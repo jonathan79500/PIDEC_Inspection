@@ -1,0 +1,19 @@
+.newInspectionform
+{
+  width: 400px;
+  height: 400px;
+  border-style: solid;
+  border-color: #123C69;
+  background: linear-gradient(to bottom, #123C69,  #EEE2DC);
+}
+
+.submintButton{
+
+  width: 50px;
+  height: 20px;
+  background: linear-gradient(to bottom, #123C69,  #EEE2DC);
+}
+.submitArea{
+  text-align: right;
+  padding: 3px 3px 3px 3px;
+}

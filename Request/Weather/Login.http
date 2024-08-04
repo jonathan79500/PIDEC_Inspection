@@ -1,0 +1,11 @@
+
+@Host= http://localhost:5196
+
+POST {{Host}}/auth/Login 
+Content-Type: application/json
+
+
+{  
+  "Email": "akbari.elahe1@pidec.Com",
+  "Password":"123224"
+}

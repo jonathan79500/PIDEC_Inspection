@@ -1,0 +1,125 @@
+@Inspection.Api_HostAddress = https://localhost:44332
+@Inspection.Api_HostAddress_Https= https://localhost:44332
+
+GET {{Inspection.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{Inspection.Api_HostAddress}}/api/inspectionnotification/GetAll
+
+###
+GET {{Inspection.Api_HostAddress_Https}}/api/inspectionNotification/GetAll
+
+DELETE {{Inspection.Api_HostAddress}}/api/inspectionnotification/0
+
+###
+
+POST {{Inspection.Api_HostAddress}}/auth/Login
+Content-Type: application/json
+
+{
+  //LoginRequest
+}
+
+###
+
+GET {{Inspection.Api_HostAddress}}/api/inspectionnotification/GetById/6c832192-5afd-4b07-b8e6-15402d5c9f70
+Content-Type:application/json;charset=utf-8
+Accept: application/json;charset=utf-8
+###
+
+
+###
+
+POST {{Inspection.Api_HostAddress_Https}}/api/inspectionnotification
+Content-Type: application/json
+
+{
+    "inspectionNotification":  ["name": "Notification_Test02",
+    "inspectionSubject": "Notification_Test02",
+    "order": {
+      "project": {
+        "title": "Project01",
+        "description": "Project01",
+        "number": "01",
+        "fsId": "1227",
+        "id": "dd0c2863-d272-400d-b3b2-de39df43ae01",
+        "createdDate": "2024-07-30T00:00:00",
+        "modifiedDate": "2024-07-30T00:00:00",
+        "createdBy": "Akbari.elahe",
+        "modifiedBy": "Akbari.elahe"
+      },
+      "no": "Order01",
+      "title": "Order01",
+      "name": "Order01",
+      "id": "a5dcc11b-846a-4d16-91e1-1dfb9b86c4e2",
+      "createdDate": "2024-07-31T00:00:00",
+      "modifiedDate": "2024-07-31T00:00:00",
+      "createdBy": "Akbari.elahe",
+      "modifiedBy": "Akbari.elahe"
+    },
+    "city": null,
+    "notificationNumber": "NotificationNumber { name = 1227-NT-622-006 }",
+    "vendor": null,
+    "inspectionTypeDto": {
+      "id": "7f2a9ffc-fd81-4fd1-adfd-e5032cac15e6",
+      "name": "Shipping"
+    },
+    "proposedDate": "2024-08-09T00:00:00",
+    "place": null,
+    "address": null,
+    "contactPerson": null,
+    "contractShippingDueDate": "2024-08-1T00:00:00",
+    "actualShippingDueDate": "2024-08-01T00:00:00",
+    "description": "test",
+    "owner": {
+      "name": "Vendor01",
+      "project": {
+        "title": "Project01",
+        "description": "Project01",
+        "number": "01",
+        "fsId": "1227",
+        "id": "dd0c2863-d272-400d-b3b2-de39df43ae01",
+        "createdDate": "2024-07-30T00:00:00",
+        "modifiedDate": "2024-07-30T00:00:00",
+        "createdBy": "Akbari.elahe",
+        "modifiedBy": "Akbari.elahe"
+      },
+      "contacts": null,
+      "id": "a5860223-4456-41dd-8948-2dda8009a0d9",
+      "createdDate": "2024-07-30T00:00:00",
+      "modifiedDate": "2024-07-30T00:00:00",
+      "createdBy": "Akbari.elaheh",
+      "modifiedBy": "Akbari.elaheh"
+    },
+    "location": {
+      "country": "Iran",
+      "state": "Fars",
+      "city": "Shiraz",
+      "streetLine1": "Eram",
+      "streetLine2": "Eram",
+      "zipCode": "1234234",
+      "address": null,
+      "id": "2368e8cc-90fb-4472-a8f1-baf1a8e988ee",
+      "createdDate": "2024-07-31T00:00:00",
+      "modifiedDate": "2024-07-31T00:00:00",
+      "createdBy": "Akbari.elaheh",
+      "modifiedBy": "Akbari.elaheh"
+    }
+   
+  
+
+]
+}
+
+###
+
+POST {{Inspection.Api_HostAddress}}/api/inspectionnotification
+Content-Type: application/json
+
+{
+  //CreateInspectionNotificationDto
+}
+
+###

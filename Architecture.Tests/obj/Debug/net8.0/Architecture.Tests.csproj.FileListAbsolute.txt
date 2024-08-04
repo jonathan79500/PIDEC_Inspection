@@ -1,0 +1,15 @@
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.csproj.AssemblyReference.cache
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Architecture.Tests\bin\Debug\net8.0\Architecture.Tests.deps.json
+E:\Projects\1403\Inspection\Architecture.Tests\bin\Debug\net8.0\Architecture.Tests.dll
+E:\Projects\1403\Inspection\Architecture.Tests\bin\Debug\net8.0\Architecture.Tests.pdb
+E:\Projects\1403\Inspection\Architecture.Tests\bin\Debug\net8.0\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Architecture.Tests\bin\Debug\net8.0\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architec.A9F69F80.Up2Date
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.dll
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\refint\Architecture.Tests.dll
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\Architecture.Tests.pdb
+E:\Projects\1403\Inspection\Architecture.Tests\obj\Debug\net8.0\ref\Architecture.Tests.dll

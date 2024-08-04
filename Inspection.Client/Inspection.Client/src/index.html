@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Inspection</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="../styles.css">   
+  <link href="https://fonts.google.com/specimen/Pacifico?preview.layout=grid&query=pacifico" >
+</head>
+<body>
+  <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@32.0.0/dist/ag-grid-community.min.js"></script>
+  <!-- Style added after AG Grid bundle -->
+  <style>
+      .ag-theme-alpine {
+          --ag-foreground-color: rgb(179, 17, 103);
+          --ag-header-column-separator-color: orange;
+        
+       }
+       .ag-theme-material{
+        --ag-foreground-color: rgb(17, 179, 58);
+        --ag-header-column-separator-color: orange;
+       }
+  </style>
+  <app-master></app-master>
+</body>
+</html>

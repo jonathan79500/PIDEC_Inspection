@@ -1,0 +1,12 @@
+﻿
+1- this error occures when we define a class without an empty constructor, I mean i have to create domain entities with constructors that have not any argument
+
+Example : public/private Address(){}
+
+Unable to create a 'DbContext' of type ''. The exception 'No suitable constructor was found for entity type 'Address'. The following constructors had parameters that could not be bound to properties of the entity type: 
+    Cannot bind 'country', 'state', 'city', 'streetL1', 'streetL2', 'zipCode' in 'Address(string country, string state, string city, string streetL1, string streetL2, string zipCode)'
+Note that only mapped properties can be bound to constructor parameters. Navigations to related entities, including references to owned types, cannot be bound.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
+
+
+2- 
+

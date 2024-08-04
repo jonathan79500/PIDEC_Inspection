@@ -1,0 +1,13 @@
+E:\Projects\1403\Inspection\Inspection.Application\bin\Debug\netstandard2.1\Inspection.Application.deps.json
+E:\Projects\1403\Inspection\Inspection.Application\bin\Debug\netstandard2.1\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\bin\Debug\netstandard2.1\Inspection.Application.pdb
+E:\Projects\1403\Inspection\Inspection.Application\bin\Debug\netstandard2.1\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Application\bin\Debug\netstandard2.1\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.csproj.AssemblyReference.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspecti.A73FEAAA.Up2Date
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\netstandard2.1\Inspection.Application.pdb

@@ -1,0 +1,10 @@
+ 
+ <p>{{title()}}</p>
+ <ng-template [ngTemplateOutlet]="estimateTemplate" [ngTemplateOutletContext]="ctx" >
+
+</ng-template>
+<ng-container *ngIf="true;else estimateTemplate"></ng-container>
+<button ref-btn>Helloo</button>
+<ng-template #estimateTemplate>
+  <div>` Approximately  lessons ...{{ctx.estimate}}`</div>
+</ng-template>  

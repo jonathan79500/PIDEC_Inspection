@@ -1,0 +1,35 @@
+
+.container
+{
+  background-color: #123C69; ;    
+
+  /* transition the background-color over 1s with a linear animation */
+  transition: background-color 1s linear;
+  
+}
+.lightpinkColor
+{
+  background-color: #edc7b7; 
+  border-radius: 0.1rem;
+}
+.blueColor
+{ 
+  background-color: #123C69; 
+  border-radius: 0.2rem;
+  color:  #EEE2DC; 
+}
+.pinkColor
+{
+  background-color: #Ac3B61;
+  border-radius: 0.2rem;
+}
+.grayColor
+{
+  background-color: #BAB2B5;
+  border-radius: 0.1rem;
+}
+.ostokhooniColor
+{
+  background-color: #EEE2DC;
+  border-radius: 0.1rem;
+}

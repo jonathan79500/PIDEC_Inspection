@@ -1,0 +1,9 @@
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\netstandard2.1\Inspection.Domain.deps.json
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\netstandard2.1\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\netstandard2.1\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\netstandard2.1\Inspection.Domain.pdb
