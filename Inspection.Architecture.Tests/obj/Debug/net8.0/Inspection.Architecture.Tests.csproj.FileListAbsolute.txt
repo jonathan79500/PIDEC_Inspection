@@ -108,3 +108,4 @@ E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\ref\I
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\MediatR.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\MediatR.Contracts.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\Inspection.Architecture.Tests.sourcelink.json

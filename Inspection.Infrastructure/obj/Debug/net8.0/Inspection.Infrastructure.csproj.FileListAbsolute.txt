@@ -15,3 +15,4 @@ E:\Projects\1403\Inspection\Inspection.Infrastructure\obj\Debug\net8.0\Inspectio
 E:\Projects\1403\Inspection\Inspection.Infrastructure\obj\Debug\net8.0\refint\Inspection.Infrastructure.dll
 E:\Projects\1403\Inspection\Inspection.Infrastructure\obj\Debug\net8.0\Inspection.Infrastructure.pdb
 E:\Projects\1403\Inspection\Inspection.Infrastructure\obj\Debug\net8.0\ref\Inspection.Infrastructure.dll
+E:\Projects\1403\Inspection\Inspection.Infrastructure\obj\Debug\net8.0\Inspection.Infrastructure.sourcelink.json

@@ -39,22 +39,24 @@ public class CreateInspectionNotificationCommandHandler : IRequestHandler<Create
     {
         var validator = new CreateInspectionNotificationValidator();
         var validationResult = validator.ValidateAsync(request.createInspectionNotificationDto).Result;
-        if (validationResult.IsValid != false)
+        if (validationResult.IsValid != true)
         {
             throw new Exception();
         }
         var InspectionNotification = _mapper.Map<InspectionNotification>(request.createInspectionNotificationDto);
-        InspectionNotification = await _inspectionNotificationRepository.Add(InspectionNotification);
+
+        var ins = InspectionNotification.CreateByUniqueId(InspectionNotification);
+        var newinspectionNotification = await _inspectionNotificationRepository.CreateNewInspectionNotification(ins);
 
        // await _unitOfWork.SaveChangesAsync();
 
 
-        await _publisher.Publish(InspectionNotification.Events.First(),cancellationToken);
+        await _publisher.Publish(newinspectionNotification.Events.First(),cancellationToken);
 
         var email = new Email
         {
             To = "akbari.elahe@pidec.com",
-            Body = $"Email From Inspection System at {request.createInspectionNotificationDto.ProposedDate: D}",
+          //  Body = $"Email From Inspection System at {request.createInspectionNotificationDto.ProposedDate: D}",
             Subject = "Inspection Notification"
         };
 

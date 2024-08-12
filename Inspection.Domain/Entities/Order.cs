@@ -3,7 +3,7 @@
 using System;
 
 
-namespace Inspection.Domain
+namespace Inspection.Domain.Entities
 {
     public sealed class Order:BaseDomainEntity<Guid>
     {
@@ -17,8 +17,21 @@ namespace Inspection.Domain
 
         public Order(Guid id):base(id)
         {
-            
+            Id = id;
         }
+
+        public static Order Create(Guid id,string orderName,string titel,string number,Project project)
+        {
+            var order = new Order(id)
+            {
+                Name = orderName,
+                Title = orderName,    
+                No = orderName,
+                Project = project
+            };
+            return order;
+        }
+
         public static Order CreateEmpty()
         {
             var EmptyOrder = new Order(Guid.NewGuid()) { 

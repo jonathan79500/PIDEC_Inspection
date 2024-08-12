@@ -4,6 +4,7 @@ using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 
 namespace Inspection.Domain.Entities.InspectionNotification.Entities
@@ -52,12 +53,13 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
         public Address? Location { get; private set; }
         public InspectionType? InspectionType { get; private set; }
         public string? Description { get; private set; }
+        private readonly List<Attachment>? _attachments= new();
 
-        public readonly List<Contact>? Contacts = new List<Contact>();
+        public readonly List<Contact>? _contacts = new();
 
 
-        public readonly List<Attachment>? Attachments = new List<Attachment>();
-
+        public IReadOnlyList<Attachment>? Attachments => _attachments!.AsReadOnly();
+        public IReadOnlyList<Contact>? Contacts => _contacts!.AsReadOnly();
 
         public static InspectionNotification Create(string name,NotificationNumber notificationNumber,string inspectionSubject,            
             DateTime contractShippingDueDate, DateTime actualShippingDueDate,DateTime proposedDate, Vendor owner, Order order,
@@ -71,17 +73,29 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
             return inspectionNotification;
         }
 
-   
+        public static InspectionNotification CreateByUniqueId(InspectionNotification inspectionNotification)
+        {
+            var ins = inspectionNotification;
+            var newinspectionNotification = InspectionNotification.Create(ins.Name,ins.NotificationNumber,ins.InspectionSubject,ins.ContractShippingDueDate!.Value,
+                ins.ActualShippingDueDate!.Value,ins.ProposedDate!.Value,ins.Owner,ins.Order!,ins.Location!,ins.InspectionType!,ins.Description!);
+            newinspectionNotification.InspectionNotificationId = InspectionNotificationId.CreateUnique();
+
+
+            newinspectionNotification.RaiseEvent(new InspectionNotificationCreatedEvent(newinspectionNotification.InspectionNotificationId));
+
+            return newinspectionNotification;
+        }
+
         public void AddAttachment(string name, string description, byte[] content)
         {
             var attachment = Attachment.Create(name, description, content);          
-            Attachments.Add(attachment);
+            _attachments.Add(attachment);
         }
 
         public void AddContact(string name,Address address,string phone,string fax, string email,string homepage)
         {
             var contact = Contact.Create(name, address, phone, fax, email, homepage);
-            Contacts.Add(contact);
+            _contacts.Add(contact);
         }
 
     }

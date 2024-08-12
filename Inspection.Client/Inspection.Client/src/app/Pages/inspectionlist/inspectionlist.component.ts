@@ -60,13 +60,13 @@ let gridApi: GridApi<Inspection> ;
 const gridOptions: GridOptions<Inspection> = {
   columnDefs: [
     { field: "name", width: 150 },
-    { field: "city", width: 90 },
-    { field: "notificationNumber", width: 150 },
+    // { field: "city", width: 90 },
+    // { field: "notificationNumber", width: 150 },
     { field: "inspectionSubject", width: 90 },
-    { field: "ActualShippingDueDate", width: 150 },
-    { field: "contractShippingDueDate", width: 150 },
-    { field: "locationId", width: 100 },
-    { field: "ownerId", width: 100 }    
+    // { field: "ActualShippingDueDate", width: 150 },
+    // { field: "contractShippingDueDate", width: 150 },
+    // { field: "locationId", width: 100 },
+    // { field: "ownerId", width: 100 }    
   ],
   domLayout:'normal'
 };

@@ -1,9 +1,11 @@
 ﻿using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.Features.InspectionNotifications.Commands.CreateInspectionNotification;
+using Inspection.Application.Features.InspectionNotifications.Common;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 
 namespace Inspection.Api.Controllers;
@@ -37,16 +39,38 @@ public class InspectionNotificationController : ControllerBase
         return Ok(inspectionNotification);
     }
 
-    // POST api/<InspectionController>
+
     [HttpPost]
     [Route("SaveNew")]
     public async Task<ActionResult> Post([FromBody] CreateInspectionNotificationDto inspectionNotification)
     {
         var command = new CreateInspectionNotificationCommand { createInspectionNotificationDto = inspectionNotification };
 
-        var response = await _mediator.Send(command);
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
 
-        return Ok(response);
+            return Ok("jdljqwl");
+        }
+        
+    }
+
+
+    // POST api/<InspectionController>
+    [HttpPost]
+    //[Route("SaveNew")]
+    public async Task<ActionResult> Post(string str)//[FromBody] CreateInspectionNotificationDto inspectionNotification)
+    {
+        return Ok(str);
+        //var command = new CreateInspectionNotificationCommand { createInspectionNotificationDto = inspectionNotification };
+
+        //var response = await _mediator.Send(command);
+
+        //return Ok(response);
     }
 
     // PUT api/<InspectionController>/5

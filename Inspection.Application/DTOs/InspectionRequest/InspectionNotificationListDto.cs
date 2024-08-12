@@ -1,5 +1,5 @@
 ﻿using Inspection.Application.DTOs.Common;
-using Inspection.Domain;
+using Inspection.Domain.Entities;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using System;
 using System.Collections.Generic;

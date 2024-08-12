@@ -3,6 +3,7 @@ using Inspection.Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities;
 
 namespace Inspection.Persistence.Repositories;
 
@@ -14,13 +15,51 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     public InspectionNotificationRepository(InspectionDbContext dbContext) : base()
     {
         _dbContext = dbContext;
-    }   
+    }
+
+    public Task<InspectionNotification> CreateNewInspectionNotification(InspectionNotification inspectionNotification)
+    {
+        try
+        {
+            _dbContext.Entry(inspectionNotification.Owner).State = EntityState.Unchanged;
+            _dbContext.Entry(inspectionNotification.InspectionType!).State = EntityState.Unchanged;
+          
+            _dbContext.Entry(inspectionNotification.Order!).State = EntityState.Unchanged;
+            _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
+
+        
+            _dbContext.InspectionNotifications.Add(inspectionNotification);
+
+            
+            _dbContext.SaveChanges();
+            return Task.FromResult(inspectionNotification);
+
+        }
+        catch (Exception ex)
+        {
+            string str = ex.Message;
+        }
+
+        
+        return null;
+    }
 
     Task<InspectionNotification> IGenericRepository<InspectionNotification, InspectionNotificationId>.Add(InspectionNotification entity)
     {
-        _dbContext.InspectionNotifications.Add(entity);
-       
-         _dbContext.SaveChanges();
+
+        try
+        {
+            Order  order = _dbContext.Orders.Find(entity.Order.Id);
+            _dbContext.Entry(order).State = EntityState.Unchanged;
+
+            _dbContext.InspectionNotifications.Add(entity);
+
+            _dbContext.SaveChanges();
+
+        }
+        catch(Exception ex) {
+            string str = ex.Message;
+        }
 
         return null;
     }

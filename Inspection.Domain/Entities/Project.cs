@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inspection.Domain
+namespace Inspection.Domain.Entities
 {
     public sealed class Project : BaseDomainEntity<Guid>
     {
@@ -15,7 +15,20 @@ namespace Inspection.Domain
 
 
         public Project() { }    
-        public Project(Guid id):base(id) { }
+        public Project(Guid id):base(id) {
+        
+        }
+
+        public static Project Create(Guid id,string title,string description,string number, string fsId)
+        {
+            return new Project(id)
+            {
+                Title = title,
+                Description = description,
+                Number = number,
+                FSId = fsId
+            };
+        }
         
     }
 }

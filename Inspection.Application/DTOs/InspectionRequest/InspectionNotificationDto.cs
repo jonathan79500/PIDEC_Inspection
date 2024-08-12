@@ -1,6 +1,6 @@
 ﻿using Inspection.Application.DTOs.Common;
 using System;
-using Inspection.Domain;
+using Inspection.Domain.Entities;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using System.Collections.Generic;

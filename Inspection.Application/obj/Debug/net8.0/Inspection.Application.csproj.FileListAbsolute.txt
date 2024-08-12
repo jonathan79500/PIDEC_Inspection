@@ -13,3 +13,4 @@ E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\net8.0\Inspection.A
 E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\net8.0\refint\Inspection.Application.dll
 E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\net8.0\Inspection.Application.pdb
 E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\net8.0\ref\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\obj\Debug\net8.0\Inspection.Application.sourcelink.json

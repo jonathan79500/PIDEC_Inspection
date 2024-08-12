@@ -1,4 +1,4 @@
-@Inspection.Api_HostAddress = https://localhost:44332
+@Inspection.Api_HostAddress = http://localhost:5196
 @Inspection.Api_HostAddress_Https= https://localhost:44332
 
 GET {{Inspection.Api_HostAddress}}/weatherforecast/
@@ -31,91 +31,75 @@ Accept: application/json;charset=utf-8
 
 
 ###
-
-POST {{Inspection.Api_HostAddress_Https}}/api/inspectionnotification
+POST {{Inspection.Api_HostAddress}}/api/inspectionNotification
 Content-Type: application/json
 
 {
-    "inspectionNotification":  ["name": "Notification_Test02",
-    "inspectionSubject": "Notification_Test02",
-    "order": {
-      "project": {
-        "title": "Project01",
-        "description": "Project01",
-        "number": "01",
-        "fsId": "1227",
-        "id": "dd0c2863-d272-400d-b3b2-de39df43ae01",
-        "createdDate": "2024-07-30T00:00:00",
-        "modifiedDate": "2024-07-30T00:00:00",
-        "createdBy": "Akbari.elahe",
-        "modifiedBy": "Akbari.elahe"
-      },
-      "no": "Order01",
-      "title": "Order01",
-      "name": "Order01",
-      "id": "a5dcc11b-846a-4d16-91e1-1dfb9b86c4e2",
-      "createdDate": "2024-07-31T00:00:00",
-      "modifiedDate": "2024-07-31T00:00:00",
-      "createdBy": "Akbari.elahe",
-      "modifiedBy": "Akbari.elahe"
-    },
-    "city": null,
-    "notificationNumber": "NotificationNumber { name = 1227-NT-622-006 }",
-    "vendor": null,
-    "inspectionTypeDto": {
-      "id": "7f2a9ffc-fd81-4fd1-adfd-e5032cac15e6",
-      "name": "Shipping"
-    },
-    "proposedDate": "2024-08-09T00:00:00",
-    "place": null,
-    "address": null,
-    "contactPerson": null,
-    "contractShippingDueDate": "2024-08-1T00:00:00",
-    "actualShippingDueDate": "2024-08-01T00:00:00",
-    "description": "test",
-    "owner": {
-      "name": "Vendor01",
-      "project": {
-        "title": "Project01",
-        "description": "Project01",
-        "number": "01",
-        "fsId": "1227",
-        "id": "dd0c2863-d272-400d-b3b2-de39df43ae01",
-        "createdDate": "2024-07-30T00:00:00",
-        "modifiedDate": "2024-07-30T00:00:00",
-        "createdBy": "Akbari.elahe",
-        "modifiedBy": "Akbari.elahe"
-      },
-      "contacts": null,
-      "id": "a5860223-4456-41dd-8948-2dda8009a0d9",
-      "createdDate": "2024-07-30T00:00:00",
-      "modifiedDate": "2024-07-30T00:00:00",
-      "createdBy": "Akbari.elaheh",
-      "modifiedBy": "Akbari.elaheh"
-    },
-    "location": {
-      "country": "Iran",
-      "state": "Fars",
-      "city": "Shiraz",
-      "streetLine1": "Eram",
-      "streetLine2": "Eram",
-      "zipCode": "1234234",
-      "address": null,
-      "id": "2368e8cc-90fb-4472-a8f1-baf1a8e988ee",
-      "createdDate": "2024-07-31T00:00:00",
-      "modifiedDate": "2024-07-31T00:00:00",
-      "createdBy": "Akbari.elaheh",
-      "modifiedBy": "Akbari.elaheh"
-    }
+    "str": \"test \"
    
-  
+}
 
-]
+POST {{Inspection.Api_HostAddress}}/api/inspectionnotification
+Content-Type: application/json
+
+ {
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "string",
+  "order": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "city": "string",
+  "notificationNumber": "string",
+  "vendor": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "inspectionTypeDto": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "string"
+  },
+  "proposedDate": "2024-08-05T07:48:38.084Z",
+  "place": "string",
+  "address": "string",
+  "contactPerson": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "address": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z",
+      "address": "string"
+    }
+  },
+  "contractShippingDueDate": "2024-08-05T07:48:38.084Z",
+  "actualShippingDueDate": "2024-08-05T07:48:38.084Z",
+  "description": "string",
+  "owner": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "location": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "address": "string"
+  }
 }
 
 ###
 
-POST {{Inspection.Api_HostAddress}}/api/inspectionnotification
+POST {{Inspection.Api_HostAddress}}/api/inspectionnotification/SaveNew
 Content-Type: application/json
 
 {

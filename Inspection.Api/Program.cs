@@ -11,20 +11,24 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.
     AddApplication().
     AddInfrastructure();
+   
+    builder.Services.AddControllers().
+    AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull);
 
-    builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-
+  //  builder.Services.AddSwaggerGen();
     builder.Services.AddCors(o =>
     o.AddPolicy("CorsPolicy",
-    builder => builder.AllowAnyOrigin()
-    .AllowAnyMethod()
+    builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()    
     .AllowAnyHeader()));
 
 // Add services to the container.
 var app = builder.Build();
 
-
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
     app.UseHttpsRedirection();  
 
     app.UseCors("CorsPolicy");

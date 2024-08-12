@@ -19,7 +19,11 @@ public class InspectionNotificationMappingConfig : IRegister
             .Map(dest => dest.InspectionNotificationId.Value, src => src.ins.Id);
 
         config.NewConfig<InspectionNotification, CreateInspectionNotificationDto>()
-            .Map(dest=>dest.Id , src=>src.InspectionNotificationId.Value);
+            .Map(dest => dest.Id, src => src.InspectionNotificationId.Value)
+            .Map(dest => dest.OrderId, src => src.Order!.Id)
+            .Map(dest => dest.OwnerId, src => src.Owner.Id);
+            
+            
 
         config.NewConfig<(GetInspectionNotificationDetailRequest req,InspectionNotification res), InspectionNotificationDto>().PreserveReference(true)
             .Map(dest => dest.Id, src => src.res.InspectionNotificationId.Value)           

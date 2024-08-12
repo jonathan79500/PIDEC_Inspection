@@ -3,7 +3,7 @@ using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 
 
-namespace Inspection.Domain
+namespace Inspection.Domain.Entities
 {
     public class Contact: BaseDomainEntity<Guid>
     {

@@ -5,6 +5,7 @@ using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json.Linq;
 using System.Reflection.Emit;
@@ -17,41 +18,85 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
     {
 
         ConfigureInspectionNotificationTable(builder);
+        ConfigureAttachments(builder);
+        
+    }
+
+    private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
+    {
+       
+        builder.OwnsMany(inf => inf.Attachments
+        , 
+            atb =>
+            {
+                atb.ToTable("Attachments");
+
+              
+                //or
+                atb.HasKey(nameof(Attachment.Id), "InspectionNotificationId");
+
+                atb.WithOwner().HasForeignKey("InspectionNotificationId");
+
+                var converter = new ValueConverter<AttachmentId, Guid>(
+                 id => id.Value,
+                  guidValue => AttachmentId.Create(guidValue));
+
+                atb.Property(a => a.Id)
+                    .HasColumnName("Id")
+                    .ValueGeneratedNever()
+                    .HasConversion(converter);
+
+              //  atb.HasKey("AttachmentId", "InspectionNotificationId");
+
+                atb.Property(a => a.Name).HasMaxLength(100);
+                atb.Property(a => a.Description).HasMaxLength(255);
+                atb.Property(a => a.Content).HasColumnType("image");
+
+                // if attchment record had many children so again like above we could define atb.OwnsMany(....) and etc
+            }
+        );
+
+        builder.Navigation(i => i.Attachments).Metadata.SetField("_attachments");
+        builder.Navigation(i => i.Contacts).Metadata.SetField("_contacts");
+        builder.Metadata.FindNavigation(nameof(InspectionNotification.Attachments))!.SetPropertyAccessMode(PropertyAccessMode.Field);
+        builder.Metadata.FindNavigation(nameof(InspectionNotification.Contacts))!.SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 
     private void ConfigureInspectionNotificationTable(EntityTypeBuilder<InspectionNotification> builder)
     {
-        builder.ToTable("InspectionNotifications");          
-        builder.Ignore(e=>e.InspectionNotificationId);
+        builder.ToTable("InspectionNotifications");   
+        builder.HasKey(x => x.Id);       
 
         var converter = new ValueConverter<InspectionNotificationId, Guid>(
         id => id.Value,
           guidValue => InspectionNotificationId.Create(guidValue));
              
        
+
         builder.Property(e => e.Id)
-            .HasConversion(converter)
-            .ValueGeneratedOnAdd();
+            .HasColumnName("Id")
+             .ValueGeneratedNever()
+            .HasConversion(converter);
 
-        builder.HasOne(e => e.InspectionType);
-        builder.Property(e => e.InspectionSubject);
+        builder.Property(e => e.Name).HasMaxLength(200);
+        builder.Property(e => e.InspectionSubject).HasMaxLength(600);
+
+        //we do this OwnsOne for value objects which should flatten to InspectionNotification Table and has not any unique ids
+        builder.OwnsOne(e => e.NotificationNumber, nnb =>
+        {
+            nnb.Property(n => n.name).HasColumnName("NotificationNumber").HasMaxLength(100).IsRequired();
+        });
+
+
+
+        builder.HasOne(e => e.InspectionType).WithMany().HasForeignKey("InspectionTypeId");
+      
         builder.Property(e => e.ContractShippingDueDate);
-        builder.ComplexProperty(i => i.NotificationNumber).IsRequired();
-        builder.HasOne(i => i.Owner);
-        builder.HasOne(i => i.Order);
-        
+        //builder.ComplexProperty(i => i.NotificationNumber).IsRequired();
+        builder.HasOne(i => i.Owner);//.WithMany().HasForeignKey("OwnerId");
+        builder.HasOne(i => i.Order);//.WithMany().HasForeignKey("OrderId");
 
-        builder.HasMany(inf => inf.Attachments);
-        builder.Metadata.FindNavigation(nameof(InspectionNotification.Contacts));
-        builder.Metadata.FindNavigation(nameof(InspectionNotification.Owner));
 
-        //when we want flatten an object and spread it to mother object as one or more fields we use OwnesOne() Method
-        // builder.ComplexProperty(e => e.Owner);
-        // builder.OwnsOne(e => e.Owner);
-
-        // var InspectionTypeIdconverter = new ValueConverter<InspectionTypeId, Guid>(
-        //id => id.Value,
-        //  guidValue => InspectionTypeId.Create(guidValue));
-        // builder.Property(e => e.InspectionType.InspectionTypeId).HasConversion(InspectionTypeIdconverter) .ValueGeneratedOnAdd();
+      
     }
 }

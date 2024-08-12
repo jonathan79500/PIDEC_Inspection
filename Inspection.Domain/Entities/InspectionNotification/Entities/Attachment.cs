@@ -4,7 +4,7 @@ using System;
 
 namespace Inspection.Domain.Entities.InspectionNotification.Entities;
 
-public sealed class Attachment:BaseDomainEntity<Guid>
+public sealed class Attachment:BaseDomainEntity<AttachmentId>
 {
 
     public AttachmentId AttachmentId { get; private set; }

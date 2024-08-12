@@ -97,3 +97,4 @@ E:\Projects\1403\Inspection\Inspection.Tests\obj\Debug\net8.0\refint\Inspection.
 E:\Projects\1403\Inspection\Inspection.Tests\obj\Debug\net8.0\Inspection.Tests.pdb
 E:\Projects\1403\Inspection\Inspection.Tests\obj\Debug\net8.0\Inspection.Tests.genruntimeconfig.cache
 E:\Projects\1403\Inspection\Inspection.Tests\obj\Debug\net8.0\ref\Inspection.Tests.dll
+E:\Projects\1403\Inspection\Inspection.Tests\obj\Debug\net8.0\Inspection.Tests.sourcelink.json

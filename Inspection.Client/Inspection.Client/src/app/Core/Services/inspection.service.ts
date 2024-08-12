@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inspection } from '../Models/Inspection.model';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class InspectionService {
   public PortNo : string = "5196";
   public APIName : string ="InspectionNotification";
   public InspectionAPIPath :string = this.HostName+'/'+'api'+'/'+this.APIName;
-
+  public headers = new HttpHeaders().set('Content-Type', 'application/json');
 
   public RestAPIActions : object[]=[
     {
@@ -45,6 +45,8 @@ export class InspectionService {
 
   saveNewInspection(newInspection: Inspection)
   {
-    return this.http.post(this.InspectionAPIPath+'/'+"SaveNew",newInspection);
+    const headers = new HttpHeaders();
+   
+    return this.http.post<any>(this.InspectionAPIPath+'/'+"SaveNew", newInspection,{ headers: headers } );
   }
 }

@@ -27,7 +27,7 @@ namespace Inspection.Architecture.Tests
             {
                 //Arrange
 
-                var assembly = typeof(Domain.Model.Attachment).Assembly;
+                var assembly = typeof(Domain.Entities.InspectionNotification.Entities.Attachment).Assembly;
                 var otherProjects = new[] {
                 InfrastructureNamespace,
                 ApiNamespace

@@ -1,8 +1,7 @@
-﻿using Inspection.Domain;
+﻿using Inspection.Domain.Entities;
 using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
-using Inspection.Persistence.Configurations.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inspection.Persistence;
@@ -16,6 +15,9 @@ public class InspectionDbContext:DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {       
+         modelBuilder.Ignore<InspectionNotificationId>();
+         modelBuilder.Ignore<AttachmentId>();
+        //modelBuilder.Ignore("Attachments");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InspectionDbContext).Assembly);
 
@@ -31,7 +33,7 @@ public class InspectionDbContext:DbContext
         //modelBuilder.Entity<InspectionNotification>().HasMany(inf => inf.Attachments);//.WithMany().UsingEntity(a=>a.);
         //  modelBuilder.Entity<InspectionNotification>().OwnsOne(inf => inf.InspectionType);
 
-        modelBuilder.Ignore<InspectionNotificationId>();
+       
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -46,8 +48,8 @@ public class InspectionDbContext:DbContext
         }
         return base.SaveChangesAsync(cancellationToken);
     }
-    public DbSet<Address> Addresses { get; set; } 
-    public DbSet<InspectionNotification> InspectionNotifications { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<InspectionNotification> InspectionNotifications { get; set; } = null!;
     public DbSet<InspectionType> InspectionTypes { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Vendor> Vendors { get; set; }

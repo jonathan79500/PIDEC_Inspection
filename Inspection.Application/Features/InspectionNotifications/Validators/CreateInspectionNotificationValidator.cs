@@ -15,8 +15,8 @@ public class CreateInspectionNotificationValidator:AbstractValidator<CreateInspe
         
         DateTime pd= DateTime.Now.AddDays(1);
 
-        RuleFor(i => i.ProposedDate).GreaterThan(pd);
+        //RuleFor(i => i.ProposedDate).GreaterThan(pd);
 
-        RuleFor(i=>i.NotificationNumber).NotEmpty().WithMessage("NotificationNumber is required").NotNull();
+        //RuleFor(i=>i.NotificationNumber).NotEmpty().WithMessage("NotificationNumber is required").NotNull();
     }
 }

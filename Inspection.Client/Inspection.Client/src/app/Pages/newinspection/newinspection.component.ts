@@ -13,14 +13,15 @@ import { Order } from '../../Core/Models/Order.model';
 export class NewinspectionComponent {
 
   order :Order ={
+    id :'a5dcc11b-846a-4d16-91e1-1dfb9b86c4e2',
     projectId: 'dd0c2863-d272-400d-b3b2-de39df43ae01',
     no: 'Order01',
     title: 'Order01',
     name: 'Order01',
-    createdDate: undefined,
-    modifiedDate: undefined,
-    createdBy: '',
-    modifiedBy: ''
+    createdDate:new Date(Date.now()),
+    modifiedDate: new Date(Date.now()),
+    createdBy: 'asda',
+    modifiedBy: 'adad'
   };
   newInspection !:Inspection ;
   /**
@@ -28,8 +29,7 @@ export class NewinspectionComponent {
    */
   constructor(private inspectionService:InspectionService) {
    
-    
-  }
+}
 
 
   SaveNewInspection():void
@@ -39,18 +39,23 @@ export class NewinspectionComponent {
 
     this.newInspection  = {
       name: 'Inspection02',
-      order: this.order,
-      city: 'shiraz',
-      notificationNumber: '02 Inspection',
-      inspectionSubject: 'Inspection Notification',
-      contractShippingDueDate: new Date(Date.now()),
-      ActualShippingDueDate: new Date(Date.now()),
-      proposedDate: new Date(Date.now()),
-      ownerId: '',
-      locationId: ''
+      // order: this.order,
+       orderId:'81882025-6495-48b6-b570-e667fdd09e3f',
+       city: 'shiraz',
+       notificationNumber: '02 Inspection',
+       inspectionSubject: 'Inspection Notification',
+       inspectionTypeId:'7f2a9ffc-fd81-4fd1-adfd-e5032cac15e6',
+       contractShippingDueDate: new Date(Date.now()),
+       ActualShippingDueDate: new Date(Date.now()),
+       proposedDate: new Date(Date.now()),
+       ownerId:'a5860223-4456-41dd-8948-2dda8009a0d9',
+       locationId: '2368e8cc-90fb-4472-a8f1-baf1a8e988ee',
+      // locationId: ''
     }
     
-   this.inspectionService.saveNewInspection(this.newInspection);
+   this.inspectionService.saveNewInspection(this.newInspection).subscribe((result)=>{
+    console.log(result);
+   });
   }
 
 }

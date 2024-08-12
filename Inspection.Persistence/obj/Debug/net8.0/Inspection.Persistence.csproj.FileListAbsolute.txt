@@ -17,3 +17,4 @@ E:\Projects\1403\Inspection\Inspection.Persistence\obj\Debug\net8.0\Inspection.P
 E:\Projects\1403\Inspection\Inspection.Persistence\obj\Debug\net8.0\ref\Inspection.Persistence.dll
 E:\Projects\1403\Inspection\Inspection.Persistence\bin\Debug\net8.0\Inspection.Persistence.runtimeconfig.json
 E:\Projects\1403\Inspection\Inspection.Persistence\obj\Debug\net8.0\Inspection.Persistence.genruntimeconfig.cache
+E:\Projects\1403\Inspection\Inspection.Persistence\obj\Debug\net8.0\Inspection.Persistence.sourcelink.json

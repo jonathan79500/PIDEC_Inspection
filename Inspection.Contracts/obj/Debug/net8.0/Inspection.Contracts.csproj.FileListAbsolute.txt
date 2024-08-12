@@ -9,3 +9,4 @@ E:\Projects\1403\Inspection\Inspection.Contracts\obj\Debug\net8.0\Inspection.Con
 E:\Projects\1403\Inspection\Inspection.Contracts\obj\Debug\net8.0\refint\Inspection.Contracts.dll
 E:\Projects\1403\Inspection\Inspection.Contracts\obj\Debug\net8.0\Inspection.Contracts.pdb
 E:\Projects\1403\Inspection\Inspection.Contracts\obj\Debug\net8.0\ref\Inspection.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Debug\net8.0\Inspection.Contracts.sourcelink.json
