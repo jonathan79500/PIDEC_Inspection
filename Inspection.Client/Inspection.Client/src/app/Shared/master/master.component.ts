@@ -1,5 +1,5 @@
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component,computed,effect,input, Input, Signal, signal, TemplateRef } from '@angular/core';
+import { Component,computed,effect,input, Input, OnInit, Signal, signal, TemplateRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from '../../Pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -9,6 +9,8 @@ import { NotFoundComponent } from '../../Pages/not-found/not-found.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { RouterOutlet,RouterLink ,RouterLinkActive} from '@angular/router';
 import { Router } from '@angular/router';
+import { BasicInfoService } from '../../Core/Services/basic-info.service';
+import { Project } from '../../Core/Models/Project.model';
 
 
  enum NavbarLinkList {
@@ -26,14 +28,28 @@ import { Router } from '@angular/router';
 
 
 
-export class MasterComponent {
+export class MasterComponent implements OnInit{
 
+public Projects !:Project[];
 
-  constructor(private router: Router) {  
+  constructor(private router: Router,private basicInfoService: BasicInfoService) {  
  
     effect(()=>{
     console.log(`the count is ${this.count}`);
   })  
+  }
+
+
+  
+  ngOnInit(): void {
+    let vendorId ="a5860223-4456-41dd-8948-2dda8009a0d9";
+
+    this.basicInfoService.getVendorProjects(vendorId).subscribe((prjs)=>
+    {
+      console.log(prjs);
+      this.Projects = prjs;
+    }
+    );
   }
 
 size = input<string>();

@@ -8,5 +8,15 @@ Unable to create a 'DbContext' of type ''. The exception 'No suitable constructo
 Note that only mapped properties can be bound to constructor parameters. Navigations to related entities, including references to owned types, cannot be bound.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
 
 
-2- 
+2- this error occures when we define a class as a table with inheritence from a base class and instead pass a datatype like 'VendorDocumentId', we pass Guid
+like
+
+'public class VendorDocument:BaseDomainEntity<Guid>'
+
+we should use this format
+
+'public class VendorDocument:BaseDomainEntity<VendorDocumentId>'
+
+Unable to create a 'DbContext' of type ''. The exception 'Converter for model type 'VendorDocumentId' cannot be used for 'VendorDocument.Id'
+because its type is 'Guid'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
 

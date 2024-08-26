@@ -13,5 +13,6 @@ namespace Inspection.Application.DTOs
         public string No { get; set; }
         public string Title { get; set; }
         public string Name { get; set; }
+        public readonly List<VendorDocumentDto> vendorDocuments = new List<VendorDocumentDto>();
     }
 }

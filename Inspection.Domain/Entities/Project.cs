@@ -13,6 +13,8 @@ namespace Inspection.Domain.Entities
         public string Number { get;private set; } = string.Empty;
         public string FSId { get; private set; } = string.Empty;
 
+        public List<ProjectVendor> vendors { get; private set; }
+
 
         public Project() { }    
         public Project(Guid id):base(id) {

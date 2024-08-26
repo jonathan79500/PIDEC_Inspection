@@ -20,6 +20,7 @@ public static class PersistenceServicesRegisteration
         //services.AddScoped<IGenericRepository,IGenericRepository>();
         services.AddScoped(typeof(IGenericRepository<,>),typeof(GenericRepository<,>));
         services.AddScoped <IInspectionNotificationRepository,InspectionNotificationRepository>();
+        services.AddScoped<IBasicInformationRepository, BasicInformationRepository>();
 
         return services;
 

@@ -248,9 +248,14 @@ namespace Inspection.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("VendorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("VendorId");
 
                     b.ToTable("Orders");
                 });
@@ -296,6 +301,38 @@ namespace Inspection.Persistence.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.ProjectVendor", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ProjectId", "VendorId");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("ProjectVendors", (string)null);
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.Vendor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -320,14 +357,51 @@ namespace Inspection.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
+                    b.HasKey("Id");
+
+                    b.ToTable("Vendors");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.VendorDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("image");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("OrderId");
 
-                    b.ToTable("Vendors");
+                    b.ToTable("VendorDocuments", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Contact", b =>
@@ -456,18 +530,41 @@ namespace Inspection.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Inspection.Domain.Entities.Vendor", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("VendorId");
+
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Inspection.Domain.Entities.Vendor", b =>
+            modelBuilder.Entity("Inspection.Domain.Entities.ProjectVendor", b =>
                 {
                     b.HasOne("Inspection.Domain.Entities.Project", "Project")
-                        .WithMany()
+                        .WithMany("vendors")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Inspection.Domain.Entities.Vendor", "Vendor")
+                        .WithMany("Projects")
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Project");
+
+                    b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.VendorDocument", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Order", "Order")
+                        .WithMany("VendorDocuments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
@@ -475,9 +572,23 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("Contacts");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("VendorDocuments");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Project", b =>
+                {
+                    b.Navigation("vendors");
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.Vendor", b =>
                 {
                     b.Navigation("Contacts");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,7 +24,10 @@
     "@angular/ssr": "^18.0.1",
     "ag-grid-angular": "^32.0.0",
     "ag-grid-community": "^32.0.0",
+    "angular-captcha": "^3.7.4",
+    "boxicons": "^2.1.4",
     "express": "^4.18.2",
+    "ngx-toaster": "^1.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

@@ -1,0 +1,49 @@
+<div class="wrapper">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <h1>Login</h1>
+    <fieldset>
+      <legend></legend>
+      <div>
+        <label for="txtUserName">User Name : </label>
+        &nbsp;&nbsp;
+        <input
+          id="txtUserName"
+          name="txtUserName"
+          type="text"
+          value="userName"
+          formControlName="userName"
+          placeholder="User Name"
+          class="input-Box"
+        />
+        <i class="bx bxs-user"></i>
+      </div>
+      <div>
+        <label for="txtPassword">Password : </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input
+          id="txtPassword"
+          name="txtPassword"
+          type="password"
+          value="userName"
+          formControlName="password"
+          placeholder="Password"
+          class="input-Box"
+        />
+        <i class="bx bxs-lock-alt"></i>
+      </div>
+
+      <div>
+        <label for="slcDomain">Domain : </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <select id="slcDomain" name="slcDomain" class="input-Box">
+          <option value="NotSelected" class="input-Box">---</option>
+          <option value="PidecUsers" class="input-Box">PidecUsers</option>
+          <option value="Projects" class="input-Box">Projects</option>
+        </select>
+      </div>
+    </fieldset>
+    <div class="submitButtonArea">
+      <button type="submit" value="Login" class="button">Login</button>
+    </div>
+  </form>
+</div>

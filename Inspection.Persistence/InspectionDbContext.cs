@@ -2,6 +2,7 @@
 using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inspection.Persistence;
@@ -17,6 +18,7 @@ public class InspectionDbContext:DbContext
     {       
          modelBuilder.Ignore<InspectionNotificationId>();
          modelBuilder.Ignore<AttachmentId>();
+        modelBuilder.Ignore<VendorDocumentId>();    
         //modelBuilder.Ignore("Attachments");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InspectionDbContext).Assembly);
@@ -33,7 +35,19 @@ public class InspectionDbContext:DbContext
         //modelBuilder.Entity<InspectionNotification>().HasMany(inf => inf.Attachments);//.WithMany().UsingEntity(a=>a.);
         //  modelBuilder.Entity<InspectionNotification>().OwnsOne(inf => inf.InspectionType);
 
-       
+        modelBuilder.Entity<ProjectVendor>()
+            .ToTable("ProjectVendors")
+            .HasKey(pv => new { pv.ProjectId, pv.VendorId });
+        modelBuilder.Entity<ProjectVendor>()
+            .HasOne(pv => pv.Project)
+            .WithMany(pv => pv.vendors)
+            .HasForeignKey(pv=>pv.ProjectId);
+
+        modelBuilder.Entity<ProjectVendor>()
+           .HasOne(pv => pv.Vendor)
+           .WithMany(pv => pv.Projects)
+           .HasForeignKey(pv=>pv.VendorId);
+
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -56,5 +70,6 @@ public class InspectionDbContext:DbContext
     public DbSet<Contact> Contacts { get; set; }    
     public DbSet<Project> Projects { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<VendorDocument> vendorDocuments { get; set; }
 
 }

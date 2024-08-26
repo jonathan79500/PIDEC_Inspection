@@ -1,6 +1,9 @@
 ﻿using Inspection.Domain.Entities.Common;
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 
 namespace Inspection.Domain.Entities
@@ -8,10 +11,13 @@ namespace Inspection.Domain.Entities
     public sealed class Order:BaseDomainEntity<Guid>
     {
 
+        private readonly List<VendorDocument> _vendorDocuments = new();
         public Project Project { get; private set; }
         public string No { get; private set; }
         public string Title { get; private set; }
         public string Name { get; private set; }
+
+        public IReadOnlyList<VendorDocument> VendorDocuments=> _vendorDocuments;
 
         public Order() { }
 
@@ -38,6 +44,11 @@ namespace Inspection.Domain.Entities
             
             };
             return EmptyOrder;
+        }
+
+        public void AddVendorDocument(VendorDocument vendorDocument)
+        {
+            _vendorDocuments.Add(vendorDocument);
         }
     }
 

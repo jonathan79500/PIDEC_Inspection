@@ -13,5 +13,6 @@ namespace Inspection.Application.DTOs.Common
         public string Name { get; set; }
         public ProjectDto Project { get; set; }
         public IEnumerable<ContactDto> ContactsDto { get; set; }
+        public IEnumerable<ProjectVendorDto> ProjectsDto { get; set; }     
     }
 }

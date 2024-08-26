@@ -24,7 +24,14 @@ namespace Inspection.Application.Profiles
             CreateMap<Vendor, VendorDto>()
             .ForMember(intp => intp.Id, opt => opt.MapFrom(src => src.Id)).ReverseMap()
             .ForMember(inpt => inpt.Name, opt => opt.MapFrom(src => src.Name)).ReverseMap()
-            .ForMember(inpt => inpt.ContactsDto, opt => opt.MapFrom(src => src.Contacts)).ReverseMap();
+            .ForMember(inpt => inpt.ContactsDto, opt => opt.MapFrom(src => src.Contacts))
+            .ForMember(inpt => inpt.ProjectsDto, opt => opt.MapFrom(src => src.Projects))
+            .ReverseMap();
+
+
+            CreateMap<VendorDocument, VendorDocumentDto>()
+          .ForMember(intp => intp.Id, opt => opt.MapFrom(src => src.VendorDocumentId)).ReverseMap()
+          .ForMember(intp => intp.Name, opt => opt.MapFrom(src => src.Name)).ReverseMap();
 
 
             CreateMap<Order, OrderDto>()
@@ -32,7 +39,8 @@ namespace Inspection.Application.Profiles
             .ForMember(inpt => inpt.Name, opt => opt.MapFrom(src => src.Name)).ReverseMap()
             .ForMember(inpt => inpt.No, opt => opt.MapFrom(src => src.No)).ReverseMap()
             .ForMember(inpt => inpt.Title, opt => opt.MapFrom(src => src.Title)).ReverseMap()
-            .ForMember(inpt => inpt.ProjectDto, opt => opt.MapFrom(src => src.Project)).ReverseMap();
+            .ForMember(inpt => inpt.ProjectDto, opt => opt.MapFrom(src => src.Project)).ReverseMap()
+            .ForMember(inpt => inpt.VendorDocuments, opt => opt.MapFrom(src => src.vendorDocuments)).ReverseMap();
 
             CreateMap<Contact, ContactDto>()
             .ForMember(intp => intp.Id, opt => opt.MapFrom(src => src.Id)).ReverseMap()
@@ -54,40 +62,39 @@ namespace Inspection.Application.Profiles
             CreateMap<CreateInspectionNotificationDto, InspectionNotification>()
                 .ForMember(d => d.InspectionNotificationId, opt => opt.MapFrom(s => Guid.NewGuid()));
 
-            CreateMap<InspectionNotification, CreateInspectionNotificationDto>()                
+            CreateMap<InspectionNotification, CreateInspectionNotificationDto>()
                 .ForMember(d => d.OrderId, opt => opt.MapFrom(s => s.Order!.Id))
-                .ForMember(d=>d.OwnerId,opt=>opt.MapFrom(s=>s.Owner.Id))
-                .ForMember(d=>d.InspectionTypeId,opt=>opt.MapFrom(s=>s.InspectionType!.InspectionTypeId))
-                .ForMember(d=>d.LocationId,opt=>opt.MapFrom(s=>s.Location!.Id))
-                .ForMember(d => d.NotificationNumber, opt => opt.MapFrom(s => s.NotificationNumber!.name))
-                .ReverseMap();
+                .ForMember(d => d.OwnerId, opt => opt.MapFrom(s => s.Owner.Id))
+                .ForMember(d => d.InspectionTypeId, opt => opt.MapFrom(s => s.InspectionType!.InspectionTypeId))
+                .ForMember(d => d.LocationId, opt => opt.MapFrom(s => s.Location!.Id))
+                .ForMember(d => d.NotificationNumber, opt => opt.MapFrom(s => s.NotificationNumber!.name)).ReverseMap();
 
 
-            //CreateMap<CreateInspectionNotificationDto, InspectionNotification>()
-            //    .ForMember(d=>d.Order,opt=>opt.MapFrom(s=>s.OrderId))
-                //.ForMember(infd => infd.Order, src=>src.MapFrom(src=>Order.Create(src.OrderId,string.Empty,string.Empty,string.Empty,null))                   
-                //)
-                //.ForMember(infd => infd.Owner, src => src.MapFrom(src =>new Vendor(src.Id)))
-                //.ForMember(infd => infd.InspectionType, src => src.MapFrom(src => InspectionType.Create(src.Id,string.Empty)))
-                //.ForMember(infd=> infd.Contacts ,src=>src.MapFrom(src=>new List<ContactDto>()
-                //{                     
-                //}
-                //))
+            CreateMap<Project,ProjectDto>()
+                .ForMember(d=>d.Vendors,src=>src.MapFrom(s=>s.vendors)).ReverseMap();
+
+            //CreateMap<InspectionNotification,CreateInspectionNotificationDto >()
+            //    .ForMember(dest => dest.OrderId
+            //    , src => src.MapFrom(src => new OrderDto
+            //    {
+            //        Id = src.Order!.Id,
+            //        Name = src.Order.Name,
+            //        No = src.Order.No,
+            //        //ProjectDto = src.Order.ProjectDto,
+            //        Title = src.Order.Title
+            //    }))
+            //    .ForMember(dest => dest.OwnerId, 
+            //    opt => opt.MapFrom(s => 
+            //    new VendorDto
+            //    {
+            //        Id = s.Owner.Id,
+            //        Name = s.Owner.Name                    
+            //    }
+            //    ))
+            //    .ForMember(d => d.InspectionTypeId, opt => opt.MapFrom(s => s.InspectionType!.InspectionTypeId))
+            //    .ForMember(d => d.LocationId, opt => opt.MapFrom(s => s.Location!.Id))
+            //    .ForMember(d => d.NotificationNumber, opt => opt.MapFrom(s => s.NotificationNumber!.name));
                 
-                  
-               //.ForMember(infd => infd.InspectionType, src => src.MapFrom(src => new InspectionTypeDto()
-               //{
-               //    Id = src.Id
-               //}))
-
-               //.ForMember(infd=>infd.Owner, opt => opt.MapFrom(src => new Vendor(src.Vendor_Id)))
-               //.ReverseMap();
-
-
-            //CreateMap<CreateInspectionNotificationDto ,InspectionNotification >()
-            //    .ForMember(infd => infd.Order, opt => opt.MapFrom(src => new Order(src.OrderId)))
-            //    //.ForMember(infd=>infd.Owner, opt => opt.MapFrom(src => new Vendor(src.Vendor_Id)))
-            //   .ReverseMap();
 
         }
     }

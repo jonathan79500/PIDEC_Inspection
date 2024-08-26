@@ -10,8 +10,12 @@ namespace Inspection.Domain.Entities
     {
 
         public string Name { get; private set; }
-        public Project Project { get; private set; }
+        public string UserName { get; private set; }
+        public List<ProjectVendor> Projects { get; private set; }
         public IEnumerable<Contact> Contacts { get;private set; }
+        private readonly List<Order> orders = new();
+
+        public IReadOnlyList<Order> Orders => orders;
 
         public Vendor() { }
 

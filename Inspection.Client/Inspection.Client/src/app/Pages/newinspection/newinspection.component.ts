@@ -2,15 +2,25 @@ import { Component } from '@angular/core';
 import { Inspection } from '../../Core/Models/Inspection.model';
 import { InspectionService } from '../../Core/Services/inspection.service';
 import { Order } from '../../Core/Models/Order.model';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-newinspection',
   standalone: true,
-  imports: [],
+  imports: [CommonModule,ReactiveFormsModule,FormsModule],
   templateUrl: './newinspection.component.html',
   styleUrl: './newinspection.component.css'
 })
 export class NewinspectionComponent {
+selectProject() {
+throw new Error('Method not implemented.');
+}
+selectOwner() {
+throw new Error('Method not implemented.');
+}
+
+  fgNewInspection !:FormGroup;
 
   order :Order ={
     id :'a5dcc11b-846a-4d16-91e1-1dfb9b86c4e2',
@@ -32,7 +42,7 @@ export class NewinspectionComponent {
 }
 
 
-  SaveNewInspection():void
+  SaveNewInspection(fgNewInspection:FormGroup):void
   {
 
     

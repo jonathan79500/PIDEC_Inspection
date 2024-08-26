@@ -1,0 +1,32 @@
+<!-- <a [routerLink]="[{outlets:{outlet2:['link']}}]">Link Content</a> -->
+<div style="flex: 5" class="ostokhooniColor">
+  <div
+    style="display: flex; flex-direction: row; flex-wrap: wrap; height: 15vh"
+  >
+    <div style="flex: 1; color: #123c69; font-weight: bold; height: 5vh">
+      InspectionArm
+    </div>
+    <div style="flex: 4; height: 5vh" class="lightpinkColor">
+      <div style="display: flex; flex-direction: row" class="ostokhooniColor">
+        <div style="flex: 1; color: #ac3b61; font-weight: bold"></div>
+        <div style="flex: 1; color: #ac3b61; font-weight: bold">
+          {{ CurrentProjectName }}
+
+          <select>
+            <option value="null">--</option>
+            @for(order of currentOrders;track order.id) {
+            <option value="{{ order.id }}">
+              {{ order.name }}
+            </option>
+            }
+          </select>
+        </div>
+        <div style="flex: 2">
+          <button (click)="CreateNewInspectionNotification()" class="button">
+            Create New Inspection Notification
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

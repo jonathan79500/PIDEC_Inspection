@@ -1,3 +1,4 @@
+using Inspection.Application.Contracts.Persistence;
 using Inspection.Application.Services.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class DependencyInjection
   {
 
     services.AddScoped<IAuthenticationService, AuthenticationService>();
+   
     return services;
   }
 

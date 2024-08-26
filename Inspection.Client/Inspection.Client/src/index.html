@@ -1,29 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
 
-  <title>Inspection</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="../styles.css">   
-  <link href="https://fonts.google.com/specimen/Pacifico?preview.layout=grid&query=pacifico" >
-</head>
-<body>
-  <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@32.0.0/dist/ag-grid-community.min.js"></script>
-  <!-- Style added after AG Grid bundle -->
-  <style>
+    <title>Inspection</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link href="../styles.css" />
+    <link
+      href="https://fonts.google.com/specimen/Pacifico?preview.layout=grid&query=pacifico"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@32.0.0/dist/ag-grid-community.min.js"></script> -->
+    <!-- Style added after AG Grid bundle -->
+    <style>
       .ag-theme-alpine {
-          --ag-foreground-color: rgb(179, 17, 103);
-          --ag-header-column-separator-color: orange;
-        
-       }
-       .ag-theme-material{
+        --ag-foreground-color: rgb(179, 17, 103);
+        --ag-header-column-separator-color: orange;
+      }
+      .ag-theme-material {
         --ag-foreground-color: rgb(17, 179, 58);
         --ag-header-column-separator-color: orange;
-       }
-  </style>
-  <app-master></app-master>
-</body>
+      }
+      .ComponentWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+        min-width: 100%;
+        background: rgb(240, 243, 242);
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+    <div>
+      <app-main></app-main>
+    </div>
+  </body>
 </html>

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Inspection.Persistence.Repositories;
 
@@ -19,8 +20,20 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
     public Task<InspectionNotification> CreateNewInspectionNotification(InspectionNotification inspectionNotification)
     {
+
+        //using (var ctx = new MyContext())
+        //{
+        //    ctx.Parents.Attach(parent);
+        //    ctx.Entry(parent).State = EntityState.Added;  // or EntityState.Modified
+        //    ctx.SaveChanges();
+        //}
+
         try
         {
+            //var added = _dbContext.ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+            //// Do your thing, like changing the state to detached
+            //_dbContext.SaveChanges();
+
             _dbContext.Entry(inspectionNotification.Owner).State = EntityState.Unchanged;
             _dbContext.Entry(inspectionNotification.InspectionType!).State = EntityState.Unchanged;
           

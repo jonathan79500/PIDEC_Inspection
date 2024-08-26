@@ -1,19 +1,83 @@
-
-<input type="button" (click)="SaveNewInspection()" value=" Input Save">
-<form id="newInspection">
-  <div class="newInspectionform" >    
-    <div id="GeneralInfo">
-      <label>Inspection No:</label>
-      <input type="text"/>
+<form id="newInspection" [formGroup]="fgNewInspection" >
+  <fieldset class="newInspectionform">
+    <legend>New Inspection Notification</legend>
+      
+    <fieldset id="GeneralInfo">
+      <label for="InspectionNo">Inspection No:</label>
+      <input name="InspectionNo" type="text"/>
       <br/>
-      <label>Issue Date:</label>
-      <input type="text"/>
+      <label for="IssueDate">Issue Date:</label>
+      <input name="IssueDate" type="text"/>
+      <br/>
+      <label for="ReqInspectionDate">Issue Date:</label>
+      <input name="ReqInspectionDate" type="text"/>
+    </fieldset>
+    <div style="display: flex;flex-direction: row;flex-wrap: wrap;width: 66vw;">    
+     
+        <fieldset name="toFieldset" style="flex: 1;">
+          <legend> <button>To</button></legend>
+            <label for="ToEmail">Email:</label>            
+            <input name="ToEmail" />
+            <label for="ToAttention">Attention:</label>
+            <input name="ToAttention" />
+            <label for="ToName">Name:</label>
+            <input name="ToName" />
+            <label for="ToPhone">Phone:</label>
+            <input name="ToPhone" />
+            <label for="ToFax">FAX:</label>
+            <input name="ToFax" />
+            <label for="ToEmailCC">CC:</label>
+            <input name="ToEmailCC" />
+        </fieldset>
+         
+        <fieldset name="ccFieldset" style="flex: 1;">
+          <legend> <button>cc</button></legend>
+            <label for="ccEmail">Email:</label>            
+            <input name="ccEmail" />
+            <label for="ccAttention">Attention:</label>
+            <input name="ccAttention" />
+            <label for="ccName">Name:</label>
+            <input name="ccName" />
+            <label for="ccPhone">Phone:</label>
+            <input name="ccPhone" />
+            <label for="ccFax">FAX:</label>
+            <input name="ccFax" />
+            <label for="ccEmailCC">CC:</label>
+            <input name="ccEmailCC" />
+        </fieldset>       
     </div>
-    <div id="Contacts">
-
+    <div>
+      <fieldset>
+        <button id="btnselectOwner" (click)="selectOwner()">Owner: </button>
+        <label for="btnselectOwner"></label>
+        <button id="btnselectProject" (click)="selectProject()">Owner: </button>
+        <label for="btnselectProject"></label>
+        <label for="OwnerJobNo">Owner Job No: </label>
+        <input id="OwnerJobNo" />
+        <label for="PIDECJobNo">PIDEC Job No: </label>
+        <input id="PIDECJobNo" />
+      </fieldset>
+    </div>
+    <div>
+      <fieldset>
+        <label for="supplier">Supplier : </label>
+        <input id="supplier"/>
+        <label for="subsupplier">Sub Supplier : </label>
+        <input id="subsupplier"/>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset>
+        <label for="RequisitionNO"></label>
+        <input id="RequisitionNO" />
+        <label for="RequisitionTitle"></label>
+        <input id="RequisitionTitle" />
+        
+      </fieldset>
     </div>
     <div id="Submit" class="submitArea">
-      <button type="submit" (submit)="SaveNewInspection()" class="submintButton" >save</button>
+      <button type="submit" (submit)="SaveNewInspection(fgNewInspection)" class="submintButton" >save</button>
     </div>
-  </div>
+  
+</fieldset>
 </form>

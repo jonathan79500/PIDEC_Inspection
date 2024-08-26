@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Inspection.Application.DTOs.Common
 {
-    public class ProjectDto
+    public class ProjectDto:BaseDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
         public string FSId { get; set; } = string.Empty;
+
+        public readonly List<ProjectVendorDto>? Vendors =new List<ProjectVendorDto>();
     }
 }
