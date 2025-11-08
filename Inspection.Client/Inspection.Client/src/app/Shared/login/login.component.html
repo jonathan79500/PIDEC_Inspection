@@ -1,0 +1,94 @@
+<!-- <div class="wrapper">
+  <form [formGroup]="currentUser" (ngSubmit)="login()">
+    <h1>Login</h1>
+    <fieldset>
+      <legend></legend>
+      <div>
+        <label for="txtUserName">User Name : </label>
+        &nbsp;&nbsp;
+        <input
+          id="txtUserName"
+          name="txtUserName"
+          type="text"
+          value="userName"
+          formControlName="userName"
+          placeholder="User Name"
+          class="input-Box"
+        />
+        <i class="bx bxs-user"></i>
+      </div>
+      <div>
+        <label for="txtPassword">Password : </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input
+          id="txtPassword"
+          name="txtPassword"
+          type="password"
+          value="userName"
+          formControlName="password"
+          placeholder="Password"
+          class="input-Box"
+        />
+        <i class="bx bxs-lock-alt"></i>
+      </div>
+
+      <div>
+        <label for="slcDomain">Domain : </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <select
+          id="slcDomain"
+          name="slcDomain"
+          class="input-Box"
+          formControlName="domainId"
+        >
+          <option value="-1" class="input-Box">---</option>
+          <option value="3" class="input-Box">PidecUsers</option>
+          <option value="1" class="input-Box">Projects</option>
+        </select>
+      </div>
+    </fieldset>
+    <div class="submitButtonArea">
+      <button type="submit" value="Login" class="button">Login</button>
+    </div>
+  </form>
+</div> -->
+
+<div class="mb-4 h2 text-success">Sign up</div>
+<form [formGroup]="form" (ngSubmit)="login()">
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="User Name"
+      formControlName="userName"
+    />
+    <div
+      class="error-feedback"
+      *ngIf="
+        hasDisplayableError('userName') &&
+        form.controls.userName.hasError('required')
+      "
+    >
+      please Enter your Full Name
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="Password"
+      formControlName="password"
+    />
+    <div
+      class="error-feedback"
+      *ngIf="
+        hasDisplayableError('password') &&
+        form.controls.userName.hasError('required')
+      "
+    ></div>
+  </div>
+  <div class="mt-4">
+    <button type="submit" class="btn btn-success w-100 rounded-3">Login</button>
+  </div>
+</form>

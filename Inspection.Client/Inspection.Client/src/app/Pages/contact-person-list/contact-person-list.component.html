@@ -1,0 +1,39 @@
+<div class="container">
+  <!-- 🔼 Upper Part: Input Form -->
+  <div class="form-section">
+    <form [formGroup]="formGroupUser" (ngSubmit)="onSaveNewUser()">
+      <div>
+        <label>
+          Name:
+          <input formControlName="name" />
+        </label>
+        <label>
+          Email:
+          <input formControlName="email" />
+        </label>
+      </div>
+      <div>
+        <label>
+          User Name:
+          <input formControlName="userName" />
+        </label>
+        <label>
+          Password:
+          <input formControlName="password" />
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- 🔽 Lower Part: Data Grid/List -->
+  <div class="list-section">
+    <h3>Users Defined In Project</h3>
+    <ul>
+      <li *ngFor="let usr of existedUsers">
+        {{ usr["userName"] }} - {{ usr["email"] }}
+      </li>
+      <br />
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="mb-4 h2 text-success">Sign up</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="Full Name"
+      formControlName="fullName"
+    />
+    <div
+      class="error-feedback"
+      *ngIf="
+        hasDisplayableError('fullName') &&
+        form.controls.fullName.hasError('required')
+      "
+    >
+      please Enter your Full Name
+    </div>
+  </div>
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="Email"
+      formControlName="email"
+    />
+    <div class="error-feedback" *ngIf="hasDisplayableError('email')">
+      <div
+        class="error-feedback"
+        *ngIf="
+          hasDisplayableError('email') &&
+          form.controls.email.hasError('required')
+        "
+      >
+        please Enter your Email address
+      </div>
+      <div class="error-feedback" *ngIf="form.controls.email.hasError('email')">
+        please Enter a Valid Email address
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="Password"
+      formControlName="password"
+    />
+    <div class="error-feedback" *ngIf="hasDisplayableError('password')">
+      <ng-container
+        [ngSwitch]="form.controls.password.errors | firstKey"
+      ></ng-container>
+      <div class="error-feedback" *ngSwitchCase="'required'">
+        please Enter your password
+      </div>
+      <div class="error-feedback" *ngSwitchCase="'minlength'">
+        at least 6 characters required.
+      </div>
+      <div class="error-feedback" *ngSwitchCase="'pattern'">
+        one or more special characters.
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control bg-body-secondary"
+      placeholder="Confirm Password"
+      formControlName="confirmPassword"
+    />
+    <div
+      class="error-feedback"
+      *ngIf="
+        hasDisplayableError('confirmPassword') &&
+        form.controls.confirmPassword.hasError('passwordMismatch')
+      "
+    >
+      password doesn't match
+    </div>
+  </div>
+  <div class="mt-4">
+    <button type="submit" class="btn btn-success w-100 rounded-3">
+      Register
+    </button>
+  </div>
+</form>

@@ -1,0 +1,297 @@
+<div style="margin-left: 20rem">
+  <div>
+    <label>EDMS Orders:</label>
+    <select
+      style="width: 10rem"
+      [disabled]="!EdmsOrders?.length"
+      [(ngModel)]="selectedOrder"
+      (change)="ChangeEdmsOrder()"
+    >
+      <option *ngFor="let edmsorder of EdmsOrders" [ngValue]="edmsorder">
+        {{ edmsorder?.name }}
+      </option>
+    </select>
+  </div>
+  <div [formGroup]="orderMngForm">
+    <div style="display: flex">
+      <div style="flex: 1; width: 40vw">
+        <label>Order Name: </label>
+        <label>{{ selectedOrder?.name }}</label>
+
+        <label>Vendor ContactPerson: </label>
+        <label>{{ selectedOrder?.vendorCompanyName }}</label>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="col-span-12">
+        <label
+          >------------------------------------------------------------------------------------------------------------------------------------</label
+        >
+      </div>
+    </div>
+    <div [formGroup]="currentOrder">
+      <div class="rows">
+        <label class="subTitle">PIDEC Contact Persons: </label>
+        <div class="col-span-1">
+          <img
+            style="cursor: pointer"
+            src="../../../../assets/search.png"
+            (click)="openPidecContactSelector()"
+          />
+        </div>
+        <div class="col-span-11" formArrayName="contacts">
+          <table style="width: 40vw; text-align: left; border-style: solid">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+            <tr
+              *ngFor="
+                let pideccontact of filteredQCContacts;
+                let indexOfelement = index
+              "
+              [formGroupName]="indexOfelement"
+            >
+              <td>{{ indexOfelement + 1 }}</td>
+              <td>{{ pideccontact?.get("name")?.value }}</td>
+              <td>{{ pideccontact?.get("email")?.value }}</td>
+              <td>{{ pideccontact?.get("phone")?.value }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="rows">
+        <div
+          style="display: grid; position: relative; width: 300px; height: 50px"
+        >
+          <div
+            style="
+              grid-column: 1;
+              grid-row: 1;
+              position: absolute;
+              top: 10px;
+              left: 0px;
+              width: 250px;
+              height: 20px;
+            "
+          >
+            <label class="subTitle">OWNER Contact Persons: </label>
+            <img
+              style="cursor: pointer"
+              src="../../../../assets/search.png"
+              (click)="openOwnerContactSelector()"
+            />
+          </div>
+          <div
+            style="
+              grid-column: 1;
+              grid-row: 1;
+              position: absolute;
+              top: 10px;
+              left: 250px;
+              width: 50px;
+              height: 20px;
+            "
+          >
+            <img
+              style="cursor: pointer"
+              src="../../../../assets/search.png"
+              (click)="openOwnerContactSelector()"
+            />
+          </div>
+        </div>
+        <div class="col-span-12" formArrayName="contacts">
+          <table style="width: 40vw; text-align: left; border-style: solid">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+            <tr
+              *ngFor="
+                let ownercontact of filteredOwnerContacts;
+                let indexOfownerelement = index
+              "
+              [formGroupName]="indexOfownerelement"
+            >
+              <td>
+                {{ indexOfownerelement + 1 }}
+              </td>
+              <td>
+                {{ ownercontact?.get("email")?.value }}
+              </td>
+              <td>
+                {{ ownercontact?.get("name")?.value }}
+              </td>
+              <td>
+                {{ ownercontact?.get("phone")?.value }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="rows">
+        <div class="col-span-1">
+          <label class="subTitle">MC Contact Persons: </label>
+          <img
+            style="cursor: pointer"
+            src="../../../../assets/search.png"
+            (click)="openMCContactSelector()"
+          />
+        </div>
+        <div class="col-span-11" formArrayName="contacts">
+          <table style="width: 40vw; text-align: left; border-style: solid">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Included</th>
+            </tr>
+            <tr
+              *ngFor="
+                let mCcontact of filteredMCContacts;
+                let indexOfmcelement = index
+              "
+              [formGroupName]="indexOfmcelement"
+            >
+              <td>
+                {{ indexOfmcelement + 1 }}
+              </td>
+              <td>
+                {{ mCcontact?.get("email")?.value }}
+              </td>
+              <td>
+                {{ mCcontact?.get("name")?.value }}
+              </td>
+              <td>
+                {{ mCcontact?.get("phone")?.value }}
+              </td>
+              <td>
+                <ng-container
+                  *ngIf="mCcontact?.get('belongedTo')?.value === 1; else tick"
+                >
+                  <input
+                    type="checkbox"
+                    checked
+                    disabled
+                    aria-label="Selected"
+                  />
+                </ng-container>
+                <ng-template #tick>✓</ng-template>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="rows">
+        <div class="col-span-6">
+          <label>ITP Number: </label>
+          <input
+            type="text"
+            formControlName="itP_NO"
+            [ngModel]="selectedOrder?.itP_NO"
+          />
+        </div>
+      </div>
+
+      <!-- <div class="rows">
+      <div class="col-span-12">
+        <div formArrayName="subjects">
+          <div
+            *ngFor="
+              let subject of orderInspectionSubjects?.controls;
+              let i = index
+            "
+            [formGroupName]="i"
+          >
+            <label>
+
+              <input type="checkbox" />
+              {{ subject?.get("name")?.value }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+      <div class="subject-selector">
+        <!-- Existing Subjects -->
+        <!-- <div
+          *ngFor="let subject of inspectionSubjects.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <label>
+            <input
+              type="checkbox"
+              formControlName="selected"
+              (change)="toggleSelection(i)"
+            />
+            {{ subject.get("name")?.value }}
+          </label>
+        </div> -->
+
+        <!-- Add New Subject -->
+        <div [formGroup]="newInspectionSubject">
+          <label for="newSubject">Add New Inspection Subject: </label>
+          <input
+            id="newSubject"
+            type="text"
+            formControlName="name"
+            placeholder="Type an Inspection subject..."
+          />
+          <button type="button" (click)="addNewSubject()">Add</button>
+        </div>
+
+        <!-- Selected Subjects -->
+        <div class="row" formArrayName="inspectionSubjects">
+          <h3>Selected Inspection Subjects:</h3>
+          <ul>
+            <li
+              *ngFor="
+                let subject of orderInspectionSubjects.controls;
+                let indexOfsubject = index
+              "
+              [formGroupName]="indexOfsubject"
+            >
+              <span *ngIf="subject.get('selected')?.value">
+                <label>
+                  <input
+                    type="checkbox"
+                    formControlName="selected"
+                    (change)="toggleSelection(subject)"
+                  />
+                  {{ subject.get("name")?.value }}
+                </label>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- <div class="columns-12">
+      <label> Inspection Subjects : </label>
+      <div [formGroup]=""></div>
+    </div> -->
+      <!-- <div>
+      <ag-grid-angular
+        style="width: 100%; height: 500px"
+        class="ag-theme-alpine"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+      >
+      </ag-grid-angular>
+    </div> -->
+    </div>
+  </div>
+
+  <button
+    class="button"
+    (click)="ActivateOrderInInspectionSystem(selectedOrder)"
+  >
+    Activate In Inspection System
+  </button>
+</div>

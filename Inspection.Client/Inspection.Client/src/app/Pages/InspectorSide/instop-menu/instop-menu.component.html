@@ -1,0 +1,49 @@
+<div
+  style="
+    font: bold;
+    font-size: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    flex-direction: row;
+
+    padding: 0 10px;
+    align-items: center;
+    background-color: rgb(237 191 211 / 47%);
+    height: 5vh;
+  "
+>
+  <!-- <mat-divider vertical="true"></mat-divider> -->
+  <span
+    class="selectItem"
+    style="font-size: 1.1em !important; float: right !important; padding: 2rem"
+    >Projects:
+  </span>
+  <mat-divider vertical="true"></mat-divider>
+  <!-- i;let i= $index) { -->
+  <!-- <div style="float: left !important"> -->
+  <select
+    class="selectClass"
+    (change)="changeProject($event)"
+    [(ngModel)]="currentProject"
+  >
+    <option [value]="-1" [ngValue]="null">----</option>
+    @for(project of QCMemberProjects;track i;let i= $index) {
+    <option [ngValue]="project" class="selectItem">
+      {{ project.title }}
+    </option>
+    }
+  </select>
+  <mat-divider
+    vertical="true"
+    style="width: auto; text-align: right"
+  ></mat-divider>
+  <div style="text-align: right; width: 100% !important">
+    <button (click)="ShowWarnings()" style="background-color: red">
+      Warnings
+    </button>
+  </div>
+  <div style="text-align: right; width: 100% !important">
+    <button (click)="Exit()">Log Out</button>
+  </div>
+  <!-- </div> -->
+</div>

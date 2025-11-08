@@ -1,0 +1,37 @@
+.messageDialog {
+  height: 45vh;
+  width: 120vw;
+  border-style: solid;
+  border-color: #c0c2ce !important;
+  border-radius: 3px;
+}
+
+table {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+th {
+  background-color: #f4f4f4;
+}
+
+.subTitle
+{
+  font: 1em sans-serif;
+  color: rgb(4, 4, 51);
+  font-weight: bold;
+}
+
+.button{
+  border-style: solid;
+  background-color: rgb(50, 92, 9);
+  width: 300px;
+}
+
+label{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  width: 100%;
+}

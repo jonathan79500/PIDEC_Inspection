@@ -1,0 +1,62 @@
+
+.container
+{
+  background-color: #123C69; ;    
+
+  /* transition the background-color over 1s with a linear animation */
+  transition: background-color 1s linear;
+  
+}
+.lightpinkColor
+{
+  background-color: #edc7b7; 
+  border-radius: 0.1rem;
+}
+.blueColor
+{ 
+  background-color: #123C69; 
+  border-radius: 0.2rem;
+  color:  #EEE2DC; 
+}
+.pinkColor
+{
+  background-color: #Ac3B61;
+  border-radius: 0.2rem;
+}
+.grayColor
+{
+  background-color: #BAB2B5;
+  border-radius: 0.1rem;
+}
+.ostokhooniColor
+{
+  background-color: #EEE2DC;
+  border-radius: 0.1rem;
+}
+
+      select {
+        appearance: none; /* remove default appearance set by the browser */
+        outline: none; /* remove the outline shown on focus */
+        cursor: pointer; /* change the mouse cursor icon */
+
+        color: #123C69;   /* text color */
+        background-color: rgb(229, 237, 240);
+        border: 2px solid #3d5e81; ;
+
+        border-radius: 5px;  /* round the border corners */
+        padding: 5px 10px;
+        width: 200px;
+        height: 30px;
+        box-shadow: 3px 5px 3px rgba(0, 0, 0, 0.8);
+
+        font-family: serif;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      select:focus {
+        outline: 2px solid #edc7b7;  /* replace the focus outline removed with 'outline: none' */
+      }
+ 
+ 

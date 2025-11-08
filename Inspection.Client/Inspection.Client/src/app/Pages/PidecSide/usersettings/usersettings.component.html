@@ -1,0 +1,82 @@
+<button>Assign QC Members To Project</button>
+
+<label>EDMS QC Members : </label>
+<!-- <select>
+  <option>---</option>
+  <option>Person 1</option>
+  <option>Person 2</option>
+</select> -->
+
+<mat-selection-list #QCMembers>
+  @for (edmsMember of EDMSQCMembers; track edmsMember.use_Id) {
+  <mat-list-option [(ngModel)]="edmsMember.selected">{{
+    edmsMember.userName
+  }}</mat-list-option>
+  }
+</mat-selection-list>
+<button (click)="AddToQCUsers()">Add to Inspection System</button>
+<!-- <mat-selection-list #QCInspectionMembers>
+  @for (inspectionMember of InspectionQCMembers; track inspectionMember.id) {
+  <mat-list-option>{{ inspectionMember.userName }}</mat-list-option>
+  }
+</mat-selection-list> -->
+<table mat-table [dataSource]="InspectionQCMembers" class="mat-elevation-z8">
+  <!-- UserName Column -->
+  <ng-container matColumnDef="userName">
+    <th mat-header-cell *matHeaderCellDef>User Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+  </ng-container>
+  <!-- TO Column -->
+  <ng-container matColumnDef="TO">
+    <th mat-header-cell *matHeaderCellDef>TO</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox [(ngModel)]="element.to"></mat-checkbox>
+    </td>
+  </ng-container>
+  <!-- CC Column -->
+  <ng-container matColumnDef="CC">
+    <th mat-header-cell *matHeaderCellDef>CC</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox [(ngModel)]="element.cc"></mat-checkbox>
+    </td>
+  </ng-container>
+  <!-- From Column -->
+  <ng-container matColumnDef="From">
+    <th mat-header-cell *matHeaderCellDef>From/th></th>
+    <td mat-cell *matCellDef="let element">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="pickerf"
+          [formControl]="element.from"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="pickerf"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #pickerf></mat-datepicker>
+      </mat-form-field>
+    </td>
+  </ng-container>
+  <!-- Until Column -->
+  <ng-container matColumnDef="Until">
+    <th mat-header-cell *matHeaderCellDef>Until/th></th>
+    <td mat-cell *matCellDef="let element">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="pickeru"
+          [formControl]="element.Until"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="pickeru"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #pickeru></mat-datepicker>
+      </mat-form-field>
+    </td>
+  </ng-container>
+  <!-- Header and Row Definitions -->
+  <tr mat-header-row *matHeaderRowDef="InspectionQCsColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: InspectionQCsColumns"></tr>
+</table>

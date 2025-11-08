@@ -1,0 +1,68 @@
+.wrapper
+{
+  width: 30vw;
+  height: 30vh;
+  vertical-align: middle;
+  background: linear-gradient(to right, #123C69,  #EEE2DC);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: medium;
+  margin-top: 20vh;
+}
+
+.wrapper h1
+{
+  font-size: 26px;
+  text-align: center;
+
+}
+
+.wrapper fieldset 
+{
+  display: inline-block;
+  border-style: none;
+
+div{
+ 
+  justify-content: space-between;
+
+
+  line-height: 45px;  
+
+  label{
+    margin-left:20px;
+    width: 150px;  
+  }
+  .input-Box
+  {
+    padding-left: 0;
+    width: 125px;
+    height: 25px;
+
+    border-radius: 6px;
+    background: rgb(247, 249, 250);
+    margin-left: 0;
+    color: #611a61 !important;
+  }
+}
+
+}
+.submitButtonArea
+{  
+  
+ text-align: right;
+ margin-right: 20px; 
+ border-radius: 6px;
+ border-style: none;
+ border-color: #123C69;
+ 
+}
+.button{
+  width: 80px;
+  text-align: center; 
+  border-radius: 6px;
+  border-style: solid;
+  color: white;
+  background: linear-gradient(to top, #123C69,  #EEE2DC);
+}
+

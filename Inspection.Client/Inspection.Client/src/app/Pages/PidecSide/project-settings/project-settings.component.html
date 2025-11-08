@@ -1,0 +1,131 @@
+<div class="prjContainer" *ngIf="projectForm" [formGroup]="">
+  <div>
+    <label>Owner Contact Persons:</label>
+    <img
+      style="cursor: pointer"
+      src="../../../../assets/search.png"
+      (click)="openOwnerContactSelector()"
+    />
+
+    <div class="col-span-11">
+      <table style="width: 40vw; text-align: left; border-style: solid">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        <tr
+          *ngFor="
+            let ownercontact of filteredOwnerContacts;
+            let indexOfelement = index
+          "
+        >
+          <td>{{ indexOfelement + 1 }}</td>
+          <td>{{ ownercontact.get("name").value }}</td>
+          <td>{{ ownercontact?.get("email")?.value }}</td>
+          <td>{{ ownercontact?.get("phone")?.value }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div>
+    <label>MC Contact Persons:</label>
+    <img
+      style="cursor: pointer"
+      src="../../../../assets/search.png"
+      (click)="openMCContactSelector()"
+    />
+
+    <div class="col-span-11">
+      <table style="width: 40vw; text-align: left; border-style: solid">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        <tr
+          *ngFor="
+            let mCcontact of filteredMCContacts!;
+            let indexOfelement = index
+          "
+        >
+          <td>{{ indexOfelement + 1 }}</td>
+          <td>{{ mCcontact?.get("name")?.value }}</td>
+          <td>{{ mCcontact?.get("email")?.value }}</td>
+          <td>{{ mCcontact?.get("phone")?.value }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div>
+    <label>PIDEC Inspector Contact Persons:</label>
+    <img
+      style="cursor: pointer"
+      src="../../../../assets/search.png"
+      (click)="openPidecInspectorContactSelector()"
+    />
+
+    <div class="col-span-11">
+      <table style="width: 40vw; text-align: left; border-style: solid">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        <tr
+          *ngFor="
+            let pIcontact of filteredPidecInspectorContacts!;
+            let indexOfelement = index
+          "
+        >
+          <td>{{ indexOfelement + 1 }}</td>
+          <td>{{ pIcontact!.get("name")?.value }}</td>
+          <td>{{ pIcontact!.get("email")?.value }}</td>
+          <td>{{ pIcontact!.get("phone")?.value }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div>
+    <label>Third-Part Inspector Contact Persons:</label>
+    <img
+      style="cursor: pointer"
+      src="../../../../assets/search.png"
+      (click)="openTPInspectorContactSelector()"
+    />
+
+    <div class="col-span-11">
+      <table style="width: 40vw; text-align: left; border-style: solid">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        <tr
+          *ngFor="
+            let tPIcontact of filteredThirdPartContacts!;
+            let indexOfelement = index
+          "
+        >
+          <td>{{ indexOfelement + 1 }}</td>
+          <td>{{ tPIcontact!.get("name")?.value }}</td>
+          <td>{{ tPIcontact!.get("email")?.value }}</td>
+          <td>{{ tPIcontact!.get("phone")?.value }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br />
+  <div>
+    <input
+      class="button"
+      type="button"
+      value="Save Settings"
+      (click)="SaveProjectSettings()"
+    />
+  </div>
+</div>

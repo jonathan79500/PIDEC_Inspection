@@ -1,0 +1,74 @@
+<div
+  style="
+    font: bold;
+    font-size: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    flex-direction: row;
+
+    padding: 0 10px;
+    align-items: center;
+    background-color: rgb(237 191 211 / 47%);
+    height: 5vh;
+  "
+>
+  <span
+    style="
+      width: 40%;
+      font-weight: bold;
+      font-size: 16px;
+      margin-right: 3rem;
+      padding-right: 3rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #123c69 !important;
+    "
+    >{{ vendorProject.title }}</span
+  >
+
+  <!-- <mat-divider vertical="true"></mat-divider> -->
+  <span
+    class="selectItem"
+    style="font-size: 1.1em !important; float: right !important; padding: 2rem"
+    >Orders:
+  </span>
+  <mat-divider vertical="true"></mat-divider>
+  <!-- i;let i= $index) { -->
+  <div style="float: left !important">
+    <select
+      class="selectClass"
+      (change)="changeRequisition($event)"
+      [(ngModel)]="currentOrder"
+    >
+      <option [value]="-1" [ngValue]="null">----</option>
+      @for(order of vendorOrders;track i;let i= $index) {
+      <option [ngValue]="order" class="selectItem">
+        {{ order.name }}
+      </option>
+      }
+      <!-- @empty {
+    <option>Please Select A project to Show Requisitions</option>
+    } -->
+    </select>
+  </div>
+  <mat-divider vertical="true"></mat-divider>
+  <img
+    src="../../../../assets/orange-plus-11974.png"
+    style="
+      width: 20px;
+      height: 20px;
+      margin-left: 1rem;
+      padding-left: 0;
+      background: transparent;
+    "
+    (click)="CreateNewInspection()"
+  />
+
+  <mat-divider
+    vertical="true"
+    style="width: auto; text-align: right"
+  ></mat-divider>
+  <div style="text-align: right; width: 100% !important">
+    <button (click)="Exit()">Log Out</button>
+  </div>
+  <!-- <img src="../../../../assets/close01.png" style="width: 30px; height: 30px" /> -->
+</div>

@@ -1,0 +1,145 @@
+@Inspection.Api_HostAddress = https://localhost:7068
+@Inspection.Api_HostAddress_Https= https://localhost:44332
+@token = CfDJ8MW336hIdUBHssSKz9TAmn3LC72czotgWWOUT5kI_dvzIVf_Vbcvu2nlHwRQHQHNdxv9UDl7rLiOvgzSu-HkUnsC0O_y9s0FUw8NYKpPlIG3rtX1GPzqnJI6RFZxDywrWfmJAPj5xv1z9wtNxFgH0pYyMozW0FdVubKN8fQU8d-ZxvBnHgi43tsU6z9Eu8ACOrtesguPzPlr2Soe-rDRyZ7lm6NNl9pTdlQBX5w7J-RXZIpEnc-krgAaHFbubHInMmNyOEU1tEYzP6Ol5oBmsmwj31NXXUrXKzmg_qkw7xIuxjTo_Hu5jPKDg5qIQTUg31j3okczlfN3_EK6otBI0XqoAWkmbwmGnzUtidx7Ii_rhrp6yvI8f0udExTMo_B9sJSbJkfHpL5E3D_700N-kCB9bWQ8zfaMBMm8Zez-PjOwIwc11n-Nxak5uHgvetwb4mRX4_Fm9pFfCq5kIDY7dpb5Bi1qBFad34_dCxmYyEfjsKCvHoNd1XqndK2YxVZa0sgHeDDexVXoosA6ZNSoAYZ03zIDxzJ37-dKDEz2psvGDmJxuQz3MFvk9nOU7EAvw9E2ixisbfxN4kIwAnKJdWjVUSPhnLSJCVapFKO1wVX14BLhbn-DUrtume52iRjBuqVgCknDyWb-oevYANItqT0a0sALuNobUcdj9RKNvp76-R-Cghxr9Gx1jF4WdUADaKYYlSC5CTXU1EHheCAryeitXMBAakjP42VlUtdnHnLiOVOu-UTr4jGnHhzzk9M2zCDl9vn_WaNEza-sxY2azznJPJt_BuwVkM2eDP_O_gOdOdc5Cv-c3vryLfKaFnNnNQ
+
+GET {{Inspection.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{Inspection.Api_HostAddress}}/api/inspectionnotification/GetAll
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+GET {{Inspection.Api_HostAddress_Https}}/api/inspectionNotification/GetAll
+
+DELETE {{Inspection.Api_HostAddress}}/api/inspectionnotification/0
+
+###
+
+POST {{Inspection.Api_HostAddress}}/auth/Login
+Content-Type: application/json
+
+{
+  //LoginRequest
+}
+
+###
+
+GET {{Inspection.Api_HostAddress}}/api/inspectionnotification/GetById/6c832192-5afd-4b07-b8e6-15402d5c9f70
+Content-Type:application/json;charset=utf-8
+Accept: application/json;charset=utf-8
+###
+
+
+###
+POST {{Inspection.Api_HostAddress}}/api/inspectionNotification
+Content-Type: application/json
+
+{
+    "str": \"test \"
+   
+}
+
+POST {{Inspection.Api_HostAddress}}/api/inspectionnotification
+Content-Type: application/json
+
+ {
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "string",
+  "order": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "city": "string",
+  "notificationNumber": "string",
+  "vendor": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "inspectionTypeDto": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "string"
+  },
+  "proposedDate": "2024-08-05T07:48:38.084Z",
+  "place": "string",
+  "address": "string",
+  "contactPerson": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "address": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z",
+      "address": "string"
+    }
+  },
+  "contractShippingDueDate": "2024-08-05T07:48:38.084Z",
+  "actualShippingDueDate": "2024-08-05T07:48:38.084Z",
+  "description": "string",
+  "owner": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "project": {
+      "createdDate": "2024-08-05T07:48:38.084Z",
+      "modifiedDate": "2024-08-05T07:48:38.084Z"
+    }
+  },
+  "location": {
+    "createdDate": "2024-08-05T07:48:38.084Z",
+    "modifiedDate": "2024-08-05T07:48:38.084Z",
+    "address": "string"
+  }
+}
+
+###
+
+POST {{Inspection.Api_HostAddress}}/api/inspectionnotification/SaveNew
+Content-Type: application/json
+
+{
+  //CreateInspectionNotificationDto
+}
+
+###Identity Controller Methods Tests
+###
+
+POST {{Inspection.Api_HostAddress}}/register
+Content-Type: application/json
+
+{
+  "email":"testuser1@test.com",
+  "password":"Password1!"
+}
+
+###
+
+POST {{Inspection.Api_HostAddress}}/login
+Content-Type: application/json
+
+{
+  "email":"testuser1@test.com",
+  "password":"Password1!"
+}
+
+###
+
+POST {{Inspection.Api_HostAddress}}/api/authentication/register
+Content-Type: application/json
+
+{
+  //UserDto
+}
+
+###
+GET {{Inspection.Api_HostAddress}}/api/Authentication/TestGet/3
+Authorization:Bearer {{token}}

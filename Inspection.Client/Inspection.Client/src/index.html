@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Inspection</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link href="../styles.css" />
+    <link
+      href="https://fonts.google.com/specimen/Pacifico?preview.layout=grid&query=pacifico"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    /> -->
+
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+
+    <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" /> -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    /> -->
+
+    <!-- <link rel="stylesheet" href="css/persian.datepicker.css" /> -->
+    <script src="js/jquery.js"></script>
+    <script src="../node_modules/persian-datepicker/dist/js/persian-datepicker.js"></script>
+    <script src="js/persian.datepicker.js"></script>
+    <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    /> -->
+  </head>
+  <body
+    class="mat-typography bg-primary-subtle"
+    style="background-color: #f6efff !important"
+  >
+    <script src="https://cdn.jsdelivr.net/npm/browse/ag-grid-community@32.0.0/dist/ag-grid-community.min.js"></script>
+
+    <script src="https://unpkg.com/ag-grid-community@28.2.0/styles/ag-grid.css"></script>
+    <script src="https://unpkg.com/ag-grid-community@28.2.0/styles/ag-theme-alpine.css"></script>
+
+    <!-- Style added after AG Grid bundle -->
+    <style>
+      .ag-theme-alpine {
+        --ag-foreground-color: rgb(179, 17, 103);
+        --ag-header-column-separator-color: orange;
+      }
+      .ag-theme-material {
+        --ag-foreground-color: rgb(17, 179, 58);
+        --ag-header-column-separator-color: orange;
+      }
+      .ComponentWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+        min-width: 100%;
+        background: rgb(240, 243, 242);
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+    <div style="background-color: #f6eaef !important">
+      <app-root></app-root>
+    </div>
+  </body>
+</html>

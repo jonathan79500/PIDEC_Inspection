@@ -1,0 +1,31 @@
+<div *ngIf="isLoading">
+  <img src="../../../assets/close-icon" />
+</div>
+<div *ngIf="!isLoading">
+  <!-- Display your vendor basic info here -->
+
+  <div style="display: flex; flex-direction: row; background-color: #f6efff">
+    <div style="flex: 1">
+      <span>hello</span>
+      <app-pdleft-sidebar
+        [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+        (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
+      ></app-pdleft-sidebar>
+    </div>
+    <div style="flex: 6; margin-left: 0">
+      <div style="display: flex; flex-direction: column">
+        <div style="flex: 1; margin-left: 0; position: relative">
+          <app-pdtop-menu
+            [basicPIDECDeptInfo]="basicPidecDeptInfo"
+          ></app-pdtop-menu>
+        </div>
+        <div style="flex: 5; margin-left: 0">
+          <app-pd-main
+            [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+            [screenWidth]="screenWidth()"
+          ></app-pd-main>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

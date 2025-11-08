@@ -1,0 +1,29 @@
+@Host = http://localhost:5196
+@port = 5196
+@Inspection.Api_HostAddress = http://localhost:5196/api
+@InspectionHostAddr = {{Host}}:{{port}}
+
+
+
+GET {{Inspection.Api_HostAddress}}/InspectionNotification/GetAll
+Accept: application/json
+
+###
+
+@Inspection.Api_HostAddress = http://localhost:5196/api
+
+GET {{Inspection.Api_HostAddress}}/InspectionNotification/GetById/6c832192-5afd-4b07-b8e6-15402d5c9f70
+Accept: application/json
+
+# {
+#     "id":"6c832192-5afd-4b07-b8e6-15402d5c9f70"
+# }
+
+###
+POST {{Inspection.Api_HostAddress}}/InspectionNotification/
+Content-Type:application/json
+
+{
+    "email":""
+    "NotificationNumber":"12378178"
+}

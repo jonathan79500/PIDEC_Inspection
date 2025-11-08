@@ -1,0 +1,5 @@
+﻿1- If there is an API that Argument in definition and call are different (even in field Names) , you cannot successfully call that API
+
+2- If in client side calling API , you do not subscribe that API call, then API call not occure.(Important)
+
+3-an API with [FromBody] argument always should have an object type argument not a simple type(I am not sure)

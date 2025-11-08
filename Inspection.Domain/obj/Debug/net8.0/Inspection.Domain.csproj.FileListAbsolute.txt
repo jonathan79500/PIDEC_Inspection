@@ -1,0 +1,17 @@
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\net8.0\Inspection.Domain.deps.json
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\net8.0\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\net8.0\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Inspection.Domain\bin\Debug\net8.0\PersianCalendar.dll
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.csproj.AssemblyReference.cache
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.Properties.Resources.resources
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.csproj.GenerateResource.cache
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.sourcelink.json
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspecti.3E6AF212.Up2Date
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\refint\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Inspection.Domain\obj\Debug\net8.0\ref\Inspection.Domain.dll

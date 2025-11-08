@@ -1,0 +1,297 @@
+<div style="margin: 0rem; background-color: white">
+  <div [formGroup]="newContactForm">
+    <fieldset style="display: flex; flex-direction: row; padding-top: 1rem">
+      <div style="flex: 1; white-space: nowrap">
+        <div class="rows">
+          <div class="columns">
+            <label for="ToEmail" class="theLabels">Email:</label>
+            <input
+              name="ToEmail"
+              class="theInputs"
+              [formControl]="newContactForm?.controls?.email"
+            />
+          </div>
+        </div>
+        <div class="rows">
+          <div class="columns">
+            <label for="ToAttention" class="theLabels">Attention:</label>
+            <input
+              name="ToAttention"
+              class="theInputs"
+              formControlName="attention"
+            />
+          </div>
+        </div>
+        <div class="rows">
+          <div class="columns">
+            <label for="ToName" class="theLabels">Name: </label>
+            <input name="ToName" class="theInputs" formControlName="name" />
+          </div>
+        </div>
+      </div>
+      <div style="flex: 1; white-space: nowrap">
+        <div class="rows">
+          <div class="rows">
+            <div class="columns">
+              <label for="Password" class="theLabels">Password:</label>
+              <input
+                name="Password"
+                class="theInputs"
+                formControlName="password"
+              />
+              <img
+                src="../../../../assets/orange-plus-11974.png"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 1rem;
+                  padding-left: 0;
+                  background: transparent;
+                "
+                (click)="suggestNewPassword()"
+              />
+            </div>
+          </div>
+          <div class="rows">
+            <div class="columns">
+              <label for="ToFax" class="theLabels">FAX:</label>
+              <input name="ToFax" class="theInputs" formControlName="fax" />
+            </div>
+          </div>
+
+          <div class="rows">
+            <div class="columns">
+              <label for="ToPhone" class="theLabels">Phone: </label>
+              <input name="ToPhone" class="theInputs" formControlName="phone" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <img (click)="addNewContact()" src="assets/orange-plus-11974.png" />
+    <!-- <button (click)="addNewContact()" class="button">Add to Contacts</button> -->
+  </div>
+
+  <div class="row">
+    <div
+      class="col-xs-12 col-md-12"
+      style="
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        height: 10rem;
+        overflow: auto;
+      "
+    >
+      <table
+        class="borderedTable"
+        id="pTable"
+        style="width: 100% !important; border-radius: 3px"
+      >
+        <tr style="text-align: center" class="childGridHeader">
+          <td style="width: 2rem">
+            <span id="Label1">No</span>
+          </td>
+          <td style="width: 5rem">
+            <span id="Label3">Name</span>
+          </td>
+          <td style="width: 3rem">
+            <span id="Label4">Email</span>
+          </td>
+          <td style="width: 3rem">
+            <span id="Label5">Phone</span>
+          </td>
+          <td style="width: 3rem">
+            <span id="Label5">Attention</span>
+          </td>
+          <td style="width: 3rem">
+            <span id="Label5">Mobile</span>
+          </td>
+          <td style="width: 3rem">
+            <span id="Label5">FAX</span>
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="
+            let contact of findedContacts.controls;
+            let indexOfelement = index
+          "
+          style="font-family: Tahoma"
+          (click)="addToSelectedContact(contact)"
+        >
+          <td style="width: 2rem">
+            <span id="lblIndex " class="innerlabel"
+              >{{ indexOfelement + 1 }}
+            </span>
+          </td>
+
+          <td style="width: 5rem; text-align: right">
+            <span class="innerlabel">{{ contact?.controls.name.value }}</span>
+          </td>
+          <td style="width: 3rem">
+            <span class="innerlabel">{{ contact?.controls.email.value }}</span>
+          </td>
+          <td style="width: 3rem">
+            <span class="innerlabel">{{ contact?.controls.phone.value }}</span>
+          </td>
+          <td style="width: 3rem">
+            <span class="innerlabel">{{
+              contact?.controls.attention.value
+            }}</span>
+          </td>
+          <!-- <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ contact['phone'] }}"
+          >
+            <span class="innerlabel">{{ contact.attention }}</span>
+          </td> -->
+          <td style="width: 3rem; text-align: right">
+            <span class="innerlabel">{{ contact?.controls.mobile.value }}</span>
+          </td>
+          <td style="width: 3rem; text-align: left">
+            <span class="innerlabel">{{ contact?.controls.fax.value }}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row" style="padding-top: 20px; text-align: left">
+    <div class="col-xs-12 col-md-12">
+      <span
+        id="lblIndex "
+        class="innerlabel"
+        style="
+          color: #eb7404;
+          font-size: 16px;
+          font-weight: bold;
+          font-family: 'B Nazanin';
+        "
+        >Selected List</span
+      >
+      <hr
+        style="padding-top: 0; padding-bottom: 5px; margin: 0; color: #f7690b"
+      />
+    </div>
+  </div>
+
+  <div class="row section">
+    <div
+      class="col-xs-12 col-md-12"
+      style="
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        height: 10rem;
+        overflow: auto;
+      "
+    >
+      <table
+        class="borderedTable"
+        id="selectedTable"
+        style="width: 100% !important"
+      >
+        <tr
+          *ngFor="
+            let scontact of selectedContacts.controls;
+            let indexOfselement = index
+          "
+          style="font-family: Tahoma"
+          class="childRow"
+        >
+          <td style="width: 3rem">
+            <span id="lblIndex " class="innerlabel"
+              >{{ indexOfselement + 1 }}
+            </span>
+          </td>
+          <td style="width: 8rem; text-align: right">
+            <span class="innerlabel">{{
+              scontact.controls!["name"].value
+            }}</span>
+          </td>
+          <td style="width: 3rem">
+            <span class="innerlabel">{{
+              scontact.controls!["email"].value
+            }}</span>
+          </td>
+          <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ scontact.controls!['phone'].value }}"
+          >
+            <span class="innerlabel">{{
+              scontact.controls!["phone"].value
+            }}</span>
+          </td>
+          <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ scontact.controls['attention'].value }}"
+          >
+            <span class="innerlabel">{{
+              scontact.controls!["attention"].value
+            }}</span>
+          </td>
+          <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ scontact.controls!['mobile'].value }}"
+          >
+            <span class="innerlabel">{{
+              scontact.controls!["mobile"].value
+            }}</span>
+          </td>
+          <td style="width: 3rem">
+            <span class="innerlabel">{{
+              scontact.controls!["fax"].value
+            }}</span>
+          </td>
+          <td style="width: 1rem">
+            <button
+              type="button"
+              (click)="deleteContactByIndex(indexOfselement)"
+            >
+              <img src="../../assets/RedDelete.png" alt="Delete" />
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row" style="padding-top: 10px">
+    <div class="col-xs-12 col-md-12" style="text-align: left">
+      <button
+        class="button button-persianText button-green"
+        data-id="Save"
+        (click)="close()"
+      >
+        Confirm
+      </button>
+      &nbsp;&nbsp;&nbsp;
+      <!-- <button
+      class="button button-persianText button-red"
+      data-id="close"
+      (click)="close()"
+    >
+      خروج
+    </button> -->
+    </div>
+  </div>
+
+  <!-- <img
+  (click)="close()"
+  src="assets/error-10380.png"
+  style="width: 26px; height: 26px"
+/> -->
+</div>

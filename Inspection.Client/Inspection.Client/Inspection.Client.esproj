@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.271090-alpha">
+  <PropertyGroup>
+    <StartupCommand>npm start</StartupCommand>
+    <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
+    <!-- Allows the build (or compile) script located on package.json to run on Build -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Folder where production build objects will be placed -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\Inspection.Client\</BuildOutputFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\directive\theme-hover.directive.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\IActiveDate.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\IDatepickerTheme.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\IDay.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\IMonth.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\index.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\interface\IYear.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\ng-persian-datepicker.component.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\ng-persian-datepicker.module.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\pipe\locale.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\pipe\month.pipe.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\theme\default.theme.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\lib\theme\index.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\ng-persian-datepicker.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\esm2020\public-api.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\fesm2015\ng-persian-datepicker.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\fesm2015\ng-persian-datepicker.mjs.map" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\fesm2020\ng-persian-datepicker.mjs" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\fesm2020\ng-persian-datepicker.mjs.map" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\directive\theme-hover.directive.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\IActiveDate.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\IDatepickerTheme.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\IDay.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\IMonth.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\index.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\interface\IYear.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\ng-persian-datepicker.component.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\ng-persian-datepicker.module.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\pipe\locale.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\pipe\month.pipe.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\theme\default.theme.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\lib\theme\index.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\ng-persian-datepicker.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\package.json" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\public-api.d.ts" />
+    <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\README.md" />
+  </ItemGroup>
+</Project>

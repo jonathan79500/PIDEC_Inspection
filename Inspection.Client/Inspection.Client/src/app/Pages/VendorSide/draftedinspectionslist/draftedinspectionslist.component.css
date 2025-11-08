@@ -1,0 +1,130 @@
+.inspectionList
+{
+  width: 55vw;
+  height: 100%;
+  border-style: solid;
+  border-color: #123C69;
+  background: linear-gradient(to bottom, #123C69,  #EEE2DC);
+  margin: auto;
+}
+
+.ag-theme-quartz {
+  /* Changes the color of the grid text */
+    --ag-foreground-color: rgb(14, 68, 145);
+    /* Changes the color of the grid background */
+    --ag-background-color: rgb(241, 247, 255);
+    /* Changes the header color of the top row */
+    --ag-header-background-color: rgb(228, 237, 250);
+    /* Changes the hover color of the row*/
+    --ag-row-hover-color: rgb(216, 226, 255);
+}
+
+.rag-green {
+  background-color: #33cc3344;
+}
+
+.mat-mdc-table{
+  background-color: transparent !important;
+}
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
+
+.mat-cell {
+  color: rgba(85, 54, 5, 0.856);
+  text-align: center;
+  font-weight: 550;
+  font-style: normal;
+  text-align: center;
+}
+
+.mat-row {
+  background-color: rgb(234, 232, 226);
+}
+
+  .mat-row:hover {
+    flex: content;
+    background-color: rgb(221, 205, 145);
+  }
+
+.mat-header-cell {
+  color:white;
+  font-size: 1rem;
+  font-family: 'Times New Roman', Times, serif !important;
+  font-weight: bold;
+  background-color: #123C69;
+}
+
+
+.mat-header-row {
+  position: sticky;
+  top: 0;
+  background-color: inherit;
+}
+
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 86vh;
+  min-width: 300px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 86vh;
+}
+
+
+
+th.mat-sort-header-sorted {
+  color: black;
+  text-align: center;
+}
+
+.filterInput {
+  width: 90%;
+  height: 80%;
+  border-radius: 7px;
+  border-color: rgb(252, 247, 239);
+  font-size: 12px;
+  color: rgba(85, 54, 5, 0.856) !important;
+}
+
+.mat-row:nth-child(even) {
+  background-color: rgb(243, 227, 207);
+  background-color:rgb(234, 232, 226);
+  background-color:white;
+}
+
+.mat-row:nth-child(odd) {
+  /* background-color: rgb(245, 241, 241); */
+  background-color: #faffcb;
+  background-color: #e9efdd;
+}
+
+
+.mat-paginator {
+  display: flex;
+  justify-content: left;
+}
+
+.headerText {
+  text-align: center;
+  color: white;
+font-size: 1em !important;
+}
+
+.alignCenterText {
+  text-align: center !important;
+}
