@@ -276,6 +276,9 @@ namespace Inspection.Persistence.Migrations
                     b.Property<string>("HomePage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("InspectionReportId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool?>("IsVisible")
                         .HasColumnType("bit");
 
@@ -308,6 +311,8 @@ namespace Inspection.Persistence.Migrations
                     b.HasKey("ContactId");
 
                     b.HasIndex("AddressId");
+
+                    b.HasIndex("InspectionReportId");
 
                     b.ToTable("Contacts", (string)null);
                 });
@@ -578,6 +583,129 @@ namespace Inspection.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotificationNumbers", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReport", b =>
+                {
+                    b.Property<Guid>("InspectionReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InspectionReportNumberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RelatedInspectionNotificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("InspectionReportId");
+
+                    b.HasIndex("InspectionReportNumberId");
+
+                    b.HasIndex("RelatedInspectionNotificationId");
+
+                    b.ToTable("InspectionReports", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReportAttachment", b =>
+                {
+                    b.Property<Guid>("InspectionReportAttachmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InspectionReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PDFSize")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<string>("edmsId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InspectionReportAttachmentId");
+
+                    b.HasIndex("InspectionReportId");
+
+                    b.ToTable("InspectionReportAttachments", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReportNumber", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InfoPart")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotificationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InspectionReportNumber");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -1150,6 +1278,10 @@ namespace Inspection.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("AddressId");
 
+                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReport", null)
+                        .WithMany("InspectorContacts")
+                        .HasForeignKey("InspectionReportId");
+
                     b.Navigation("Address");
                 });
 
@@ -1291,6 +1423,36 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("InspectionNotification");
 
                     b.Navigation("InspectionType");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReport", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReportNumber", "InspectionReportNumber")
+                        .WithMany()
+                        .HasForeignKey("InspectionReportNumberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", "RelatedInspectionNotification")
+                        .WithMany()
+                        .HasForeignKey("RelatedInspectionNotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InspectionReportNumber");
+
+                    b.Navigation("RelatedInspectionNotification");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReportAttachment", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReport", "InspectionReport")
+                        .WithMany("inspectionReportAttachments")
+                        .HasForeignKey("InspectionReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InspectionReport");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -1495,6 +1657,13 @@ namespace Inspection.Persistence.Migrations
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionType", b =>
                 {
                     b.Navigation("InspectionNotifications");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReport", b =>
+                {
+                    b.Navigation("InspectorContacts");
+
+                    b.Navigation("inspectionReportAttachments");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>

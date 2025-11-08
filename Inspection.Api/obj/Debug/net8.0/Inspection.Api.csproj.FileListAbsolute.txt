@@ -191,3 +191,4 @@ E:\Projects\1403\Inspection\Inspection.Api\bin\Debug\net8.0\EntityFramework.SqlS
 E:\Projects\1403\Inspection\Inspection.Api\bin\Debug\net8.0\EntityFramework.dll
 E:\Projects\1403\Inspection\Inspection.Api\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
 E:\Projects\1403\Inspection\Inspection.Api\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll
+E:\Projects\1403\Inspection\Inspection.Api\obj\Debug\net8.0\Inspection.Api.MvcApplicationPartsAssemblyInfo.cs

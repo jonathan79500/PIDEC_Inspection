@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VUwBeXnqeGw=",
+  "dgSpecHash": "NXprpyN1ZUo=",
   "success": true,
-  "projectFilePath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+  "projectFilePath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\akbari.elahe\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\akbari.elahe\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
@@ -121,9 +121,9 @@
       "code": "NU1608",
       "level": "Warning",
       "message": "Detected package version outside of dependency constraint: MediatR.Extensions.Microsoft.DependencyInjection 11.1.0 requires MediatR (>= 11.0.0 && < 12.0.0) but version MediatR 12.5.0 was resolved.",
-      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "warningLevel": 1,
-      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "libraryId": "MediatR",
       "targetGraphs": [
         "net8.0"
@@ -133,9 +133,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'EntityFramework 6.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "warningLevel": 1,
-      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "libraryId": "EntityFramework",
       "targetGraphs": [
         "net8.0"
@@ -145,9 +145,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'Microsoft.AspNet.Identity.Core 2.2.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "warningLevel": 1,
-      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "libraryId": "Microsoft.AspNet.Identity.Core",
       "targetGraphs": [
         "net8.0"
@@ -157,9 +157,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'Microsoft.AspNet.Identity.EntityFramework 2.2.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "warningLevel": 1,
-      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+      "filePath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
       "libraryId": "Microsoft.AspNet.Identity.EntityFramework",
       "targetGraphs": [
         "net8.0"

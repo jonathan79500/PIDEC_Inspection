@@ -3,6 +3,7 @@ using Inspection.Domain.Entities.Common.ValueObjects;
 using Inspection.Domain.Entities.Contacts;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.InspectionReport;
 using Inspection.Domain.Entities.Orders;
 
 using Inspection.Domain.Entities.Projects;
@@ -35,6 +36,7 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Ignore<InspectionSubjectId>();
         modelBuilder.Ignore<InspectionTypeId>();
         modelBuilder.Ignore<ContactId>();
+        modelBuilder.Ignore<InspectionReportId>();
 
         //modelBuilder.Ignore("Attachments");
 
@@ -63,11 +65,17 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
 
         // Composite key for IdentityUserRole<string>
 
-  //      modelBuilder.Entity<InspectionNotification>()
-  //.HasOne(insp => insp.Request)
-  //.WithMany(req => req.InspectionNotifications)
-  //.HasForeignKey(insp => insp.Request)
-  //.OnDelete(DeleteBehavior.Restrict);    // Restrict == NO ACTION 
+        //      modelBuilder.Entity<InspectionNotification>()
+        //.HasOne(insp => insp.Request)
+        //.WithMany(req => req.InspectionNotifications)
+        //.HasForeignKey(insp => insp.Request)
+        //.OnDelete(DeleteBehavior.Restrict);    // Restrict == NO ACTION 
+
+        modelBuilder.Entity<InspectionReportAttachment>()
+    .HasOne(a => a.InspectionReport)
+    .WithMany(r => r.inspectionReportAttachments)
+    .HasForeignKey(a => a.InspectionReportId)
+    .IsRequired(); // or false if optional
 
         modelBuilder.Entity<IdentityUserRole<string>>()
             .HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -263,4 +271,6 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
     public DbSet<CirculationAttachments> CirculationAttachments { get; set; }
     public DbSet<ProjectUser> ProjectUsers { get; set; }
     public DbSet<OrdersettingException> OrdersettingExceptions { get; set; }
+    public DbSet<InspectionReport>  InspectionReports{ get; set; }
+    public DbSet<InspectionReportAttachment>  InspectionReportAttachments{ get; set; }
 }

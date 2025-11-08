@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj": {}
+    "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj": {}
   },
   "projects": {
     "E:\\Projects\\1403\\Inspection\\Inspection.Application\\Inspection.Application.csproj": {
@@ -180,14 +180,14 @@
         }
       }
     },
-    "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj": {
+    "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+        "projectUniqueName": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
         "projectName": "Inspection.Persistence",
-        "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\Inspection.Persistence.csproj",
+        "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\Inspection.Persistence.csproj",
         "packagesPath": "C:\\Users\\akbari.elahe\\.nuget\\packages\\",
-        "outputPath": "E:\\Projects\\1403\\Inspection\\Inspection.Persistence\\obj\\",
+        "outputPath": "E:\\Projects\\1403\\Inspection\\Inspection.persistence\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

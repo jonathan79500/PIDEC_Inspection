@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Inspection.Architecture.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a25dd9d46aaa3b8ff9fdaf63cabc9dc932020ab5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2795e09493d3ab25ee8b06271a8e30ddc3826c11")]
 [assembly: System.Reflection.AssemblyProductAttribute("Inspection.Architecture.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Inspection.Architecture.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

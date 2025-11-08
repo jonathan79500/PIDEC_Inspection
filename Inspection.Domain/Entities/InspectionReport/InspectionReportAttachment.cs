@@ -1,18 +1,20 @@
-﻿using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+﻿using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using InspectionReportAttachmentId = Inspection.Domain.Entities.ValueObjects.InspectionReportAttachmentId;
 
 namespace Inspection.Domain.Entities.InspectionReport
 {
     public class InspectionReportAttachment
     {
-        public AttachmentId InspectionReportAttachmentId { get; set; }
+        public InspectionReportAttachmentId InspectionReportAttachmentId { get; set; }
         public InspectionReportId InspectionReportId { get; set; }
-
+        public InspectionReport InspectionReport { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public byte[] Content { get; set; }
@@ -20,7 +22,7 @@ namespace Inspection.Domain.Entities.InspectionReport
         public string edmsId { get; set; }
         public string PDFSize { get; set; }
 
-        public InspectionReportAttachment(AttachmentId inspectionReportAttachmentId) : base()
+        public InspectionReportAttachment(InspectionReportAttachmentId inspectionReportAttachmentId) : base()
         {
             InspectionReportAttachmentId = inspectionReportAttachmentId;
         }
