@@ -7,6 +7,7 @@ using Inspection.Application.Features.Authentication.Common;
 using Inspection.Application.Features.Authentication.Queries.GetUsersInfoByProjectId;
 using Inspection.Application.Features.Authentication.Queries.Login;
 using Inspection.Application.Features.BasicInfo.Inspectors.Queries;
+using Inspection.Application.Features.BasicInfo.Inspectors.Queries.GetInspectorsDataByUserName;
 using Inspection.Application.Features.BasicInfo.Orders.Commands.ActivateEdmsOrderInInspectionSystem;
 using Inspection.Application.Features.BasicInfo.Orders.Queries.GetEdmsOrdersByProjectId;
 using Inspection.Application.Features.BasicInfo.PIDECLeads;
@@ -227,7 +228,8 @@ public class AuthenticationController : ControllerBase
                     User = loggedInUser,
                     QCMemberInfo = null,
                     VendorInfo = vendorDataRes,
-                    PIDECLeadsInfo = null
+                    PIDECLeadsInfo = null,
+                    InspectorInfo = null
                 };
 
                 return Ok(response);
@@ -240,7 +242,8 @@ public class AuthenticationController : ControllerBase
                     User = loggedInUser,
                     QCMemberInfo = qcMemberDataRes,
                     VendorInfo = null,
-                    PIDECLeadsInfo = null
+                    PIDECLeadsInfo = null,
+                    InspectorInfo = null
                 };
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
                 return Ok(response);
@@ -253,6 +256,7 @@ public class AuthenticationController : ControllerBase
                     User = loggedInUser,
                     QCMemberInfo = null,
                     VendorInfo = null,
+                    InspectorInfo=null,
                     PIDECLeadsInfo = pidecLeadDataRes
                 };
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
@@ -266,6 +270,7 @@ public class AuthenticationController : ControllerBase
                     User = loggedInUser,
                     QCMemberInfo = null,
                     VendorInfo = null,
+                    InspectorInfo=null,
                     PIDECLeadsInfo = pidecLeadDataRes
                 };
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
@@ -273,13 +278,14 @@ public class AuthenticationController : ControllerBase
             }
             else if (principal.IsInRole("ThirdPartyInspector") || principal.IsInRole("PidecInspector"))
             {
-                var pidecLeadDataRes = await GetPIDECLeadDataByPIDECLeadInfo(userDto);
+                var pidecLeadDataRes = await GetInspectorDataByInspectorInfo(userDto);
                 var response = new ValidUserResponse()
                 {
                     User = loggedInUser,
                     QCMemberInfo = null,
                     VendorInfo = null,
-                    PIDECLeadsInfo = pidecLeadDataRes
+                    PIDECLeadsInfo =null,
+                    InspectorInfo =  pidecLeadDataRes
                 };
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
                 return Ok(response);

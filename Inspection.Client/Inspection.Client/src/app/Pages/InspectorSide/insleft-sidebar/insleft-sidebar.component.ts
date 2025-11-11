@@ -57,6 +57,12 @@ effect(()=>{
       imageName:'../../../../assets/green-add-button-12023.png'
     } ,
     {
+      routeLink: 'ConditionalInspectionReports',
+      icon: 'fal fa-file',
+      label: 'Conditional Inspections',
+      imageName:'../../../../assets/green-add-button-12023.png'
+    } ,
+    {
       routeLink: 'CompletedInspections',
       icon: 'fal fa-file',
       label: 'Completed Inspections',

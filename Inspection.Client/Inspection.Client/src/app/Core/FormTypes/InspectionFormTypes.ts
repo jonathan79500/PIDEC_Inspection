@@ -187,3 +187,13 @@ export type InspectionForm = FormGroup<{
   CreatedBy: FormControl<string>,
   ModifiedBy: FormControl<string>,
 }>
+
+export type InspectionReportForm = FormGroup<{
+   inspectionReportId:FormControl<string>,
+    inspectionReportNumber:FormControl<string>,
+    currentStatus : FormControl<number>,
+    inspectorContacts:FormArray<FormContact>,
+    relatedInspectionNotification:InspectionForm,
+    relatedInspectionNotificationId: FormControl<string>,
+    inspectionReportAttachments: FormArray<FormAttachment>
+}>

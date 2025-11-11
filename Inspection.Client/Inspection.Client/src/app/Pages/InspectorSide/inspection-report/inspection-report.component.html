@@ -1,1 +1,19 @@
-<p>inspection-report works!</p>
+<form id="newInspectionReport" [formGroup]="inspectionReportForm">
+  <div style="display: flex; flex-direction: row">
+    <div style="flex: 1">
+      <div>
+        <label>Issue Date: </label>
+        <input type="text" [formControl]="IssueDate" />
+      </div>
+      <div style="flex: 1">
+        <label>Report Number :</label>
+        <input type="text" [formControl]="ReportNumber" />
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1">
+    <div>
+      <input type="text" />
+    </div>
+  </div>
+</form>

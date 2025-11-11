@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Inspection.Application.Features.BasicInfo.Inspectors.Queries
+namespace Inspection.Application.Features.BasicInfo.Inspectors.Queries.GetInspectorsDataByUserName
 {
     public class GetInspectorsDataByUserNameQueryHandler : IRequestHandler<GetInspectorsDataByUserNameQuery, BasicInspectorInfoDto>
     {

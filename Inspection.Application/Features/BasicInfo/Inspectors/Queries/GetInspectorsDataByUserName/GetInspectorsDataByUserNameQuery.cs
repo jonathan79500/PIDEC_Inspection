@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Inspection.Application.Features.BasicInfo.Inspectors.Queries
+namespace Inspection.Application.Features.BasicInfo.Inspectors.Queries.GetInspectorsDataByUserName
 {
     public class GetInspectorsDataByUserNameQuery:IRequest<BasicInspectorInfoDto>
     {
