@@ -204,7 +204,7 @@ export class OrderManagementComponent implements OnInit{
     return this.orderContacts?.controls.filter((control: FormGroup) => {
       const contactType = control.get('contactType')?.value;
       console.log('contactType in filteredQCContacts',contactType);
-      return contactType && contactType==ContactTypes.PIDEC_TO // Example filter condition
+      return contactType && contactType==ContactTypes.QC_Manager // Example filter condition
     }) as FormGroup[]; // Cast to FormGroup array
   }
 
@@ -350,10 +350,10 @@ toggleSelection(subject: FormTypes.FormInspectionSubject): void {
 
   openPidecContactSelector():void{
 
-      let currentAddedContacts = this.orderContacts?.getRawValue().filter((contact)=> contact.contactType==ContactTypes.PIDEC_TO && (contact.email !='' || [] )) as Contact[];
-      let exceptionContacts = this.currentOrder.controls.exceptionContacts.value.filter((contact)=> contact.contactType==ContactTypes.PIDEC_TO && (contact.email !='' || [] )) as Contact[];
+      let currentAddedContacts = this.orderContacts?.getRawValue().filter((contact)=> contact.contactType==ContactTypes.QC_Manager && (contact.email !='' || [] )) as Contact[];
+      let exceptionContacts = this.currentOrder.controls.exceptionContacts.value.filter((contact)=> contact.contactType==ContactTypes.QC_Manager && (contact.email !='' || [] )) as Contact[];
       const dialogRef = this.dialog.open(ContactpersonSelectorComponent, {
-        data: {ToContacts: {currentAddedContacts,exceptionContacts} ,ContactType:ContactTypes.PIDEC_TO,timeStamp: new Date().getTime()},panelClass: 'messageDialog', disableClose: true, autoFocus: false
+        data: {ToContacts: {currentAddedContacts,exceptionContacts} ,ContactType:ContactTypes.QC_Manager,timeStamp: new Date().getTime()},panelClass: 'messageDialog', disableClose: true, autoFocus: false
         ,width:'700px', maxWidth:'140vw',height:'56.5vh',minHeight:'300px'
       });
 
@@ -365,7 +365,7 @@ toggleSelection(subject: FormTypes.FormInspectionSubject): void {
           //this.orderContacts.clear();
           for (let i = this.orderContacts.length - 1; i >= 0; i--) {
             const group = this.orderContacts.at(i) as FormGroup; // Access the FormGroup
-            if ( group.get('contactType')?.value == ContactTypes.PIDEC_TO) {
+            if ( group.get('contactType')?.value == ContactTypes.QC_Manager) {
               this.orderContacts.removeAt(i); // Remove the FormGroup if the condition is true
             }
           }

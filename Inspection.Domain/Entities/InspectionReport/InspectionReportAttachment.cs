@@ -1,5 +1,6 @@
 ﻿using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.InspectionReport.Enums;
 using Inspection.Domain.Entities.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Inspection.Domain.Entities.InspectionReport
         public int Version { get; set; }
         public string edmsId { get; set; }
         public string PDFSize { get; set; }
+        public ReportAttachmentType ReportAttachmentType { get; set; }
 
         public InspectionReportAttachment(InspectionReportAttachmentId inspectionReportAttachmentId) : base()
         {

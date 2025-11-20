@@ -11,13 +11,30 @@ using System.Threading.Tasks;
 
 namespace Inspection.Persistence.Configurations.Entities
 {
-    //public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
-    //{
+    public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
+    {
+        public void Configure(EntityTypeBuilder<Attachment> atb)
+        {
+            atb.ToTable("Attachments");
 
-    //    public void Configure(EntityTypeBuilder<Attachment> builder)
-    //    {
-    //        //  builder.ToTable("Attachments");
+            atb.HasKey(a => a.Id);
 
-    //    }
-    //}
+            var converter = new ValueConverter<AttachmentId, Guid>(
+                id => id.Value,
+                guidValue => AttachmentId.Create(guidValue));
+
+            atb.Property(a => a.Id)
+                .HasColumnName("Id")
+                .ValueGeneratedNever()
+                .HasConversion(converter);
+
+            atb.Property(a => a.Name).HasMaxLength(100);
+            atb.Property(a => a.Description).HasMaxLength(255);
+            atb.Property(a => a.PDFSize).HasMaxLength(20);
+            atb.Property(a => a.Content).HasColumnType("image");
+            atb.Property(e => e.CreatedBy).HasMaxLength(100);
+            atb.Property(e => e.ModifiedBy).HasMaxLength(100);
+        }
+    }
+
 }

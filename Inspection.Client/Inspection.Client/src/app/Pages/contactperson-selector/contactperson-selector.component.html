@@ -18,14 +18,18 @@
             <input
               name="ToAttention"
               class="theInputs"
-              formControlName="attention"
+              [formControl]="newContactForm?.controls?.attention"
             />
           </div>
         </div>
         <div class="rows">
           <div class="columns">
             <label for="ToName" class="theLabels">Name: </label>
-            <input name="ToName" class="theInputs" formControlName="name" />
+            <input
+              name="ToName"
+              class="theInputs"
+              [formControl]="newContactForm?.controls?.name"
+            />
           </div>
         </div>
       </div>
@@ -37,7 +41,7 @@
               <input
                 name="Password"
                 class="theInputs"
-                formControlName="password"
+                [formControl]="newContactForm?.controls?.password"
               />
               <img
                 src="../../../../assets/orange-plus-11974.png"
@@ -55,14 +59,22 @@
           <div class="rows">
             <div class="columns">
               <label for="ToFax" class="theLabels">FAX:</label>
-              <input name="ToFax" class="theInputs" formControlName="fax" />
+              <input
+                name="ToFax"
+                class="theInputs"
+                [formControl]="newContactForm?.controls?.fax"
+              />
             </div>
           </div>
 
           <div class="rows">
             <div class="columns">
               <label for="ToPhone" class="theLabels">Phone: </label>
-              <input name="ToPhone" class="theInputs" formControlName="phone" />
+              <input
+                name="ToPhone"
+                class="theInputs"
+                [formControl]="newContactForm?.controls?.phone"
+              />
             </div>
           </div>
         </div>
@@ -113,12 +125,9 @@
         </tr>
 
         <tr
-          *ngFor="
-            let contact of findedContacts.controls;
-            let indexOfelement = index
-          "
+          *ngFor="let contact of fcontacts; let indexOfelement = index"
           style="font-family: Tahoma"
-          (click)="addToSelectedContact(contact)"
+          (click)="addToSelectedContact(contact.value)"
         >
           <td style="width: 2rem">
             <span id="lblIndex " class="innerlabel"
@@ -127,18 +136,16 @@
           </td>
 
           <td style="width: 5rem; text-align: right">
-            <span class="innerlabel">{{ contact?.controls.name.value }}</span>
+            <span class="innerlabel">{{ contact.get("name")?.value }}</span>
           </td>
           <td style="width: 3rem">
-            <span class="innerlabel">{{ contact?.controls.email.value }}</span>
+            <span class="innerlabel">{{ contact.get("email").value }}</span>
           </td>
           <td style="width: 3rem">
-            <span class="innerlabel">{{ contact?.controls.phone.value }}</span>
+            <span class="innerlabel">{{ contact.get("phone").value }}</span>
           </td>
           <td style="width: 3rem">
-            <span class="innerlabel">{{
-              contact?.controls.attention.value
-            }}</span>
+            <span class="innerlabel">{{ contact.get("attention").value }}</span>
           </td>
           <!-- <td
             style="width: 3rem; text-align: left"
@@ -150,10 +157,10 @@
             <span class="innerlabel">{{ contact.attention }}</span>
           </td> -->
           <td style="width: 3rem; text-align: right">
-            <span class="innerlabel">{{ contact?.controls.mobile.value }}</span>
+            <span class="innerlabel">{{ contact.get("mobile").value }}</span>
           </td>
           <td style="width: 3rem; text-align: left">
-            <span class="innerlabel">{{ contact?.controls.fax.value }}</span>
+            <span class="innerlabel">{{ contact.get("fax").value }}</span>
           </td>
         </tr>
       </table>
@@ -196,10 +203,7 @@
         style="width: 100% !important"
       >
         <tr
-          *ngFor="
-            let scontact of selectedContacts.controls;
-            let indexOfselement = index
-          "
+          *ngFor="let scontact of scontacts; let indexOfselement = index"
           style="font-family: Tahoma"
           class="childRow"
         >
@@ -209,13 +213,29 @@
             </span>
           </td>
           <td style="width: 8rem; text-align: right">
-            <span class="innerlabel">{{
-              scontact.controls!["name"].value
-            }}</span>
+            <span class="innerlabel">{{ scontact.get("name").value }}</span>
           </td>
           <td style="width: 3rem">
+            <span class="innerlabel">{{ scontact.get("email").value }}</span>
+          </td>
+          <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ scontact.get('phone').value }}"
+          >
+            <span class="innerlabel">{{ scontact.get("phone").value }}</span>
+          </td>
+          <td
+            style="width: 3rem; text-align: left"
+            data-container="body"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ scontact.get('attention').value }}"
+          >
             <span class="innerlabel">{{
-              scontact.controls!["email"].value
+              scontact.get("attention").value
             }}</span>
           </td>
           <td
@@ -223,44 +243,15 @@
             data-container="body"
             data-toggle="tooltip"
             data-placement="bottom"
-            title="{{ scontact.controls!['phone'].value }}"
+            title="{{ scontact.get('mobile').value }}"
           >
-            <span class="innerlabel">{{
-              scontact.controls!["phone"].value
-            }}</span>
-          </td>
-          <td
-            style="width: 3rem; text-align: left"
-            data-container="body"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="{{ scontact.controls['attention'].value }}"
-          >
-            <span class="innerlabel">{{
-              scontact.controls!["attention"].value
-            }}</span>
-          </td>
-          <td
-            style="width: 3rem; text-align: left"
-            data-container="body"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="{{ scontact.controls!['mobile'].value }}"
-          >
-            <span class="innerlabel">{{
-              scontact.controls!["mobile"].value
-            }}</span>
+            <span class="innerlabel">{{ scontact.get("mobile").value }}</span>
           </td>
           <td style="width: 3rem">
-            <span class="innerlabel">{{
-              scontact.controls!["fax"].value
-            }}</span>
+            <span class="innerlabel">{{ scontact.get("fax").value }}</span>
           </td>
           <td style="width: 1rem">
-            <button
-              type="button"
-              (click)="deleteContactByIndex(indexOfselement)"
-            >
+            <button type="button" (click)="deleteContact(scontact.value)">
               <img src="../../assets/RedDelete.png" alt="Delete" />
             </button>
           </td>

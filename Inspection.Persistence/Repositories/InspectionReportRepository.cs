@@ -70,6 +70,17 @@ public class InspectionReportRepository : IGenericRepository<InspectionReport, I
     public Task<InspectionReportNumber> GenerateNewInspectionReportNumber(string NotificationNumber, int ReportType)
     {
         throw new NotImplementedException();
+        //InspectionReportNumber inspectionReportNumber = _dbContext.Inspec.Where(nn => nn.ProjectNumber == projectNumber && nn.OrderNumber == orderNumber).FirstOrDefault()!;
+
+        //if (notificationNumber?.Id != null)
+        //{
+        //    // return Task.FromResult(notificationNumber.CreateNewVersion());
+        //    return await Task.FromResult(notificationNumber.IncreaseVersion());
+        //}
+        //else
+        //{
+        //    return await Task.FromResult(NotificationNumber.CreateFromNull(projectNumber, orderNumber, "NTF"));
+        //}
     }
 
     public Task<InspectionReport> Get(InspectionReportId id)

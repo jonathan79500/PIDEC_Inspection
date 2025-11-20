@@ -179,11 +179,13 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                 else
                 {
                     newAttachment = new Attachment();
-                    newAttachment.AttachmentId = inspectionNotification.Attachments[i].AttachmentId;
+                    newAttachment.AttachmentId = inspectionNotification.Attachments[i].AttachmentId.Value == null ? AttachmentId.CreateUnique() : inspectionNotification.Attachments[i].AttachmentId;
+                    newAttachment.Id = newAttachment.AttachmentId;
                     newAttachment.Content = inspectionNotification.Attachments[i].Content;
                     newAttachment.Version = inspectionNotification.Attachments[i].Version;
                     newAttachment.Name = inspectionNotification.Attachments[i].Name;
                     newAttachment.PDFSize = inspectionNotification.Attachments[i].PDFSize;
+                    newinspectionNotification.Attachments!.Add(newAttachment);
                 }
                 
             }

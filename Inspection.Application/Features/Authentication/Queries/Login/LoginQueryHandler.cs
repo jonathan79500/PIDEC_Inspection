@@ -51,16 +51,17 @@ namespace Inspection.Application.Features.Authentication.Queries.Login
 
                 if (userRoles != null && userRoles!.Contains("Vendor"))
                 {
-                    if (authenticatedUser.PasswordHash != null )
+                    if (authenticatedUser.PasswordHash != null)
                     {
                         if (authenticatedUser.IsAuthenticated == false)
                             return null;
                         else
                             return authenticatedUser.Adapt<UserDto>();
-                    }                    
-                    else if(authenticatedUser.PasswordHash == null && authenticatedUser.IsAuthenticated == false) { 
-                    
-                    EdmsSystemUser = _eDMSService.UserIsValid(request.User.UserName, request.User.Password, request.User.DomainId).Result;
+                    }
+                    else if (authenticatedUser.PasswordHash == null && authenticatedUser.IsAuthenticated == false)
+                    {
+
+                        EdmsSystemUser = _eDMSService.UserIsValid(request.User.UserName, request.User.Password, request.User.DomainId).Result;
                         if (EdmsSystemUser != null && EdmsSystemUser.IsAuthenticated && EdmsSystemUser.IsActive)
                         {
                             var updatedVendor = await _userManagerRepository.UpdateUserPassword_Token(authenticatedUser, request.User.Password, userRoles);
@@ -88,6 +89,10 @@ namespace Inspection.Application.Features.Authentication.Queries.Login
                     return authenticatedUser.Adapt<UserDto>();
                 }
                 else if (userRoles != null && (userRoles!.Contains("MC") || userRoles!.Contains("MC")))
+                {
+                    return authenticatedUser.Adapt<UserDto>();
+                }
+                else if (userRoles != null && (userRoles!.Contains("PIDEC_Inspector") || userRoles!.Contains("ThirdPart_Inspector")))
                 {
                     return authenticatedUser.Adapt<UserDto>();
                 }

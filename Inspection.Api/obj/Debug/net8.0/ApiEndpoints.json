@@ -1231,12 +1231,238 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "attachments",
+        "Name": "inspection",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "project",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "currentCirculation",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentNames",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentVersions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDescriptions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Attachments",
+        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "Post",
+    "RelativePath": "api/InspectionReport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "Get",
+    "RelativePath": "api/InspectionReport/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "Put",
+    "RelativePath": "api/InspectionReport/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "value",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "Delete",
+    "RelativePath": "api/InspectionReport/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "GetInspectionReportById",
+    "RelativePath": "api/InspectionReport/GetInspectionReportById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "inspectionReportId",
+        "Type": "Inspection.Api.Controllers.InspectionReportController\u002BInspectionReportIdQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Inspection.Application.DTOs.InspectionReport.InspectionReportDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "GetInspectionReportsByInspectionNotificationId",
+    "RelativePath": "api/InspectionReport/GetInspectionReportsByInspectionNotificationId",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "inspectionNotificationId",
+        "Type": "Inspection.Api.Controllers.InspectionReportController\u002BNotificationIdQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "GetNewInspectionReportNumber",
+    "RelativePath": "api/InspectionReport/GetNewInspectionReportNumber",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "param",
+        "Type": "Inspection.Api.Controllers.InspectionReportController\u002BqueryRNParams",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Inspection.Api.Controllers.InspectionReportController\u002BqueryReportResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionReportController",
+    "Method": "SaveNewInspectionReport",
+    "RelativePath": "api/InspectionReport/SaveNewInspectionReport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reportAttachments",
         "Type": "Microsoft.AspNetCore.Http.IFormFile[]",
         "IsRequired": false
       },
       {
-        "Name": "inspectionNotification",
+        "Name": "inspectionReportFull",
         "Type": "Microsoft.AspNetCore.Http.IFormCollection",
         "IsRequired": false
       }

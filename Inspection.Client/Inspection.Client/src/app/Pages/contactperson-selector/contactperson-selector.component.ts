@@ -1,3 +1,4 @@
+import { IDatepickerTheme } from 'ng-persian-datepicker';
 
 import { map } from 'rxjs';
 import { qCMembersbasicinfoResolver } from './../../Core/Resolvers/qcmembersbasicinfo.resolver';
@@ -96,7 +97,13 @@ export class ContactpersonSelectorComponent implements OnInit{
       //this.selectedContacts.push(...this.beforeSelectedContacts.ToContacts);
    }
 
+get fcontacts(): FormGroup[] {
+  return this.findedContacts.controls as FormGroup[];
+}
 
+get scontacts(): FormGroup[] {
+  return this.selectedContacts.controls as FormGroup[];
+}
   generateContactForm():FormTypes.FormContact{
     return this.fBuilder.group({
       id:'',
@@ -166,7 +173,7 @@ export class ContactpersonSelectorComponent implements OnInit{
     let fg= this.generateContactFromContactValue(this.newContactForm.getRawValue() as Contact);
 
     //let addedContact = this.newContactForm.getRawValue() as Contact;
-    this.findedContacts?.push(fg);
+   // this.findedContacts?.push(fg);
     this.selectedContacts?.push(fg);
     //console.log(this.selectedContacts);
   }
@@ -209,8 +216,9 @@ const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   addToSelectedContact(contact)
   {
-    this.selectedContacts?.push(contact);
-    const selIndex = this.findedContacts.controls.indexOf(contact);
+    let sg = this.generateContactFromContactValue(contact);
+    this.selectedContacts?.push(sg);
+    const selIndex = this.findedContacts.value.findIndex(cont=>cont.id == contact.id);
     if(selIndex >=0 ){
       this.findedContacts.removeAt(selIndex);
       this.existingIds.delete(contact.id);
@@ -229,12 +237,14 @@ const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
   }
 
-  deleteContactByIndex(i: number) {
-  const formArray = this.selectedContacts as FormArray;
-  if (i >= 0 && i < formArray.length) {
-    formArray.removeAt(i);
-  }
-}
+//   deleteContactByIndex(i: number) {
+//   const formArray = this.selectedContacts as FormArray;
+//   if (i >= 0 && i < formArray.length) {
+//     formArray.removeAt(i);
+//     this.findedContacts.push(this.generateContactFromContactValue(contact));
+//       this.existingIds.add(contact.id);
+//   }
+// }
 
   close()
   {

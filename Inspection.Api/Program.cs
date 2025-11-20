@@ -28,6 +28,8 @@ SqlMapper.AddTypeHandler(new ContactIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionSubjectIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionNotificationIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionTypeIdTypeHandler());
+SqlMapper.AddTypeHandler(new InspectionReportIdTypeHandler());
+SqlMapper.AddTypeHandler(new InspectionReportAttachmentIdTypeHandler());
 
 var builder = WebApplication.CreateBuilder(args);   
 
@@ -97,7 +99,7 @@ builder.Services.AddAuthentication(options =>
 //----------------------check file size to upload in my system------------------------------------------
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 50 * 1024 * 1024; // 50MB
+    options.MultipartBodyLengthLimit = 500 * 1024 * 1024; // 500MB
 });
 
 //builder.Services.AddAuthorization(options => options.FallbackPolicy = new AuthorizationPolicyBuilder()

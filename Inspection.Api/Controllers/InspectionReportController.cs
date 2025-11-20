@@ -1,4 +1,6 @@
-﻿using Inspection.Application.DTOs.InspectionReport;
+﻿using Inspection.Application.DTOs;
+using Inspection.Application.DTOs.Common;
+using Inspection.Application.DTOs.InspectionReport;
 using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById;
@@ -7,9 +9,11 @@ using Inspection.Application.Features.InspectionReport.Commands.CreateInspection
 using Inspection.Application.Features.InspectionReport.Queries.GetInspectionReportById;
 using Inspection.Application.Features.InspectionReport.Queries.GetInspectionReportsByNotificationId;
 using Inspection.Application.Features.InspectionReport.Queries.GetNewInspectionReportNumber;
+using Inspection.Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Inspection.Api.Controllers
 {
@@ -25,13 +29,39 @@ namespace Inspection.Api.Controllers
             this.webHostEnvironment = _webHostEnvironment;
         }
 
+        // GET api/<TestController>/5
+        [HttpGet("{id}")]
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST api/<TestController>
+        [HttpPost]
+        public void Post([FromBody] string value)
+        {
+        }
+
+        // PUT api/<TestController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+
+        // DELETE api/<TestController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+        }
+
+
         [HttpPost]
         [Route("GetInspectionReportById")]
         public async Task<ActionResult<InspectionReportDto>> GetInspectionReportById([FromBody] InspectionReportIdQuery inspectionReportId)
         {
             try
             {
-                var inspectionReport = await _mediator.Send(new GetInspectionReportByIdQuery { InspectionReportId = inspectionReportId.InspectionReportId});
+                var inspectionReport = await _mediator.Send(new GetInspectionReportByIdQuery { InspectionReportId = inspectionReportId.InspectionReportId });
                 return Ok(inspectionReport);
             }
             catch (Exception exp)
@@ -41,13 +71,13 @@ namespace Inspection.Api.Controllers
         }
 
         [HttpPost]
-        [Route("GetInspectionReportByInspectionNotificationId")]
-        public async Task<ActionResult<InspectionReportDto>> GetInspectionReportByInspectionNotificationId([FromBody] InspectionNotificationIdQuery inspectionNotificationId)
+        [Route("GetInspectionReportsByInspectionNotificationId")]
+        public async Task<ActionResult<List<InspectionReportDto>>> GetInspectionReportsByInspectionNotificationId([FromBody] NotificationIdQuery inspectionNotificationId)
         {
             try
             {
-                var inspectionReport = await _mediator.Send(new GetInspectionReportsByNotificationIdQuery { InspectionNotificationId = inspectionNotificationId.InspectionNotificationId});
-                return Ok(inspectionReport);
+                var inspectionReports = await _mediator.Send(new GetInspectionReportsByNotificationIdQuery { InspectionNotificationId = inspectionNotificationId.InspectionNotificationId });
+                return Ok(inspectionReports);
             }
             catch (Exception exp)
             {
@@ -55,33 +85,52 @@ namespace Inspection.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("SaveNewInspectionReport")]
-        public async Task<ActionResult> Post([FromBody] InspectionReportDto inspectionReport)
-        {
-            var command = new CreateInspectionReportCommand { inspectionReport = inspectionReport };
 
+
+        [Consumes("multipart/form-data")]
+        [Produces("application/json")]
+        [HttpPost("SaveNewInspectionReport")]
+        public async Task<ActionResult> SaveNewInspectionReport(IFormFile[] reportAttachments, IFormCollection inspectionReportFull)
+        {
             try
             {
+                //Debug.Write("File Name is: "+attachment.FileName);
+                //Debug.Write("File Type is: " + attachment.ContentType);
+                foreach (var attachment in reportAttachments)
+                {
+                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "reportAttachments", FileHelper.generateFileName(attachment.FileName));
+
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        attachment.CopyTo(fileStream);
+                    }
+
+                }
+                var inspectionReport = JsonConvert.DeserializeObject<InspectionReportDto>(inspectionReportFull["InspectionReport"]!);
+                //var currentCirculation = JsonConvert.DeserializeObject<CirculationDto>(inspectionNotification["CurrentCirculation"]!);
+                //var project = JsonConvert.DeserializeObject<ProjectDto>(inspectionNotification["Project"]!);
+                var command = new CreateInspectionReportCommand { inspectionReport = inspectionReport };
+
                 var response = await _mediator.Send(command);
-                return Ok(response);
+
+                return Ok(reportAttachments);
             }
             catch (Exception ex)
             {
-
-                return Ok("jdljqwl");
+                return BadRequest();
             }
-
         }
+
         [HttpPost]
         [Route("GetNewInspectionReportNumber")]
-        public async Task<ActionResult<queryResult>> GetNewInspectionReportNumber([FromBody] queryRNParams param)
+        public async Task<ActionResult<queryReportResult>> GetNewInspectionReportNumber([FromBody] queryRNParams param)
         {
-            var command = new GetNewInspectionReportNumberQuery { InspectionNotificationNumber = param.inspectionNotificationNumber,ReportType= param.reportType};
+            var command = new GetNewInspectionReportNumberQuery { InspectionNotificationNumber = param.inspectionNotificationNumber, ReportType = param.reportType };
             try
             {
                 var response = await _mediator.Send(command);
-                queryResult q = new queryResult();
+                queryReportResult q = new queryReportResult();
                 q.newInspectionReportNumber = response;
                 return Ok(q);
             }
@@ -91,7 +140,7 @@ namespace Inspection.Api.Controllers
             }
         }
 
-        public class InspectionNotificationIdQuery
+        public class NotificationIdQuery
         {
 
             public string InspectionNotificationId { get; set; }
@@ -109,7 +158,7 @@ namespace Inspection.Api.Controllers
             public int reportType { get; set; }
         }
 
-        public class queryResult
+        public class queryReportResult
         {
             public string newInspectionReportNumber { get; set; }
         }

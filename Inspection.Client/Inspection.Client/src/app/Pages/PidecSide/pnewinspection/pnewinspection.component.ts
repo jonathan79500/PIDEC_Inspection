@@ -335,13 +335,13 @@ toggleEditMode(on: boolean) {
           'ownerContactPerson': this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.Owner)[0],
           'mcContactPerson':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.MC)[0],
           'contacts':  this.currentContacts,
-          'pidecContacts':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.PIDEC_TO || contact.contactType==ContactTypes.PIDEC_CC)
+          'pidecContacts':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.QC_Manager || contact.contactType==ContactTypes.QC_Lead)
               });
 
 
 
        let pidecContacts = this.currentContacts?.filter(
-            (contact) => contact.contactType === ContactTypes.PIDEC_TO || contact.contactType === ContactTypes.PIDEC_CC
+            (contact) => contact.contactType === ContactTypes.QC_Manager || contact.contactType === ContactTypes.QC_Lead
           );
 
       if(pidecContacts != null)
@@ -517,7 +517,7 @@ removeToContact(contactIndex:number):void
       phone:'',
       mobile:'',
       address:this.generateAddress(),
-      contactType:ContactTypes.PIDEC_CC,
+      contactType:ContactTypes.QC_Lead,
       homePage:'',
       userId:'',
       isVisible:[true],
@@ -531,7 +531,7 @@ removeToContact(contactIndex:number):void
   changeContactEmail(indexOfelement)
   {
     if(this.contactsFormArray.controls[indexOfelement].get('email').value != '')
-       this.contactsFormArray.controls[indexOfelement].patchValue({contactType:ContactTypes.PIDEC_TO}) ;
+       this.contactsFormArray.controls[indexOfelement].patchValue({contactType:ContactTypes.QC_Manager}) ;
   }
   onInspectionTypeChange(inspectionTypeIndex : any):void{
     // inspectionType.selected = !inspectionType.selected;
@@ -635,7 +635,8 @@ removeToContact(contactIndex:number):void
       id:'00000000-0000-0000-0000-000000000000',
       version:'' ,
       name:'',
-      content: []
+      content: [],
+      description:''
     });
   }
 
@@ -1137,12 +1138,12 @@ get contactsFormArray() :FormArray<FormTypes.FormContact> {
 
 get pidecContactsFormArray() :FormGroup[]{
 let a = this.contactsFormArray?.controls
-  ?.filter(ctrl => ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.PIDEC_TO.toString().trim()
-  || ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.PIDEC_CC.toString().trim()) as FormGroup[];
+  ?.filter(ctrl => ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.QC_Manager.toString().trim()
+  || ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.QC_Lead.toString().trim()) as FormGroup[];
 if(a==undefined || a==null || a.length==0)
 {
   let pc = this.generateContact();
-  pc.get('contactType').setValue(ContactTypes.PIDEC_TO);
+  pc.get('contactType').setValue(ContactTypes.QC_Manager);
     this.contactsFormArray.push(pc);
 
 }
@@ -1497,7 +1498,7 @@ CalculateInspectionDuration():void{
           ,
         attachments:this.inspectionForm
           .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.length !=0) as Attachment[]
+          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
         //    ,
         //  circulations: [this.currentCirculation]
     };
@@ -1550,7 +1551,7 @@ CalculateInspectionDuration():void{
           ,
         attachments:this.inspectionForm
           .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.length !=0) as Attachment[]
+          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
     };
 
     this.formData.delete('Inspection');

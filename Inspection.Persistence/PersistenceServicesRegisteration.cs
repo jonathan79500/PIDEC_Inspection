@@ -34,6 +34,7 @@ public static class PersistenceServicesRegisteration
         services.AddScoped<IUserManagerRepository, UserManagerRepository>();
         services.AddScoped(typeof(IGenericRepository<,>),typeof(GenericRepository<,>));
         services.AddScoped <IInspectionNotificationRepository,InspectionNotificationRepository>();
+        services.AddScoped<IInspectionReportRepository, InspectionReportRepository>();
         services.AddScoped<IBasicInformationRepository, BasicInformationRepository>();
         services.AddScoped<IUnitOfWork,EFUnitOfWork>();
 

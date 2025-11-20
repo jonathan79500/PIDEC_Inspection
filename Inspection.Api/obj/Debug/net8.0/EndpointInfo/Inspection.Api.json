@@ -1949,26 +1949,71 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "attachments": {
+                  "inspection": {
+                    "type": "string"
+                  },
+                  "project": {
+                    "type": "string"
+                  },
+                  "currentCirculation": {
+                    "type": "string"
+                  },
+                  "AttachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentVersions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentDescriptions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "Attachments": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "format": "binary"
                     }
-                  },
-                  "inspectionNotification": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/StringStringValuesKeyValuePair"
-                    }
                   }
                 }
               },
               "encoding": {
-                "attachments": {
+                "inspection": {
                   "style": "form"
                 },
-                "inspectionNotification": {
+                "project": {
+                  "style": "form"
+                },
+                "currentCirculation": {
+                  "style": "form"
+                },
+                "AttachmentIds": {
+                  "style": "form"
+                },
+                "AttachmentNames": {
+                  "style": "form"
+                },
+                "AttachmentVersions": {
+                  "style": "form"
+                },
+                "AttachmentDescriptions": {
+                  "style": "form"
+                },
+                "Attachments": {
                   "style": "form"
                 }
               }
@@ -1978,6 +2023,335 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/InspectionReport/{id}": {
+      "get": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/InspectionReport": {
+      "post": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/InspectionReport/GetInspectionReportById": {
+      "post": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionReportIdQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionReportIdQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionReportIdQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionReportDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionReportDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionReportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/InspectionReport/GetInspectionReportsByInspectionNotificationId": {
+      "post": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationIdQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationIdQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationIdQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InspectionReportDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InspectionReportDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InspectionReportDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/InspectionReport/SaveNewInspectionReport": {
+      "post": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reportAttachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "inspectionReportFull": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/StringStringValuesKeyValuePair"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "reportAttachments": {
+                  "style": "form"
+                },
+                "inspectionReportFull": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/InspectionReport/GetNewInspectionReportNumber": {
+      "post": {
+        "tags": [
+          "InspectionReport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/queryRNParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/queryRNParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/queryRNParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/queryReportResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/queryReportResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/queryReportResult"
+                }
+              }
+            }
           }
         }
       }
@@ -2314,6 +2688,14 @@
           "pdfSize": {
             "type": "string",
             "nullable": true
+          },
+          "downloadUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "base64Content": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2323,23 +2705,24 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "name": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
           },
           "description": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "content": {
             "type": "string",
-            "format": "byte",
-            "nullable": true,
-            "readOnly": true
+            "format": "binary",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2950,6 +3333,13 @@
           },
           "inspectionNotification": {
             "$ref": "#/components/schemas/InspectionNotification"
+          },
+          "inspectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CirculationInspector"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3012,6 +3402,45 @@
           "comment": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CirculationInspector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "circulationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectorId": {
+            "$ref": "#/components/schemas/InspectorId"
+          },
+          "circulation": {
+            "$ref": "#/components/schemas/Circulation"
+          },
+          "inspector": {
+            "$ref": "#/components/schemas/Inspector"
           }
         },
         "additionalProperties": false
@@ -4129,6 +4558,85 @@
         },
         "additionalProperties": false
       },
+      "InspectionReportAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionReportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "content": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectionReportDto": {
+        "type": "object",
+        "properties": {
+          "inspectionReportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionReportNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentStatus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inspectorContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactDto"
+            },
+            "nullable": true
+          },
+          "relatedInspectionNotification": {
+            "$ref": "#/components/schemas/InspectionNotificationDto"
+          },
+          "relatedInspectionNotificationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionReportAttachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InspectionReportAttachmentDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectionReportIdQuery": {
+        "type": "object",
+        "properties": {
+          "inspectionReportId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "InspectionSubject": {
         "type": "object",
         "properties": {
@@ -4261,6 +4769,110 @@
         },
         "additionalProperties": false
       },
+      "Inspector": {
+        "type": "object",
+        "properties": {
+          "inspectorId": {
+            "$ref": "#/components/schemas/InspectorId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectorAttachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InspectorAttachment"
+            },
+            "nullable": true
+          },
+          "circulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CirculationInspector"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectorAttachment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "size": {
+            "type": "string",
+            "nullable": true
+          },
+          "attachmentTypes": {
+            "$ref": "#/components/schemas/InspectorAttachmentTypes"
+          },
+          "inspector": {
+            "$ref": "#/components/schemas/Inspector"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectorAttachmentTypes": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "InspectorId": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LoginRequest": {
         "required": [
           "email",
@@ -4281,6 +4893,16 @@
             "nullable": true
           },
           "twoFactorRecoveryCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationIdQuery": {
+        "type": "object",
+        "properties": {
+          "inspectionNotificationId": {
             "type": "string",
             "nullable": true
           }
@@ -5455,6 +6077,30 @@
             "nullable": true
           },
           "ordernumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "queryRNParams": {
+        "type": "object",
+        "properties": {
+          "inspectionNotificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportType": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "queryReportResult": {
+        "type": "object",
+        "properties": {
+          "newInspectionReportNumber": {
             "type": "string",
             "nullable": true
           }

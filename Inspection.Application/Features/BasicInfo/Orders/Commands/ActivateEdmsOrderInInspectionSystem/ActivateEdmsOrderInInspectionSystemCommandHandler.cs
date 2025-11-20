@@ -61,7 +61,7 @@ namespace Inspection.Application.Features.BasicInfo.Orders.Commands.ActivateEdms
 
                     if (vendorContact != null)
                     {
-                        userManagerRepository.RegisterNewUserByRandomPassFromContactData(vendorContact, ["vendor"]);
+                        userManagerRepository.RegisterNewUserByRandomPassFromContactData(vendorContact, ["Vendor"]);
                     }
 
                     Order newOrderInInspectionSystem;
@@ -119,7 +119,8 @@ namespace Inspection.Application.Features.BasicInfo.Orders.Commands.ActivateEdms
                         newOrderInInspectionSystem.EquipmentTagNo = newOrderForActivation.EquipmentTagNo;
 
                         newOrderInInspectionSystem.ModifiedBy = newOrderForActivation.ModifiedBy;
-                        newOrderInInspectionSystem.ModifiedDate = DateTime.Now;
+                        newOrderInInspectionSystem.ModifiedDate = DateTime.Now;                       
+
                         basicInformationRepository.SaveOrder(newOrderInInspectionSystem);
                     }
 

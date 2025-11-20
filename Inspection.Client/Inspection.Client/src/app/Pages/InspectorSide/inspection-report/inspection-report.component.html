@@ -3,17 +3,37 @@
     <div style="flex: 1">
       <div>
         <label>Issue Date: </label>
-        <input type="text" [formControl]="IssueDate" />
+        <input type="text" formControlName="issueDate" />
       </div>
-      <div style="flex: 1">
+      <div>
         <label>Report Number :</label>
-        <input type="text" [formControl]="ReportNumber" />
+        <input type="text" formControlName="inspectionReportNumber" />
       </div>
     </div>
   </div>
   <div style="flex: 1">
     <div>
-      <input type="text" />
+      <label>Notes : </label>
+      <input type="text" formControlName="ReportNotes" />
+    </div>
+  </div>
+  <div style="flex: 1">
+    <div>
+      <label>InspectionReport Documents : </label>
+      <input type="text" formControlName="ReportNotes" />
+      <input type="file" multiple (change)="onDocPicked($event)" />
+    </div>
+  </div>
+  <div style="flex: 1">
+    <div>
+      <label>Packing List : </label>
+      <input type="text" formControlName="ReportNotes" />
+      <input type="file" multiple (change)="onPackingListPicked($event)" />
+    </div>
+  </div>
+  <div style="flex: 1">
+    <div>
+      <input type="button" (click)="SaveReport()" />
     </div>
   </div>
 </form>

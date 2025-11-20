@@ -276,16 +276,16 @@ public class AuthenticationController : ControllerBase
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
                 return Ok(response);
             }
-            else if (principal.IsInRole("ThirdPartyInspector") || principal.IsInRole("PidecInspector"))
+            else if (principal.IsInRole("ThirdPart_Inspector") || principal.IsInRole("PIDEC_Inspector"))
             {
-                var pidecLeadDataRes = await GetInspectorDataByInspectorInfo(userDto);
+                var inspectorDataRes = await GetInspectorDataByInspectorInfo(userDto);
                 var response = new ValidUserResponse()
                 {
                     User = loggedInUser,
                     QCMemberInfo = null,
                     VendorInfo = null,
                     PIDECLeadsInfo =null,
-                    InspectorInfo =  pidecLeadDataRes
+                    InspectorInfo = inspectorDataRes
                 };
                 var text = System.Text.Json.JsonSerializer.Serialize(response);
                 return Ok(response);

@@ -4,6 +4,7 @@ using Inspection.Domain.Entities.Contacts;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.InspectionReport;
+using Inspection.Domain.Entities.Inspector;
 using Inspection.Domain.Entities.Orders;
 
 using Inspection.Domain.Entities.Projects;
@@ -37,6 +38,7 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Ignore<InspectionTypeId>();
         modelBuilder.Ignore<ContactId>();
         modelBuilder.Ignore<InspectionReportId>();
+        modelBuilder.Ignore<InspectorId>();
 
         //modelBuilder.Ignore("Attachments");
 
@@ -217,6 +219,21 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
             .HasForeignKey(it=>it.InspectionTypeId);
 
 
+
+        modelBuilder.Entity<CirculationInspector>()
+        .ToTable("CirculationInspectors")
+        .HasKey(cin => cin.Id);
+
+
+        modelBuilder.Entity<CirculationInspector>()
+            .HasOne(cin => cin.Circulation)
+            .WithMany(cin => cin.Inspectors)
+            .HasForeignKey(ins => ins.CirculationId);
+
+        modelBuilder.Entity<CirculationInspector>()
+            .HasOne(cin => cin.Inspector)
+            .WithMany(cin => cin.Circulations)
+            .HasForeignKey(ins => ins.InspectorId);
         //modelBuilder.Entity<InspectionNotificationContact>()
         //.ToTable("InspectionNotificationContacts")
         //.HasKey(pq => pq.Id);
@@ -273,4 +290,8 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
     public DbSet<OrdersettingException> OrdersettingExceptions { get; set; }
     public DbSet<InspectionReport>  InspectionReports{ get; set; }
     public DbSet<InspectionReportAttachment>  InspectionReportAttachments{ get; set; }
+    public DbSet<Inspector> Inspectors { get; set; }
+    public DbSet<InspectorAttachment> InspectorAttachments { get; set; }
+    public DbSet<CirculationInspector> CirculationInspectors { get; set; }
+
 }

@@ -74,7 +74,8 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
                         {
                            savedMCContact= _userManagerRepository.SaveContact(mcContact).Result;
                            savedmcContacts.Add(savedMCContact);
-                            _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System", "your pass:" + mcPassword + " and user is :"+ mcUser.Email);
+                            if(mcPassword != null && mcPassword != "") 
+                                _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as MC", "your pass:" + mcPassword + " and user is :"+ mcUser.Email);
                         }
                             
                         }
@@ -96,6 +97,8 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
                     if (ownerUser != null)
                     {
                         savedownerContacts.Add(_userManagerRepository.SaveContact(ownerContacts[i]).Result);
+                        if(ownerPass !=null && ownerPass != "")
+                            _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as Owner", "your pass:" + ownerPass + " and user is :" + ownerUser.Email);
                     }
                 }
                 _userManagerRepository.SaveProjectContacts(project, savedownerContacts);
@@ -114,6 +117,8 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
                     if (pidecInspectorUser != null)
                     {
                         savedpidecInspectorContacts.Add(_userManagerRepository.SaveContact(pidecInspectorsContacts[i]).Result);
+                        if(pidecInspectorPass != null && pidecInspectorPass != "")
+                            _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as PIDEC Inspector", "your pass:" + pidecInspectorPass + " and user is :" + pidecInspectorUser.Email);
                     }
                 }
                 _userManagerRepository.SaveProjectContacts(project, savedpidecInspectorContacts);
@@ -133,7 +138,8 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
                     if (thirdPartInspectorUser != null)
                     {
                         savedthirdPartInspectorContacts.Add(_userManagerRepository.SaveContact(tPInspectorsContacts[i]).Result);
-                      
+                        if (thirdPartInspectorPass != null && thirdPartInspectorPass != "")
+                            _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as ThirdPart Inspector", "your pass:" + thirdPartInspectorPass + " and user is :" + thirdPartInspectorUser.Email);
                     }
                 }
                 _userManagerRepository.SaveProjectContacts(project, savedthirdPartInspectorContacts);

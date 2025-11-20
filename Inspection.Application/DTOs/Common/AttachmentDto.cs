@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,10 @@ namespace Inspection.Application.DTOs.Common
 {
     public class AttachmentDto
     {
-        public Guid Id { get; set; }  
-        public string Name { get; private set; }
-        public string? Description { get; private set; }
-        public byte[] Content { get; private set; }
+        public string Id { get; set; }  
+        public string Name { get;  set; }
+        public string Version { get;  set; }
+        public string Description { get;  set; }
+        public IFormFile Content { get;  set; }
     }
 }

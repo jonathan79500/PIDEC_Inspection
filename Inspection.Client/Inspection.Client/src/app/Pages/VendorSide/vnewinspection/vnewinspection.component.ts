@@ -345,7 +345,7 @@ toggleEditMode(on: boolean) {
           'ownerContactPerson': this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.Owner)[0],
           'mcContactPerson':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.MC)[0],
           'contacts':  this.currentContacts,
-          'pidecContacts':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.PIDEC_TO || contact.contactType==ContactTypes.PIDEC_CC),
+          'pidecContacts':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.QC_Manager || contact.contactType==ContactTypes.QC_Lead),
           'pidecInspectors':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.PIDEC_Inspector),
           'thirdPartInspectors':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.ThirdPart_Inspector),
               });
@@ -353,7 +353,7 @@ toggleEditMode(on: boolean) {
 
 
        let pidecContacts = this.currentContacts?.filter(
-            (contact) => contact.contactType === ContactTypes.PIDEC_TO || contact.contactType === ContactTypes.PIDEC_CC
+            (contact) => contact.contactType === ContactTypes.QC_Manager || contact.contactType === ContactTypes.QC_Lead
           );
 
       if(pidecContacts != null)
@@ -529,7 +529,7 @@ removeToContact(contactIndex:number):void
       phone:'',
       mobile:'',
       address:this.generateAddress(),
-      contactType:ContactTypes.PIDEC_CC,
+      contactType:ContactTypes.QC_Lead,
       homePage:'',
       userId:'',
       isVisible:[true],
@@ -543,7 +543,7 @@ removeToContact(contactIndex:number):void
   changeContactEmail(indexOfelement)
   {
     if(this.contactsFormArray.controls[indexOfelement].get('email').value != '')
-       this.contactsFormArray.controls[indexOfelement].patchValue({contactType:ContactTypes.PIDEC_TO}) ;
+       this.contactsFormArray.controls[indexOfelement].patchValue({contactType:ContactTypes.QC_Manager}) ;
   }
   onInspectionTypeChange(inspectionTypeIndex : any):void{
     // inspectionType.selected = !inspectionType.selected;
@@ -582,7 +582,7 @@ removeToContact(contactIndex:number):void
         let currentOrderContacts = this.currentAppState.vendorBasicInfo().orderContacts;
       return this.formBuilder.group({
 
-          id:'00000000-0000-0000-0000-000000000000',
+          id:['00000000-0000-0000-0000-000000000000'],
           attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
           contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           pidecContacts: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
@@ -596,30 +596,30 @@ removeToContact(contactIndex:number):void
           mcContactPerson:this.generateContact(),
           supplierContactPerson:this.generateContact(),
           subSupplierContactPerson:this.generateContact(),
-          sub_supplier:'',
-          ownerDocNo:'',
-          pidecDocNo:'',
-          supplier:'',
+          sub_supplier:[''],
+          ownerDocNo:[''],
+          pidecDocNo:[''],
+          supplier:[''],
           workProgress:new Date().toLocaleDateString('fa-IR-u-nu-latn', {
             year: 'numeric',
             day: '2-digit',
             month: 'long'
           }),
-          notificationNumber:this.initialInspectionInfo.newNotificationNumber,
+          notificationNumber:[this.initialInspectionInfo.newNotificationNumber],
 
           CreatedBy: [currentUserName],
           ModifiedBy :[currentUserName],
           CreatedDate:[ DateNow],
           ModifiedDate : [DateNow],
-          issueDate:DateNow,
-          persianIssueDate:formattedPersianDate ,
-          RequestInspectionDateStart: DateNow,
-          RequestInspectionDateEnd:DateNow,
-          RequestInspectionPersianDateStart:formattedPersianDate,
-          RequestInspectionPersianDateEnd:formattedPersianDate,
-          RequestInspectionDueDate:0,
-          RequestInspectionTimesInPeriod:0,
-          RequestInspectionPeriodDays:0,
+          issueDate:[DateNow],
+          persianIssueDate:[formattedPersianDate] ,
+          RequestInspectionDateStart: [DateNow],
+          RequestInspectionDateEnd:[DateNow],
+          RequestInspectionPersianDateStart:[formattedPersianDate],
+          RequestInspectionPersianDateEnd:[formattedPersianDate],
+          RequestInspectionDueDate:[0],
+          RequestInspectionTimesInPeriod:[0],
+          RequestInspectionPeriodDays:[0],
           inspectionSubjects:this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()]),
           inspectionTypes: this.formBuilder.array<FormTypes.FormInspectionType>([this.generateInspectionType()]),
 
@@ -628,16 +628,16 @@ removeToContact(contactIndex:number):void
 
   generateInspectionType():FormTypes.FormInspectionType{
     return this.formBuilder.group({
-      id:'00000000-0000-0000-0000-000000000000',
-      name:'',
+      id:['00000000-0000-0000-0000-000000000000'],
+      name:[''],
       selected : new FormControl<boolean>(false)
     });
   }
 
   generateInspectionSubject():FormTypes.FormInspectionSubject{
     return this.formBuilder.group({
-      id:'00000000-0000-0000-0000-000000000000',
-      name:'',
+      id:['00000000-0000-0000-0000-000000000000'],
+      name:[''],
       selected : new FormControl<boolean>(false)
     });
   }
@@ -645,9 +645,10 @@ removeToContact(contactIndex:number):void
   generateAttachment():FormTypes.FormAttachment{
     return this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
-      version:'' ,
-      name:'',
-      content: []
+      version:[''] ,
+      name:[''],
+      content: [],
+      description:['']
     });
   }
 
@@ -1112,8 +1113,17 @@ selectOwner() {
 throw new Error('Method not implemented.');
 }
 
+get Attachments():FormArray<FormTypes.FormAttachment>{
+    if(this.inspectionForm != null && this.inspectionForm != undefined)
+  {
+   if(this.inspectionForm.get('attachments')== null && this.inspectionForm.get('attachments')==undefined)
+    this.inspectionForm.addControl('attachments', new FormArray([]));
+  return (<FormArray>this.inspectionForm.get('attachments'));
+  }
+  return new FormArray([]);
+}
 
-get inspectionSubjectsFormArray(): FormArray {
+get inspectionSubjectsFormArray(): FormArray<FormGroup> {
   if(this.inspectionForm != null && this.inspectionForm != undefined)
   {
    if(this.inspectionForm.get('inspectionSubjects')== null && this.inspectionForm.get('inspectionSubjects')==undefined)
@@ -1128,7 +1138,7 @@ get filteredInspectionSubjectsFormArray() : FormGroup[]  {
      return ((this.inspectionForm?.get('inspectionSubjects') as FormArray)?.controls
       ?.filter(ctrl => ctrl.get('name')?.value?.toString().trim() !== '') || []) as FormGroup[];
    }
-get inspectionTypesFormArray(): FormArray {
+get inspectionTypesFormArray(): FormArray<FormGroup> {
   if(this.inspectionForm != null && this.inspectionForm != undefined)
   {
   if(this.inspectionForm.get('inspectionTypes')== null && this.inspectionForm.get('inspectionTypes')==undefined)
@@ -1158,19 +1168,22 @@ get contactsFormArray() :FormArray<FormTypes.FormContact> {
 
 }
 
-get pidecContactsFormArray() :FormGroup[]{
-let a = this.contactsFormArray?.controls
-  ?.filter(ctrl => ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.PIDEC_TO.toString().trim()
-  || ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.PIDEC_CC.toString().trim()) as FormGroup[];
-if(a==undefined || a==null || a.length==0)
-{
-  let pc = this.generateContact();
-  pc.get('contactType').setValue(ContactTypes.PIDEC_TO);
-    this.contactsFormArray.push(pc);
+get pidecContactsFormArray(): FormArray<FormContact> {
+  const filtered = this.contactsFormArray.controls.filter(ctrl =>
+    ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.QC_Manager.toString().trim() ||
+    ctrl.get('contactType')?.value?.toString().trim() === ContactTypes.QC_Lead.toString().trim()
+  );
 
+  if (!filtered || filtered.length === 0) {
+    const pc = this.generateContact();
+    pc.get('contactType')?.setValue(ContactTypes.QC_Manager);
+    this.contactsFormArray.push(pc);
+    return new FormArray<FormContact>([pc]);
+  }
+
+  return new FormArray<FormContact>(filtered as FormContact[]);
 }
-    return a;
-}
+
 
 get mcContact() :FormTypes.FormContact | undefined{
   return (this.inspectionForm?.controls?.mcContactPerson as FormTypes.FormContact) ;
@@ -1452,6 +1465,43 @@ CalculateInspectionDuration():void{
     return `${year} ${monthName} ${('0' + day).slice(-2)}`;
   }
 
+  //---------------------File Upload Section--------------------------
+//   filesFormArray = this.formBuilder.array<FormGroup<{
+//   fileName: FormControl<string>;
+//   description: FormControl<string>;
+//   file: FormControl<File>;
+// }>>([]);
+
+
+
+onFilesPicked(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (!input.files) return;
+  console.log(this.Attachments.value);
+  Array.from(input.files).forEach(file => {
+    return this.Attachments.push(
+      this.formBuilder.group({
+        name: [file.name],
+        description: [''],
+        content: [file],
+        id:[''],
+        version:['']
+
+      })
+    );
+  });
+
+  // Reset input so same file can be re-added if needed
+  input.value = '';
+}
+
+removeFile(index: number): void {
+  //this.filesFormArray.removeAt(index);
+  this.Attachments.removeAt(index);
+}
+
+  //-------------------End of File Upload Section---------------------
+
   SaveNewInspection():void
   {
     console.log("in save :", this.inspectionForm.getRawValue());
@@ -1484,19 +1534,51 @@ CalculateInspectionDuration():void{
           ,
         attachments:this.inspectionForm
           .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.length !=0) as Attachment[]
+          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
         //    ,
         //  circulations: [this.currentCirculation]
     };
 
-
-     this.formData.delete('Inspection');
-     this.formData.delete('Project');
+    filteredInspectionForm.attachments = null;
+     this.formData.delete('inspection');
+     this.formData.delete('project');
      this.formData.delete('currentCirculation');
-    this.formData.append('Inspection',JSON.stringify(filteredInspectionForm));
-    this.formData.append('Project',JSON.stringify(this.Project ))
-    this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
+     this.formData.delete('Attachments');
+     this.formData.delete('AttachmentIds');
+     this.formData.delete('AttachmentNames');
+     this.formData.delete('AttachmentVersions');
+     this.formData.delete('AttachmentDescriptions');
 
+    // this.formData.append('attachments',JSON.stringify(this.Attachments));
+   this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
+   this.formData.append('project',JSON.stringify(this.Project ))
+   this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
+
+     // Append attachments
+  // this.Attachments.controls.forEach((ctrl, index) => {
+  //   const att = ctrl.value; // FormAttachment model
+  //    this.formData.append(`Attachments[${index}].Id`, att.id);
+  //    this.formData.append(`Attachments[${index}].Version`, att.version);
+  //    this.formData.append(`Attachments[${index}].Name`, att.name);
+  //    this.formData.append(`Attachments[${index}].Description`, att.description);
+  //    this.formData.append(`Attachments[${index}].Content`, att.content); // File object
+  // });
+
+  this.Attachments.controls.forEach((ctrl, index) => {
+ const name = ctrl.get('name')?.value;
+  const description = ctrl.get('description')?.value;
+  const id = ctrl.get('id')?.value;
+  const version = ctrl.get('version')?.value;
+  const content = ctrl.get('content')?.value;
+
+  if (name && name.trim() !== '') {
+    this.formData.append('Attachments', content); // File object
+    this.formData.append('AttachmentIds', id);
+    this.formData.append('AttachmentNames', name);
+    this.formData.append('AttachmentVersions', version);
+    this.formData.append('AttachmentDescriptions', description);
+  }
+});
     this.inspectionService.saveNewInspectionFull(this.formData).subscribe((sentInspection)=>{
       this.editMode = false;
       this.toggleEditMode(false);
@@ -1506,7 +1588,7 @@ CalculateInspectionDuration():void{
         contacts:sentInspection.contacts,
         inspectionSubjects: sentInspection.inspectionSubjects,
         inspectionTypes:sentInspection.inspectionTypes,
-        attachments :sentInspection.attachments
+        attachments :[...sentInspection.attachments]
       })
     });
   }
@@ -1537,7 +1619,7 @@ CalculateInspectionDuration():void{
           ,
         attachments:this.inspectionForm
           .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.length !=0) as Attachment[]
+          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
     };
 
     this.formData.delete('Inspection');
@@ -1568,7 +1650,7 @@ let findedInsType = null;
       else
       {
         savedNewInspection.inspectionTypes.at(j).selected = true;
-        this.inspectionTypesFormArray.push(savedNewInspection.inspectionTypes.at(j));
+        this.inspectionTypesFormArray.push(this.generateInspectionTypeFromValue(savedNewInspection.inspectionTypes.at(j)));
       }
 
     }
@@ -1596,7 +1678,7 @@ let findedInsSubject = null;
       else
       {
         savedNewInspection.inspectionSubjects.at(j).selected = true;
-        this.inspectionSubjectsFormArray.push(savedNewInspection.inspectionSubjects.at(j));
+        this.inspectionSubjectsFormArray.push(this.generateInspectionSubjectFromValue(savedNewInspection.inspectionSubjects.at(j)));
       }
 
     }

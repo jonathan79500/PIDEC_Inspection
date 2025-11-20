@@ -109,33 +109,46 @@ namespace Inspection.Persistence.Migrations
                     b.Property<Guid>("CirculationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("Content")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PDFSize")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.Property<string>("edmsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("AttachmentId");
 
                     b.HasIndex("CirculationId");
 
                     b.ToTable("CirculationAttachmens", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.CirculationInspector", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CirculationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("InspectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CirculationId");
+
+                    b.HasIndex("InspectorId");
+
+                    b.ToTable("CirculationInspectors", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.InspectionSubject", b =>
@@ -276,9 +289,6 @@ namespace Inspection.Persistence.Migrations
                     b.Property<string>("HomePage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("InspectionReportId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool?>("IsVisible")
                         .HasColumnType("bit");
 
@@ -312,9 +322,66 @@ namespace Inspection.Persistence.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("InspectionReportId");
-
                     b.ToTable("Contacts", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Base64Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("image");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("DownloadUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("InspectionNotificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PDFSize")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<string>("edmsId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectionNotificationId");
+
+                    b.ToTable("Attachments", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
@@ -591,9 +658,8 @@ namespace Inspection.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -607,6 +673,9 @@ namespace Inspection.Persistence.Migrations
                     b.Property<Guid>("InspectionReportNumberId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -614,8 +683,19 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PersianIssueDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("RelatedInspectionNotificationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReportNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReportType")
+                        .HasColumnType("int");
 
                     b.HasKey("InspectionReportId");
 
@@ -650,6 +730,9 @@ namespace Inspection.Persistence.Migrations
                     b.Property<string>("PDFSize")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReportAttachmentType")
+                        .HasColumnType("int");
 
                     b.Property<int>("Version")
                         .HasColumnType("int");
@@ -706,6 +789,83 @@ namespace Inspection.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("InspectionReportNumber");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.Inspector", b =>
+                {
+                    b.Property<Guid>("InspectorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("InspectionReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InspectorId");
+
+                    b.HasIndex("InspectionReportId");
+
+                    b.ToTable("Inspectors", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.InspectorAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AttachmentTypes")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InspectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectorId");
+
+                    b.ToTable("InspectorAttachments");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -1261,6 +1421,23 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("Circulation");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.CirculationInspector", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Common.Circulation", "Circulation")
+                        .WithMany("Inspectors")
+                        .HasForeignKey("CirculationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inspection.Domain.Entities.Inspector.Inspector", "Inspector")
+                        .WithMany("Circulations")
+                        .HasForeignKey("InspectorId");
+
+                    b.Navigation("Circulation");
+
+                    b.Navigation("Inspector");
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.Common.Request", b =>
                 {
                     b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "CreatorContactPerson")
@@ -1278,11 +1455,14 @@ namespace Inspection.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("AddressId");
 
-                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReport", null)
-                        .WithMany("InspectorContacts")
-                        .HasForeignKey("InspectionReportId");
-
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", null)
+                        .WithMany("Attachments")
+                        .HasForeignKey("InspectionNotificationId");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
@@ -1300,68 +1480,6 @@ namespace Inspection.Persistence.Migrations
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsMany("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", "Attachments", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier")
-                                .HasColumnName("Id");
-
-                            b1.Property<Guid>("InspectionNotificationId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<byte[]>("Content")
-                                .IsRequired()
-                                .HasColumnType("image");
-
-                            b1.Property<string>("CreatedBy")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<DateTime>("CreatedDate")
-                                .HasColumnType("datetime2");
-
-                            b1.Property<string>("Description")
-                                .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)");
-
-                            b1.Property<string>("ModifiedBy")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<DateTime>("ModifiedDate")
-                                .HasColumnType("datetime2");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<string>("PDFSize")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<int>("Version")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("edmsId")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("Id", "InspectionNotificationId");
-
-                            b1.HasIndex("InspectionNotificationId");
-
-                            b1.ToTable("Attachments", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("InspectionNotificationId");
-                        });
-
-                    b.Navigation("Attachments");
 
                     b.Navigation("Location");
 
@@ -1453,6 +1571,24 @@ namespace Inspection.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("InspectionReport");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.Inspector", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReport", null)
+                        .WithMany("Inspectors")
+                        .HasForeignKey("InspectionReportId");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.InspectorAttachment", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Inspector.Inspector", "Inspector")
+                        .WithMany("inspectorAttachments")
+                        .HasForeignKey("InspectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inspector");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -1622,6 +1758,11 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.Circulation", b =>
+                {
+                    b.Navigation("Inspectors");
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.Common.InspectionSubject", b =>
                 {
                     b.Navigation("InspectionNotifications");
@@ -1645,6 +1786,8 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("Circulations");
 
                     b.Navigation("Contacts");
@@ -1661,9 +1804,16 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReport", b =>
                 {
-                    b.Navigation("InspectorContacts");
+                    b.Navigation("Inspectors");
 
                     b.Navigation("inspectionReportAttachments");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.Inspector", b =>
+                {
+                    b.Navigation("Circulations");
+
+                    b.Navigation("inspectorAttachments");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>

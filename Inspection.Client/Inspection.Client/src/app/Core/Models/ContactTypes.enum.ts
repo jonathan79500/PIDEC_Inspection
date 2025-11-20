@@ -6,10 +6,12 @@ export enum ContactTypes
     Owner = 1,
     Vendor = 2,
     MC = 3,
-    PIDEC_TO = 4,
+    QC_Manager = 4,
     Supplier = 5,
     SubSupplier = 6,
-    PIDEC_CC = 7,
+    QC_Lead = 7,
     PIDEC_Inspector = 8,
-    ThirdPart_Inspector = 9
+    ThirdPart_Inspector = 9,
+    Department_Lead =10 ,
+    Department_Originator =11
 }

@@ -74,7 +74,7 @@ public class InspectionNotificationController : ControllerBase
     [Route("SaveNew")]
     public async Task<ActionResult> Post([FromBody] CreateInspectionNotificationDto inspectionNotification)
     {
-        var command = new SendInspectionNotificationCommand { createInspectionNotificationDto = inspectionNotification };
+        var command = new SendInspectionNotificationCommand { CreateInspectionNotificationDto = inspectionNotification };
 
         try
         {
@@ -293,42 +293,122 @@ public class InspectionNotificationController : ControllerBase
     }
 
 
-[Consumes("multipart/form-data")]
-[Produces("application/json")]
-[HttpPost("SendInspectionNotification")]
-public async Task<ActionResult> SendInspectionNotification(IFormFile[] attachments, IFormCollection inspectionNotification)
-{
-    try
+    [HttpPost("SendInspectionNotification")]
+    [Consumes("multipart/form-data")]
+   // [Produces("application/json")]
+    public async Task<ActionResult> SendInspectionNotification([FromForm] InspectionUploadDto inspectionUpload) 
+   // IFormCollection inspectionUploadDto)
     {
-        //Debug.Write("File Name is: "+attachment.FileName);
-        //Debug.Write("File Type is: " + attachment.ContentType);
-        foreach (var attachment in attachments)
+        try
         {
-            var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachment.FileName));
 
-
-            using (var fileStream = new FileStream(path, FileMode.Create))
+            List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
+            AttachmentDto attachmentDto;
+            for (int i = 0; i < inspectionUpload.Attachments.Count; i++)
             {
-                attachment.CopyTo(fileStream);
+                attachmentDto = new AttachmentDto();
+                attachmentDto.Content = inspectionUpload.Attachments[i];
+                attachmentDto.Id = inspectionUpload.AttachmentIds[i];
+                attachmentDto.Name = inspectionUpload.AttachmentNames[i];
+                attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
+                attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
+                var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
+
+
+
+
+                using var stream = new FileStream(path, FileMode.Create);
+                await attachmentDto.Content.CopyToAsync(stream);
+
+                attachmentDtos.Add(attachmentDto);
+                // Here you can persist metadata + file path to DB
             }
 
+            var command = new SendInspectionNotificationCommand
+            {
+                CreateInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
+                ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
+                CurrentCirculationDto = JsonConvert.DeserializeObject<CirculationDto>(inspectionUpload.currentCirculation),
+                AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
+            };
+            //var command = new SendInspectionNotificationCommand
+            //{
+            //    CreateInspectionNotificationDto = null,
+            //    ProjectDto = null,
+            //    CurrentCirculationDto = null,
+            //    AttachmentDtos = null
+            //};
+
+            var response = await _mediator.Send(command);
+            return Ok(response);
         }
-        var inspection = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionNotification["Inspection"]!);
-            var currentCirculation = JsonConvert.DeserializeObject<CirculationDto>(inspectionNotification["CurrentCirculation"]!);
-            var project = JsonConvert.DeserializeObject<ProjectDto>(inspectionNotification["Project"]!);
-            var command = new SendInspectionNotificationCommand { createInspectionNotificationDto = inspection!,currentCirculationDto = currentCirculation! ,ProjectDto = project};
-
-        var response = await _mediator.Send(command);
-
-        return Ok(attachments);
+        catch (Exception exp)
+        {
+            return Ok();
+        }
     }
-    catch (Exception ex)
-    {
-        return BadRequest();
-    }
-}
-}
 
+    //[Consumes("multipart/form-data")]
+    //[Produces("application/json")]
+    //[HttpPost("SendInspectionNotification")]
+    //public async Task<ActionResult> SendInspectionNotification([FromForm] CreateInspectionNotificationDto inspection,
+    //    [FromForm] ProjectDto project,
+    //    [FromForm] CirculationDto currentCirculation,
+    //    [FromForm] List<AttachmentDto> attachments)//([FromForm] List<AttachmentDto> attachments, IFormCollection inspectionNotification)
+    //{
+    //    try
+    //        {
+    //        var dtoAttachment = new AttachmentDto();
+          
+    //        //Debug.Write("File Name is: "+attachment.FileName);
+    //        //Debug.Write("File Type is: " + attachment.ContentType);
+    //        AttachmentDto[] attachmentDtos = new AttachmentDto[10];
+    //    //foreach (var attachment in attachments)
+    //    //{
+    //    //    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachment.Name));
+
+            
+    //    //        if (dtoAttachment.Content != null)
+    //    //        {
+    //    //            dtoAttachment.Id = Guid.NewGuid();
+    //    //            dtoAttachment.Version = attachment.Version;
+    //    //            dtoAttachment.Name = attachment.Name;
+    //    //            dtoAttachment.Description = attachment.Description;
+    //    //            using var ms = new MemoryStream();
+    //    //            await dtoAttachment.Content.CopyToAsync(ms);
+    //    //           attachmentDtos.Append(attachment);
+    //    //        }
+
+    //    //}
+    //    //var inspection = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionNotification["Inspection"]!);
+    //    //    var currentCirculation = JsonConvert.DeserializeObject<CirculationDto>(inspectionNotification["CurrentCirculation"]!);
+    //    //    var project = JsonConvert.DeserializeObject<ProjectDto>(inspectionNotification["Project"]!);
+    //    //    var command = new SendInspectionNotificationCommand { CreateInspectionNotificationDto = inspection!,CurrentCirculationDto = currentCirculation! ,ProjectDto = project,AttachmentDtos= attachmentDtos};
+
+    //   // var response = await _mediator.Send(command);
+
+    //    return Ok(true);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //    return BadRequest();
+    //    }
+    //}
+}
+public class InspectionUploadDto
+{
+    public string inspection { get; set; }
+     public string project { get; set; }
+      public string currentCirculation { get; set; }
+    public List<string> AttachmentIds { get; set; }
+    public List<string> AttachmentNames { get; set; }
+    public List<string> AttachmentVersions { get; set; }
+    public List<string> AttachmentDescriptions { get; set; }
+    public List<IFormFile> Attachments { get; set; }
+    //[ModelBinder(BinderType = typeof(AttachmentListBinder))]
+    //public List<AttachmentDto> Attachments { get; set; }
+
+}
 
 public class queryResult {
    public string newNotificationNumber { get; set; }

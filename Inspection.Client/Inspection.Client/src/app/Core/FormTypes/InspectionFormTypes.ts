@@ -15,7 +15,8 @@ export type FormAttachment = FormGroup<{
   id:FormControl<string>,
   version : FormControl<string>,
   name :FormControl<string>,
-  content:FormControl<Uint8Array[]>
+  content:FormControl<File>
+  description:FormControl<string>
 }>
 
 export type FormInspectionType = FormGroup<{
@@ -195,5 +196,11 @@ export type InspectionReportForm = FormGroup<{
     inspectorContacts:FormArray<FormContact>,
     relatedInspectionNotification:InspectionForm,
     relatedInspectionNotificationId: FormControl<string>,
-    inspectionReportAttachments: FormArray<FormAttachment>
+    inspectionReportAttachments: FormArray<FormAttachment>,
+    issueDate : FormControl<Date>,
+    persianIssueDate :FormControl<string>,
+    createdBy : FormControl<string>,
+    ReportNotes : FormControl<string>,
+    ReportType: FormControl<number> //Packing List = 1| Not Packing=0
+    // InspectorType : FormControl<number> //ThirdPart Inspector = 3 | SecondPart Inspector = 2
 }>

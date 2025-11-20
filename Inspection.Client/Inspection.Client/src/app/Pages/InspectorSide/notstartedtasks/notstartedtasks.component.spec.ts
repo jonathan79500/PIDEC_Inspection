@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewinspectionComponent } from './vnewinspection.component';
+import { NotstartedtasksComponent } from './notstartedtasks.component';
 
-describe('NewinspectionComponent', () => {
-  let component: NewinspectionComponent;
-  let fixture: ComponentFixture<NewinspectionComponent>;
+describe('NotstartedtasksComponent', () => {
+  let component: NotstartedtasksComponent;
+  let fixture: ComponentFixture<NotstartedtasksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewinspectionComponent]
+      imports: [NotstartedtasksComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NewinspectionComponent);
+    fixture = TestBed.createComponent(NotstartedtasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

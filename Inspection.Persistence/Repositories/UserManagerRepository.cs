@@ -269,6 +269,32 @@ namespace Inspection.Persistence.Repositories
                                 return (user, roles);
                             }
                         }
+                        else if (roles.Contains("PIDEC_Inspector") || roles.Contains("ThirdPart_Inspector"))
+                        {
+                            if (user.PasswordHash != null)
+                            {
+                                if (await userManager.CheckPasswordAsync(user, password) == true)
+                                {
+
+                                    userToken = tokenGenerator.GenerateToken(user, roles.ToList());
+                                    user.IsAuthenticated = true;
+                                    user.SetToken(userToken);
+                                    await userManager.SetAuthenticationTokenAsync(user, "bearer", "bearerToken", userToken);
+                                    return (user, roles);
+
+                                }
+                                else
+                                {
+                                    user.IsAuthenticated = false;
+                                    return (user, roles);
+                                }
+                            }
+                            else
+                            {
+                                user.IsAuthenticated = false;
+                                return (user, roles);
+                            }
+                        }
                         //if (await _userManager.CheckPasswordAsync(user, password) == true)
                         //{
 
@@ -542,8 +568,7 @@ namespace Inspection.Persistence.Repositories
         }
 
         public string GetContactTypeName_Code(int code)
-        {
-            string s = ContactType.Undefined.ToString();
+        {          
 
             switch (code)
             {
@@ -551,15 +576,20 @@ namespace Inspection.Persistence.Repositories
                 case 1: return "Owner";
                 case 2: return "Vendor";
                 case 3: return "MC";
-                case 4: return "PIDEC_TO";
+                case 4: return "QC_Manager";
                 case 5: return "Supplier";
                 case 6: return "SubSupplier";
-                case 7: return "PIDEC_CC";
+                case 7: return "QC_Lead";
                 case 8: return "PIDEC_Inspector";
                 case 9: return "ThirdPart_Inspector";
+                case 10: return "Department_Lead";
+                case 11: return "Department_Originator";
                 default: return "";
             }
 
+        }
+        public int GetRoleCode_RoleName(string RoleName) {
+            return int.Parse(_dbcontext.Roles.Where(r => r.Name == RoleName).FirstOrDefault().RoleCode);
         }
 
         public async Task<(SystematicUser, string)> RegisterNewUserByRandomPass(SystematicUser newUser, List<string> RoleNames)
@@ -639,7 +669,7 @@ namespace Inspection.Persistence.Repositories
                     createdUser.PhoneNumberConfirmed = true;
                    // createdUser.Token = "1";
                     createdUser.TwoFactorEnabled = true;
-                    createdUser.UserType = 2;
+                    createdUser.UserType = GetRoleCode_RoleName(RoleNames.First());
                     createdUser.Use_Id = 3;
                     createdUser.UserName = contactData.UserName;//prjContact.Name,
                     createdUser.Email = contactData.Email;

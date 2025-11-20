@@ -9,6 +9,7 @@ import { json } from 'stream/consumers';
 import { InspectionNotificationFlow } from '../Models/InspectionNotificationFlow.model';
 import { Project } from '../Models/Project.model';
 import { InspectionNotificationDataSummary } from '../Models/InspectionNotificationDataSummary.model';
+import { InspectionReport } from '../Models/InspectionReport.model';
 
 
 export interface queryNewInspectionReportNumberResult
@@ -87,23 +88,23 @@ export class InspectionReportService {
     return this.http.get<Inspection[]>(this.InspectionReportAPIPath+'/'+"GetAll");
   }
 
-   getInspectionListByProjectIdUserId(projectId:string,userId:string)
+   getInspectionReportsByInspectionId(InspectionNotificationId:string)
   {
-      const body = { projectId, userId };
+      const body = { InspectionNotificationId };
     //console.log("in Inspection Service")
-    return this.http.post<Inspection[]>(this.InspectionReportAPIPath+'/'+"GetReceivedInspectionsByProjectId_UserId",body);
+    return this.http.post<Inspection[]>(this.InspectionReportAPIPath+'/'+"GetInspectionReportByInspectionNotificationId",body);
   }
 
-  getInspectionById(inspectionId:string)
+  getInspectionReportById(inspectionId:string)
   {
     //console.log("in Inspection Service")
     const headers = new HttpHeaders();
     console.log('ins id',inspectionId);
-    return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
+    return this.http.post<InspectionReport>(this.InspectionReportAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
   }
 
 
-  getDraftedInspectionsByUserName(userName:string)
+  getDraftedReportsByUserName(userName:string)
   {
     //console.log("in Inspection Service")
     const body={ userName}
@@ -111,7 +112,7 @@ export class InspectionReportService {
     return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionReportAPIPath+'/'+"GetDraftedInspectionsByUserName", body);
   }
 
-  getSentInspectionsByUserName(userName:string)
+  getSavedtInspectionReportsByUserName(userName:string)
   {
     //console.log("in Inspection Service")
     const body={ userName}
@@ -119,50 +120,20 @@ export class InspectionReportService {
     return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionReportAPIPath+'/'+"GetSentInspectionsByUserName", body);
   }
 
-  getNotStartedInspectionsByUserName(userName:string)
+
+
+   saveNewInspectionReport(formData: FormData)
   {
-    //console.log("in Inspection Service")
-    const body={ userName}
     const headers = new HttpHeaders();
-    return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionReportAPIPath+'/'+"GetNotStartedInspectionsByUserName", body);
+     return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"SaveNewInspectionReport",formData,{ headers: headers });
   }
 
 
-  getInspectionByNotificationNumber(notificationNumber:string)
+  UpdateInspectionReport(updatedInspectionReport:InspectionReport)
   {
-    //console.log("in Inspection Service")
-    const headers = new HttpHeaders();
-    console.log('ins id',notificationNumber);
-    return this.http.post<InspectionNotificationFlow>(this.InspectionReportAPIPath+'/'+"GetInspectionByNumber",{'notificationNumber':notificationNumber} );
+
   }
-
-  saveNewInspection(newInspection: Inspection)
-  {
-    const headers = new HttpHeaders();
-
-    return this.http.post<any>(this.InspectionReportAPIPath+'/'+"SaveNew", newInspection,{ headers: headers } );
-  }
-
-   saveCirculationData(formData: FormData)
-  {
-    const headers = new HttpHeaders();
-
-     return this.http.post<Circulation>(this.InspectionReportAPIPath+'/'+"CompleteTask",formData,{ headers: headers });
-  }
-
-  // async saveNewInspectionFull(formData: FormData)
-  // {
-  //   return await lastValueFrom(this.http.post(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData))
-  // }
-
-
-   saveNewInspectionFull(formData: FormData)
-  {
-    const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"SendInspectionNotification",formData,{ headers: headers });
-  }
-
-  draftNewInspectionFull(formData: FormData)
+  draftNewInspectionReport(formData: FormData)
   {
      const headers = new HttpHeaders();
      return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"DraftInspectionNotification",formData,{ headers: headers });
@@ -170,20 +141,5 @@ export class InspectionReportService {
     //return await lastValueFrom()
   }
 
-  saveNeww()
-  {
-    const headers = new HttpHeaders();
 
-
-  var str = {
-    id :'a5dcc11b-846a-4d16-91e1-1dfb9b86c4e2',
-    name :'',
-         userName:'',
-         domainId:1,
-         Email :'',
-         Password :''
-  };
-
-    return this.http.post<any>(this.InspectionReportAPIPath+'/'+"SaveNeww", str,{ headers: headers } );
-  }
 }

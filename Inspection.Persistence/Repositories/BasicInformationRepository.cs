@@ -76,7 +76,7 @@ public class BasicInformationRepository : IBasicInformationRepository
         Order ExistedOrder = _dbcontext.Orders//.AsNoTracking()
                             .Include(o => o.Contacts)
                             .Include(o => o.Subjects)
-                            .FirstOrDefault(o => o.EdmsId == edmsId);
+                            .FirstOrDefault(o => o.EdmsId == edmsId);        
         return Task.FromResult(ExistedOrder);
     }
 
@@ -84,10 +84,20 @@ public class BasicInformationRepository : IBasicInformationRepository
         Order addedOrder;
         try
         {
-            _dbcontext.Entry(order.Project).State = EntityState.Unchanged;
-           addedOrder = _dbcontext.Orders.Add(order).Entity;
-            _dbcontext.SaveChanges();
-            return Task.FromResult(addedOrder);
+            _dbcontext.Projects.Attach(order.Project);
+            //_dbcontext.Entry(order.Project).State = EntityState.Unchanged;
+            Guid currentOrderId = order.OrderId.Value;
+            var existedOrder = _dbcontext.Orders.Where(ord => ord.OrderId == currentOrderId).FirstOrDefault();
+            if (existedOrder == null)
+            {
+                addedOrder = _dbcontext.Orders.Add(order).Entity;
+                _dbcontext.SaveChanges();
+                return Task.FromResult(addedOrder);
+            }
+            else
+            {
+                return Task.FromResult(existedOrder);
+            }
         }
         catch (Exception ex) {
             return null;
@@ -1698,6 +1708,9 @@ public class BasicInformationRepository : IBasicInformationRepository
     }
 
     public Task<bool> SaveOrderInspectionSubjects(List<InspectionSubject> InspectionSubjects, Order order) {
+
+        var trackedOrder = _dbcontext.Orders.Find(order.OrderId);
+
         InspectionSubject newInspectionSubject;
         for (int i = 0; i < InspectionSubjects.Count; i++)
         {
@@ -2926,6 +2939,23 @@ public class InspectionNotificationIdTypeHandler : SqlMapper.TypeHandler<Inspect
     }
 }
 
+public class InspectionReportIdTypeHandler : SqlMapper.TypeHandler<InspectionReportId>
+{
+    public override void SetValue(IDbDataParameter parameter, InspectionReportId value)
+    {
+        parameter.Value = value?.Value;
+    }
+
+    public override InspectionReportId Parse(object value)
+    {
+        if (value == null || value is DBNull)
+        {
+            return null; // or throw a custom exception if null is not acceptable in your domain
+        }
+        return InspectionReportId.Create(Guid.Parse(value.ToString()));
+    }
+}
+
 public class ProjectIdTypeHandler : SqlMapper.TypeHandler<ProjectId>
 {
     public override void SetValue(IDbDataParameter parameter, ProjectId value)
@@ -3009,3 +3039,21 @@ public class InspectionTypeIdTypeHandler : SqlMapper.TypeHandler<InspectionTypeI
         return InspectionTypeId.Create(Guid.Parse(value.ToString()));
     }
 }
+
+public class InspectionReportAttachmentIdTypeHandler : SqlMapper.TypeHandler<InspectionReportAttachmentId>
+{
+    public override void SetValue(IDbDataParameter parameter, InspectionReportAttachmentId value)
+    {
+        parameter.Value = value?.Value;
+    }
+
+    public override InspectionReportAttachmentId Parse(object value)
+    {
+        if (value == null || value is DBNull)
+        {
+            return null; // or throw a custom exception if null is not acceptable in your domain
+        }
+        return InspectionReportAttachmentId.Create(Guid.Parse(value.ToString()));
+    }
+}
+

@@ -51,10 +51,10 @@ export class LoginComponent  implements OnInit{
 
  generateUserForm():userForm{
   return this.builder.group({
-    //  userName:'1235-EL-509A-1345',
-    // password:'49gpa',
-    userName:'akbari.elahe',
-     password:'@2050926Rr',
+     userName:'1235-EL-509A-1345',
+    password:'49gpa',
+    // userName:'akbari.elahe',
+    //  password:'@2050926Rr',
     // //   userName:'monavari.ali',
 
     //password:'Z#6b^Fkd3#^g',
@@ -116,9 +116,9 @@ login() {
             //this.userService.ActivateOrderInInspectionSystem1(this.form.getRawValue()).subscribe((result)=>{console.log(result)});
             this.router.navigate(['pidecDept']);
           }
-           else if(lowerCaseUserRoles.includes('inspector'))
+           else if(lowerCaseUserRoles.includes('pidec_inspector') || lowerCaseUserRoles.includes('thirdpart_inspector'))
           {
-            this.InspectorState.SetBasicInspectorInfo(userData.InspectorInfo);
+            this.InspectorState.SetBasicInspectorInfo(userData.inspectorInfo);
             console.log("in login page_PIDECDeptInfo Codition",lowerCaseUserRoles);
             //this.userService.ActivateOrderInInspectionSystem1(this.form.getRawValue()).subscribe((result)=>{console.log(result)});
             this.router.navigate(['inspector']);

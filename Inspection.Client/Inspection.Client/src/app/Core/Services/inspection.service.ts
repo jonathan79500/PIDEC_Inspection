@@ -163,7 +163,7 @@ export class InspectionService {
    saveNewInspectionFull(formData: FormData)
   {
     const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData,{ headers: headers });
+     return this.http.post<Inspection>(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData);//,{ headers: headers });
   }
 
   draftNewInspectionFull(formData: FormData)

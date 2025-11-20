@@ -738,22 +738,6 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
               
                 inspectionNotification = InspectionNotification.CreateByUniqueId(rawinspectionNotification);
 
-            //_dbContext.Entry(inspectionNotification.Order.Project!).State = EntityState.Unchanged;
-            //_dbContext.Entry(inspectionNotification.Order!).State = EntityState.Unchanged;
-
-            //if (await _dbContext.Projects.AnyAsync(p =>
-            //p.FSId == _dbContext.Entry(inspectionNotification.Order!.Project).Entity.FSId))
-            //{
-
-            //    var prj = _dbContext.Projects.Where(prj => prj.FSId == _dbContext.Entry(inspectionNotification.Order!.Project).Entity.FSId).FirstOrDefault();
-            //    inspectionNotification.Order!.SetProject(prj);
-
-            //    _dbContext.Entry(inspectionNotification.Order.Project!).State = EntityState.Unchanged;
-
-            //}
-            //else
-            //    _dbContext.Entry(inspectionNotification.Order!.Project!).State = EntityState.Added;
-
             if (await _dbContext.Orders.AnyAsync(o =>
             o.EdmsId == _dbContext.Entry(inspectionNotification.Order).Entity.EdmsId))
             {
@@ -918,6 +902,8 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
                 }
 
+            
+
 
                 var entries = _dbContext.ChangeTracker.Entries().ToList();
                 foreach (var entry in entries)
@@ -953,7 +939,36 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     circulation.PerformedActionDateGregorian = currentTime;
                     circulation.PerformedActionDate = "";// persianDate.ToString();
                     inspectionNotification.Circulations!.Add(circulation);
+
+                _dbContext.SaveChanges();
+
+                foreach (Attachment attachment in inspectionNotification.Attachments!.ToList())
+                {
+
+                   // var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(atc => atc.Id.Value == attachment.Id.Value);
+                    var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(a => a.Id == attachment.Id);
+
+
+                    CirculationAttachments newCirculationAttachment = new CirculationAttachments();
+                    newCirculationAttachment.CirculationId = circulation.Id;
+                    _dbContext.Entry(circulation).State = EntityState.Unchanged;
+
+                    if (existingAttachment != null)
+                    {
+                        newCirculationAttachment.AttachmentId = existingAttachment.AttachmentId;                        
+                    }
+                    else
+                    {
+                        //Attachment newAttachment = new Attachment(attachment.AttachmentId);
+                        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0");
+                       // newAttachment = _dbContext.Attachments.Add(newAttachment).Entity;
+                        newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
+                        
+                    }
+                    _dbContext.CirculationAttachments.Add(newCirculationAttachment);
                 }
+
+            }
 
 
                 _dbContext.SaveChanges();

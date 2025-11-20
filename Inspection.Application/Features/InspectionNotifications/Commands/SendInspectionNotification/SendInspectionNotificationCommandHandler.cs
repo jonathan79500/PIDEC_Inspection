@@ -48,16 +48,16 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
     public async Task<InspectionNotification> Handle(SendInspectionNotificationCommand request, CancellationToken cancellationToken)
     {
         var validator = new CreateInspectionNotificationValidator();
-        var validationResult = await validator.ValidateAsync(request.createInspectionNotificationDto);
+        var validationResult = await validator.ValidateAsync(request.CreateInspectionNotificationDto);
         if (validationResult.IsValid != true)
         {
             throw new Exception();
         }
         
-        var InspectionNotification = request.createInspectionNotificationDto.Adapt<InspectionNotification>();
-        var currentCirculation = request.currentCirculationDto.Adapt<Circulation>();
+        var InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
+        var currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
         var project = request.ProjectDto.Adapt<Project>();
-
+        var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
 
         //var newinspectionNotification = await _inspectionNotificationRepository.SendNewInspectionNotification(InspectionNotification,project);
         //-------------------------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
         string newRevisedNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result.ToString();
         InspectionNotification.NotificationNumber = newRevisedNumber;
+        InspectionNotification.Attachments = attachments;
 
         try
         {

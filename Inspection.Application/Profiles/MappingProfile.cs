@@ -1,25 +1,26 @@
 ﻿//using AutoMapper;
-using Mapster;
 using Inspection.Application.DTOs;
 using Inspection.Application.DTOs.Common;
 using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.Common.ValueObjects;
+using Inspection.Domain.Entities.Contacts;
+using Inspection.Domain.Entities.EDMS;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
+using Inspection.Domain.Entities.InspectionNotification.Enums;
+using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.Orders;
 using Inspection.Domain.Entities.Projects;
 using Inspection.Domain.Entities.User.Enums;
+using Inspection.Domain.Entities.ValueObjects;
+using Inspection.Domain.Entities.Vendor;
+using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Inspection.Domain.Entities.Vendor;
-using Inspection.Domain.Entities.Common.ValueObjects;
-using Inspection.Domain.Entities.ValueObjects;
-using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
-using Inspection.Domain.Entities.EDMS;
-using Inspection.Domain.Entities.Contacts;
-using Inspection.Domain.Entities.InspectionNotification.Enums;
-
 
 namespace Inspection.Application.Profiles;
 
@@ -35,7 +36,12 @@ public class MappingProfile : IRegister
         else
             return 0;
     }
-
+    private static byte[] ReadFileBytes(IFormFile file)
+    {
+        using var ms = new MemoryStream();
+        file.CopyTo(ms);
+        return ms.ToArray();
+    }
     public void Register(TypeAdapterConfig config)
     {
         TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.Compile();
@@ -50,14 +56,25 @@ public class MappingProfile : IRegister
             .Map(dest => dest.Id, src => src.AttachmentId.Value) // Map AttachmentId to Id
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Description, src => src.Description)
-            .Map(dest => dest.Content, src => src.Content);
+            .IgnoreNonMapped(true);
 
         // Optional reverse mapping: Map AttachmentDto back to Attachment
         TypeAdapterConfig<AttachmentDto, Attachment>.NewConfig()
-            .Map(dest => dest.AttachmentId, src => new AttachmentId(src.Id)) // Map Id to AttachmentId
-            .IgnoreNonMapped(true);
+            .Map(dest => dest.AttachmentId, src =>(src.Id == Guid.Empty.ToString() || src.Id==null) ? new AttachmentId(Guid.NewGuid()) : new AttachmentId(new Guid(src.Id))) // Map Id to AttachmentId
 
-       
+             .Map(dest => dest.Name, src => src.Name)
+             .Map(dest=>dest.Version , src=>src.Version == null ? "0" : src.Version)
+            .Map(dest => dest.Description, src => src.Description)
+           .Map(dest => dest.Content, src => src.Content != null
+                ? ReadFileBytes(src.Content)
+                : Array.Empty<byte>())
+            .IgnoreNonMapped(true)
+             .AfterMapping((src, dest) =>
+             {
+                 dest.Id = dest.AttachmentId;
+             });
+
+
 
         // Map Circulation to CirculationDto
         TypeAdapterConfig<Circulation, CirculationDto>.NewConfig()
@@ -580,7 +597,7 @@ public class MappingProfile : IRegister
           .Map(dest => dest.CreatedBy, src => src.CreatedBy)
           .Map(dest => dest.ModifiedBy, src => src.ModifiedBy)
           .Map(dest => dest.PersianIssueDate, src => src.PersianIssueDate)
-          .Map(dest => dest.Attachments, src => src.Attachments.Adapt<List<AttachmentDto>>()) // Map Attachments to AttachmentDto list
+         // .Map(dest => dest.Attachments, src => src.Attachments.Adapt<List<AttachmentDto>>()) // Map Attachments to AttachmentDto list
           .Map(dest => dest.InspectionSubjects, src => src.Subjects == null ? new List<InspectionSubjectDto>() : src.Subjects.Adapt<List<InspectionSubjectDto>>()) // Map Subjects
           .Map(dest => dest.InspectionTypes, src => src.Types == null ? new List<InspectionTypeDto>() : src.Types.Adapt<List<InspectionTypeDto>>()) // Map Types
           .Map(dest => dest.Circulations, src => src.Circulations == null ? new List<CirculationDto>() : src.Circulations.Adapt<List<CirculationDto>>()) // Map Types
@@ -608,7 +625,7 @@ public class MappingProfile : IRegister
           .Map(dest => dest.CreatedBy, src => src.CreatedBy)
           .Map(dest => dest.ModifiedBy, src => src.ModifiedBy)
           .Map(dest => dest.PersianIssueDate, src => src.PersianIssueDate)
-          .Map(dest => dest.Attachments, src => src.Attachments.Adapt<List<AttachmentDto>>()) // Map Attachments to AttachmentDto list
+          //.Map(dest => dest.Attachments, src => src.Attachments.Adapt<List<AttachmentDto>>()) // Map Attachments to AttachmentDto list
           .Map(dest => dest.Subjects, src => src.InspectionSubjects == null ? new List<InspectionNotificationSubject>() : src.InspectionSubjects.Adapt<List<InspectionNotificationSubject>>())
            .Map(dest => dest.Types, src => src.InspectionTypes == null ? new List<InspectionNotificationType>() : src.InspectionTypes.Adapt<List<InspectionNotificationType>>())
            .Map(dest => dest.Circulations, src => src.Circulations == null ? new List<Circulation>() : src.Circulations.Adapt<List<Circulation>>()) // Map Types

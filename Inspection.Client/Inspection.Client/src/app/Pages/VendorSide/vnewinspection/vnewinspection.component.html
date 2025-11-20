@@ -1,511 +1,317 @@
-<form id="newInspection" *ngIf="inspectionForm" [formGroup]="inspectionForm">
-  <fieldset class="newInspectionform">
-    <div class="subSection">
-      <fieldset id="GeneralInfo" style="flex: 1; width: 100%">
-        <div style="display: flex; flex-direction: row">
-          <div style="flex: 5; flex-direction: column; width: 100%">
-            <div class="grid-container dates">
-              <div class="label">Notification No:</div>
-              <div class="control">
-                <input
-                  id="notificationNumber"
-                  name="notificationNumber"
-                  type="text"
-                  class="theInputs"
-                  [formControl]="inspectionForm?.controls?.notificationNumber"
-                />
-              </div>
-            </div>
+<form
+  id="newInspection"
+  *ngIf="inspectionForm"
+  [formGroup]="inspectionForm"
+  class="inspection-form"
+>
+  <fieldset class="section">
+    <legend>General Information</legend>
+    <div class="form-group">
+      <label for="notificationNumber">Notification No:</label>
+      <input
+        id="notificationNumber"
+        type="text"
+        formControlName="notificationNumber"
+        class="input"
+      />
+    </div>
 
-            <div class="rows">
-              <div class="columns">
-                <div *ngIf="inspectionForm" class="date-picker-container">
-                  <label for="IssueDate" class="theLabels">Issue Date:</label>
-                  <ng-persian-datepicker
-                    class="date-toggle"
-                    [uiTheme]="uiTheme"
-                    [timeEnable]="timeEnable"
-                    [timeMeridian]="timeMeridian"
-                    [uiTodayBtnEnable]="uiTodayBtnEnable"
-                    [dateFormat]="'jYYYY/jMM/jDD'"
-                    [dateInitValue]="false"
-                    (dateOnSelect)="onIssueDateSelect($event)"
-                    [matTooltip]="formattedPersianIssueDate"
-                    matTooltipPosition="above"
-                    [ngClass]="{ 'no-click': !editMode }"
-                  >
-                    <input
-                      type="text"
-                      class="theInputs"
-                      name="persianIssueDate"
-                      formControlName="persianIssueDate"
-                      [ngClass]="{ 'no-click': !editMode }"
-                      style="width: 10rem !important; direction: ltr"
-                    />
-                  </ng-persian-datepicker>
-                </div>
-                <div class="date-picker-container">
-                  <input
-                    matInput
-                    [matDatepicker]="IssueDatepicker"
-                    formControlName="issueDate"
-                    name="IssueDatepicker"
-                    class="theInputs"
-                    placeholder="MM/DD/YYYY"
-                    [value]="inspectionForm?.controls?.
+    <div class="form-group">
+      <label for="issueDate">Issue Date:</label>
+      <ng-persian-datepicker
+        class="date-toggle"
+        [uiTheme]="uiTheme"
+        [timeEnable]="timeEnable"
+        [timeMeridian]="timeMeridian"
+        [uiTodayBtnEnable]="uiTodayBtnEnable"
+        [dateFormat]="'jYYYY/jMM/jDD'"
+        [dateInitValue]="false"
+        (dateOnSelect)="onIssueDateSelect($event)"
+        [matTooltip]="formattedPersianIssueDate"
+        matTooltipPosition="above"
+        [ngClass]="{ 'no-click': !editMode }"
+      >
+        <input
+          type="text"
+          class="theInputs"
+          name="persianIssueDate"
+          formControlName="persianIssueDate"
+          [ngClass]="{ 'no-click': !editMode }"
+          style="width: 10rem !important; direction: ltr"
+        />
+      </ng-persian-datepicker>
+
+      <input
+        matInput
+        [matDatepicker]="IssueDatepicker"
+        formControlName="issueDate"
+        name="IssueDatepicker"
+        class="theInputs"
+        placeholder="MM/DD/YYYY"
+        [value]="inspectionForm?.controls?.
                     ['issueDate']
                     .value
                     "
-                    (dateChange)="setPersianIssueDate($event)"
-                    [disabled]="!editMode"
-                    style="width: 10rem !important; direction: ltr"
-                    [matTooltip]="formattedGregorianIssueDate"
-                    matTooltipPosition="above"
-                  />
-                  <mat-datepicker-toggle
-                    matSuffix
-                    class="date-toggle"
-                    [disabled]="!editMode"
-                    [for]="IssueDatepicker"
-                    (select)="setPersianIssueDate($event)"
-                  >
-                  </mat-datepicker-toggle>
-                  <mat-datepicker #IssueDatepicker></mat-datepicker>
-                </div>
-              </div>
-            </div>
+        (dateChange)="setPersianIssueDate($event)"
+        [disabled]="!editMode"
+        style="width: 10rem !important; direction: ltr"
+        [matTooltip]="formattedGregorianIssueDate"
+        matTooltipPosition="above"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        class="date-toggle"
+        [disabled]="!editMode"
+        [for]="IssueDatepicker"
+        (select)="setPersianIssueDate($event)"
+      >
+      </mat-datepicker-toggle>
+      <mat-datepicker #IssueDatepicker></mat-datepicker>
+    </div>
 
-            <div class="rows">
-              <div class="columns date-picker-wrapper">
-                <!-- <div class="form-section"> -->
-                <!-- <div class="grid-container dates"> -->
-                <div *ngIf="inspectionForm" class="date-picker-container">
-                  <label class="theLabels">Inspection Period From:</label>
-                  <ng-persian-datepicker
-                    class="date-toggle"
-                    [uiTheme]="uiTheme"
-                    [timeEnable]="timeEnable"
-                    [timeMeridian]="timeMeridian"
-                    [uiTodayBtnEnable]="uiTodayBtnEnable"
-                    [dateFormat]="'jYYYY/jMM/jDD'"
-                    [dateInitValue]="false"
-                    (dateOnSelect)="onRequestInspectionDateStartSelect($event)"
-                    [matTooltip]="formattedPersianReqStartDate"
-                    matTooltipPosition="above"
-                    [ngClass]="{ 'no-click': !editMode }"
-                  >
-                    <input
-                      type="text"
-                      class="theInputs"
-                      [disabled]="!editMode"
-                      name="RequestInspectionPersianDateStart"
-                      formControlName="RequestInspectionPersianDateStart"
-                      [ngClass]="{ 'no-click': !editMode }"
-                      style="width: 6rem !important; direction: ltr"
-                    />
-                  </ng-persian-datepicker>
-                </div>
-                <div class="date-picker-container">
-                  <input
-                    matInput
-                    [matDatepicker]="RequestInspectionDateStartDatePicker"
-                    formControlName="RequestInspectionDateStart"
-                    name="RequestInspectionDateStartDatePicker"
-                    class="theInputs"
-                    placeholder="MM/DD/YYYY"
-                    [value]="inspectionForm?.controls?.['RequestInspectionDateStart']
+    <div class="form-group-inline">
+      <label>Inspection Period:</label>
+      <div class="form-group">
+        <label>From:</label>
+        <ng-persian-datepicker
+          class="date-toggle"
+          [uiTheme]="uiTheme"
+          [timeEnable]="timeEnable"
+          [timeMeridian]="timeMeridian"
+          [uiTodayBtnEnable]="uiTodayBtnEnable"
+          [dateFormat]="'jYYYY/jMM/jDD'"
+          [dateInitValue]="false"
+          (dateOnSelect)="onRequestInspectionDateStartSelect($event)"
+          [matTooltip]="formattedPersianReqStartDate"
+          matTooltipPosition="above"
+          [ngClass]="{ 'no-click': !editMode }"
+        >
+          <input
+            type="text"
+            class="theInputs"
+            [disabled]="!editMode"
+            name="RequestInspectionPersianDateStart"
+            formControlName="RequestInspectionPersianDateStart"
+            [ngClass]="{ 'no-click': !editMode }"
+            style="width: 6rem !important; direction: ltr"
+          />
+        </ng-persian-datepicker>
+
+        <input
+          matInput
+          [matDatepicker]="RequestInspectionDateStartDatePicker"
+          formControlName="RequestInspectionDateStart"
+          name="RequestInspectionDateStartDatePicker"
+          class="theInputs"
+          placeholder="MM/DD/YYYY"
+          [value]="inspectionForm?.controls?.['RequestInspectionDateStart']
                         .value
                     "
-                    (dateChange)="setRequestInspectionPersianDateStart($event)"
-                    style="width: 6rem !important; direction: ltr"
-                    [disabled]="!editMode"
-                    [matTooltip]="formattedGregorianReqStartDate"
-                    matTooltipPosition="above"
-                  />
-                  <mat-datepicker-toggle
-                    matSuffix
-                    class="date-toggle"
-                    [disabled]="!editMode"
-                    [for]="RequestInspectionDateStartDatePicker"
-                    (select)="setRequestInspectionPersianDateStart($event)"
-                  >
-                  </mat-datepicker-toggle>
-                  <mat-datepicker
-                    #RequestInspectionDateStartDatePicker
-                  ></mat-datepicker>
-                </div>
-                <div *ngIf="inspectionForm" class="date-picker-container">
-                  <label class="theLabels">To:</label>
-                  <ng-persian-datepicker
-                    class="date-toggle"
-                    [uiTheme]="uiTheme"
-                    [timeEnable]="timeEnable"
-                    [timeMeridian]="timeMeridian"
-                    [uiTodayBtnEnable]="uiTodayBtnEnable"
-                    [dateFormat]="'jYYYY/jMM/jDD'"
-                    [dateInitValue]="false"
-                    (dateOnSelect)="onRequestInspectionDateEndSelect($event)"
-                    [matTooltip]="formattedPersianReqEndDate"
-                    matTooltipPosition="above"
-                    [ngClass]="{ 'no-click': !editMode }"
-                  >
-                    <input
-                      type="text"
-                      class="theInputs"
-                      name="RequestInspectionPersianDateEnd"
-                      formControlName="RequestInspectionPersianDateEnd"
-                      [disabled]="!editMode"
-                      [ngClass]="{ 'no-click': !editMode }"
-                      style="width: 6rem !important; direction: ltr"
-                    />
-                  </ng-persian-datepicker>
-                </div>
-                <div *ngIf="inspectionForm" class="date-picker-container">
-                  <input
-                    matInput
-                    [matDatepicker]="RequestInspectionDateEndDatePicker"
-                    formControlName="RequestInspectionDateEnd"
-                    name="RequestInspectionDateEndDatePicker"
-                    class="theInputs"
-                    placeholder="MM/DD/YYYY"
-                    [value]="
-                      inspectionForm.controls['RequestInspectionDateEnd'].value
-                    "
-                    (dateChange)="setRequestInspectionPersianDateEnd($event)"
-                    style="width: 6rem !important; direction: ltr"
-                    [disabled]="!editMode"
-                    [matTooltip]="formattedGregorianReqEndDate"
-                    matTooltipPosition="above"
-                  />
-                  <mat-datepicker-toggle
-                    matSuffix
-                    [for]="RequestInspectionDateEndDatePicker"
-                    [disabled]="!editMode"
-                    class="date-toggle"
-                    (select)="setRequestInspectionPersianDateEnd($event)"
-                  >
-                  </mat-datepicker-toggle>
-                  <mat-datepicker
-                    #RequestInspectionDateEndDatePicker
-                  ></mat-datepicker>
-                </div>
-              </div>
-              <!-- </div> -->
-            </div>
-            <div class="rows">
-              <div class="columns date-picker-wrapper">
-                <div class="date-picker-container">
-                  <label class="theLabels inline-label">=</label>
-                  <input
-                    formControlName="RequestInspectionDueDate"
-                    style="width: 5rem !important; direction: ltr"
-                  />
-                  <label class="theLabels inline-label">Days</label>
-                </div>
-              </div>
-            </div>
-            <div class="rows">
-              <div class="columns">
-                <div class="date-picker-container">
-                  <input
-                    class="theInputs"
-                    style="width: 3rem"
-                    formControlName="RequestInspectionTimesInPeriod"
-                  />
-                  <label class="theLabels"> Times in </label>
-                  <input
-                    class="theInputs"
-                    style="width: 3rem"
-                    formControlName="RequestInspectionPeriodDays"
-                    value="7"
-                  />
-                  <label class="theLabels"> Days </label>
-                </div>
-              </div>
-            </div>
-            <div class="grid-container">
-              <div style="grid-column: span 17">
-                -------------------------------------------------------------------------------------
-              </div>
-            </div>
-            <!-- <div class="rows" formArrayName="inspectionTypes">
-              <div class="columns">
-                <label for="InspectionTypes" class="theLabels"
-                  >INSPECTION TYPE :</label
-                >
-                <div class="checkbox-container">
-                  <div
-                    *ngFor="
-                      let inspectionType of inspectionTypesFormArray.controls;
-                      let i = index
-                    "
-                    class="checkbox-item"
-                  >
-                    <div [formGroup]="inspectionType">
-                      <input
-                        formControlName="selected"
-                        type="checkbox"
-                        (change)="onInspectionTypeChange(i)"
-                      />
-                      {{ inspectionType!.get("name")!.value }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-             -->
-
-            <!-- The FormArray for inspectionTypes -->
-            <div class="rows" formArrayName="inspectionTypes">
-              <div class="columns">
-                <label for="InspectionTypes" class="theLabels">
-                  INSPECTION TYPE :
-                </label>
-                <div class="checkbox-container">
-                  <div
-                    *ngFor="
-                      let inspectionType of filteredInspectionTypesFormArray!;
-                      let i = index
-                    "
-                    class="checkbox-item"
-                  >
-                    <div [formGroup]="inspectionType">
-                      <input
-                        formControlName="selected"
-                        type="checkbox"
-                        (change)="onInspectionTypeChange(i)"
-                      />
-                      {{ inspectionType?.get("name")?.value }}
-                    </div>
-                  </div>
-                </div>
-                <!-- New input section for adding an inspection type -->
-                <div class="newInputBlock">
-                  <!-- Using ngModel for simplicity; make sure to import FormsModule -->
-                  <input
-                    type="text"
-                    style="width: 150px"
-                    placeholder="new Inspection Type"
-                    [(ngModel)]="newInspectionType"
-                    [ngModelOptions]="{ standalone: true }"
-                  />
-                  <img
-                    src="../../../assets/pluss011.png"
-                    (click)="addInspectionType()"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-container">
-              <div style="grid-column: span 17; width: 100%">
-                -------------------------------------------------------------------------------------
-              </div>
-            </div>
-            <div class="rows" formArrayName="inspectionSubjects">
-              <div class="columns">
-                <label for="inspectionSubjects" class="theLabels"
-                  >INSPECTION Subject :</label
-                >
-                <div class="checkbox-container">
-                  <div
-                    *ngFor="
-                      let inspectionSubject of filteredInspectionSubjectsFormArray!;
-                      let i = index
-                    "
-                    class="checkbox-item"
-                  >
-                    <div [formGroup]="inspectionSubject">
-                      <input
-                        formControlName="selected"
-                        type="checkbox"
-                        (change)="onInspectionSubjectChange(i)"
-                      />
-                      {{ inspectionSubject?.get("name")?.value }}
-                    </div>
-                  </div>
-                </div>
-                <!-- New input section for adding an inspection type -->
-                <div class="newInputBlock">
-                  <!-- Using ngModel for simplicity; make sure to import FormsModule -->
-                  <input
-                    type="text"
-                    style="width: 150px"
-                    placeholder="new Inspection Subject"
-                    [(ngModel)]="newInspectionSubject"
-                    [ngModelOptions]="{ standalone: true }"
-                  />
-                  <img
-                    src=".../../../assets/pluss011.png"
-                    (click)="addInspectionSubject()"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style="flex: 1; width: 20vw" *ngIf="!editMode">
-            <div class="columns">
-              <div id="sign" class="submitArea">
-                <!-- <img src=".../../../assets/logo1.jpg" /> -->
-                <label>
-                  {{
-                    inspectionForm.get("ModifiedDate")?.value
-                      | date : "yyyy-MM-dd"
-                  }}
-                </label>
-                <label>
-                  {{ inspectionForm.get("ModifiedBy")?.value }}
-                </label>
-                <label> Submitted </label>
-              </div>
-            </div>
-          </div>
-          <div style="flex: 1; width: 20vw" *ngIf="editMode">
-            <div class="columns">
-              <div id="Submit" class="submitArea">
-                <button
-                  type="submit"
-                  (click)="SaveNewInspection()"
-                  class="submintButton"
-                  [hidden]="!editMode"
-                >
-                  submit
-                </button>
-              </div>
-            </div>
-            <div class="columns">
-              <div id="Draft" class="submitArea">
-                <button
-                  type="submit"
-                  (click)="DraftNewInspection()"
-                  class="submintButton"
-                  [hidden]="!editMode"
-                >
-                  save & Draft
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </fieldset>
-    </div>
-    <div class="subSection">
-      <fieldset name="toFieldset" style="flex: 1; white-space: nowrap">
-        <legend>
-          <!-- <img
-            style="cursor: pointer"
-            src="../../../../assets/search.png"
-            (click)="openToContactSelector()"
-          /> -->
-          <!-- <button mat-raised-button (click)="openContactSelector()">To</button> -->
-        </legend>
-
-        <div style="display: flex; color: black; align-items: center">
-          <div style="flex: 0.25">
-            <span class="theLabels" style="width: 50px">New</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels"> Name</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Email</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Phone</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Mobile</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Attention</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">CC</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Fax</span>
-          </div>
-          <div style="flex: 1">
-            <span class="theLabels">Remove</span>
-          </div>
-        </div>
-        <div
-          style="display: flex; align-items: center"
-          formArrayName="pidecContacts"
-          *ngFor="
-            let contact of pidecContactsFormArray!;
-            let indexOfelement = index
-          "
+          (dateChange)="setRequestInspectionPersianDateStart($event)"
+          style="width: 6rem !important; direction: ltr"
+          [disabled]="!editMode"
+          [matTooltip]="formattedGregorianReqStartDate"
+          matTooltipPosition="above"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          class="date-toggle"
+          [disabled]="!editMode"
+          [for]="RequestInspectionDateStartDatePicker"
+          (select)="setRequestInspectionPersianDateStart($event)"
         >
-          <ng-container [formGroup]="contact">
-            <div style="flex: 0.25">
-              <img
-                src="../../../assets/pluss011.png"
-                (click)="addNewToContact()"
-              />
-            </div>
-
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="name"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="email"
-                style="width: 70%"
-                (change)="changeContactEmail(indexOfelement)"
-              />
-            </div>
-
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="phone"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="mobile"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="attention"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="cc"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <input
-                class="theInputs"
-                formControlName="fax"
-                style="width: 70%"
-              />
-            </div>
-            <div style="flex: 1">
-              <img
-                src="../../../assets/RedDelete.png"
-                (click)="removeToContact(indexOfelement)"
-              />
-            </div>
-          </ng-container>
+        </mat-datepicker-toggle>
+        <mat-datepicker #RequestInspectionDateStartDatePicker></mat-datepicker>
+      </div>
+      <div *ngIf="inspectionForm" class="form-group">
+        <label class="theLabels">To:</label>
+        <ng-persian-datepicker
+          class="date-toggle"
+          [uiTheme]="uiTheme"
+          [timeEnable]="timeEnable"
+          [timeMeridian]="timeMeridian"
+          [uiTodayBtnEnable]="uiTodayBtnEnable"
+          [dateFormat]="'jYYYY/jMM/jDD'"
+          [dateInitValue]="false"
+          (dateOnSelect)="onRequestInspectionDateEndSelect($event)"
+          [matTooltip]="formattedPersianReqEndDate"
+          matTooltipPosition="above"
+          [ngClass]="{ 'no-click': !editMode }"
+        >
+          <input
+            type="text"
+            class="theInputs"
+            name="RequestInspectionPersianDateEnd"
+            formControlName="RequestInspectionPersianDateEnd"
+            [disabled]="!editMode"
+            [ngClass]="{ 'no-click': !editMode }"
+            style="width: 6rem !important; direction: ltr"
+          />
+        </ng-persian-datepicker>
+        <div *ngIf="inspectionForm" class="date-picker-container">
+          <input
+            matInput
+            [matDatepicker]="RequestInspectionDateEndDatePicker"
+            formControlName="RequestInspectionDateEnd"
+            name="RequestInspectionDateEndDatePicker"
+            class="theInputs"
+            placeholder="MM/DD/YYYY"
+            [value]="inspectionForm.controls['RequestInspectionDateEnd'].value"
+            (dateChange)="setRequestInspectionPersianDateEnd($event)"
+            style="width: 6rem !important; direction: ltr"
+            [disabled]="!editMode"
+            [matTooltip]="formattedGregorianReqEndDate"
+            matTooltipPosition="above"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="RequestInspectionDateEndDatePicker"
+            [disabled]="!editMode"
+            class="date-toggle"
+            (select)="setRequestInspectionPersianDateEnd($event)"
+          >
+          </mat-datepicker-toggle>
+          <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
         </div>
-      </fieldset>
+      </div>
+      <!-- </div> -->
     </div>
+    <div class="rows">
+      <div class="columns date-picker-wrapper">
+        <div class="date-picker-container">
+          <label class="theLabels inline-label">=</label>
+          <input
+            formControlName="RequestInspectionDueDate"
+            style="width: 5rem !important; direction: ltr"
+          />
+          <label class="theLabels inline-label">Days</label>
+        </div>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="columns">
+        <div class="date-picker-container">
+          <input
+            class="theInputs"
+            style="width: 3rem"
+            formControlName="RequestInspectionTimesInPeriod"
+          />
+          <label class="theLabels"> Times in </label>
+          <input
+            class="theInputs"
+            style="width: 3rem"
+            formControlName="RequestInspectionPeriodDays"
+            value="7"
+          />
+          <label class="theLabels"> Days </label>
+        </div>
+      </div>
+    </div>
+
+    <fieldset class="section" formArrayName="inspectionTypes">
+      <legend>Inspection Types</legend>
+      <div class="checkbox-list">
+        <div
+          *ngFor="let type of inspectionTypesFormArray.controls; let i = index"
+          [formGroup]="type"
+          class="checkbox-item"
+        >
+          <input
+            type="checkbox"
+            formControlName="selected"
+            (change)="onInspectionTypeChange(i)"
+          />
+          {{ type.get("name")?.value }}
+        </div>
+      </div>
+      <div class="add-item">
+        <input
+          type="text"
+          [(ngModel)]="newInspectionType"
+          placeholder="New Inspection Type"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <button type="button" class="btn-primary" (click)="addInspectionType()">
+          +
+        </button>
+      </div>
+    </fieldset>
+
+    <fieldset class="section" formArrayName="inspectionSubjects">
+      <legend>Inspection Subjects</legend>
+      <div class="checkbox-list">
+        <div
+          *ngFor="
+            let subject of inspectionSubjectsFormArray.controls;
+            let i = index
+          "
+          [formGroup]="subject"
+          class="checkbox-item"
+        >
+          <input
+            type="checkbox"
+            formControlName="selected"
+            (change)="onInspectionSubjectChange(i)"
+          />
+          {{ subject.get("name")?.value }}
+        </div>
+      </div>
+      <div class="add-item">
+        <input
+          type="text"
+          [(ngModel)]="newInspectionSubject"
+          placeholder="New Inspection Subject"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="addInspectionSubject()"
+        >
+          +
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- Contacts -->
+    <fieldset class="section" formArrayName="pidecContacts">
+      <legend>Contacts</legend>
+      <div
+        *ngFor="let contact of pidecContactsFormArray.controls; let i = index"
+        [formGroup]="contact"
+        class="contact-row"
+      >
+        <input formControlName="name" placeholder="Name" class="input small" />
+        <input
+          formControlName="email"
+          placeholder="Email"
+          class="input small"
+        />
+        <input
+          formControlName="phone"
+          placeholder="Phone"
+          class="input small"
+        />
+        <input
+          formControlName="mobile"
+          placeholder="Mobile"
+          class="input small"
+        />
+        <input
+          formControlName="attention"
+          placeholder="Attention"
+          class="input small"
+        />
+        <input formControlName="cc" placeholder="CC" class="input small" />
+        <input formControlName="fax" placeholder="Fax" class="input small" />
+        <button type="button" class="btn-danger" (click)="removeToContact(i)">
+          ✖
+        </button>
+      </div>
+      <button type="button" class="btn-secondary" (click)="addNewToContact()">
+        Add Contact
+      </button>
+    </fieldset>
     <div class="subSection">
       <fieldset
         style="flex: 2; white-space: nowrap"
@@ -550,125 +356,28 @@
         </div>
       </fieldset>
     </div>
-    <!-- <div class="subSection">
-      <fieldset
-        style="flex: 1; white-space: nowrap"
-        [formGroup]="inspectionForm.controls.owner"
-      >
-        <div class="rows">
-          <div class="columns">
-            <label for="OwnerJobNo" class="theLabels">Owner:</label>
-            <input id="OwnerJobNo" class="theInputs" formControlName="name" />
-          </div>
-        </div>
-        <div class="rows">
-          <div class="columns">
-            <label for="OwnerJobNo" class="theLabels">Project:</label>
-            <input
-              id="OwnerJobNo"
-              class="theInputs"
-              formControlName="project"
-            />
-          </div>
-        </div>
-        <div class="rows">
-          <div class="columns">
-            <label for="OwnerJobNo" class="theLabels">Owner Job No:</label>
-            <input
-              id="OwnerJobNo"
-              class="theInputs"
-              formControlName="ownerJobNo"
-            />
-          </div>
-        </div>
-        <div class="rows">
-          <div class="columns">
-            <label for="PIDECJobNo" class="theLabels">PIDEC Job No: </label>
-            <input
-              id="PIDECJobNo"
-              class="theInputs"
-              formControlName="pidecJobNo"
-            />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset style="flex: 1; white-space: nowrap">
-        <div class="rows">
-          <div class="columns">
-            <label for="supplier" class="theLabels">Supplier: </label>
-            <input id="supplier" class="theInputs" formControlName="supplier" />
-          </div>
-        </div>
-        <div class="rows">
-          <div class="columns">
-            <label for="subsupplier" class="theLabels">Sub Supplier: </label>
-            <input
-              id="subsupplier"
-              class="theInputs"
-              formControlName="sub_supplier"
-            />
-          </div>
-        </div>
-      </fieldset>
-    </div> -->
 
-    <div class="subSection">
-      <fieldset
-        style="flex: 2; white-space: nowrap"
-        [formGroup]="inspectionForm.controls.location"
-      >
-        <legend>Location Of Inspection</legend>
-        <div class="row">
-          <div class="col-md-1">
-            <label for="locCountry" class="theLabels">Country :</label>
-          </div>
-          <div class="col-md-5">
-            <input
-              id="locCountry"
-              class="theInputs"
-              formControlName="country"
-            />
-          </div>
-          <div class="col-md-1">
-            <label for="locState" class="theLabels">State :</label>
-          </div>
-          <div class="col-md-5">
-            <input id="locState" class="theInputs" formControlName="state" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1">
-            <label for="locCity" class="theLabels">City :</label>
-          </div>
-          <div class="col-md-5">
-            <input id="locCity" class="theInputs" formControlName="city" />
-          </div>
-          <div class="col-md-1">
-            <label for="locZipCode" class="theLabels">ZipCode :</label>
-          </div>
-          <div class="col-md-5">
-            <input
-              id="locZipCode"
-              class="theInputs"
-              formControlName="zipCode"
-            />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1">
-            <label for="locAddress" class="theLabels">Address :</label>
-          </div>
-          <div class="col-md-11">
-            <input
-              id="locAddress"
-              class="theInputs"
-              formControlName="address"
-              style="width: 70%"
-            />
-          </div>
-        </div>
-      </fieldset>
-    </div>
+    <!-- Location -->
+    <fieldset class="section" [formGroup]="inspectionForm.controls.location">
+      <legend>Location Of Inspection</legend>
+      <div class="form-group-inline">
+        <label>Country:</label>
+        <input formControlName="country" class="input" />
+        <label>State:</label>
+        <input formControlName="state" class="input" />
+      </div>
+      <div class="form-group-inline">
+        <label>City:</label>
+        <input formControlName="city" class="input" />
+        <label>Zip Code:</label>
+        <input formControlName="zipCode" class="input" />
+      </div>
+      <div class="form-group">
+        <label>Address:</label>
+        <input formControlName="address" class="input" />
+      </div>
+    </fieldset>
+
     <div class="subSection">
       <fieldset
         style="flex: 1; white-space: nowrap"
@@ -821,40 +530,94 @@
     </div>
 
     <div class="subSection">
-      <div style="flex: 1">
-        <div style="display: flex; flex-direction: row">
-          <div style="flex: 3">
-            <!-- <button
-              class="theLabels"
-              style="text-wrap: wrap"
-              (click)="AttachDocument()"
-            >
-              Vendor DOC. FOR EXECUTION OF APPLIED INSPECTION
-            </button> -->
+      <div class="upload-card">
+        <!-- Upload input -->
+        <div class="upload-body">
+          <input
+            type="file"
+            multiple
+            (change)="onFilesPicked($event)"
+            class="upload-input"
+          />
+        </div>
 
-            <input type="file" multiple (change)="onDocPicked($event)" />
-            <!-- <app-cfile-upload></app-cfile-upload> -->
-            <!-- <app-primeng-fileupload></app-primeng-fileupload> -->
-            <!-- <app-upload-files></app-upload-files> -->
-            <!-- <input type="file" #filePicker (change)="onDocPicked($event)" /> -->
-          </div>
-          <div style="flex: 1">
-            <label class="theLabels" style="text-wrap: wrap"
-              >WORK PROGRESS</label
-            >
-          </div>
+        <!-- Editable table -->
+        <div formArrayName="attachments">
+          <table class="upload-table" *ngIf="Attachments.controls.length > 0">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let fileCtrl of Attachments.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <td>{{ fileCtrl.get("name")?.value }}</td>
+                <td>
+                  <input
+                    type="text"
+                    formControlName="description"
+                    placeholder="Enter description"
+                  />
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="delete-btn"
+                    (click)="removeFile(i)"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <!-- <div style="flex: 3">
-        <div class="AttachedDocsWrapper">
-          <div class="docGridWrapper">
-            <div id="docGrid" class="ag-theme-quartz"></div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
-    <!-- <div class="subSection">
+    <!-- Signature area (shown after submit) -->
+    <div class="submit-wrapper" *ngIf="!editMode">
+      <div class="submit-card">
+        <div class="submit-info">
+          <span class="submit-date">
+            {{
+              inspectionForm.get("ModifiedDate")?.value | date : "yyyy-MM-dd"
+            }}
+          </span>
+          <span class="submit-user">
+            {{ inspectionForm.get("ModifiedBy")?.value }}
+          </span>
+          <span class="submit-status">Submitted ✔</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button area (shown in edit mode) -->
+    <div class="submit-wrapper" *ngIf="editMode">
+      <div class="submit-card">
+        <button
+          type="submit"
+          (click)="SaveNewInspection()"
+          class="submit-btn primary"
+        >
+          Submit
+        </button>
+        <button
+          type="submit"
+          (click)="DraftNewInspection()"
+          class="submit-btn secondary"
+        >
+          Save & Draft
+        </button>
+      </div>
+    </div>
+  </fieldset>
+  <!-- <div class="subSection">
       <div style="flex: 3">
         <label
           >1. This notification shall be submitted 4 working days prior to the
@@ -874,5 +637,4 @@
         >
       </div>
     </div> -->
-  </fieldset>
 </form>

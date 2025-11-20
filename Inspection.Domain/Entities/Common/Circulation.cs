@@ -15,8 +15,8 @@ namespace Inspection.Domain.Entities.Common
 {
     public class Circulation :BaseDomainEntity<Guid>
     {
-        public Circulation() { 
-        
+        public Circulation() :base(){ 
+       
            
         }
        // public Request? Request { get; set; }
@@ -36,14 +36,17 @@ namespace Inspection.Domain.Entities.Common
         //[NotMapped]
         public InspectionNotification.Entities.InspectionNotification InspectionNotification { get; set; }
 
+        public List<CirculationInspector> Inspectors { get; set; }
+
         public static Circulation CreateNew(InspectionNotification.Entities.InspectionNotification inspectionNotification,Contact creatorContactPerson)
         {          
           
 
             string currentDate = "";
             return new Circulation()
-            {                
-                InspectionNotification = inspectionNotification, 
+            {
+                Id = Guid.NewGuid(),
+                InspectionNotification = inspectionNotification,
                 ActionType = ActionTypes.CreateInspection.GetHashCode(),
                 PerformerContactPerson = creatorContactPerson,
                 SequenceNo = 0,
@@ -58,13 +61,14 @@ namespace Inspection.Domain.Entities.Common
             string currentDate = "";
             return new Circulation()
             {
+                Id = Guid.NewGuid(),
                 InspectionNotification = inspectionNotification,
                 ActionType = null,
                 PerformerContactPerson = contactPerson,
                 SequenceNo = 1,
                 PerformedActionDate = null,
                 PerformedActionDateGregorian = null,
-                PerformerContactType= contactPerson.ContactType,
+                PerformerContactType = contactPerson.ContactType,
                 Comment = ""
             };
         }

@@ -24,46 +24,54 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
 
     private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
     {
-        
+        // Instead of OwnsMany, configure a one-to-many relationship
+        builder.HasMany(inf => inf.Attachments)
+               .WithOne() // or .WithOne(a => a.InspectionNotification) if you add a navigation back
+               .HasForeignKey("InspectionNotificationId");
 
-        builder.OwnsMany(inf => inf.Attachments
-        , 
-            atb =>
-            {
-                atb.ToTable("Attachments");
+        // optional: configure navigation access mode
+        builder.Navigation(i => i.Attachments)
+               .HasField("_attachments")
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-              
-                //or
-                atb.HasKey(nameof(Attachment.Id), "InspectionNotificationId");
+        //builder.OwnsMany(inf => inf.Attachments
+        //, 
+        //    atb =>
+        //    {
+        //        atb.ToTable("Attachments");
 
-                atb.WithOwner().HasForeignKey("InspectionNotificationId");
 
-                var converter = new ValueConverter<AttachmentId, Guid>(
-                 id => id.Value,
-                  guidValue => AttachmentId.Create(guidValue));
+        //        //or
+        //        atb.HasKey(nameof(Attachment.Id), "InspectionNotificationId");
 
-                atb.Property(a => a.Id)
-                    .HasColumnName("Id")
-                    .ValueGeneratedNever()
-                    .HasConversion(converter);
+        //        atb.WithOwner().HasForeignKey("InspectionNotificationId");
 
-              //  atb.HasKey("AttachmentId", "InspectionNotificationId");
+        //        var converter = new ValueConverter<AttachmentId, Guid>(
+        //         id => id.Value,
+        //          guidValue => AttachmentId.Create(guidValue));
 
-                atb.Property(a => a.Name).HasMaxLength(100);
-                atb.Property(a => a.Description).HasMaxLength(255);
-                atb.Property(a => a.PDFSize).HasMaxLength(20);
-                atb.Property(a => a.Content).HasColumnType("image");               
-                atb.Property(e => e.CreatedBy).HasMaxLength(100);
-                atb.Property(e => e.ModifiedBy).HasMaxLength(100);
+        //        atb.Property(a => a.Id)
+        //            .HasColumnName("Id")
+        //            .ValueGeneratedNever()
+        //            .HasConversion(converter);
 
-                // if attchment record had many children so again like above we could define atb.OwnsMany(....) and etc
-            }
-        );
+        //      //  atb.HasKey("AttachmentId", "InspectionNotificationId");
 
-        builder.Navigation(i => i.Attachments).Metadata.SetField("_attachments");
-       // builder.Navigation(i => i.InspectionNotificationContacts).Metadata.SetField("_contacts");
-        builder.Metadata.FindNavigation(nameof(InspectionNotification.Attachments))!.SetPropertyAccessMode(PropertyAccessMode.Field);
-        //builder.Metadata.FindNavigation(nameof(InspectionNotification.InspectionNotificationContacts))!.SetPropertyAccessMode(PropertyAccessMode.Field);
+        //        atb.Property(a => a.Name).HasMaxLength(100);
+        //        atb.Property(a => a.Description).HasMaxLength(255);
+        //        atb.Property(a => a.PDFSize).HasMaxLength(20);
+        //        atb.Property(a => a.Content).HasColumnType("image");               
+        //        atb.Property(e => e.CreatedBy).HasMaxLength(100);
+        //        atb.Property(e => e.ModifiedBy).HasMaxLength(100);
+
+        //        // if attchment record had many children so again like above we could define atb.OwnsMany(....) and etc
+        //    }
+        //);
+
+        //builder.Navigation(i => i.Attachments).Metadata.SetField("_attachments");
+
+        //builder.Metadata.FindNavigation(nameof(InspectionNotification.Attachments))!.SetPropertyAccessMode(PropertyAccessMode.Field);
+
     }
 
     private void ConfigureInspectionNotificationTable(EntityTypeBuilder<InspectionNotification> builder)
