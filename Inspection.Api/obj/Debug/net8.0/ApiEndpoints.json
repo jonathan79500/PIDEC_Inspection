@@ -1026,6 +1026,22 @@
   },
   {
     "ContainingType": "Inspection.Api.Controllers.InspectionNotificationController",
+    "Method": "Download",
+    "RelativePath": "api/InspectionNotification/GetAttachmentById/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionNotificationController",
     "Method": "GetDraftedInspectionsByUserName",
     "RelativePath": "api/InspectionNotification/GetDraftedInspectionsByUserName",
     "HttpMethod": "POST",

@@ -24,15 +24,15 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
 
     private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
     {
-        // Instead of OwnsMany, configure a one-to-many relationship
-        builder.HasMany(inf => inf.Attachments)
-               .WithOne() // or .WithOne(a => a.InspectionNotification) if you add a navigation back
-               .HasForeignKey("InspectionNotificationId");
+        //// Instead of OwnsMany, configure a one-to-many relationship
+        //builder.HasMany(inf => inf.Attachments)
+        //       .WithOne() // or .WithOne(a => a.InspectionNotification) if you add a navigation back
+        //       .HasForeignKey("InspectionNotificationId");
 
-        // optional: configure navigation access mode
-        builder.Navigation(i => i.Attachments)
-               .HasField("_attachments")
-               .UsePropertyAccessMode(PropertyAccessMode.Field);
+        //// optional: configure navigation access mode
+        //builder.Navigation(i => i.Attachments)
+        //       .HasField("_attachments")
+        //       .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         //builder.OwnsMany(inf => inf.Attachments
         //, 

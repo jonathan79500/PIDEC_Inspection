@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
 
-public class SendInspectionNotificationCommand : IRequest<InspectionNotification>
+public class SendInspectionNotificationCommand : IRequest<(InspectionNotificationDto,CirculationDto)>
 {
     public CreateInspectionNotificationDto CreateInspectionNotificationDto { get; set; }
     public ProjectDto ProjectDto { get; set; }

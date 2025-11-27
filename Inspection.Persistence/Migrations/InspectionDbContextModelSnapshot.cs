@@ -106,7 +106,10 @@ namespace Inspection.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CirculationId")
+                    b.Property<Guid?>("CirculationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("AttachmentId");
@@ -185,7 +188,7 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CreatorContactPersonContactId")
+                    b.Property<Guid?>("CreatorContactPersonContactId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ModifiedBy")
@@ -269,10 +272,9 @@ namespace Inspection.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DomainId")
@@ -297,10 +299,9 @@ namespace Inspection.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -327,15 +328,18 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("AttachmentId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
+                        .HasColumnName("AttachmentId");
 
                     b.Property<string>("Base64Content")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("Content")
                         .HasColumnType("image");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -351,9 +355,6 @@ namespace Inspection.Persistence.Migrations
 
                     b.Property<string>("DownloadUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("InspectionNotificationId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
@@ -377,9 +378,7 @@ namespace Inspection.Persistence.Migrations
                     b.Property<string>("edmsId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("InspectionNotificationId");
+                    b.HasKey("AttachmentId");
 
                     b.ToTable("Attachments", (string)null);
                 });
@@ -484,7 +483,7 @@ namespace Inspection.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ContactId")
+                    b.Property<Guid?>("ContactId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
@@ -494,7 +493,7 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("InspectionNotificationId")
+                    b.Property<Guid?>("InspectionNotificationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ModifiedBy")
@@ -1412,11 +1411,18 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.CirculationAttachments", b =>
                 {
-                    b.HasOne("Inspection.Domain.Entities.Common.Circulation", "Circulation")
-                        .WithMany()
-                        .HasForeignKey("CirculationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", "Attachment")
+                        .WithMany("Circulations")
+                        .HasForeignKey("AttachmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Inspection.Domain.Entities.Common.Circulation", "Circulation")
+                        .WithMany("Attachments")
+                        .HasForeignKey("CirculationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Attachment");
 
                     b.Navigation("Circulation");
                 });
@@ -1442,9 +1448,7 @@ namespace Inspection.Persistence.Migrations
                 {
                     b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "CreatorContactPerson")
                         .WithMany()
-                        .HasForeignKey("CreatorContactPersonContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorContactPersonContactId");
 
                     b.Navigation("CreatorContactPerson");
                 });
@@ -1456,13 +1460,6 @@ namespace Inspection.Persistence.Migrations
                         .HasForeignKey("AddressId");
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", b =>
-                {
-                    b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("InspectionNotificationId");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
@@ -1492,15 +1489,11 @@ namespace Inspection.Persistence.Migrations
                 {
                     b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "Contact")
                         .WithMany("InspectionNotifications")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContactId");
 
                     b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", "InspectionNotification")
                         .WithMany("Contacts")
-                        .HasForeignKey("InspectionNotificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InspectionNotificationId");
 
                     b.Navigation("Contact");
 
@@ -1760,6 +1753,8 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.Circulation", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("Inspectors");
                 });
 
@@ -1784,10 +1779,13 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("Projects");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.Attachment", b =>
+                {
+                    b.Navigation("Circulations");
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", b =>
                 {
-                    b.Navigation("Attachments");
-
                     b.Navigation("Circulations");
 
                     b.Navigation("Contacts");

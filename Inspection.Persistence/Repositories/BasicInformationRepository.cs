@@ -61,10 +61,15 @@ public class BasicInformationRepository : IBasicInformationRepository
         return Task.FromResult(projects);
     }
 
+    public Task<Attachment> GetAttachmentById(Guid id) {
+        AttachmentId attachmentId = new AttachmentId(id);
+       return Task.FromResult(_dbcontext.Attachments.FirstOrDefault(a => a.AttachmentId == attachmentId));
+    }
+
     public Task<List<VendorDocument>> GetVendorDocumentsByOrder(Contact vendor, Order order)
     {
         List<VendorDocument> vendorDocuments = _dbcontext.Contacts
-                                                                .Where(v => v.Id == vendor.Id).FirstOrDefault()!.Orders
+                                                                .Where(v => v.ContactId == vendor.ContactId).FirstOrDefault()!.Orders
                                                                 .Where(ord => ord.Id == order.Id).FirstOrDefault()!.Order.VendorDocuments.ToList();
 
      
@@ -273,7 +278,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                {
                    orderContact.OrderId = OrderId.Create(new Guid(orderContact.OrderId.Value.ToString()));
                }
-               orderContact.ContactId = contact.Id;
+               orderContact.ContactId = contact.ContactId;
                orderContact.Id = orderContact.Id;
                return orderContact;
            },
@@ -1593,7 +1598,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         Contact newContact;
                         for (int i = 0; i < orderContacts.Length; i++)
                         {
-                            var returnedContact = dbContext.Contacts.Where(contact => contact.ContactId == orderContacts[i].Id).ToList();
+                            var returnedContact = dbContext.Contacts.Where(contact => contact.ContactId == orderContacts[i].ContactId).ToList();
                             if (returnedContact.Count==0) 
                                 {
                                     newContact = new Contact();
@@ -1640,7 +1645,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         Guid exceptionContactId = Guid.Empty;
                         for (int i = 0; i < exceptionContacts.Length; i++)
                         {
-                            exceptionContactId = exceptionContacts[i].Id;
+                            exceptionContactId = exceptionContacts[i].ContactId;
                             prjContact = dbContext.ProjectContacts.Where(pc => pc.ContactId == exceptionContactId && pc.ProjectId == order.Project.Id).FirstOrDefault();
                             if (prjContact != null)
                             {
@@ -1751,7 +1756,7 @@ public class BasicInformationRepository : IBasicInformationRepository
         Contact newContact;
         for (int i = 0; i < contacts.Count; i++)
         {
-            var returnedContact = _dbcontext.Contacts.Where(contact => (contact.ContactId == contacts[i].Id || contact.UserName == contacts[i].UserName)).ToList();
+            var returnedContact = _dbcontext.Contacts.Where(contact => (contact.ContactId == contacts[i].ContactId || contact.UserName == contacts[i].UserName)).ToList();
             if (returnedContact.Count == 0)
             {
                 newContact = new Contact();
@@ -1812,7 +1817,7 @@ public class BasicInformationRepository : IBasicInformationRepository
         Guid exceptionContactId = Guid.Empty;
         for (int i = 0; i < exceptionContacts.Count; i++)
         {
-            exceptionContactId = exceptionContacts[i].Id;
+            exceptionContactId = exceptionContacts[i].ContactId;
             prjContact = _dbcontext.ProjectContacts.Where(pc => pc.ContactId == exceptionContactId && pc.ProjectId == order.Project.Id).FirstOrDefault();
             if (prjContact != null)
             {
@@ -2999,11 +3004,11 @@ public class ContactIdTypeHandler : SqlMapper.TypeHandler<ContactId>
     public override ContactId Parse(object value)
     {
         if (value == null || value is DBNull)
-        {
-            return null; // or throw a custom exception if null is not acceptable in your domain
-        }
-        return ContactId.Create(Guid.Parse(value.ToString()));
+            throw new InvalidOperationException("Cannot map null to ContactId");
+
+        return ContactId.Create((Guid)value);
     }
+
 }
 
 public class InspectionSubjectIdTypeHandler : SqlMapper.TypeHandler<InspectionSubjectId>
@@ -3022,7 +3027,22 @@ public class InspectionSubjectIdTypeHandler : SqlMapper.TypeHandler<InspectionSu
         return InspectionSubjectId.Create(Guid.Parse(value.ToString()));
     }
 }
+public class AttachmentIdTypeHandler : SqlMapper.TypeHandler<AttachmentId>
+{
+    public override void SetValue(IDbDataParameter parameter, AttachmentId value)
+    {
+        parameter.Value = value?.Value;
+    }
 
+    public override AttachmentId Parse(object value)
+    {
+        if (value == null || value is DBNull)
+        {
+            return null; // or throw a custom exception if null is not acceptable in your domain
+        }
+        return AttachmentId.Create(Guid.Parse(value.ToString()));
+    }
+}
 public class InspectionTypeIdTypeHandler : SqlMapper.TypeHandler<InspectionTypeId>
 {
     public override void SetValue(IDbDataParameter parameter, InspectionTypeId value)

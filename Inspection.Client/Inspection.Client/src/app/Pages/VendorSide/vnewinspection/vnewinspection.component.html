@@ -556,12 +556,20 @@
                 *ngFor="let fileCtrl of Attachments.controls; let i = index"
                 [formGroupName]="i"
               >
-                <td>{{ fileCtrl.get("name")?.value }}</td>
+                <td>
+                  <a
+                    [href]="fileCtrl.get('downloadUrl')?.value"
+                    (click)="fetchFile(fileCtrl.get('id')?.value)"
+                    target="_blank"
+                    >{{ fileCtrl.get("name")?.value }}</a
+                  >
+                </td>
                 <td>
                   <input
                     type="text"
                     formControlName="description"
                     placeholder="Enter description"
+                    [disabled]="!editMode"
                   />
                 </td>
                 <td>
@@ -569,6 +577,7 @@
                     type="button"
                     class="delete-btn"
                     (click)="removeFile(i)"
+                    [hidden]="!editMode"
                   >
                     Delete
                   </button>
@@ -638,3 +647,76 @@
       </div>
     </div> -->
 </form>
+<div class="comment-section">
+  <!--*ngIf="currentCirculation">-->
+  <!-- Toggle to show/hide all comments -->
+  <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle>
+
+  <!-- Responsive grid of comment cards -->
+  <div class="comment-grid">
+    <mat-card
+      *ngFor="let circulation of requestCirculations"
+      class="comment-card"
+    >
+      <!-- Card header -->
+      <mat-card-header>
+        <mat-card-title>
+          {{ circulation.performerContactPerson.name }}'s Comment
+        </mat-card-title>
+      </mat-card-header>
+
+      <!-- Card content -->
+      <mat-card-content>
+        <!-- Comment input -->
+        <input
+          [(ngModel)]="circulation.comment"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          class="comment-body"
+          type="text"
+          placeholder="please insert your comment before be late"
+        />
+
+        <!-- Upload button -->
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="onUploadFile(circulation)"
+        >
+          <mat-icon>attach_file</mat-icon> Upload File
+        </button>
+
+        <!-- Uploaded files indicator -->
+        <div *ngIf="circulation.attachments?.length > 0" class="file-indicator">
+          📎 {{ circulation.attachments.length }} file(s) uploaded
+        </div>
+
+        <!-- Optional: show filenames as chips -->
+        <mat-chip-listbox>
+          <mat-chip *ngFor="let file of circulation.attachments">
+            {{ file.name }}
+          </mat-chip>
+        </mat-chip-listbox>
+      </mat-card-content>
+
+      <!-- Action buttons -->
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onAction(circulation, 1)"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+        >
+          Approve
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="onAction(circulation, 0)"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+        >
+          Not Approve
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

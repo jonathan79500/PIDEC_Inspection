@@ -17,6 +17,11 @@ import { MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/d
 import { MatDatepickerModulePersian } from 'ngx-persian-datepicker';
 import { MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { toGregorian, toJalaali } from 'jalaali-js';
+import { IsActiveForUserPipe } from '../../../Core/General/Pipes/is-active-for-user.pipe';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatButtonModule} from '@angular/material/button';
 //import {GregorianDateWithMonthNamePipe} from '../../../Core/General/Pipes/gregorian-date-with-month-name.pipe';
 
 import {    ColDef,ColGroupDef,  DataChangedEvent,  FirstDataRenderedEvent,  GridApi,
@@ -113,7 +118,7 @@ export const MY_FORMATS: MatDateFormats = {
 
 @Component({
     selector: 'app-newinspection',
-    imports: [CommonModule, ReactiveFormsModule, FormsModule,  NgPersianDatepickerModule, MatDatepickerModule,MatFormFieldModule,MatTooltipModule],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule,MatChipsModule,MatButtonModule,MatIconModule,MatCardModule,IsActiveForUserPipe,  NgPersianDatepickerModule, MatDatepickerModule,MatFormFieldModule,MatTooltipModule],
     templateUrl: './vnewinspection.component.html',
     styleUrl: './vnewinspection.component.css',
     encapsulation: ViewEncapsulation.None,
@@ -128,6 +133,8 @@ export class VnewinspectionComponent implements OnInit{
   newInspection !:Inspection ;
   attachedDocs: File[];
   formData : FormData;
+  circulationData: FormData;
+  requestCirculations: Circulation[];
   readonly dialog = inject(MatDialog);
   injector = inject(Injector);
   Project:Project;
@@ -167,6 +174,7 @@ newInspectionSubject:string ='';
 currentCirculation : Circulation;
 orderSettingsExceptions:OrderSettingsException[];
 currentOrderExceptionContacts: ProjectContact[];
+
 // Add this to your component
 private gregorianMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -192,6 +200,8 @@ private gregorianMonthNames = [
   constructor(private activatedRoute: ActivatedRoute,private inspectionService:InspectionService,private formBuilder:FormBuilder,private toastr:ToastrService,private cdr: ChangeDetectorRef) {
 
     this.formData = new FormData();
+      this.circulationData = new FormData();
+
     this.initialInspectionInfo = activatedRoute.snapshot.data['inspectionInfo'];
     this.currentVendorData = this.currentAppState.vendorData();
     this.currentProject = this.currentAppState.currentproject();
@@ -208,6 +218,67 @@ private gregorianMonthNames = [
     }
   }
 
+   isActiveForCurrentUser(circulation: Circulation) : boolean{
+  if(circulation.performerContactPerson.id == this.currentCirculation.performerContactPerson.id && circulation.actionType ==null)
+    return true;
+  return false;
+}
+
+onAction(circulation: Circulation,actionType: number) {
+
+  if(actionType == 1)
+    {
+    this.currentCirculation.actionType = 1;
+    this.currentCirculation.comment =  circulation.comment;
+    }
+
+  this.circulationData.delete("circulation");
+  this.circulationData.append("circulation",JSON.stringify(this.currentCirculation));
+  this.inspectionService.saveCirculationData(this.circulationData).subscribe((savedCirculation)=>{
+    if(savedCirculation)
+    {
+      this.currentCirculation.actionType= savedCirculation.actionType;
+      this.currentCirculation.performedActionDate = savedCirculation.performedActionDate;
+      this.currentCirculation.performedActionDateGregorian = savedCirculation.performedActionDateGregorian;
+    }
+  });
+
+}
+
+onUploadFile(circulation: any): void {
+    // Create a hidden file input dynamically
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+
+    fileInput.onchange = (event: any) => {
+      const files: FileList = event.target.files;
+
+      if (!circulation.attachments) {
+        circulation.attachments = [];
+      }
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i);
+        if (file) {
+          // Push file metadata into attachments array
+          circulation.attachments.push({
+            id:'',
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file
+          });
+        }
+      }
+    };
+
+    // Trigger the file picker
+    fileInput.click();
+  }
+
+  showAll = true;
+
 toggleEditMode(on: boolean) {
   this.editMode = on;
   const CtrlRequestInspectionPersianDateStart = this.inspectionForm.get('RequestInspectionPersianDateStart');
@@ -216,15 +287,17 @@ toggleEditMode(on: boolean) {
 
   const CtrlpersianIssueDate = this.inspectionForm.get('persianIssueDate');
 
-
   if (on) {
     CtrlRequestInspectionPersianDateStart?.enable();
     CtrlRequestInspectionPersianDateEnd?.enable();
     CtrlpersianIssueDate?.enable();
+    this.Attachments.enable();
+
   } else {
     CtrlRequestInspectionPersianDateStart?.disable();
     CtrlRequestInspectionPersianDateEnd?.disable();
     CtrlpersianIssueDate?.disable();
+    this.Attachments.disable();
   }
 }
   ngAfterViewInit() {
@@ -277,6 +350,8 @@ toggleEditMode(on: boolean) {
       this.inspectionService.getInspectionById(inspectionNotificationId).subscribe((inspection)=>{
 
        this.formData.append('readInspection',JSON.stringify(inspection));
+
+       this.generateInspectionFromValue(inspection);
 
       });
         }
@@ -648,8 +723,21 @@ removeToContact(contactIndex:number):void
       version:[''] ,
       name:[''],
       content: [],
-      description:['']
+      description:[''],
+      downloadUrl:['']
     });
+  }
+
+  generateAttachmentFromValue(attachment:Attachment):FormTypes.FormAttachment{
+
+    return this.formBuilder.group({
+      id: [attachment.id],
+      version:[attachment.version],
+      content:[attachment.content],
+      description:[attachment.description],
+      name:[attachment.name],
+      downloadUrl:[attachment.downloadUrl]
+    })
   }
 
   generateOrder():FormTypes.FormOrder{
@@ -807,10 +895,14 @@ console.log('current vendor:',this.currentVendorData);
 
 
      currentOrderContacts = this.currentAppState.vendorBasicInfo().orderContacts?.filter((ordercontact)=>ordercontact.orderId==currentOrder.id);
+     let idsToExclude = null;
+      if(this.currentOrderExceptionContacts != undefined)
+         idsToExclude = new Set(this.currentOrderExceptionContacts.map(item => item.id));
 
-     const idsToExclude = new Set(this.currentOrderExceptionContacts.map(item => item.id));
-
-     currentProjectContacts = this.currentAppState.vendorBasicInfo().projectContacts?.filter((projectContact)=>projectContact.projectId==this.currentProject.id && !idsToExclude.has(projectContact.id));
+      if(idsToExclude != null)
+          currentProjectContacts = this.currentAppState.vendorBasicInfo().projectContacts?.filter((projectContact)=>projectContact.projectId==this.currentProject.id && !idsToExclude.has(projectContact.id));
+      else
+          currentProjectContacts = this.currentAppState.vendorBasicInfo().projectContacts?.filter((projectContact)=>projectContact.projectId==this.currentProject.id);
 
        this.currentContacts = currentOrderContacts.map((ordercontact)=>ordercontact.contact)
        this.currentContacts = this.currentContacts.concat(currentProjectContacts.map((projectcontact)=>projectcontact.contact));
@@ -864,6 +956,8 @@ generateInspectionFromValue(inspection :Inspection):void
   //first should initialize form based on inspection order
 
 this.initializeInspectionForm(inspection.order);
+
+this.requestCirculations = inspection.circulations;
 
   this.inspectionForm =  this.formBuilder.group({
 
@@ -1051,23 +1145,23 @@ return this.formBuilder.group({
 
   generateContactFromContactValue(contact:Contact):FormTypes.FormContact{
     return this.formBuilder.group({
-      id:contact.id,
-      attention:contact.attention,
-      cc:contact.cc,
-      email:contact.email,
-      fax:contact.fax,
-      name:contact.name,
-      phone:contact.phone,
-      contactType:contact.contactType,
-      mobile:contact.mobile,
-      homePage:contact.homePage,
+      id:[contact.id],
+      attention:[contact.attention],
+      cc:[contact.cc],
+      email:[contact.email],
+      fax:[contact.fax],
+      name:[contact.name],
+      phone:[contact.phone],
+      contactType:[contact.contactType],
+      mobile:[contact.mobile],
+      homePage:[contact.homePage],
       address:this.generateAddressFromAddressValue(contact.address),
-      userId:contact.userId,
+      userId:[contact.userId],
       isVisible:[true],
-      password:contact.password,
-      belongedTo:contact.belongedTo
-    })
-  }
+      password:[contact.password],
+      belongedTo:[contact.belongedTo]
+  })
+}
   generateLocation():FormTypes.FormLocation{
     return this.formBuilder.group({
       address:'',
@@ -1485,7 +1579,8 @@ onFilesPicked(event: Event): void {
         description: [''],
         content: [file],
         id:[''],
-        version:['']
+        version:[''],
+        downloadUrl:['']
 
       })
     );
@@ -1579,20 +1674,47 @@ removeFile(index: number): void {
     this.formData.append('AttachmentDescriptions', description);
   }
 });
-    this.inspectionService.saveNewInspectionFull(this.formData).subscribe((sentInspection)=>{
-      this.editMode = false;
-      this.toggleEditMode(false);
+    this.inspectionService.saveNewInspectionFull(this.formData).subscribe((result)=>{
+
+
       this.inspectionForm.patchValue({
-        ...this.inspectionForm.getRawValue(),
-        id:sentInspection.id,
-        contacts:sentInspection.contacts,
-        inspectionSubjects: sentInspection.inspectionSubjects,
-        inspectionTypes:sentInspection.inspectionTypes,
-        attachments :[...sentInspection.attachments]
+        //...this.inspectionForm.getRawValue(),
+        id:result.inspection.id,
+        contacts:result.inspection.contacts,
+        inspectionSubjects: result.inspection.inspectionSubjects,
+        inspectionTypes:result.inspection.inspectionTypes,
+        //attachments :sentInspection.attachments
       })
+      this.Attachments.clear();
+      this.currentCirculation = result.currentCirculation;
+
+ if(this.currentCirculation != null){
+    this.currentCirculation.attachments.forEach((ra)=>{
+      this.Attachments.push(this.generateAttachmentFromValue(ra));
+    })
+ }
+  this.toggleEditMode(false);
+
+//       const attachmentsArray = this.inspectionForm.get('attachments') as FormArray;
+//this.Attachments.clear();
+// sentInspection.attachments.forEach(a => this.Attachments.push(  this.formBuilder.group({
+//         name: [a.name],
+//         description: [a.description],
+//         content: [a.content],
+//         id:[a.id],
+//         version:[a.version],
+//         downloadUrl:[a.id]
+//       })
+//     )
+//   );
+
     });
   }
 
+  fetchFile(id){
+    this.inspectionService.FetchFileFromServer(id);
+
+  }
   DraftNewInspection():void
   {
     console.log("in draft :", this.inspectionForm.getRawValue());
@@ -1688,7 +1810,7 @@ let findedInsSubject = null;
         contacts:savedNewInspection.contacts,
        // inspectionSubjects: savedNewInspection.inspectionSubjects,
        // inspectionTypes:savedNewInspection.inspectionTypes,
-        attachments :savedNewInspection.attachments
+      //  attachments :savedNewInspection.attachments
       })
   });
 

@@ -42,7 +42,7 @@ namespace Inspection.Application.DTOs.InspectionRequest
         public List<InspectionSubjectDto>? InspectionSubjects { get; set; }
         public List<ContactDto>? Contacts { get; set; }
         public ContactType? ContactType { get; private set; }
-        public List<AttachmentDto>? Attachments { get; set; }
+        //public List<AttachmentDto>? Attachments { get; set; }
         public List<CirculationDto>? Circulations { get; set; }
 
     }

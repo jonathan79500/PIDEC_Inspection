@@ -24,7 +24,7 @@ export interface Inspection{
    ownerId :string,
    inspectionSubjects: InspectionSubject[],
    inspectionTypes:InspectionType[],
-   attachments:Attachment[],
+   //attachments:Attachment[],
    contractShippingDueDate:Date | undefined,
    actualShippingDueDate:Date | undefined,
    proposedDate:Date | undefined,

@@ -18,9 +18,9 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 {
     Task<InspectionNotification> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
 
-    Task<InspectionNotification> CreateNewInspectionNotification(InspectionNotification inspectionNotification);
+    Task<(InspectionNotification,Circulation)> CreateNewInspectionNotification(InspectionNotification inspectionNotification,List<Attachment> attachments);
 
-    Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project);
+    //Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project);
 
     Task<NotificationNumber> GenerateNewNotificationNumber(string projectNumber, string orderNumber);
 

@@ -115,7 +115,7 @@ namespace Inspection.Infrastructure.EDMS
             {
                 orderContact = new OrderContact();
                 orderContact.Contact= contact;
-                orderContact.ContactId = contact.Id;
+                orderContact.ContactId = contact.ContactId;
                 orderContact.Order  = orders[i];
                 orderContact.OrderId = orders[i].OrderId;
                 orderContacts.Add(orderContact);

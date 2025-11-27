@@ -16,7 +16,8 @@ export type FormAttachment = FormGroup<{
   version : FormControl<string>,
   name :FormControl<string>,
   content:FormControl<File>
-  description:FormControl<string>
+  description:FormControl<string>,
+  downloadUrl:FormControl<string>
 }>
 
 export type FormInspectionType = FormGroup<{

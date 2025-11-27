@@ -16,7 +16,7 @@ namespace Inspection.Application.DTOs
 
         }
         public Guid Id { get; set; }
-        public RequestDto? Request { get; set; }
+        //public RequestDto? Request { get; set; }
         public int? ActionType { get; set; }
         public int QcActionType { get; set; }//because QC Lead befor any action related to vendor Request,
                                              //should gather all commennts and attachments belongs to technical departments and inspectors and then send that to vendor.
@@ -30,5 +30,8 @@ namespace Inspection.Application.DTOs
         public DateTime? CreatedDate { set; get; }
         public DateTime? ModifiedDate { set; get; }
         public string? Comment { set; get; }
+        public string? Description { set; get; }
+        public List<AttachmentDto> Attachments { get; set; }
+        public bool isCurrentCirculation { get; set; }
     }
 }

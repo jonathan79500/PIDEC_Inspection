@@ -97,10 +97,10 @@ namespace Inspection.Persistence.Repositories
             try
             {
                 Contact existedContact = null;
-                Guid contactId = contact.Id == null ? contact.ContactId : contact.Id;
+               
 
                 //if(contact.Id != Guid.Empty && contact.Id != null)
-                existedContact = _dbcontext.Contacts.Where(ct => ct.ContactId == contactId).FirstOrDefault();
+                existedContact = _dbcontext.Contacts.Where(ct => ct.ContactId == contact.ContactId).FirstOrDefault();
                 if (existedContact == null)
                 {
                     if (contact.UserId == "")
@@ -130,13 +130,13 @@ namespace Inspection.Persistence.Repositories
                 for (int i = 0; i < contacts.Count; i++)
                 {
 
-                    currentContactId = (contacts[i].Id == null ? contacts[i].ContactId.Value : contacts[i].Id);
-                    projContact = _dbcontext.ProjectContacts.Where(pc => pc.ContactId ==currentContactId  && pc.ProjectId== currentProjectId).FirstOrDefault();
+                    //currentContactId = (contacts[i].Id == null ? contacts[i].ContactId.Value : contacts[i].Id);
+                    projContact = _dbcontext.ProjectContacts.Where(pc => pc.ContactId == contacts[i].ContactId  && pc.ProjectId== currentProjectId).FirstOrDefault();
                     if (projContact == null)
                     {
                         newProjectContact = new ProjectContact();
                         newProjectContact.Contact = contacts[i];
-                        newProjectContact.ContactId = contacts[i].ContactId ?? contacts[i].Id;
+                        newProjectContact.ContactId = contacts[i].ContactId;
                         newProjectContact.ProjectId = project.ProjectId ?? project.Id;
                         _dbcontext.ProjectContacts.Add(newProjectContact);
                         _dbcontext.SaveChanges();

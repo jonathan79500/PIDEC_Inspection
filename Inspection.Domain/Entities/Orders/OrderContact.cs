@@ -12,7 +12,7 @@ public class OrderContact
     }
     public Guid? Id { get; set; }
     public OrderId? OrderId { get; set; }
-    public ContactId? ContactId { get; set; }
+    public Guid? ContactId { get; set; }
     public Order? Order { get; set; }
     public Contact? Contact { get; set; }
 }

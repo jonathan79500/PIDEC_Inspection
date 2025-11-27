@@ -1,11 +1,12 @@
 import { ActionType } from "./ActionType.model";
+import { Attachment } from "./Attachment.model";
 import { Contact } from "./Contact.model";
 import { ContactTypes } from "./ContactTypes.enum";
 
 export interface Circulation
 {
     id: string,
-    requestId :string,
+    //requestId :string,
     actionType :number,
      performerPN :string,
      performedActionDate :string,
@@ -16,4 +17,5 @@ export interface Circulation
      createdDate:Date,
      modifiedDate : Date,
      comment :string
+     attachments: Attachment[]
 }

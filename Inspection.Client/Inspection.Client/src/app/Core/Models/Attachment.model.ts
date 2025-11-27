@@ -3,5 +3,6 @@ id:string,
   version : string,
   name :string,
   content:File,
-  description:string
+  description:string,
+   downloadUrl:string
 }

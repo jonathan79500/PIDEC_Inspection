@@ -36,6 +36,7 @@ namespace Inspection.Domain.Entities.Common
         //[NotMapped]
         public InspectionNotification.Entities.InspectionNotification InspectionNotification { get; set; }
 
+        public List<CirculationAttachments> Attachments { get; set; }
         public List<CirculationInspector> Inspectors { get; set; }
 
         public static Circulation CreateNew(InspectionNotification.Entities.InspectionNotification inspectionNotification,Contact creatorContactPerson)

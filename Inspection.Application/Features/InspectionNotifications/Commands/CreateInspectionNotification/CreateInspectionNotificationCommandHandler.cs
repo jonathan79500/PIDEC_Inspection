@@ -3,6 +3,7 @@ using Inspection.Application.Contracts.Infrastructure;
 using Inspection.Application.Contracts.Persistence;
 using Inspection.Application.Features.InspectionNotifications.Validators;
 using Inspection.Application.Models;
+using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.InspectionNotification;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Mapster;
@@ -36,6 +37,7 @@ public class CreateInspectionNotificationCommandHandler : IRequestHandler<Create
     public async Task<InspectionNotification> Handle(CreateInspectionNotificationCommand request, CancellationToken cancellationToken)
     {
         InspectionNotification resultinspectionNotification = null;
+        Circulation currentCirculation = null;
 
         var validator = new CreateInspectionNotificationValidator();
         var validationResult = validator.ValidateAsync(request.createInspectionNotificationDto).Result;
@@ -55,7 +57,7 @@ public class CreateInspectionNotificationCommandHandler : IRequestHandler<Create
             //else
             //{
 
-                resultinspectionNotification = await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification);
+                (resultinspectionNotification,currentCirculation) = await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification,null);
             //}
         }
         catch (Exception exp)

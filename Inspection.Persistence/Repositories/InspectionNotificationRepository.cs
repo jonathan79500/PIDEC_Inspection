@@ -31,6 +31,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Net;
 using System.Runtime.InteropServices.JavaScript;
+using Request = Inspection.Domain.Entities.Common.Request;
 //using Pidec.Utils;
 
 namespace Inspection.Persistence.Repositories;
@@ -43,7 +44,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     private IEDMSService _eDMSService;
     private IUserManagerRepository _userManagerRepository;
 
-    public InspectionNotificationRepository(InspectionDbContext dbContext, IServiceScopeFactory serviceProvider,IEDMSService eDMSService, IUserManagerRepository userManagerRepository) : base()
+    public InspectionNotificationRepository(InspectionDbContext dbContext, IServiceScopeFactory serviceProvider, IEDMSService eDMSService, IUserManagerRepository userManagerRepository) : base()
     {
         _dbContext = dbContext;
         _serviceProvider = serviceProvider;
@@ -115,7 +116,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             "GetInspectionNotificationData",
             new { NotificationNumber = notificationNumber },
             commandType: CommandType.StoredProcedure,
-            transaction:adoTransaction))
+            transaction: adoTransaction))
             {
 
 
@@ -190,7 +191,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
       {
           inspectionNotificationContact.InspectionNotificationId = InspectionNotificationId.Create(new Guid(inspectionNotificationContact.InspectionNotificationId.Value.ToString()));
       }
-      inspectionNotificationContact.ContactId = contact.Id;
+      inspectionNotificationContact.ContactId = contact.ContactId;
       inspectionNotificationContact.Id = inspectionNotificationContact.Id;
       return inspectionNotificationContact;
   },
@@ -232,7 +233,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
             }
 
-           // connection.Close();
+            // connection.Close();
 
 
             InspectionNotificationFlow inspectionNotificationFlow = new InspectionNotificationFlow();
@@ -260,282 +261,282 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     {
         InspectionNotification existingInspectionNotification = _dbContext.InspectionNotifications.Where(ins => ins.InspectionNotificationId == inspectionNotification.InspectionNotificationId).AsNoTracking().FirstOrDefault();
         if (existingInspectionNotification != null)
-        {          
+        {
+
+            try
+            {
+                var inspectionNotificationId = inspectionNotification.InspectionNotificationId; // The parent entity you want to remove relationships for.
+
+
+                //------- Clean Up Old Contacts and InspectionNotificationContacts in DataBase-----------------
+                var contactsInInspectionNotificationContact = _dbContext.InspectionNotificationsContacts.Where(c => c.InspectionNotificationId == inspectionNotificationId)
+                .Select(isc => isc.ContactId)
+                .Distinct()
+                .ToList();
+
+                var existedInspectionNotificationContacts = _dbContext.InspectionNotificationsContacts.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
+                _dbContext.InspectionNotificationsContacts.RemoveRange(existedInspectionNotificationContacts);
+
+                //----Then I  cleanup database from contacts that are not used at the moment
+                //----at first find that contacts are used in which tables-----------------
+                //----Then search which contacts are not referenced in other tables and delete them---------
+                var foreignKeys = _dbContext.Model.FindEntityType(typeof(Contact))?
+                .GetReferencingForeignKeys();
+
+                var contactsUsedElsewhere = new HashSet<Guid>();
+
+                foreach (var fk in foreignKeys)
+                {
+                    Type relatedTable = fk.DeclaringEntityType.ClrType;
+
+                    // Use reflection to get DbSet dynamically
+                    var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
+                    var genericMethod = method.MakeGenericMethod(relatedTable);
+                    var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
+
+
+                    var usedContactIds = tableSet
+                     .Cast<object>()
+                     .AsEnumerable() // Force the remainder of the query to be executed in memory
+                     .Select(entity =>
+                     {
+                         if (fk.Properties.First().PropertyInfo != null)
+                         {
+                             var value = fk.Properties.First().PropertyInfo!.GetValue(entity);
+                             if (value == null)
+                             {
+                                 return Guid.Empty;
+                             }
+                             else
+                             {
+                                 // Explicitly cast to ContactId and get its Guid value.
+                                 // Adjust .Value if your ContactId type exposes the Guid differently.
+                                 return ((ContactId)value).Value;
+                             }
+                         }
+                         else
+                         {
+                             return Guid.Empty;
+
+                         }
+                     }).Distinct().ToList();
+
+                    contactsUsedElsewhere.UnionWith(usedContactIds);
+                }
+
+                var orphanedContacts = contactsInInspectionNotificationContact
+                .Where(cid => !contactsUsedElsewhere.Contains(cid.Value))
+                .ToList();
+
+                // Convert your orphaned value objects to their underlying Guid values.
+                var orphanedContactGuids = orphanedContacts.Select(x => x).ToList();
+
+                // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
+                var contactsToRemove = _dbContext.Contacts
+                    .AsEnumerable() // This forces the remainder of the query to run in memory.
+                    .Where(c => orphanedContactGuids.Contains(c.ContactId))
+                    .ToList();
+
+                _dbContext.Contacts.RemoveRange(contactsToRemove);
+
+                //---------------End Cleanup Contacts and InspectionNotificationContacts---------------------------------
+
+                //------- Clean Up Old InspectionSubjects and InspectionNotificationSubjects in DataBase-----------------
+                var subjectsInInspectionNotificationSubjects = _dbContext.InspectionNotificationSubjects.Where(c => c.InspectionNotificationId == inspectionNotificationId)
+                .Select(iss => iss.InspectionSubjectId)
+                .Distinct()
+                .ToList();
+
+                var existedInspectionNotificationSubjects = _dbContext.InspectionNotificationSubjects.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
+                _dbContext.InspectionNotificationSubjects.RemoveRange(existedInspectionNotificationSubjects);
+
+                //----Then I  cleanup database from InspectionSubjects that are not used at the moment
+                //----at first find that InspectionSubjects are used in which tables-----------------
+                //----Then search which InspectionSubjects are not referenced in other tables and delete them---------
+                var SubjectforeignKeys = _dbContext.Model.FindEntityType(typeof(InspectionSubject))?
+                .GetReferencingForeignKeys();
+
+                var inspectionSubjectsUsedElsewhere = new HashSet<Guid>();
+
+                foreach (var fk in SubjectforeignKeys)
+                {
+                    Type relatedTable = fk.DeclaringEntityType.ClrType;
+
+                    // Use reflection to get DbSet dynamically
+                    var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
+                    var genericMethod = method.MakeGenericMethod(relatedTable);
+                    var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
+
+
+                    var usedInspectionSubjectIds = tableSet
+                     .Cast<object>()
+                     .AsEnumerable() // Force the remainder of the query to be executed in memory
+                     .Select(entity =>
+                     {
+                         var value = fk.Properties.First().PropertyInfo.GetValue(entity);
+                         if (value == null)
+                         {
+                             return Guid.Empty;
+                         }
+                         else
+                         {
+                             // Explicitly cast to ContactId and get its Guid value.
+                             // Adjust .Value if your ContactId type exposes the Guid differently.
+                             return ((InspectionSubjectId)value).Value;
+                         }
+                     }).Distinct().ToList();
+
+                    inspectionSubjectsUsedElsewhere.UnionWith(usedInspectionSubjectIds);
+                }
+
+                var orphanedInspectionSubjects = subjectsInInspectionNotificationSubjects
+                .Where(cid => !inspectionSubjectsUsedElsewhere.Contains(cid))
+                .ToList();
+
+                // Convert your orphaned value objects to their underlying Guid values.
+                var orphanedInspectionSubjectsGuids = orphanedInspectionSubjects.Select(x => x.Value).ToList();
+
+                // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
+                var inspectionSubjectsToRemove = _dbContext.InspectionSubjects
+                    .AsEnumerable() // This forces the remainder of the query to run in memory.
+                    .Where(c => orphanedInspectionSubjectsGuids.Contains(c.InspectionSubjectId.Value))
+                    .ToList();
+
+                _dbContext.InspectionSubjects.RemoveRange(inspectionSubjectsToRemove);
+                //---------------End Cleanup InspectionSubjects and InspectionNotificationSubjects---------------------------------
+
+                //------- Clean Up Old InspectionTypes and InspectionNotificationTypes in DataBase-----------------
+                var typesInInspectionNotificationTypes = _dbContext.InspectionNotificationsTypes.Where(c => c.InspectionNotificationId == inspectionNotificationId)
+                .Select(isc => isc.InspectionTypeId)
+                .Distinct()
+                .ToList();
+
+                var existedInspectionNotificationTypes = _dbContext.InspectionNotificationsTypes.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
+                _dbContext.InspectionNotificationsTypes.RemoveRange(existedInspectionNotificationTypes);
+
+                //----Then I  cleanup database from contacts that are not used at the moment
+                //----at first find that contacts are used in which tables-----------------
+                //----Then search which contacts are not referenced in other tables and delete them---------
+                var typesforeignKeys = _dbContext.Model.FindEntityType(typeof(InspectionType))?
+                .GetReferencingForeignKeys();
+
+                var inspectionTypesUsedElsewhere = new HashSet<Guid>();
+
+                foreach (var fk in typesforeignKeys)
+                {
+                    Type relatedTable = fk.DeclaringEntityType.ClrType;
+
+                    // Use reflection to get DbSet dynamically
+                    var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
+                    var genericMethod = method.MakeGenericMethod(relatedTable);
+                    var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
+
+
+                    var usedInspectionTypeIds = tableSet
+                     .Cast<object>()
+                     .AsEnumerable() // Force the remainder of the query to be executed in memory
+                     .Select(entity =>
+                     {
+                         var value = fk.Properties.First().PropertyInfo.GetValue(entity);
+                         if (value == null)
+                         {
+                             return Guid.Empty;
+                         }
+                         else
+                         {
+                             // Explicitly cast to ContactId and get its Guid value.
+                             // Adjust .Value if your ContactId type exposes the Guid differently.
+                             return ((InspectionTypeId)value).Value;
+                         }
+                     }).Distinct().ToList();
+
+                    inspectionTypesUsedElsewhere.UnionWith(usedInspectionTypeIds);
+                }
+
+                var orphanedInspectionTypes = typesInInspectionNotificationTypes
+                .Where(cid => !inspectionTypesUsedElsewhere.Contains(cid))
+                .ToList();
+
+                // Convert your orphaned value objects to their underlying Guid values.
+                var orphanedInspectionTypeGuids = orphanedInspectionTypes.Select(x => x.Value).ToList();
+
+                // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
+                var inspectionTypesToRemove = _dbContext.InspectionTypes
+                    .AsEnumerable() // This forces the remainder of the query to run in memory.
+                    .Where(c => orphanedInspectionTypeGuids.Contains(c.InspectionTypeId.Value))
+                    .ToList();
+
+                _dbContext.InspectionTypes.RemoveRange(inspectionTypesToRemove);
+
+                _dbContext.SaveChanges();
+                //---------------End Cleanup Contacts and InspectionNotificationContacts---------------------------------
+
+
+
+
+
+                //--------------Now We can Update InspectionNotification with new Data----------------------
+
 
                 try
                 {
-                    var inspectionNotificationId = inspectionNotification.InspectionNotificationId; // The parent entity you want to remove relationships for.
 
 
-                    //------- Clean Up Old Contacts and InspectionNotificationContacts in DataBase-----------------
-                    var contactsInInspectionNotificationContact = _dbContext.InspectionNotificationsContacts.Where(c => c.InspectionNotificationId == inspectionNotificationId)
-                    .Select(isc => isc.ContactId)
-                    .Distinct()
-                    .ToList();
+                    var existing = await _dbContext.InspectionNotifications
+          //.AsSplitQuery()                     // <<–– tell EF “split the includes”
+          //.AsNoTracking()
+          //.Include(i => i.Order)
+          //  .ThenInclude(o => o.Project)
+          //.Include(i => i.Order)                        
+          //.Include(i => i.Contacts)                          
+          //.Include(i => i.Subjects)
+          //.Include(i => i.Types)
+          .FirstOrDefaultAsync(i =>
+              i.InspectionNotificationId == inspectionNotification.InspectionNotificationId);
 
-                    var existedInspectionNotificationContacts = _dbContext.InspectionNotificationsContacts.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
-                    _dbContext.InspectionNotificationsContacts.RemoveRange(existedInspectionNotificationContacts);
+                    SyncContacts(existing, inspectionNotification, _dbContext);
+                    SyncSubjects(existing, inspectionNotification, _dbContext);
+                    SyncTypes(existing, inspectionNotification, _dbContext);
 
-                    //----Then I  cleanup database from contacts that are not used at the moment
-                    //----at first find that contacts are used in which tables-----------------
-                    //----Then search which contacts are not referenced in other tables and delete them---------
-                    var foreignKeys = _dbContext.Model.FindEntityType(typeof(Contact))?
-                    .GetReferencingForeignKeys();
-
-                    var contactsUsedElsewhere = new HashSet<Guid>();
-
-                    foreach (var fk in foreignKeys)
+                    if (existing.Circulations != null && existing.Circulations.Count > 0)
                     {
-                        Type relatedTable = fk.DeclaringEntityType.ClrType;
+                        //before this time , Request and circulation are created
+                    }
+                    else
+                    {
 
-                        // Use reflection to get DbSet dynamically
-                        var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
-                        var genericMethod = method.MakeGenericMethod(relatedTable);
-                        var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
+                        Contact creator = existing.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
+                        string currentDatePersian = "";
+                        DateTime currentTime = DateTime.Now;
 
 
-                        var usedContactIds = tableSet
-                         .Cast<object>()
-                         .AsEnumerable() // Force the remainder of the query to be executed in memory
-                         .Select(entity =>
-                         {
-                             if (fk.Properties.First().PropertyInfo != null)
-                             {
-                                 var value = fk.Properties.First().PropertyInfo!.GetValue(entity);
-                                 if (value == null)
-                                 {
-                                     return Guid.Empty;
-                                 }
-                                 else
-                                 {
-                                     // Explicitly cast to ContactId and get its Guid value.
-                                     // Adjust .Value if your ContactId type exposes the Guid differently.
-                                     return ((ContactId)value).Value;
-                                 }
-                             }
-                             else
-                             {
-                                 return Guid.Empty;
+                        // Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
 
-                             }
-                         }).Distinct().ToList();
-
-                        contactsUsedElsewhere.UnionWith(usedContactIds);
+                        Circulation circulation = Circulation.CreateNew(existingInspectionNotification, creator);
+                        //circulation.InspectionNotification = inspectionNotification;
+                        // circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                        circulation.PerformerContactType = creator.ContactType;
+                        circulation.CreatedDate = currentTime;
+                        circulation.PerformedActionDateGregorian = currentTime;
+                        circulation.PerformedActionDate = "";// persianDate.ToString();
+                        existing.Circulations!.Add(circulation);
                     }
 
-                    var orphanedContacts = contactsInInspectionNotificationContact
-                    .Where(cid => !contactsUsedElsewhere.Contains(cid))
-                    .ToList();
+                    _dbContext.SaveChangesAsync();
 
-                    // Convert your orphaned value objects to their underlying Guid values.
-                    var orphanedContactGuids = orphanedContacts.Select(x => x.Value).ToList();
-
-                    // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
-                    var contactsToRemove = _dbContext.Contacts
-                        .AsEnumerable() // This forces the remainder of the query to run in memory.
-                        .Where(c => orphanedContactGuids.Contains(c.ContactId.Value))
-                        .ToList();
-
-                    _dbContext.Contacts.RemoveRange(contactsToRemove);
-
-                    //---------------End Cleanup Contacts and InspectionNotificationContacts---------------------------------
-
-                    //------- Clean Up Old InspectionSubjects and InspectionNotificationSubjects in DataBase-----------------
-                    var subjectsInInspectionNotificationSubjects = _dbContext.InspectionNotificationSubjects.Where(c => c.InspectionNotificationId == inspectionNotificationId)
-                    .Select(iss => iss.InspectionSubjectId)
-                    .Distinct()
-                    .ToList();
-
-                    var existedInspectionNotificationSubjects = _dbContext.InspectionNotificationSubjects.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
-                    _dbContext.InspectionNotificationSubjects.RemoveRange(existedInspectionNotificationSubjects);
-
-                    //----Then I  cleanup database from InspectionSubjects that are not used at the moment
-                    //----at first find that InspectionSubjects are used in which tables-----------------
-                    //----Then search which InspectionSubjects are not referenced in other tables and delete them---------
-                    var SubjectforeignKeys = _dbContext.Model.FindEntityType(typeof(InspectionSubject))?
-                    .GetReferencingForeignKeys();
-
-                    var inspectionSubjectsUsedElsewhere = new HashSet<Guid>();
-
-                    foreach (var fk in SubjectforeignKeys)
-                    {
-                        Type relatedTable = fk.DeclaringEntityType.ClrType;
-
-                        // Use reflection to get DbSet dynamically
-                        var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
-                        var genericMethod = method.MakeGenericMethod(relatedTable);
-                        var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
-
-
-                        var usedInspectionSubjectIds = tableSet
-                         .Cast<object>()
-                         .AsEnumerable() // Force the remainder of the query to be executed in memory
-                         .Select(entity =>
-                         {
-                             var value = fk.Properties.First().PropertyInfo.GetValue(entity);
-                             if (value == null)
-                             {
-                                 return Guid.Empty;
-                             }
-                             else
-                             {
-                                 // Explicitly cast to ContactId and get its Guid value.
-                                 // Adjust .Value if your ContactId type exposes the Guid differently.
-                                 return ((InspectionSubjectId)value).Value;
-                             }
-                         }).Distinct().ToList();
-
-                        inspectionSubjectsUsedElsewhere.UnionWith(usedInspectionSubjectIds);
-                    }
-
-                    var orphanedInspectionSubjects = subjectsInInspectionNotificationSubjects
-                    .Where(cid => !inspectionSubjectsUsedElsewhere.Contains(cid))
-                    .ToList();
-
-                    // Convert your orphaned value objects to their underlying Guid values.
-                    var orphanedInspectionSubjectsGuids = orphanedInspectionSubjects.Select(x => x.Value).ToList();
-
-                    // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
-                    var inspectionSubjectsToRemove = _dbContext.InspectionSubjects
-                        .AsEnumerable() // This forces the remainder of the query to run in memory.
-                        .Where(c => orphanedInspectionSubjectsGuids.Contains(c.InspectionSubjectId.Value))
-                        .ToList();
-
-                    _dbContext.InspectionSubjects.RemoveRange(inspectionSubjectsToRemove);
-                    //---------------End Cleanup InspectionSubjects and InspectionNotificationSubjects---------------------------------
-
-                    //------- Clean Up Old InspectionTypes and InspectionNotificationTypes in DataBase-----------------
-                    var typesInInspectionNotificationTypes = _dbContext.InspectionNotificationsTypes.Where(c => c.InspectionNotificationId == inspectionNotificationId)
-                    .Select(isc => isc.InspectionTypeId)
-                    .Distinct()
-                    .ToList();
-
-                    var existedInspectionNotificationTypes = _dbContext.InspectionNotificationsTypes.Where(c => c.InspectionNotificationId == inspectionNotificationId).ToList();
-                    _dbContext.InspectionNotificationsTypes.RemoveRange(existedInspectionNotificationTypes);
-
-                    //----Then I  cleanup database from contacts that are not used at the moment
-                    //----at first find that contacts are used in which tables-----------------
-                    //----Then search which contacts are not referenced in other tables and delete them---------
-                    var typesforeignKeys = _dbContext.Model.FindEntityType(typeof(InspectionType))?
-                    .GetReferencingForeignKeys();
-
-                    var inspectionTypesUsedElsewhere = new HashSet<Guid>();
-
-                    foreach (var fk in typesforeignKeys)
-                    {
-                        Type relatedTable = fk.DeclaringEntityType.ClrType;
-
-                        // Use reflection to get DbSet dynamically
-                        var method = typeof(DbContext).GetMethod(nameof(DbContext.Set), Array.Empty<Type>());
-                        var genericMethod = method.MakeGenericMethod(relatedTable);
-                        var tableSet = genericMethod.Invoke(_dbContext, null) as IQueryable;
-
-
-                        var usedInspectionTypeIds = tableSet
-                         .Cast<object>()
-                         .AsEnumerable() // Force the remainder of the query to be executed in memory
-                         .Select(entity =>
-                         {
-                             var value = fk.Properties.First().PropertyInfo.GetValue(entity);
-                             if (value == null)
-                             {
-                                 return Guid.Empty;
-                             }
-                             else
-                             {
-                                 // Explicitly cast to ContactId and get its Guid value.
-                                 // Adjust .Value if your ContactId type exposes the Guid differently.
-                                 return ((InspectionTypeId)value).Value;
-                             }
-                         }).Distinct().ToList();
-
-                        inspectionTypesUsedElsewhere.UnionWith(usedInspectionTypeIds);
-                    }
-
-                    var orphanedInspectionTypes = typesInInspectionNotificationTypes
-                    .Where(cid => !inspectionTypesUsedElsewhere.Contains(cid))
-                    .ToList();
-
-                    // Convert your orphaned value objects to their underlying Guid values.
-                    var orphanedInspectionTypeGuids = orphanedInspectionTypes.Select(x => x.Value).ToList();
-
-                    // Switch to client evaluation by calling AsEnumerable() so that the .Value accessor is evaluated in C#.
-                    var inspectionTypesToRemove = _dbContext.InspectionTypes
-                        .AsEnumerable() // This forces the remainder of the query to run in memory.
-                        .Where(c => orphanedInspectionTypeGuids.Contains(c.InspectionTypeId.Value))
-                        .ToList();
-
-                    _dbContext.InspectionTypes.RemoveRange(inspectionTypesToRemove);
-
-                    _dbContext.SaveChanges();
-                    //---------------End Cleanup Contacts and InspectionNotificationContacts---------------------------------
-
-
-                
-
-
-                    //--------------Now We can Update InspectionNotification with new Data----------------------
-
-                  
-                            try
-                            {
-
-
-                                var existing = await _dbContext.InspectionNotifications
-                       //.AsSplitQuery()                     // <<–– tell EF “split the includes”
-                       //.AsNoTracking()
-                      //.Include(i => i.Order)
-                      //  .ThenInclude(o => o.Project)
-                      //.Include(i => i.Order)                        
-                      //.Include(i => i.Contacts)                          
-                      //.Include(i => i.Subjects)
-                      //.Include(i => i.Types)
-                      .FirstOrDefaultAsync(i =>
-                          i.InspectionNotificationId == inspectionNotification.InspectionNotificationId);
-
-                                SyncContacts(existing, inspectionNotification, _dbContext);
-                                SyncSubjects(existing, inspectionNotification, _dbContext);
-                                SyncTypes(existing, inspectionNotification,_dbContext);
-
-                                if (existing.Circulations != null && existing.Circulations.Count > 0)
-                                {
-                                    //before this time , Request and circulation are created
-                                }
-                                else
-                                {
-
-                                    Contact creator = existing.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
-                                    string currentDatePersian = "";
-                                    DateTime currentTime = DateTime.Now;
-                                 
-
-                                   // Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
-
-                                    Circulation circulation = Circulation.CreateNew(existingInspectionNotification, creator);
-                                    //circulation.InspectionNotification = inspectionNotification;
-                                   // circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-                                    circulation.PerformerContactType = creator.ContactType;
-                                    circulation.CreatedDate = currentTime;
-                                    circulation.PerformedActionDateGregorian = currentTime;
-                                    circulation.PerformedActionDate = "";// persianDate.ToString();
-                                    existing.Circulations!.Add(circulation);
-                                }
-
-                                _dbContext.SaveChangesAsync();
-                             
-                                return existing;
-                            }
-                            catch (Exception ex)
-                            {
-                             
-                                return null;
-                            }                  
-                   
+                    return existing;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
+
+                    return null;
                 }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
             //}
         }
         return inspectionNotification;
@@ -645,7 +646,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 {
                     InspectionSubjectId = inc.InspectionSubject.InspectionSubjectId,
                     Name = inc.InspectionSubject.Name,
-                    
+
                     // …other fields…
                 };
                 db.InspectionSubjects.Add(typeEntity);
@@ -693,7 +694,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 continue;
 
             // does this type exist?
-            var typeEntity =  db.InspectionTypes
+            var typeEntity = db.InspectionTypes
                 .FirstOrDefault(t => t.InspectionTypeId == inc.InspectionTypeId);
 
             if (typeEntity == null && inc.InspectionType != null)
@@ -706,7 +707,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     // …other fields…
                 };
                 db.InspectionTypes.Add(typeEntity);
-                 db.SaveChanges();    // flush so we get a valid FK
+                db.SaveChanges();    // flush so we get a valid FK
             }
 
             if (typeEntity != null)
@@ -728,15 +729,15 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
 
 
-    public async Task<InspectionNotification> CreateNewInspectionNotification(InspectionNotification rawinspectionNotification)
+    public async Task<(InspectionNotification,Circulation )> CreateNewInspectionNotification(InspectionNotification rawinspectionNotification,List<Attachment> attachments)
     {
 
         InspectionNotification inspectionNotification = null;
-       
-            try
-            {
-              
-                inspectionNotification = InspectionNotification.CreateByUniqueId(rawinspectionNotification);
+
+        try
+        {
+
+            inspectionNotification = InspectionNotification.CreateByUniqueId(rawinspectionNotification);
 
             if (await _dbContext.Orders.AnyAsync(o =>
             o.EdmsId == _dbContext.Entry(inspectionNotification.Order).Entity.EdmsId))
@@ -750,50 +751,50 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
 
             var currentLocation = _dbContext.Entry(inspectionNotification.Location!).Entity;
-                if (await _dbContext.Addresses.AnyAsync(a =>
-                     a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
-                     && a.StreetLine1 == currentLocation.StreetLine1))
+            if (await _dbContext.Addresses.AnyAsync(a =>
+                 a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
+                 && a.StreetLine1 == currentLocation.StreetLine1))
+            {
+                var location = _dbContext.Addresses.Where(a =>
+                 a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
+                 && a.StreetLine1 == currentLocation.StreetLine1).First();
+
+                inspectionNotification.SetLocation(location);
+
+                _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
+            }
+            else
+                _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Added;
+
+            //  _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
+
+
+
+
+
+
+            foreach (InspectionNotificationContact inscontact in inspectionNotification.Contacts!.ToList())
+            {
+                // inscontact.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                var existingContact = await _dbContext.Contacts.FirstOrDefaultAsync(c => c.ContactId == inscontact.ContactId);
+
+                Contact contactEntity;
+
+                if (existingContact != null)
                 {
-                    var location = _dbContext.Addresses.Where(a =>
-                     a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
-                     && a.StreetLine1 == currentLocation.StreetLine1).First();
+                    // If Table3 exists, use it
+                    contactEntity = existingContact;
+                    // Make sure EF Core treats it as an existing record:
+                    _dbContext.Entry(contactEntity).State = EntityState.Unchanged;
 
-                    inspectionNotification.SetLocation(location);
-
-                    _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
+                    var existingInsContact = await _dbContext.InspectionNotificationsContacts.FirstOrDefaultAsync(c => c.ContactId == inscontact.ContactId && c.InspectionNotificationId == inscontact.InspectionNotificationId);
+                    if (existingInsContact != null)
+                        _dbContext.Entry(inscontact).State = EntityState.Unchanged;
+                    else
+                        _dbContext.Entry(inscontact).State = EntityState.Added;
                 }
-                else
-                    _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Added;
-
-                //  _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
-
-
-              
-
-
-
-                foreach (InspectionNotificationContact inscontact in inspectionNotification.Contacts!.ToList())
+                else if (inscontact.Contact != null)
                 {
-                   // inscontact.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-                    var existingContact = await _dbContext.Contacts.FirstOrDefaultAsync(c => c.ContactId == inscontact.ContactId);
-
-                    Contact contactEntity;
-
-                    if (existingContact != null)
-                    {
-                        // If Table3 exists, use it
-                        contactEntity = existingContact;
-                        // Make sure EF Core treats it as an existing record:
-                        _dbContext.Entry(contactEntity).State = EntityState.Unchanged;
-
-                        var existingInsContact = await _dbContext.InspectionNotificationsContacts.FirstOrDefaultAsync(c => c.ContactId == inscontact.ContactId && c.InspectionNotificationId == inscontact.InspectionNotificationId);
-                        if (existingInsContact != null)
-                            _dbContext.Entry(inscontact).State = EntityState.Unchanged;
-                        else
-                            _dbContext.Entry(inscontact).State = EntityState.Added;
-                    }
-                    else if (inscontact.Contact != null)
-                    {
                     // inscontact.InspectionNotificationId = inspectionNotification.Id;
                     InspectionNotificationContact findedContact = rawinspectionNotification.Contacts.Find((cnt) => cnt.ContactId == inscontact.ContactId);
 
@@ -804,85 +805,85 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     }
 
                     _dbContext.Entry(inscontact.Contact).State = EntityState.Added;
-                        _dbContext.Entry(inscontact).State = EntityState.Added;
-                    }
-                    else
-                    {
-                        contactEntity = null;
-                        inspectionNotification.Contacts!.Remove(inscontact);
-                    }
+                    _dbContext.Entry(inscontact).State = EntityState.Added;
                 }
-
-
-                foreach (InspectionNotificationSubject insSubject in inspectionNotification.Subjects!.ToList())
+                else
                 {
-                    //insSubject.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                    contactEntity = null;
+                    inspectionNotification.Contacts!.Remove(inscontact);
+                }
+            }
 
-                    var existingSubject = await _dbContext.InspectionSubjects.FirstOrDefaultAsync(c => c.InspectionSubjectId == insSubject.InspectionSubjectId);
+
+            foreach (InspectionNotificationSubject insSubject in inspectionNotification.Subjects!.ToList())
+            {
+                //insSubject.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+
+                var existingSubject = await _dbContext.InspectionSubjects.FirstOrDefaultAsync(c => c.InspectionSubjectId == insSubject.InspectionSubjectId);
 
 
-                    InspectionSubject subjectEntity;
+                InspectionSubject subjectEntity;
 
-                    if (existingSubject != null)
-                    {
-                        // If Table3 exists, use it
-                        subjectEntity = existingSubject;
-                        // Make sure EF Core treats it as an existing record:
-                        _dbContext.Entry(subjectEntity).State = EntityState.Unchanged;
+                if (existingSubject != null)
+                {
+                    // If Table3 exists, use it
+                    subjectEntity = existingSubject;
+                    // Make sure EF Core treats it as an existing record:
+                    _dbContext.Entry(subjectEntity).State = EntityState.Unchanged;
 
-                        var existingInsSubject = await _dbContext.InspectionNotificationSubjects.FirstOrDefaultAsync(c => c.InspectionSubjectId == insSubject.InspectionSubjectId && c.InspectionNotificationId == insSubject.InspectionNotificationId);
-                        if (existingInsSubject != null)
-                            _dbContext.Entry(insSubject).State = EntityState.Unchanged;
-                        else
-                            _dbContext.Entry(insSubject).State = EntityState.Added;
-
-                    }
-                    else if (insSubject.InspectionSubjectId != null)
-                    {
-                     InspectionNotificationSubject findedSubject = rawinspectionNotification.Subjects.Find((subj) => subj.InspectionSubjectId == insSubject.InspectionSubjectId);
-
-                    if(findedSubject != null) 
-                        {
-                            //_dbContext.InspectionSubjects.Add(findedSubject.InspectionSubject);
-                            insSubject.InspectionSubject = findedSubject.InspectionSubject;
-                        }
-                       // insSubject.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-                        _dbContext.Entry(insSubject.InspectionSubject).State = EntityState.Added;
+                    var existingInsSubject = await _dbContext.InspectionNotificationSubjects.FirstOrDefaultAsync(c => c.InspectionSubjectId == insSubject.InspectionSubjectId && c.InspectionNotificationId == insSubject.InspectionNotificationId);
+                    if (existingInsSubject != null)
+                        _dbContext.Entry(insSubject).State = EntityState.Unchanged;
+                    else
                         _dbContext.Entry(insSubject).State = EntityState.Added;
-                    }
-                    else
-                    {
-                        subjectEntity = null;
-                        inspectionNotification.Subjects.Remove(insSubject);
-                    }
 
                 }
-
-                foreach (InspectionNotificationType insType in inspectionNotification.Types!.ToList())
+                else if (insSubject.InspectionSubjectId != null)
                 {
-                   //insType.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                    InspectionNotificationSubject findedSubject = rawinspectionNotification.Subjects.Find((subj) => subj.InspectionSubjectId == insSubject.InspectionSubjectId);
 
-                    var existingType = await _dbContext.InspectionTypes.FirstOrDefaultAsync(c => c.InspectionTypeId == insType.InspectionTypeId);
-
-
-                    InspectionType typeEntity;
-
-                    if (existingType != null)
+                    if (findedSubject != null)
                     {
-                        // If Table3 exists, use it
-                        typeEntity = existingType;
-                        // Make sure EF Core treats it as an existing record:
-                        _dbContext.Entry(typeEntity).State = EntityState.Unchanged;
-
-                        var existingInsType = await _dbContext.InspectionNotificationsTypes.FirstOrDefaultAsync(c => c.InspectionTypeId == insType.InspectionTypeId && c.InspectionNotificationId == insType.InspectionNotificationId);
-                        if (existingInsType != null)
-                            _dbContext.Entry(insType).State = EntityState.Unchanged;
-                        else
-                            _dbContext.Entry(insType).State = EntityState.Added;
-
+                        //_dbContext.InspectionSubjects.Add(findedSubject.InspectionSubject);
+                        insSubject.InspectionSubject = findedSubject.InspectionSubject;
                     }
-                    else if (insType.InspectionTypeId != null)
-                    {
+                    // insSubject.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                    _dbContext.Entry(insSubject.InspectionSubject).State = EntityState.Added;
+                    _dbContext.Entry(insSubject).State = EntityState.Added;
+                }
+                else
+                {
+                    subjectEntity = null;
+                    inspectionNotification.Subjects.Remove(insSubject);
+                }
+
+            }
+
+            foreach (InspectionNotificationType insType in inspectionNotification.Types!.ToList())
+            {
+                //insType.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+
+                var existingType = await _dbContext.InspectionTypes.FirstOrDefaultAsync(c => c.InspectionTypeId == insType.InspectionTypeId);
+
+
+                InspectionType typeEntity;
+
+                if (existingType != null)
+                {
+                    // If Table3 exists, use it
+                    typeEntity = existingType;
+                    // Make sure EF Core treats it as an existing record:
+                    _dbContext.Entry(typeEntity).State = EntityState.Unchanged;
+
+                    var existingInsType = await _dbContext.InspectionNotificationsTypes.FirstOrDefaultAsync(c => c.InspectionTypeId == insType.InspectionTypeId && c.InspectionNotificationId == insType.InspectionNotificationId);
+                    if (existingInsType != null)
+                        _dbContext.Entry(insType).State = EntityState.Unchanged;
+                    else
+                        _dbContext.Entry(insType).State = EntityState.Added;
+
+                }
+                else if (insType.InspectionTypeId != null)
+                {
                     InspectionNotificationType findedType = rawinspectionNotification.Types.Find((typ) => typ.InspectionTypeId == insType.InspectionTypeId);
 
                     if (findedType != null)
@@ -892,61 +893,61 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     }
 
                     _dbContext.Entry(insType.InspectionType).State = EntityState.Added;
-                        _dbContext.Entry(insType).State = EntityState.Added;
-                    }
-                    else
-                    {
-                        typeEntity = null;
-                        inspectionNotification.Types!.Remove(insType);
-                    }
-
-                }
-
-            
-
-
-                var entries = _dbContext.ChangeTracker.Entries().ToList();
-                foreach (var entry in entries)
-                {
-                    Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
-                }
-
-                if (inspectionNotification.Circulations != null && inspectionNotification.Circulations.Count > 0)
-                {
-                    //before this time , Request and circulation are created
+                    _dbContext.Entry(insType).State = EntityState.Added;
                 }
                 else
                 {
+                    typeEntity = null;
+                    inspectionNotification.Types!.Remove(insType);
+                }
 
-        
+            }
+
+
+
+
+            var entries = _dbContext.ChangeTracker.Entries().ToList();
+            foreach (var entry in entries)
+            {
+                Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
+            }
+
+            if (inspectionNotification.Circulations != null && inspectionNotification.Circulations.Count > 0)
+            {
+                //before this time , Request and circulation are created
+            }
+            else
+            {
+
+
 
                 Contact creator = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
-                    string currentDatePersian = "";
-                    DateTime currentTime = DateTime.Now;                   
+                string currentDatePersian = "";
+                DateTime currentTime = DateTime.Now;
 
-                    Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
+                Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
 
-                 Domain.Entities.Common.Request savedRequest =  _dbContext.Requests.Add(newRequest).Entity;
+                Domain.Entities.Common.Request savedRequest = _dbContext.Requests.Add(newRequest).Entity;
 
                 inspectionNotification.Request = savedRequest;
 
                 InspectionNotification savedNewInspection = _dbContext.InspectionNotifications.Add(inspectionNotification).Entity;
 
-                Circulation circulation = Circulation.CreateNew(inspectionNotification,creator);
-                    //circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-                    circulation.PerformerContactType = creator.ContactType;
-                    circulation.CreatedDate = currentTime;
-                    circulation.PerformedActionDateGregorian = currentTime;
-                    circulation.PerformedActionDate = "";// persianDate.ToString();
-                    inspectionNotification.Circulations!.Add(circulation);
+                Circulation circulation = Circulation.CreateNew(inspectionNotification, creator);
+                //circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                circulation.PerformerContactType = creator.ContactType;
+                circulation.CreatedDate = currentTime;
+                circulation.PerformedActionDateGregorian = currentTime;
+                circulation.PerformedActionDate = "";// persianDate.ToString();
+                inspectionNotification.Circulations!.Add(circulation);
 
                 _dbContext.SaveChanges();
 
-                foreach (Attachment attachment in inspectionNotification.Attachments!.ToList())
+                foreach (Attachment attachment in attachments)//rawinspectionNotification.Attachments!.ToList())
                 {
 
-                   // var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(atc => atc.Id.Value == attachment.Id.Value);
-                    var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(a => a.Id == attachment.Id);
+                    // var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(atc => atc.Id.Value == attachment.Id.Value);
+                    var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(a => a.AttachmentId == attachment.Id);
 
 
                     CirculationAttachments newCirculationAttachment = new CirculationAttachments();
@@ -955,35 +956,35 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
                     if (existingAttachment != null)
                     {
-                        newCirculationAttachment.AttachmentId = existingAttachment.AttachmentId;                        
+                        _dbContext.Entry(existingAttachment).State = EntityState.Unchanged;
+                        newCirculationAttachment.AttachmentId = existingAttachment.AttachmentId;
                     }
                     else
                     {
-                        //Attachment newAttachment = new Attachment(attachment.AttachmentId);
-                        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0");
-                       // newAttachment = _dbContext.Attachments.Add(newAttachment).Entity;
+                        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0", attachment.ContentType);
+                        _dbContext.Entry(newAttachment).State = EntityState.Added;
                         newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
-                        
                     }
+                    _dbContext.Entry(newCirculationAttachment).State = EntityState.Added;
                     _dbContext.CirculationAttachments.Add(newCirculationAttachment);
-                }
 
-            }
+                }
 
 
                 _dbContext.SaveChanges();
-              
-                return await Task.FromResult(inspectionNotification);
+                
 
+                return await Task.FromResult(( inspectionNotification,circulation));
             }
-            catch (Exception ex)
-            {
-              
-                string str = ex.Message;
-            }    
+        }
+        catch (Exception ex)
+        {
+
+            string str = ex.Message;
+        }    
 
 
-        return null;
+        return (null,null);
     }
 
     public Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations)
@@ -1113,7 +1114,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 LeadDepartmentContact.Address = null;
                 LeadDepartmentContact.Phone = "";
                 LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
-                LeadDepartmentContact.Id = Guid.NewGuid();
+                LeadDepartmentContact.ContactId = ContactId.CreateUnique();
                 LeadDepartmentContact.Cc = "";
                 LeadDepartmentContact.ContactType = ContactType.PIDEC_LeadDepartment.GetHashCode();
                 LeadDepartmentContact.UserName = eDMSOrderDepartmentLeads.leadEngineer;
@@ -1164,7 +1165,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 OriginatorContact.Phone = "";
                 OriginatorContact.Mobile = "";
                 OriginatorContact.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
-                OriginatorContact.Id = Guid.NewGuid();
+                OriginatorContact.ContactId = ContactId.CreateUnique();
                 OriginatorContact.Cc = "";
                 OriginatorContact.ContactType = ContactType.PIDEC_Originator.GetHashCode();
                 OriginatorContact.UserName = eDMSOrderDepartmentLeads.originator;
@@ -1200,34 +1201,34 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         return PidecDepartmentContacts;
     }
 
-    public async Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project)
-    {
-        InspectionNotification notificationForSend = null;
+    //public async Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project)
+    //{
+    //    InspectionNotification notificationForSend = null;
        
-        string  newRevisedNumber = GenerateNewNotificationNumber(project.Number, inspectionNotification.Order.Name).Result.ToString();
-        inspectionNotification.NotificationNumber = newRevisedNumber;      
+    //    string  newRevisedNumber = GenerateNewNotificationNumber(project.Number, inspectionNotification.Order.Name).Result.ToString();
+    //    inspectionNotification.NotificationNumber = newRevisedNumber;      
        
-        try
-            {
+    //    try
+    //        {
 
-                if (inspectionNotification.InspectionNotificationId != null && !inspectionNotification.InspectionNotificationId.Value.Equals(Guid.Empty))
-                {
-                    notificationForSend = UpdateInspectionNotification(inspectionNotification).Result;                 
-                }
-                else
-                    notificationForSend = CreateNewInspectionNotification(inspectionNotification).Result;
+    //            if (inspectionNotification.InspectionNotificationId != null && !inspectionNotification.InspectionNotificationId.Value.Equals(Guid.Empty))
+    //            {
+    //                notificationForSend = UpdateInspectionNotification(inspectionNotification).Result;                 
+    //            }
+    //            else
+    //                notificationForSend = CreateNewInspectionNotification(inspectionNotification).Result;
 
-           // var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend,project);
+    //       // var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend,project);
 
-            await UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
-        }
-            catch (Exception exp)
-            {
+    //        await UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
+    //    }
+    //        catch (Exception exp)
+    //        {
               
-            }         
+    //        }         
 
-        return await Task.FromResult(inspectionNotification);     
-    }
+    //    return await Task.FromResult(inspectionNotification);     
+    //}
 
 
 
@@ -1252,6 +1253,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             List<InspectionNotificationSubject> subjects;        
             List<InspectionNotificationType> types;
             List<Circulation> participatedCirculations;
+            var circulationDict = new Dictionary<Guid, Circulation>();
 
             using (var multi = connection.QueryMultiple(
             "GetInspectionNotification_Id1",
@@ -1262,10 +1264,41 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 inspectionNotifications = multi.Read<InspectionNotification>().ToList();
                 //participatedCirculations = multi.Read<Circulation>().ToList();
 
-                participatedCirculations = multi.Read<Circulation, Contact, Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification, Circulation>(
-                  (cr, ct,rq) => { cr.PerformerContactPerson = ct; cr.InspectionNotification = rq; return cr; },
-                  splitOn: "ContactId,RequestId"
-              ).ToList();
+                //  participatedCirculations = multi.Read<Circulation, Contact, Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification, Circulation>(
+                //    (cr, ct,rq) => { cr.PerformerContactPerson = ct; cr.InspectionNotification = rq; return cr; },
+                //    splitOn: "ContactId,RequestId"
+                //).ToList();
+             
+
+               
+
+                var circulations =multi.Read<Circulation, Contact,  Request, CirculationAttachments, Attachment, Circulation>(
+                    
+                    (cr, ct,  rq, cra, atc) =>
+                    {
+                        if (!circulationDict.TryGetValue(cr.Id, out var circulationEntry))
+                        {
+                            circulationEntry = cr;
+                            circulationEntry.PerformerContactPerson = ct;
+                            //circulationEntry.InspectionNotification = ins;                            
+                            circulationEntry.Attachments = new List<CirculationAttachments>();
+                            circulationDict.Add(circulationEntry.Id, circulationEntry);
+                        }
+
+                        if (cra != null)
+                        {
+                            cra.Attachment = atc;
+                            circulationEntry.Attachments.Add(cra);
+                        }
+
+                        return circulationEntry;
+                    },
+                    
+                    splitOn: "ContactId,RequestId,CirculationAttachmentId,AttachmentId"
+                );
+
+                participatedCirculations = circulations.Distinct().ToList();
+
 
                 orders = multi.Read<Order>().ToList();
                  contacts = multi.Read<InspectionNotificationContact, Contact, InspectionNotificationContact>(
@@ -1344,7 +1377,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     if (inspectionNotificationContact != null)
     {
         inspectionNotificationContact.Contact = contact;
-        inspectionNotificationContact.Contact.Id = contact.ContactId!.Value;
+        inspectionNotificationContact.Contact.ContactId = contact.ContactId;
         // Add to the collection.
         inspectionNotification.Contacts!.Add(inspectionNotificationContact);
     }
@@ -1878,7 +1911,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                         {
                             inspectionNotificationContact.InspectionNotificationId = InspectionNotificationId.Create(new Guid(inspectionNotificationContact.InspectionNotificationId.Value.ToString()));
                         }
-                        inspectionNotificationContact.ContactId = contact.Id;
+                        inspectionNotificationContact.ContactId = contact.ContactId;
                         inspectionNotificationContact.Id = inspectionNotificationContact.Id;
                         return inspectionNotificationContact;
                     },

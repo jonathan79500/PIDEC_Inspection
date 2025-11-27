@@ -1,4 +1,5 @@
-﻿using Inspection.Application.DTOs;
+﻿using Inspection.Application.Contracts.Persistence;
+using Inspection.Application.DTOs;
 using Inspection.Application.DTOs.Common;
 using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.DTOs.User;
@@ -14,6 +15,7 @@ using Inspection.Application.Features.InspectionNotifications.Queries.GetNewNoti
 using Inspection.Application.Features.InspectionNotifications.Queries.GetNotStartedNotificationsByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetSentNotificationsByUserName;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
+using Inspection.Domain.Entities.Inspector;
 using Inspection.Infrastructure.Helpers;
 using Mapster;
 using MediatR;
@@ -34,11 +36,13 @@ public class InspectionNotificationController : ControllerBase
 {
     private readonly ISender _mediator;
     private IWebHostEnvironment webHostEnvironment;
+    private IFileService _fileService;
 
-    public InspectionNotificationController(IMediator mediator, IWebHostEnvironment _webHostEnvironment)
+    public InspectionNotificationController(IMediator mediator, IWebHostEnvironment _webHostEnvironment, IFileService fileService)
     {
         _mediator = mediator;
         this.webHostEnvironment = _webHostEnvironment;
+        _fileService = fileService;
     }
     // GET: api/<InspectionController>
     [HttpGet]    
@@ -92,6 +96,9 @@ public class InspectionNotificationController : ControllerBase
     [Route("GetNewNotificationNumber")]
     public async Task<ActionResult<queryResult>> GetNewNotificationNumber([FromBody]queryNNParams param)
     {
+        if (param == null)
+            return BadRequest("Missing request body");
+
         var command = new GetNewNotificationNumberQuery { ProjectNumber= param.projectnumber, OrderNumber= param.ordernumber };
         try
         { 
@@ -129,6 +136,19 @@ public class InspectionNotificationController : ControllerBase
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
+    }
+
+    [HttpGet("GetAttachmentById/{id}")]
+    public IActionResult Download(string id)
+    {
+        var taskResult = _fileService.DownloadFileById(new Guid(id));
+        if (taskResult == null) return NotFound();
+        var FileDto = taskResult.Result;
+        // Return as downloadable file
+        // return File(FileDto.Content, FileDto.ContentType);
+        //Use MemoryStream for large files
+        var stream = new MemoryStream(FileDto.Content);
+        return File(stream, FileDto.ContentType, FileDto.FileName);
     }
 
     [HttpPost]
@@ -308,7 +328,11 @@ public class InspectionNotificationController : ControllerBase
             {
                 attachmentDto = new AttachmentDto();
                 attachmentDto.Content = inspectionUpload.Attachments[i];
-                attachmentDto.Id = inspectionUpload.AttachmentIds[i];
+                attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
+                if(inspectionUpload.AttachmentIds[i] != null && inspectionUpload.AttachmentIds[i] != "")
+                    attachmentDto.Id = new Guid(inspectionUpload.AttachmentIds[i]);
+                else
+                    attachmentDto.Id =Guid.NewGuid();
                 attachmentDto.Name = inspectionUpload.AttachmentNames[i];
                 attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
                 attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
@@ -340,13 +364,21 @@ public class InspectionNotificationController : ControllerBase
             //};
 
             var response = await _mediator.Send(command);
-            return Ok(response);
+            return Ok(new
+            {
+                Inspection = response.Item1,
+                CurrentCirculation = response.Item2
+            });
+            //return Ok(response);
         }
         catch (Exception exp)
         {
             return Ok();
         }
     }
+   
+
+   
 
     //[Consumes("multipart/form-data")]
     //[Produces("application/json")]
@@ -359,7 +391,7 @@ public class InspectionNotificationController : ControllerBase
     //    try
     //        {
     //        var dtoAttachment = new AttachmentDto();
-          
+
     //        //Debug.Write("File Name is: "+attachment.FileName);
     //        //Debug.Write("File Type is: " + attachment.ContentType);
     //        AttachmentDto[] attachmentDtos = new AttachmentDto[10];
@@ -367,7 +399,7 @@ public class InspectionNotificationController : ControllerBase
     //    //{
     //    //    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachment.Name));
 
-            
+
     //    //        if (dtoAttachment.Content != null)
     //    //        {
     //    //            dtoAttachment.Id = Guid.NewGuid();

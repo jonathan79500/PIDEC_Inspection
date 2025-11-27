@@ -1,6 +1,8 @@
 ﻿using Arch.EntityFrameworkCore.UnitOfWork;
 using Inspection.Application.Contracts.Infrastructure;
 using Inspection.Application.Contracts.Persistence;
+using Inspection.Application.DTOs;
+using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.Features.InspectionNotifications.Validators;
 using Inspection.Application.Models;
 using Inspection.Domain.Entities.Common;
@@ -13,6 +15,7 @@ using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.Projects;
 using Inspection.Domain.Entities.User.Entities;
 using Inspection.Domain.Entities.User.Enums;
+using Inspection.Domain.Entities.ValueObjects;
 using Mapster;
 using MediatR;
 using System;
@@ -25,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
 
-public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInspectionNotificationCommand, InspectionNotification>
+public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInspectionNotificationCommand, (InspectionNotificationDto,CirculationDto)>
 {
     private readonly IInspectionNotificationRepository _inspectionNotificationRepository;
     private readonly IUserManagerRepository _userManagerRepository;
@@ -45,7 +48,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
     }
 
 
-    public async Task<InspectionNotification> Handle(SendInspectionNotificationCommand request, CancellationToken cancellationToken)
+    public async Task<(InspectionNotificationDto,CirculationDto)> Handle(SendInspectionNotificationCommand request, CancellationToken cancellationToken)
     {
         var validator = new CreateInspectionNotificationValidator();
         var validationResult = await validator.ValidateAsync(request.CreateInspectionNotificationDto);
@@ -66,7 +69,8 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
         string newRevisedNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result.ToString();
         InspectionNotification.NotificationNumber = newRevisedNumber;
-        InspectionNotification.Attachments = attachments;
+          
+        //InspectionNotification.Attachments = attachments;
 
         try
         {
@@ -76,10 +80,12 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 notificationForSend =await _inspectionNotificationRepository.UpdateInspectionNotification(InspectionNotification);
             }
             else
-                notificationForSend =await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification);
+                (notificationForSend,currentCirculation) =await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification,attachments);
 
             //var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend, project);
             var result =  CreateNextUsersCirculations(notificationForSend,project);
+
+           // notificationForSend.Circulations.AddRange(result.Result);
 
             await _inspectionNotificationRepository.UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
         }
@@ -88,7 +94,10 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
         }
 
-        return await Task.FromResult(InspectionNotification);
+        //return await Task.FromResult(InspectionNotification);
+        var finalInspectionNotification = notificationForSend.Adapt<InspectionNotificationDto>();
+        CirculationDto currentCirculationDto= currentCirculation.Adapt<CirculationDto>();
+        return await Task.FromResult((finalInspectionNotification,currentCirculationDto));
 
 
         //-------------------------------------------------------------------------------------------------
@@ -133,7 +142,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
     }
 
-    public async Task<bool> CreateNextUsersCirculations(InspectionNotification inspectionNotification, Project project)
+    public async Task<List<Circulation>> CreateNextUsersCirculations(InspectionNotification inspectionNotification, Project project)
     {
         string projectId = project.FSId;
         string orderDotId = inspectionNotification.Order.EdmsId;
@@ -231,10 +240,10 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
             _inspectionNotificationRepository?.SaveInspectionNotificationCirculations(circulations);
 
 
-            return await Task.FromResult(true);
+            return await Task.FromResult(circulations);
         }
         catch (Exception exp) {
-            return await Task.FromResult(false);
+            return null;
         }
     }
     //public async Task<InspectionNotification> SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project)
@@ -366,7 +375,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 LeadDepartmentContact.Address = null;
                 LeadDepartmentContact.Phone = "";
                 LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
-                LeadDepartmentContact.Id = Guid.NewGuid();
+                LeadDepartmentContact.ContactId = Guid.NewGuid(); //ContactId.CreateUnique();
                 LeadDepartmentContact.Cc = "";
                 LeadDepartmentContact.ContactType = ContactType.PIDEC_LeadDepartment.GetHashCode();
                 LeadDepartmentContact.UserName = eDMSOrderDepartmentLeads.leadEngineer;
@@ -420,7 +429,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 OriginatorContact.Phone = "";
                 OriginatorContact.Mobile = "";
                 OriginatorContact.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
-                OriginatorContact.Id = Guid.NewGuid();
+                OriginatorContact.ContactId = Guid.NewGuid();//ContactId.CreateUnique();
                 OriginatorContact.Cc = "";
                 OriginatorContact.ContactType = ContactType.PIDEC_Originator.GetHashCode();
                 OriginatorContact.UserName = eDMSOrderDepartmentLeads.originator;
@@ -460,7 +469,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
         if (PidecDepartmentContacts_UserLink.Count == 0)
             for (int i = 0; i < PidecDepartmentContacts.Count; i++)
             {
-                PidecDepartmentContacts[i].Id = PidecDepartmentContacts[i].ContactId.Value;
+                PidecDepartmentContacts[i].ContactId = PidecDepartmentContacts[i].ContactId;
                 PidecDepartmentContacts_UserLink.Add(PidecDepartmentContacts[i], "");
             }
 

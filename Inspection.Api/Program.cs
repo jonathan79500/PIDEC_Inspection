@@ -23,6 +23,7 @@ using System.Text;
 
 // Register your type handlers before building the host
 SqlMapper.AddTypeHandler(new ProjectIdTypeHandler());
+SqlMapper.AddTypeHandler(new AttachmentIdTypeHandler());
 SqlMapper.AddTypeHandler(new OrderIdTypeHandler());
 SqlMapper.AddTypeHandler(new ContactIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionSubjectIdTypeHandler());
@@ -127,6 +128,7 @@ builder.Services.Configure<FormOptions>(options =>
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.FullName);
     c.AddSecurityDefinition("bearerAuth", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,

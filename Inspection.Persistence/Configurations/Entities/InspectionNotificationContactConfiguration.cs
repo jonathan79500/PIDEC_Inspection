@@ -26,8 +26,8 @@ namespace Inspection.Persistence.Configurations.Entities
 
 
             // builder.HasKey(e =>new { e.ContactId , e.InspectionNotificationId});
-            builder.Property(e => e.ContactId)
-                .HasConversion(converter);
+            //builder.Property(e => e.ContactId)
+            //    .HasConversion(converter);
 
             builder.Property(e => e.InspectionNotificationId)
                 .HasConversion(converter1);

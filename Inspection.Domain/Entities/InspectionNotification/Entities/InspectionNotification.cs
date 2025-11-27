@@ -76,16 +76,16 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
 
     private List<InspectionNotificationType> _types = new List<InspectionNotificationType>() ;
     private List<InspectionNotificationSubject> _subjects = new List<InspectionNotificationSubject>();  
-    private List<Attachment>? _attachments = new List<Attachment>();
+    //private List<Attachment>? _attachments = new List<Attachment>();
     private List<InspectionNotificationContact>? _contacts = new List<InspectionNotificationContact>();
     private List<Circulation>? _circulations = new List<Circulation>();
 
 
-    public List<Attachment> Attachments
-    {
-        get => _attachments;
-        set => _attachments = value;
-    }
+    //public List<Attachment> Attachments
+    //{
+    //    get => _attachments;
+    //    set => _attachments = value;
+    //}
     public List<InspectionNotificationContact>? Contacts { get => _contacts; set => _contacts = value; }
     public List<InspectionNotificationSubject>? Subjects { get => _subjects; set => _subjects = value; }
     public List<InspectionNotificationType>? Types { get => _types; set => _types = value; }
@@ -168,28 +168,31 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             }
         }
 
-        Attachment newAttachment;
-        if (inspectionNotification.Attachments != null && inspectionNotification.Attachments.Count > 0)
-        {
+        //Attachment newAttachment;
+        //if (inspectionNotification.Attachments != null && inspectionNotification.Attachments.Count > 0)
+        //{
             
-            for (int i = 0; i < inspectionNotification.Attachments.Count; i++)
-            {
-                if (inspectionNotification.Attachments[i].Content == null || inspectionNotification.Attachments[i].Content.Length == 0)
-                    inspectionNotification.Attachments.RemoveAt(i);
-                else
-                {
-                    newAttachment = new Attachment();
-                    newAttachment.AttachmentId = inspectionNotification.Attachments[i].AttachmentId.Value == null ? AttachmentId.CreateUnique() : inspectionNotification.Attachments[i].AttachmentId;
-                    newAttachment.Id = newAttachment.AttachmentId;
-                    newAttachment.Content = inspectionNotification.Attachments[i].Content;
-                    newAttachment.Version = inspectionNotification.Attachments[i].Version;
-                    newAttachment.Name = inspectionNotification.Attachments[i].Name;
-                    newAttachment.PDFSize = inspectionNotification.Attachments[i].PDFSize;
-                    newinspectionNotification.Attachments!.Add(newAttachment);
-                }
+        //    for (int i = 0; i < inspectionNotification.Attachments.Count; i++)
+        //    {
+        //        if (inspectionNotification.Attachments[i].Content == null || inspectionNotification.Attachments[i].Content.Length == 0)
+        //            inspectionNotification.Attachments.RemoveAt(i);
+        //        else
+        //        {
+        //            newAttachment = new Attachment();
+        //            newAttachment.AttachmentId = inspectionNotification.Attachments[i].AttachmentId.Value == null ? AttachmentId.CreateUnique() : inspectionNotification.Attachments[i].AttachmentId;
+        //            newAttachment.Id = newAttachment.AttachmentId;
+        //            newAttachment.Content = inspectionNotification.Attachments[i].Content;
+        //            newAttachment.Version = inspectionNotification.Attachments[i].Version;
+        //            newAttachment.Name = inspectionNotification.Attachments[i].Name;
+        //            newAttachment.PDFSize = inspectionNotification.Attachments[i].PDFSize;
+        //            newAttachment.ContentType = inspectionNotification.Attachments[i].ContentType;
+        //            newAttachment.DownloadUrl = inspectionNotification.Attachments[i].DownloadUrl;
+        //            newAttachment.Base64Content = inspectionNotification.Attachments[i].Base64Content;
+        //            newinspectionNotification.Attachments!.Add(newAttachment);
+        //        }
                 
-            }
-        }
+        //    }
+        //}
 
         newinspectionNotification.RaiseEvent(new InspectionNotificationCreatedEvent(newinspectionNotification.InspectionNotificationId));
 
@@ -219,15 +222,15 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
 
   
    
-    public  void AddAttachment(string name, string description, byte[] content,int version,string edmsId,string pdfSize)
-    {
-        var attachment = Attachment.Create(name, description, content,version,edmsId,pdfSize);          
-        _attachments.Add(attachment);
-    }
+    //public  void AddAttachment(string name, string description, byte[] content,int version,string edmsId,string pdfSize,string contentType)
+    //{
+    //    var attachment = Attachment.Create(name, description, content,version,edmsId,pdfSize,contentType);          
+    //    _attachments.Add(attachment);
+    //}
 
-    public void AddAttachment1(Attachment attachment) {
-        _attachments.Add(attachment);
-    }
+    //public void AddAttachment1(Attachment attachment) {
+    //    _attachments.Add(attachment);
+    //}
 
     public void AddContact(string name,Address address,string phone,string mobile,string fax, string email,string homepage,string attention,string cc,ContactType contactType,bool isVisible)
     {
@@ -320,19 +323,19 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             }).ToList();
 
          
-            clonedInspectionNotification.Attachments = this.Attachments.Select(attachment=>new Attachment { 
-                AttachmentId = AttachmentId.CreateUnique(),
-                Content = attachment.Content,   
-                CreatedBy  = attachment.CreatedBy,
-                CreatedDate= currentDate,
-                Description = attachment.Description,
-                edmsId = attachment.edmsId,
-                ModifiedBy = attachment.ModifiedBy,
-                ModifiedDate = currentDate,
-                Name = attachment.Name,
-                PDFSize = attachment.PDFSize,
-                Version = attachment.Version
-            }).ToList();
+            //clonedInspectionNotification.Attachments = this.Attachments.Select(attachment=>new Attachment { 
+            //    AttachmentId = AttachmentId.CreateUnique(),
+            //    Content = attachment.Content,   
+            //    CreatedBy  = attachment.CreatedBy,
+            //    CreatedDate= currentDate,
+            //    Description = attachment.Description,
+            //    edmsId = attachment.edmsId,
+            //    ModifiedBy = attachment.ModifiedBy,
+            //    ModifiedDate = currentDate,
+            //    Name = attachment.Name,
+            //    PDFSize = attachment.PDFSize,
+            //    Version = attachment.Version
+            //}).ToList();
 
 
             return clonedInspectionNotification;

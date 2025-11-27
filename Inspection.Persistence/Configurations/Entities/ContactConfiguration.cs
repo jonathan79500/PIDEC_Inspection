@@ -20,9 +20,9 @@ namespace Inspection.Persistence.Configurations.Entities
           id => id.Value,
           guidValue => new ContactId(guidValue));
             builder.HasKey(e => e.ContactId);
-            builder.Property(e => e.ContactId)
-                .HasConversion(converter)
-                .ValueGeneratedOnAdd();
+            //builder.Property(e => e.ContactId)
+            //    .HasConversion(converter)
+            //    .ValueGeneratedOnAdd();
 
             builder.Property(e => e.UserName).IsRequired();
             builder.Property(e => e.DomainId).IsRequired();

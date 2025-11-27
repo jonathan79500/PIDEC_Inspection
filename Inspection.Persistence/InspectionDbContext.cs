@@ -94,6 +94,23 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
 
+        modelBuilder.Entity<CirculationAttachments>()
+        .ToTable("CirculationAttachments")
+        .HasKey(ca => ca.Id);
+
+
+        modelBuilder.Entity<CirculationAttachments>()
+            .HasOne(ca => ca.Circulation)
+            .WithMany(ca => ca.Attachments)
+            .HasForeignKey(ca => ca.CirculationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CirculationAttachments>()
+           .HasOne(ca => ca.Attachment)
+           .WithMany(ca => ca.Circulations)
+           .HasForeignKey(ca => ca.AttachmentId)
+           .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<OrderContact>()
          .ToTable("OrderContacts")
          .HasKey(pq => pq.Id);
@@ -110,6 +127,8 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
            .WithMany(pq => pq.Orders)
            .HasForeignKey(pq=>pq.ContactId)
            .OnDelete(DeleteBehavior.Restrict);
+
+
 
         modelBuilder.Entity<OrdersettingException>()
       .ToTable("OrdersettingExceptions")

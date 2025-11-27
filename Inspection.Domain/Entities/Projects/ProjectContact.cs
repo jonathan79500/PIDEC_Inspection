@@ -19,7 +19,7 @@ namespace Inspection.Domain.Entities.Projects
         public Project Project { get; set; }
         public ProjectId ProjectId { get; set; }
 
-        public ContactId ContactId { get; set; }
+        public Guid ContactId { get; set; }
         public Contact Contact { get; set; }
 
         public List<OrdersettingException>? OrderExceptions { get; set; }

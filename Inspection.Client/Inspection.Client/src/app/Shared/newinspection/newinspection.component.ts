@@ -67,20 +67,8 @@ import { userInfo } from 'node:os';
 import { Contact } from '../../Core/Models/Contact.model';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ObjectTypes } from '../../Core/Models/ObjectTypes.enum';
+import { IsActiveForUserPipe } from '../../Core/General/Pipes/is-active-for-user.pipe';
 
-
-@Pipe({
-  name: 'isActiveForUser',
-  pure: true // keeps it performant; change to false if inputs are dynamic and need re-evaluation
-})
-export class IsActiveForUserPipe implements PipeTransform {
-  transform(circulation: Circulation, currentCirculation: Circulation): boolean {
-    return (
-      circulation.performerContactPerson.id === currentCirculation.performerContactPerson.id &&
-      (circulation.actionType == null)
-    );
-  }
-}
 
 
 function fillLarge() {
@@ -691,10 +679,11 @@ removeToContact(contactIndex:number):void
   generateAttachment():FormTypes.FormAttachment{
     return this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
-      version:'' ,
-      name:'',
+      version:[''] ,
+      name:[''],
       content: [],
-      description:''
+      description:[''],
+      downloadUrl :['']
     });
   }
 
@@ -1585,16 +1574,17 @@ CalculateInspectionDuration():void{
     this.formData.append('Project',JSON.stringify(this.Project ))
     this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
 
-    this.inspectionService.saveNewInspectionFull(this.formData).subscribe((sentInspection)=>{
+    this.inspectionService.saveNewInspectionFull(this.formData).subscribe((result)=>{
       this.editMode = false;
       this.toggleEditMode(false);
+      this.currentCirculation = result.currentCirculation;
       this.inspectionForm.patchValue({
         ...this.inspectionForm.getRawValue(),
-        id:sentInspection.id,
-        contacts:sentInspection.contacts,
-        inspectionSubjects: sentInspection.inspectionSubjects,
-        inspectionTypes:sentInspection.inspectionTypes,
-        attachments :sentInspection.attachments
+        id:result.inspection.id,
+        contacts:result.inspection.contacts,
+        inspectionSubjects: result.inspection.inspectionSubjects,
+        inspectionTypes:result.inspection.inspectionTypes,
+      //  attachments :sentInspection.attachments
       })
     });
   }
@@ -1694,7 +1684,7 @@ let findedInsSubject = null;
         contacts:savedNewInspection.contacts,
        // inspectionSubjects: savedNewInspection.inspectionSubjects,
        // inspectionTypes:savedNewInspection.inspectionTypes,
-        attachments :savedNewInspection.attachments
+       // attachments :savedNewInspection.attachments
       })
   });
 

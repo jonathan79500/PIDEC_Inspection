@@ -19,45 +19,45 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         
     }
 
-    private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
-    {
+    //private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
+    //{
        
-        builder.OwnsMany(inf => inf.Attachments
-        , 
-            atb =>
-            {
-                atb.ToTable("Attachments");
+    //    builder.OwnsMany(inf => inf.Attachments
+    //    , 
+    //        atb =>
+    //        {
+    //            atb.ToTable("Attachments");
 
               
-                //or
-                atb.HasKey(nameof(Attachment.Id), "InspectionNotificationId");
+    //            //or
+    //            atb.HasKey(nameof(Attachment.Id), "InspectionNotificationId");
 
-                atb.WithOwner().HasForeignKey("InspectionNotificationId");
+    //            atb.WithOwner().HasForeignKey("InspectionNotificationId");
 
-                var converter = new ValueConverter<AttachmentId, Guid>(
-                 id => id.Value,
-                  guidValue => AttachmentId.Create(guidValue));
+    //            var converter = new ValueConverter<AttachmentId, Guid>(
+    //             id => id.Value,
+    //              guidValue => AttachmentId.Create(guidValue));
 
-                atb.Property(a => a.Id)
-                    .HasColumnName("Id")
-                    .ValueGeneratedNever()
-                    .HasConversion(converter);
+    //            atb.Property(a => a.Id)
+    //                .HasColumnName("Id")
+    //                .ValueGeneratedNever()
+    //                .HasConversion(converter);
 
-              //  atb.HasKey("AttachmentId", "InspectionNotificationId");
+    //          //  atb.HasKey("AttachmentId", "InspectionNotificationId");
 
-                atb.Property(a => a.Name).HasMaxLength(100);
-                atb.Property(a => a.Description).HasMaxLength(255);
-                atb.Property(a => a.Content).HasColumnType("image");
+    //            atb.Property(a => a.Name).HasMaxLength(100);
+    //            atb.Property(a => a.Description).HasMaxLength(255);
+    //            atb.Property(a => a.Content).HasColumnType("image");
 
-                // if attchment record had many children so again like above we could define atb.OwnsMany(....) and etc
-            }
-        );
+    //            // if attchment record had many children so again like above we could define atb.OwnsMany(....) and etc
+    //        }
+    //    );
 
-        builder.Navigation(i => i.Attachments).Metadata.SetField("_attachments");
-        builder.Navigation(i => i.Contacts).Metadata.SetField("_contacts");
-        builder.Metadata.FindNavigation(nameof(InspectionNotification.Attachments))!.SetPropertyAccessMode(PropertyAccessMode.Field);
-        builder.Metadata.FindNavigation(nameof(InspectionNotification.Contacts))!.SetPropertyAccessMode(PropertyAccessMode.Field);
-    }
+    //   // builder.Navigation(i => i.Attachments).Metadata.SetField("_attachments");
+    //    builder.Navigation(i => i.Contacts).Metadata.SetField("_contacts");
+    //    builder.Metadata.FindNavigation(nameof(InspectionNotification.Attachments))!.SetPropertyAccessMode(PropertyAccessMode.Field);
+    //    builder.Metadata.FindNavigation(nameof(InspectionNotification.Contacts))!.SetPropertyAccessMode(PropertyAccessMode.Field);
+    //}
 
     public void ConfigureOrderTable(EntityTypeBuilder<Order> builder)
     {

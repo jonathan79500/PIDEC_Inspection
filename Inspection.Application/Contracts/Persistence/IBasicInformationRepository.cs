@@ -1,6 +1,7 @@
 ﻿
 using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Contacts;
+using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.Orders;
 using Inspection.Domain.Entities.Projects;
 using Inspection.Domain.Entities.User.Entities;
@@ -34,6 +35,7 @@ public interface IBasicInformationRepository
     Task<bool> SaveOrderInspectionSubjects(List<InspectionSubject> InspectionSubjects,Order order);
     Task<bool> SaveOrderContacts(List<Contact> Contacts, Order order);
     Task<bool> SaveOrderExceptions(List<Contact> ExceptionContacts, Order order);
+    Task<Attachment> GetAttachmentById(Guid id);
 
     //Task<bool> ActivateProjectInspectionSystem(Project project, List<Contact> mCContacts, List<Contact> ownerContacts, List<Contact> pidecInspectorsContacts, List<Contact> tPInspectorsContacts);
 }

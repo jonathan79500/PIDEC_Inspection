@@ -2,4 +2,5 @@
 .Inspection.Client/Inspection.Client/node_modeules
 *.m4a
 Debug/**
+.Inspection.Api/Attachments
 

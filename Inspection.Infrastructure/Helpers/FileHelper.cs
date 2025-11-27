@@ -9,10 +9,14 @@ namespace Inspection.Infrastructure.Helpers
     public class FileHelper
     {
         public static string generateFileName(string fileName)
-        { 
+        {
+            string ext = "";
         var name = Guid.NewGuid().ToString().Replace("-","");
             var lastIndex = fileName.LastIndexOf('.');
-            var ext = fileName.Substring(lastIndex);
+            if (lastIndex > 0)
+                ext = fileName.Substring(lastIndex);
+            else
+                ext = fileName;
             return name + ext;
         }
     }

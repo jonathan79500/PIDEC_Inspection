@@ -17,12 +17,12 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
 
         public new Guid Id { get; set; }
 
-        public InspectionNotificationId InspectionNotificationId { get;  set; }
-        public ContactId ContactId { get;  set; }
+        public InspectionNotificationId? InspectionNotificationId { get;  set; }
+        public Guid? ContactId { get;  set; }
 
 
-        public InspectionNotification InspectionNotification { get;  set; }
-        public Contact Contact { get;  set; }   
+        public InspectionNotification? InspectionNotification { get;  set; }
+        public Contact? Contact { get;  set; }   
 
         public static InspectionNotificationContact Create(Contact contact, InspectionNotification inspectionNotification, ContactType contactType)
         {

@@ -13,33 +13,38 @@ using Inspection.Domain.Entities.ValueObjects;
 
 namespace Inspection.Domain.Entities.Contacts
 {
-    public class Contact : BaseDomainEntity<ContactId>
+    public class Contact //: BaseDomainEntity<ContactId>
     {
 
         public Contact()
         {
 
         }
-        private Contact(ContactId contactId) : base(contactId)
+        public Contact(Guid contactId) //: base(contactId)
         {
             this.ContactId = contactId;
         }
 
-        public ContactId? ContactId { get; set; }
-        public string? Name { get; set; }
-        public string? UserName { get; set; }
-        public int? DomainId { get; set; }
+        public Guid ContactId { get; set; }
+        public string? Name { get; set; }= string.Empty;
+        public string? UserName { get; set; } = string.Empty;
+        public int? DomainId { get; set; } = 0;
         public int? ContactType { get; set; }
         public Address? Address { get; set; }
         public string Phone { get; set; }
         public string? Fax { get; set; } = string.Empty;
-        public string? Email { get; set; }
+        public string? Email { get; set; } = string.Empty ;
         public string? HomePage { get; set; } = string.Empty;
-        public string Mobile { get; set; }
+        public string? Mobile { get; set; }= string.Empty;
         public string? Attention { get; set; }
         public string? Cc { get; set; }
         public bool? IsVisible { get; set; }
         public string? UserId { get; set; }
+
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? ModifiedDate { get; set; } = DateTime.Now.AddSeconds(5);
+        public string? CreatedBy { get; set; } = "Admin";
+        public string? ModifiedBy { get; set; } = string.Empty;
 
         [NotMapped]
         public string? Password { get; set; }
@@ -53,7 +58,7 @@ namespace Inspection.Domain.Entities.Contacts
         public List<InspectionNotificationContact>? InspectionNotifications { get; set; }
 
 
-        private Contact(ContactId contactId, string name, Address address, string phone, string mobile, string fax, string email, string homepage, string attention, string cc, int contactType,bool isVisible)
+        private Contact(Guid contactId, string name, Address address, string phone, string mobile, string fax, string email, string homepage, string attention, string cc, int contactType,bool isVisible)
         {
             ContactId = contactId;
             Name = name;
@@ -73,7 +78,7 @@ namespace Inspection.Domain.Entities.Contacts
 
         public static Contact Create(string name, Address address, string phone, string mobile, string fax, string email, string homepage, string attention, string cc, int contactType, bool isVisible)
         {
-            return new Contact(ContactId.CreateUnique(), name, address, phone, mobile, fax, email, homepage, attention, cc, contactType,isVisible);
+            return new Contact(Guid.NewGuid(), name, address, phone, mobile, fax, email, homepage, attention, cc, contactType,isVisible);
         }
 
         public void SetContactType(ContactType contactType)

@@ -104,7 +104,7 @@ export const routes: Routes = [
     },
     {
       path:'editInspection/:id',
-      component:NewinspectionComponent,
+      component:VnewinspectionComponent,
       data:{reuse:true}
     }
   ]
@@ -190,7 +190,7 @@ export const routes: Routes = [
       data:{reuse:true}
     },
      {
-  path:'newInspection/:notificationNumber',
+  path:'newInspection/:id',
   component:PdnewinspectionComponent,
   data:{reuse:true}
  }
@@ -237,7 +237,7 @@ export const routes: Routes = [
       data:{reuse:true}
     },
      {
-  path:'newInspection/:notificationNumber',
+  path:'newInspection/:id',
   component:PdnewinspectionComponent,
   data:{reuse:true}
  }

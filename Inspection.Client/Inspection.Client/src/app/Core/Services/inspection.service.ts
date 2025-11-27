@@ -158,12 +158,16 @@ export class InspectionService {
   // {
   //   return await lastValueFrom(this.http.post(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData))
   // }
-
+FetchFileFromServer(id:string)
+{
+  window.open(this.InspectionAPIPath + "/GetAttachmentById/" + id, "_blank");
+  //return this.http.get<any>(this.InspectionAPIPath+"/"+"GetAttachmentById/"+id);
+}
 
    saveNewInspectionFull(formData: FormData)
   {
     const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData);//,{ headers: headers });
+     return this.http.post<{inspection:Inspection,currentCirculation:Circulation}>(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData);//,{ headers: headers });
   }
 
   draftNewInspectionFull(formData: FormData)
