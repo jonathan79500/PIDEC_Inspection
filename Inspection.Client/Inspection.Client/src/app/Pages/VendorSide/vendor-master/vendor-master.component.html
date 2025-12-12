@@ -1,23 +1,25 @@
-<div *ngIf="isLoading">
-  <img src="../../../assets/close-icon" />
+<div *ngIf="isLoading" class="loading-screen">
+  <img src="../../../assets/close-icon" alt="Loading..." />
 </div>
-<div *ngIf="!isLoading">
+<div *ngIf="!isLoading" class="vendorscreen">
   <!-- Display your vendor basic info here -->
 
-  <div style="display: flex; flex-direction: row; background-color: #f6efff">
-    <div style="flex: 1">
+  <div class="vendor-row">
+    <!-- Left sidebar -->
+    <div class="vendor-left flex-1">
       <span>hello</span>
       <app-vleft-sidebar
         [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
         (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
       ></app-vleft-sidebar>
     </div>
-    <div style="flex: 6; margin-left: 0">
-      <div style="display: flex; flex-direction: column">
-        <div style="flex: 1; margin-left: 0; position: relative">
+    <!-- Main content -->
+    <div class="vendor-main flex-6">
+      <div class="flex-col">
+        <div class="vendor-top flex-1">
           <app-vtop-menu [basicVendorInfo]="basicVendorInfo"></app-vtop-menu>
         </div>
-        <div style="flex: 5; margin-left: 0">
+        <div class="vendor-body flex-5">
           <app-vmain
             [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
             [screenWidth]="screenWidth()"

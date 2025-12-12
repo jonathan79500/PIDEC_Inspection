@@ -14,6 +14,8 @@ export interface Circulation
      performedActionDateGregorian :Date,
      performerContactPerson :Contact,
      performerContactType :ContactTypes,
+     qCActionType :number,
+     description:string,
      createdDate:Date,
      modifiedDate : Date,
      comment :string

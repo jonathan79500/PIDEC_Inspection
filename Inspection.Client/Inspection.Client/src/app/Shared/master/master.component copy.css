@@ -1,0 +1,63 @@
+
+.container {
+  background-color: var(--primary-color); /* deep green background */
+  transition: background-color 1s linear;
+}
+
+/* Top section background */
+.lightpinkColor {
+  background-color: #c8e6c9; /* soft green tint */
+  border-radius: 0.1rem;
+}
+
+/* Sidebar (previously blue) */
+.blueColor {
+  background-color: var(--primary-color); /* strong green */
+  border-radius: 0.2rem;
+  color: #fff; /* white text for contrast */
+}
+
+/* Right sidebar (previously pink) */
+.pinkColor {
+  background-color: var(--secondary-color); /* lighter green accent */
+  border-radius: 0.2rem;
+  color: #fff;
+}
+
+/* Neutral section */
+.grayColor {
+  background-color: #a5d6a7; /* muted green-gray */
+  border-radius: 0.1rem;
+}
+
+/* Main content background */
+.ostokhooniColor {
+  background-color: var(--background-color); /* soft light green */
+  border-radius: 0.1rem;
+}
+
+/* Select dropdown */
+select {
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+
+  color: var(--text-color); /* dark green text */
+  background-color: var(--background-color);
+  border: 2px solid var(--border-color);
+
+  border-radius: 5px;
+  padding: 5px 10px;
+  width: 200px;
+  height: 30px;
+  box-shadow: 2px 4px 3px rgba(0, 128, 0, 0.2);
+
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+select:focus {
+  outline: 2px solid var(--secondary-color); /* green accent focus */
+}

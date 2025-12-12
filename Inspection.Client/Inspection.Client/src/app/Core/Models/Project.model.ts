@@ -9,6 +9,7 @@ export class Project{
   fSId:string;
 
   contacts :Contact[];
+  pidecQCContacts: Contact[];
   ownerContacts :Contact[];
   mcContacts :Contact[];
   pidecInspectors:Contact[];

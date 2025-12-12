@@ -1,79 +1,110 @@
-
-:host .masterClass
-{
-  justify-content: left !important;
-  display: block !important;
-}
-.container
-{
-  background-color: #123C69; ;    
-
-  /* transition the background-color over 1s with a linear animation */
-  transition: background-color 1s linear;
-  
-}
-.lightpinkColor
-{
-  background-color: #edc7b7; 
-  border-radius: 0.1rem;
-  border-style: solid;
-  border-color: black;
-  width: 100px;
-}
-.blueColor
-{ 
-  background-color: #123C69; 
-  border-radius: 0.2rem;
-  color:  #EEE2DC; 
-}
-.pinkColor
-{
-  background-color: #Ac3B61;
-  border-radius: 0.2rem;
-}
-.grayColor
-{
-  background-color: #BAB2B5;
-  border-radius: 0.1rem;
-}
-.ostokhooniColor
-{
-  background-color: #EEE2DC;
-  border-radius: 0.1rem;
+:root {
+ --primary-color: #17303f !important;       /* deep green */
+  --secondary-color: #066ea7 !important;     /* lighter green accent */
+  --button-dark: #5d4037 !important;          /* rich brown */
+  --button-light: #efebe9 !important;         /* soft brown background */
+  --background-color: #dde7e7 !important;    /* light green background */
+  --text-color: #3e2723 !important;          /* dark brown text */
+  --border-color: #a1887f !important;        /* brown-gray border */
+  --font-family: "Tahoma", sans-serif !important;
+   --side-nav: #00385d !important;
+   --main-backgroundColor: #fff !important;
+   --list-background-light: #bfdeff !important;
+   --primaryform-color: #edf6fc !important;
+   --secondryform-color :#1572a1 !important;
 }
 
-.vendorscreen{
+/* Utility flex classes */
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.flex-5 { flex: 5; }
+.flex-6 { flex: 6; }
 
-  /* display: flex; */
+/* Loading screen */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Vendor screen container */
+.vendorscreen {
   width: 95vw;
   height: 100vh;
-  background: rgb(235, 223, 222);
+  background: var(--background-color);
   margin: 0;
   padding: 0;
-  color: violet !important;
-}
-.button{
-  text-align: center; 
-  border-radius: 6px;
-  border-style: solid;
-  color: white;
-  background: linear-gradient(to top, #ac3b61,  #EEE2DC);
+  font-family: var(--font-family);
+  color: var(--text-color);
 }
 
-nav
-{
-  background-color: #EEE2DC; 
-  color: #ac3b61;
-   font-weight: bold
+/* Row layout */
+.vendor-row {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--background-color) !important;
 }
-ul{
-  margin:0;
+
+/* Left sidebar */
+.vendor-left {
+  background-color: transparent !important;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+}
+
+/* Main content */
+.vendor-main {
+  margin-left: 0;
+  background-color: var(--background-color) !important;
+  border-radius: 0.2rem;
+}
+
+/* Top menu */
+.vendor-top {
+  position: relative;
+  margin-left: 0;
+  background-color: var(--secondary-color);
+  border-radius: 0.2rem;
+}
+
+/* Body content */
+.vendor-body {
+  margin-left: 0;
+  background-color: var(--background-color) !important;
+}
+
+/* Buttons */
+.button {
+  text-align: center;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--button-dark);
+}
+
+/* Navigation */
+nav {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+ul {
+  margin: 0;
   padding: 0;
   list-style-type: none;
 }
 
-li{
-display: inline-block;
-margin-right: 20px;
+li {
+  display: inline-block;
+  margin-right: 20px;
 }
-

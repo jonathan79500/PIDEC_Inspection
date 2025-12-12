@@ -6,6 +6,7 @@ using Inspection.Application.DTOs.User;
 using Inspection.Application.Features.InspectionNotifications.Commands.CompleteCirculation;
 using Inspection.Application.Features.InspectionNotifications.Commands.CreateInspectionNotification;
 using Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
+using Inspection.Application.Features.InspectionNotifications.Queries.GetApprovedInspectionNotificationsByProjIdUserId;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetDraftedNotificationsByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationFlow;
@@ -22,6 +23,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -55,24 +57,7 @@ public class InspectionNotificationController : ControllerBase
         return Ok(inspectionNotifications);
     }
 
-    // GET api/<InspectionController>/5 [Route("{id}/GetById")]
-    //[HttpGet("{id}")]
-    //[HttpGet]
-    //[Route("GetById/{id}")]
-    //public async Task<ActionResult<InspectionNotificationDto>> GetById([FromRoute]Guid id)
-    //{
-    //    var inspectionNotification = await _mediator.Send(new GetInspectionNotificationDetailRequest { Id = new Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId(id)});
-    //    return Ok(inspectionNotification);
-    //}
-
-
-    //[HttpPost]
-    //[Route("GetById")]
-    //public async Task<ActionResult<InspectionNotificationDto>> GetById([FromBody] InspectionId id)
-    //{
-    //    var inspectionNotification = await _mediator.Send(new GetInspectionNotificationDetailRequest { Id = new Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId(new Guid(id.Id)) });
-    //    return Ok(inspectionNotification);
-    //}
+  
 
     [HttpPost]
     [Route("SaveNew")]
@@ -184,12 +169,27 @@ public class InspectionNotificationController : ControllerBase
 
     [HttpPost]
     [Route("GetReceivedInspectionsByProjectId_UserId")]
-    public async Task<ActionResult<List<InspectionNotificationDto>>> GetReceivedInspectionsByProjectId_UserId([FromBody] InspectionListRequestDto request)
+    public async Task<ActionResult<List<InspectionNotificationDataSummaryDto>>> GetReceivedInspectionsByProjectId_UserId([FromBody] InspectionListRequestDto request)
     {
         try
         {
             var receivedInspectionNotifications = await _mediator.Send(new GetInspectionNotificationsByProjUsrIdsRequest {ProjectId=request.ProjectId,UserId=request.UserId });
             return Ok(receivedInspectionNotifications);
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("GetApprovedInspectionsByProjectId_UserId")]
+    public async Task<ActionResult<List<InspectionNotificationDataSummaryDto>>> GetApprovedInspectionsByProjectId_UserId([FromBody] InspectionListRequestDto request)
+    {
+        try
+        {
+            var approvedInspectionNotifications = await _mediator.Send(new GetApprovedInspectionNotificationsByProjIdUserIdRequest { ProjectId = request.ProjectId, UserId = request.UserId });
+            return Ok(approvedInspectionNotifications);
         }
         catch (Exception exp)
         {
@@ -294,20 +294,50 @@ public class InspectionNotificationController : ControllerBase
         }
     }
 
-    [HttpPost]
-    [Route("CompleteTask")]
-    public async Task<ActionResult> CompleteTask(IFormFile[] attachments, IFormCollection inspectionNotification)//([FromBody] CirculationDto circulationDto)
+    [HttpPost("CompleteTask")]
+    [Consumes("multipart/form-data")]  
+    public async Task<ActionResult> CompleteTask([FromForm] CirculationDataDto circulationDate)//([FromBody] CirculationDto circulationDto)
     {
         try
         {
-            var currentCirculation = JsonConvert.DeserializeObject<CirculationDto>(inspectionNotification["circulation"]!);
-            var command = new CompleteCirculationCommand { CirculationDto = currentCirculation };
+            List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
+            AttachmentDto attachmentDto;
+            for (int i = 0; i < circulationDate.Attachments.Count; i++)
+            {
+                attachmentDto = new AttachmentDto();
+                attachmentDto.Content = circulationDate.Attachments[i];
+                attachmentDto.ContentType = circulationDate.Attachments[i].ContentType;
+                if (circulationDate.AttachmentIds[i] != null && circulationDate.AttachmentIds[i] != "")
+                    attachmentDto.Id = new Guid(circulationDate.AttachmentIds[i]);
+                else
+                    attachmentDto.Id = Guid.NewGuid();
+                attachmentDto.Name = circulationDate.AttachmentNames[i];
+                attachmentDto.Version = circulationDate.AttachmentVersions[i];
+                attachmentDto.Description = circulationDate.AttachmentDescriptions[i];
+                var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
+
+
+
+
+                using var stream = new FileStream(path, FileMode.Create);
+                await attachmentDto.Content.CopyToAsync(stream);
+
+                attachmentDtos.Add(attachmentDto);
+                // Here you can persist metadata + file path to DB
+            }
+
+            var command = new CompleteCirculationCommand
+            {
+                CirculationDto = JsonConvert.DeserializeObject<CirculationDto>(circulationDate.circulation),
+                AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
+            };
+
             var response = _mediator.Send(command);
-            return Ok(response);
+            return Ok(response.Result);
         }
         catch
         {
-          
+
             return BadRequest("task ended with error");
         }
     }
@@ -427,7 +457,18 @@ public class InspectionNotificationController : ControllerBase
     //    }
     //}
 }
-public class InspectionUploadDto
+
+public class CirculationDataDto
+{
+        public string circulation { get; set; }      
+        public List<string> AttachmentIds { get; set; }
+        public List<string> AttachmentNames { get; set; }
+        public List<string> AttachmentVersions { get; set; }
+        public List<string> AttachmentDescriptions { get; set; }
+        [ValidateNever]
+        public List<IFormFile> Attachments { get; set; }
+}
+    public class InspectionUploadDto
 {
     public string inspection { get; set; }
      public string project { get; set; }

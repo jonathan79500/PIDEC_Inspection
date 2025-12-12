@@ -125,12 +125,27 @@ public class AuthenticationController : ControllerBase
     [Authorize]
     [HttpPost]
     [Route("GetPIDECLeadDataByPIDECLeadInfo_Remotely")]
-    public async Task<ActionResult<BasicQCMemberInfo>> GetPIDECLeadDataByPIDECLeadInfo_Remotely([FromBody] UserDto PIDECLeadData)
+    public async Task<ActionResult<BasicPIDECLeadsInfo>> GetPIDECLeadDataByPIDECLeadInfo_Remotely([FromBody] UserDto PIDECLeadData)
     {
         var pidecLeadDataRes = await _mediator.Send(new GetPIDECLeadsDataByUserNameQuery { UserName = PIDECLeadData.UserName, DomainId = PIDECLeadData.DomainId!.Value });
         try
         {
             return Ok(pidecLeadDataRes);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    [Authorize]
+    [HttpPost]
+    [Route("GetInspectorDataByInspectorInfo_Remotely")]
+    public async Task<ActionResult<BasicInspectorInfo>> GetInspectorDataByInspectorInfo_Remotely([FromBody] UserDto InspectorData)
+    {
+        var inspectorDataRes = await _mediator.Send(new GetInspectorsDataByUserNameQuery { UserName = InspectorData.UserName, DomainId = InspectorData.DomainId!.Value });
+        try
+        {
+            return Ok(inspectorDataRes);
         }
         catch (Exception ex)
         {

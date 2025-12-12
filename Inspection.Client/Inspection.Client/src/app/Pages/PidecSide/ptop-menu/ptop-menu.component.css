@@ -28,7 +28,13 @@
   padding:0 !important;
   /* color: #328932; */
   font-weight: bold !important;
-  color: #123C69 !important;
+  color: var(--toolbar-text-color) !important;
+}
+
+.LeftTopButtons
+{
+text-align: right;
+width: 100% !important;
 }
 
 /* --- Button Styling --- */
@@ -37,7 +43,7 @@
         font-size: 14px;
         border: none;
         border-radius: 6px;
-        background-color: #3c4c5e !important;
+        background-color:var(--primary-color)  !important;
         color: white;
         font-weight: bold;
         cursor: pointer;
@@ -45,5 +51,5 @@
         vertical-align: middle;
       }
       button:hover {
-        background-color: #123C69 !important;
+        background-color: var(--primary-color) !important;
       }

@@ -63,7 +63,8 @@ public class BasicInformationRepository : IBasicInformationRepository
 
     public Task<Attachment> GetAttachmentById(Guid id) {
         AttachmentId attachmentId = new AttachmentId(id);
-       return Task.FromResult(_dbcontext.Attachments.FirstOrDefault(a => a.AttachmentId == attachmentId));
+        var result = _dbcontext.Attachments.FirstOrDefault(a => a.AttachmentId == attachmentId);
+       return Task.FromResult(result);
     }
 
     public Task<List<VendorDocument>> GetVendorDocumentsByOrder(Contact vendor, Order order)
@@ -274,6 +275,8 @@ public class BasicInformationRepository : IBasicInformationRepository
            (orderContact, contact) =>
            {
                orderContact.Contact = contact;
+               if (orderContact.Contact.ContactId == null)
+                   orderContact.Contact.ContactId = contact.ContactId;
                if (orderContact?.OrderId! != null)
                {
                    orderContact.OrderId = OrderId.Create(new Guid(orderContact.OrderId.Value.ToString()));
@@ -2552,6 +2555,53 @@ public class BasicInformationRepository : IBasicInformationRepository
                 //projectData = multi.Read<Project>().SingleOrDefault();
                 if (projectData == null)
                     return null; // Or handle a missing record accordingly.
+
+                var PidecQCContactsDynamic = multi.Read(); // returns IEnumerable<dynamic>
+                projectContacts = new List<ProjectContact>();
+
+                foreach (var row in PidecQCContactsDynamic)
+                {
+                    // Create the ProjectContact instance.
+                    var projectContact = new ProjectContact
+                    {
+                        // Assuming your ProjectContact table has columns like ProjectContactId, ProjectId, ContactId, etc.
+                        Id = row.Id,
+                        ProjectId = row.ProjectId,
+                        ContactId = row.ContactId,
+                        // Map other ProjectContact properties as needed.
+                    };
+
+                    // Now manually create the related Contact.
+                    var contact = new Contact
+                    {
+                        // Notice here you’re reading the alias you defined in your SQL (for the joined Contact columns).
+                        ContactId = row.ContactId,      // the alias for c.ContactId in your query
+                        Name = row.Name,
+                        Email = row.Email,
+                        DomainId = row.DomainId,
+                        Fax = row.Fax,
+                        HomePage = row.HomePage,
+                        ContactType = row.ContactType,
+                        IsVisible = row.IsVisible,
+                        CreatedBy = row.CreatedBy,
+                        CreatedDate = row.CreatedDate,
+                        Attention = row.Attention,
+                        Cc = row.Cc,
+                        Mobile = row.Mobile,
+                        Address = row.Address,
+                        ModifiedBy = row.ModifiedBy,
+                        ModifiedDate = row.ModifiedDate,
+                        Phone = row.Phone,
+                        UserName = row.UserName
+                        // Map additional columns (e.g., row.OtherColumns)
+                    };
+
+
+                    projectContact.Contact = contact;
+                    projectContacts.Add(projectContact);
+                }
+
+                projectData.PidecQCContacts = projectContacts;
 
                 var PidecInspectorContactsDynamic = multi.Read(); // returns IEnumerable<dynamic>
                 projectContacts = new List<ProjectContact>();

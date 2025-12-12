@@ -42,6 +42,7 @@ namespace Inspection.Application.Contracts.Persistence
         public string GetContactTypeName_Code(int RoleHashCode);
 
         public Task<Contact> SaveContact(Contact contact);
+        public Task<Contact> SaveContactWithUserId(Contact contact,string userId);
 
         public Task<bool> SaveProjectContacts(Project project, List<Contact> contacts);
     }

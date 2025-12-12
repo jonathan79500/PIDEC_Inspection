@@ -33,6 +33,7 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
         public Task<bool> Handle(SaveProjectSettingsCommand request, CancellationToken cancellationToken)
         {
             Project project = request.projectDto.Adapt<Project>();
+            List<Contact> pidecQCContacts = request.projectDto.PidecQCContacts.Adapt<List<Contact>>();
             List<Contact> mcContacts = request.projectDto.MCContacts.Adapt<List<Contact>>();
             List<Contact> ownerContacts = request.projectDto.OwnerContacts.Adapt<List<Contact>>();
             List<Contact> TPIContacts = request.projectDto.TPInspectors.Adapt<List<Contact>>();
@@ -45,21 +46,44 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
             //List<Contact> pidecInspectorContacts = null;
 
             //  Task<bool> result = _basicInformationRepository.ActivateProjectInspectionSystem(project,mcContacts,ownerContacts,pidecInspectorContacts,TPIContacts);
-            Task<bool> result = ActivateProjectInspectionSystem(project, mcContacts, ownerContacts, pidecInspectorContacts, TPIContacts);
+            Task<bool> result = ActivateProjectInspectionSystem(project, mcContacts, ownerContacts, pidecInspectorContacts, TPIContacts,pidecQCContacts);
             return Task.FromResult(result.Result);
         }
 
-        public async Task<bool> ActivateProjectInspectionSystem(Project project, List<Contact> mCContacts, List<Contact> ownerContacts, List<Contact> pidecInspectorsContacts, List<Contact> tPInspectorsContacts)
+        public async Task<bool> ActivateProjectInspectionSystem(Project project, List<Contact> mCContacts, List<Contact> ownerContacts, List<Contact> pidecInspectorsContacts, List<Contact> tPInspectorsContacts, List<Contact> pidecQCContacts)
         {
             try
             {                
-                SystematicUser mcUser;
+                
                 string mcPassword;
+                List<Contact> savedpidecQCContacts = new List<Contact>();
                 List<Contact> savedmcContacts = new List<Contact>();
                 List<Contact> savedownerContacts = new List<Contact>();
                 List<Contact> savedpidecInspectorContacts = new List<Contact>();
                 List<Contact> savedthirdPartInspectorContacts = new List<Contact>();
 
+
+                SystematicUser pidecQCUser;
+                string pidecQCPass;
+                for (int i = 0; i < pidecQCContacts.Count; i++)
+                {
+
+                    List<string> PIDECQCRole = new List<string>();
+                    PIDECQCRole.Add(_userManagerRepository.GetContactTypeName_Code(pidecQCContacts[i].ContactType.GetHashCode()));
+
+                    (pidecQCUser, pidecQCPass) = _userManagerRepository.RegisterNewUserByRandomPassFromContactData(pidecQCContacts[i], PIDECQCRole).Result;
+
+
+                    if (pidecQCUser != null)
+                    {
+                        savedpidecQCContacts.Add(_userManagerRepository.SaveContactWithUserId(pidecQCContacts[i], pidecQCUser.Id).Result);
+                        if (pidecQCPass != null && pidecQCPass != "")
+                            _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as PIDEC QC Member", "your pass:" + pidecQCPass + " and user is :" + pidecQCUser.Email);
+                    }
+                }
+                _userManagerRepository.SaveProjectContacts(project, savedpidecQCContacts);
+
+                SystematicUser mcUser;
                 foreach (Contact mcContact in mCContacts)
                 {
                     if (mcContact != null)
@@ -72,7 +96,7 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
                         Contact savedMCContact;
                         if (mcUser != null)
                         {
-                           savedMCContact= _userManagerRepository.SaveContact(mcContact).Result;
+                           savedMCContact= _userManagerRepository.SaveContactWithUserId(mcContact, mcUser.Id).Result;
                            savedmcContacts.Add(savedMCContact);
                             if(mcPassword != null && mcPassword != "") 
                                 _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as MC", "your pass:" + mcPassword + " and user is :"+ mcUser.Email);
@@ -96,7 +120,7 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
 
                     if (ownerUser != null)
                     {
-                        savedownerContacts.Add(_userManagerRepository.SaveContact(ownerContacts[i]).Result);
+                        savedownerContacts.Add(_userManagerRepository.SaveContactWithUserId(ownerContacts[i], ownerUser.Id).Result);
                         if(ownerPass !=null && ownerPass != "")
                             _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as Owner", "your pass:" + ownerPass + " and user is :" + ownerUser.Email);
                     }
@@ -116,7 +140,7 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
 
                     if (pidecInspectorUser != null)
                     {
-                        savedpidecInspectorContacts.Add(_userManagerRepository.SaveContact(pidecInspectorsContacts[i]).Result);
+                        savedpidecInspectorContacts.Add(_userManagerRepository.SaveContactWithUserId(pidecInspectorsContacts[i], pidecInspectorUser.Id).Result);
                         if(pidecInspectorPass != null && pidecInspectorPass != "")
                             _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as PIDEC Inspector", "your pass:" + pidecInspectorPass + " and user is :" + pidecInspectorUser.Email);
                     }
@@ -137,7 +161,7 @@ namespace Inspection.Application.Features.BasicInfo.Projects.Commands.SaveProjec
 
                     if (thirdPartInspectorUser != null)
                     {
-                        savedthirdPartInspectorContacts.Add(_userManagerRepository.SaveContact(tPInspectorsContacts[i]).Result);
+                        savedthirdPartInspectorContacts.Add(_userManagerRepository.SaveContactWithUserId(tPInspectorsContacts[i], thirdPartInspectorUser.Id).Result);
                         if (thirdPartInspectorPass != null && thirdPartInspectorPass != "")
                             _emailSender.SendEmail("akbari.elahe@pidec.com", "", "New User And Password to login to QCMI System as ThirdPart Inspector", "your pass:" + thirdPartInspectorPass + " and user is :" + thirdPartInspectorUser.Email);
                     }

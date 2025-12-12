@@ -13,6 +13,7 @@ import { runInInjectionContext,inject } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, Observable, of, shareReplay, take, tap } from 'rxjs';
 import { UserTypes } from '../Core/Models/UserTypes.enum';
 import { Route } from '@angular/router';
+import { BasicInspectorInfo } from '../Core/Models/BasicInspectorInfo.model';
 
 
 
@@ -24,7 +25,8 @@ interface currentAppState
   vendorData:Vendor,
   vendorBasicInfo : BasicVendorInfo,
   qCMemberBasicInfo:BasicQCMemberInfo,
-  pidecDeptBasicInfo :BasicPIDECDeptInfo
+  pidecDeptBasicInfo :BasicPIDECDeptInfo,
+  inspectorBasicInfo:BasicInspectorInfo
 }
 
 const initialState :currentAppState = {
@@ -34,7 +36,8 @@ const initialState :currentAppState = {
   vendorData:{} as Vendor,
   vendorBasicInfo:{} as BasicVendorInfo,
   qCMemberBasicInfo:{} as BasicQCMemberInfo,
-  pidecDeptBasicInfo:{} as BasicPIDECDeptInfo
+  pidecDeptBasicInfo:{} as BasicPIDECDeptInfo,
+  inspectorBasicInfo :{} as BasicInspectorInfo
 };
 
 export const currentstateStore = signalStore(
@@ -69,6 +72,14 @@ export const currentstateStore = signalStore(
           ...state
         })
       },
+       setBasicInspectorInfo(basicInspectorinfo:BasicInspectorInfo)
+      {
+        patchState(store,{
+          inspectorBasicInfo:{...basicInspectorinfo},
+          ...state
+        })
+      },
+
       ChangeProject(FromRoute : string ,basicInfoService: BasicInfoService,project:Project){
 
         if(store.currentuser().userType == UserTypes.PIDEC_TO || store.currentuser().userType == UserTypes.PIDEC_CC)

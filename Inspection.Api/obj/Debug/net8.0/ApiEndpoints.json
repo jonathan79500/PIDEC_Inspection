@@ -43,6 +43,32 @@
   },
   {
     "ContainingType": "Inspection.Api.Controllers.AuthenticationController",
+    "Method": "GetInspectorDataByInspectorInfo_Remotely",
+    "RelativePath": "api/Authentication/GetInspectorDataByInspectorInfo_Remotely",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "InspectorData",
+        "Type": "Inspection.Application.DTOs.User.UserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Inspection.Domain.Entities.Common.BasicInspectorInfo",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.AuthenticationController",
     "Method": "GetPIDECLeadDataByPIDECLeadInfo_Remotely",
     "RelativePath": "api/Authentication/GetPIDECLeadDataByPIDECLeadInfo_Remotely",
     "HttpMethod": "POST",
@@ -57,7 +83,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Inspection.Domain.Entities.Common.BasicQCMemberInfo",
+        "Type": "Inspection.Domain.Entities.Common.BasicPIDECLeadsInfo",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -963,13 +989,33 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "attachments",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile[]",
+        "Name": "circulation",
+        "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "inspectionNotification",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
+        "Name": "AttachmentIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentNames",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentVersions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDescriptions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Attachments",
+        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
         "IsRequired": false
       }
     ],
@@ -1015,6 +1061,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Inspection.Api.Controllers.InspectionNotificationController",
+    "Method": "GetApprovedInspectionsByProjectId_UserId",
+    "RelativePath": "api/InspectionNotification/GetApprovedInspectionsByProjectId_UserId",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Inspection.Api.Controllers.InspectionListRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.Common.InspectionNotificationDataSummaryDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1186,7 +1258,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.Common.InspectionNotificationDataSummaryDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -63,6 +63,7 @@ export class ProjectSettingsComponent implements OnInit{
       modifiedBy: project.modifiedBy,
       modifiedDate:project.modifiedDate,
       number:project.number,
+      pidecQCContacts:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
       ownerContacts:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
       pidecInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
       tpInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
@@ -70,6 +71,11 @@ export class ProjectSettingsComponent implements OnInit{
       //vendors : this.formBuilder.array<FormTypes.FormVendor>([this.generateVendor()]),
 
     })
+
+     if(project.pidecQCContacts !=undefined)
+          project.pidecQCContacts!.forEach((relContact)=>{
+            this.pidecQCContacts.push(this.generateContactFromContactValue(relContact));
+          });
 
         if(project.mcContacts !=undefined)
           project.mcContacts!.forEach((relContact)=>{
@@ -173,6 +179,39 @@ export class ProjectSettingsComponent implements OnInit{
     })
   }
 
+
+  openPIDECQCContactSelector():void{
+
+        let currentAddedContacts = this.pidecQCContacts?.getRawValue().filter((contact)=> (contact.contactType==ContactTypes.QC_Lead || contact.contactType==ContactTypes.QC_Manager) && (contact.email !='' || [] )) as Contact[];
+         let exceptionContacts : Contact[];
+        const dialogRef = this.dialog.open(ContactpersonSelectorComponent, {
+          data: {ToContacts: {currentAddedContacts,exceptionContacts} ,ContactType:ContactTypes.QC_Manager,timeStamp: new Date().getTime()},panelClass: 'messageDialog', disableClose: true, autoFocus: false
+          ,width:'700px', maxWidth:'140vw',height:'60vh',minHeight:'300px'
+        });
+       // dialogRef.afterOpened().subscribe(()=>dialogRef.componentInstance.initializeForm());
+
+        dialogRef.afterClosed().subscribe(result => {
+
+          if (result !== undefined) {
+            this.currentContacts = result.value;
+
+            //this.orderContacts.clear();
+            for (let i = this.pidecQCContacts.length - 1; i >= 0; i--) {
+              const group = this.pidecQCContacts.at(i) as FormGroup; // Access the FormGroup
+              if ( group.get('contactType')?.value == ContactTypes.QC_Lead  || group.get('contactType')?.value == ContactTypes.QC_Manager) {
+                this.pidecQCContacts.removeAt(i); // Remove the FormGroup if the condition is true
+              }
+            }
+
+            this.currentContacts.forEach(contact => {
+
+              let fg= this.generateContactFromContactValue(contact);
+              this.pidecQCContacts.push(fg);
+            });
+
+          }
+        });
+      }
     openPidecInspectorContactSelector():void{
 
         let currentAddedContacts = this.pidecInspectorContacts?.getRawValue().filter((contact)=> contact.contactType==ContactTypes.PIDEC_Inspector && (contact.email !='' || [] )) as Contact[];
@@ -300,6 +339,11 @@ export class ProjectSettingsComponent implements OnInit{
         });
       }
 
+  get pidecQCContacts() :FormArray<FormTypes.FormContact> | undefined{
+       return this.projectForm?.controls.pidecQCContacts as FormArray<FormTypes.FormContact>;
+
+   }
+
   get mCContacts() :FormArray<FormTypes.FormContact> | undefined{
        return this.projectForm?.controls.mcContacts as FormArray<FormTypes.FormContact>;
 
@@ -319,6 +363,16 @@ export class ProjectSettingsComponent implements OnInit{
        return this.projectForm?.controls.ownerContacts as FormArray<FormTypes.FormContact>;
 
    }
+
+
+
+  get filteredPidecQCContacts(): FormGroup[] | undefined {
+
+      return (this.pidecQCContacts.controls.filter(ctrl => ctrl.get('email')?.value?.toString().trim() !== '' || ctrl.get('id')?.value?.toString().trim() !== '00000000-0000-0000-0000-000000000000') || []) as FormGroup[];
+    return ((this.projectForm?.get('pidecQCContacts') as FormArray)?.controls
+    ?.filter(ctrl => ctrl.get('email')?.value?.toString().trim() !== '' || ctrl.get('id')?.value?.toString().trim() !== '00000000-0000-0000-0000-000000000000') || []) as FormGroup[];
+
+    }
 
      get filteredOwnerContacts(): FormGroup[] | undefined {
 
@@ -356,6 +410,15 @@ SaveProjectSettings():void
     let projectSettings:Project;
     projectSettings = this.projectForm.getRawValue() as Project;
 
+
+     let currentpidecQCContact;
+    for(let i=projectSettings.pidecQCContacts.length-1;i>=0;i--){
+       currentpidecQCContact = projectSettings.pidecQCContacts[i];
+      if(currentpidecQCContact.email==undefined || currentpidecQCContact.email.trim()=='' )
+        {
+          projectSettings.pidecQCContacts.splice(i,1);
+        }
+    }
 
        let currentMCContact;
     for(let i=projectSettings.mcContacts.length-1;i>=0;i--){

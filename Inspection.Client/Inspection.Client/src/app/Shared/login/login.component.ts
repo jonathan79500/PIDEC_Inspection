@@ -51,13 +51,16 @@ export class LoginComponent  implements OnInit{
 
  generateUserForm():userForm{
   return this.builder.group({
-     userName:'1235-EL-509A-1345',
-    password:'49gpa',
+      userName:'1235-EL-509A-1345',
+     password:'49gpa',
     // userName:'akbari.elahe',
     //  password:'@2050926Rr',
     // //   userName:'monavari.ali',
 
     //password:'Z#6b^Fkd3#^g',
+
+    // userName: 'pInspector',
+    // password:'CJL&zx&P2nJA',
     domainId:0
   })
  }

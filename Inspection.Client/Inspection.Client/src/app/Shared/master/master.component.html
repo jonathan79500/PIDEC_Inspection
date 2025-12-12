@@ -1,22 +1,21 @@
-<div style="display: flex; flex-direction: column; flex-wrap: wrap; height: 100%"  class="ostokhooniColor">
-  <div style="flex: 1; color: #123c69; font-weight: bold; height: 20vh">
-    Inspection
-  </div>
-  <div style="flex: 1; height: 20vh" class="lightpinkColor">
-    <div style="display: flex; flex-direction: row" class="ostokhooniColor">
-      <div style="flex: 1; color: #ac3b61; font-weight: bold">
+<div class="master-form ostokhooniColor flex-col flex-wrap full-height">
+  <!-- Top title -->
+  <div class="section-title flex-1 full-height-20">Inspection</div>
+
+  <!-- Top controls -->
+  <div class="lightpinkColor flex-1 full-height-20">
+    <div class="ostokhooniColor flex-row">
+      <div class="flex-1 section-title">
         <button (click)="CreateNewInspectionNotification()">
           ایجاد یک بازرسی جدید
         </button>
       </div>
-      <div style="flex: 1; color: #ac3b61; font-weight: bold">
-        Inspection Report
-      </div>
-      <div style="flex: 1; color: #ac3b61; font-weight: bold">Tasks</div>
-      <div style="flex: 2">
+      <div class="flex-1 section-title">Inspection Report</div>
+      <div class="flex-1 section-title">Tasks</div>
+      <div class="flex-2">
         <select>
           <option value="null">--</option>
-          @for(project of Projects;track project.id) {
+          @for(project of Projects; track project.id) {
           <option value="{{ project.id }}">
             {{ project.title }}
           </option>
@@ -25,53 +24,62 @@
       </div>
     </div>
   </div>
+
+  <!-- Counts -->
   <div>
     {{ count() }} <br />
-    {{ count2() }}
-    <br />
+    {{ count2() }} <br />
     {{ count3() }}
     <button (click)="CountChange()">countChange</button>
     <input [(ngModel)]="title" />
   </div>
-  <div style="display: flex; flex-direction: row">
-    <div style="flex: 2; width: 10vw" class="blueColor">
-      <div
-        style="display: flex;flex-direction: column;flex-wrap: wrap;height: 100%;font-family: 'Times New Roman', Times, serif;">
-        <div style="flex: 1"></div>
-        <div style="flex: 1; text-decoration: underline; color: #bab2b5">
+
+  <!-- Main content row -->
+  <div class="flex-row">
+    <!-- Sidebar -->
+    <div class="blueColor flex-2 sidebar">
+      <div class="flex-col flex-wrap full-height times-font">
+        <div class="flex-1"></div>
+        <div class="flex-1 link-item">
           <a routerLink="inspectionList">بازرسی های در لیست انتظار</a>
           <button (click)="goToInspectionList()">
             بازرسی های در لیست انتظار
           </button>
         </div>
-        <div style="flex: 1; text-decoration: underline; color: #bab2b5">
+        <div class="flex-1 link-item">
           <button (click)="gotoRejectedInspections()">
             بازرسی های در لیست انتظار
           </button>
           <a href="">بازرسی های در دست اقدام</a>
         </div>
-        <div style="flex: 1; text-decoration: underline; color: #bab2b5">
+        <div class="flex-1 link-item">
           <button (click)="gotoRejectedInspections()">بازرسی های برگشتی</button>
         </div>
-        <div style="flex: 1; text-decoration: underline; color: #bab2b5">
+        <div class="flex-1 link-item">
           <a href="">بازرسی های کارفرما</a>
         </div>
-        <div style="flex: 1; text-decoration: underline; color: #bab2b5">
+        <div class="flex-1 link-item">
           <a href="">بازرسی های تکمیل شده</a>
         </div>
-        <div style="flex: 10; text-decoration: underline"></div>
+        <div class="flex-10"></div>
       </div>
     </div>
-    <div style="flex: 14; width: 70vw" class="ostokhooniColor">
+
+    <!-- Main content -->
+    <div class="ostokhooniColor flex-14 main-content">
       <router-outlet></router-outlet>
     </div>
-    <div style="flex: 2; height: 100vh; width: 10vw" class="pinkColor">
-      uowduoqu
-    </div>
+
+    <!-- Right sidebar -->
+    <div class="pinkColor flex-2 right-sidebar full-height">uowduoqu</div>
   </div>
-  <div style="flex: 6">
-    <ng-template [ngIf]="true"> render</ng-template>
+
+  <!-- Footer -->
+  <div class="flex-6">
+    <ng-template [ngIf]="true"> render </ng-template>
   </div>
+
+  <!-- Extra container -->
   <div class="container">
     <router-outlet></router-outlet>
   </div>

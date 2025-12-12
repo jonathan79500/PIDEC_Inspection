@@ -1,0 +1,472 @@
+
+
+.inspection-form {
+  max-width: 900px;
+  margin: 1rem auto;              /* tighter margin */
+  padding: 1rem;                  /* reduced padding */
+  background: var(--primaryform-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: var(--font-family);
+  box-shadow: 0 2px 4px rgba(0, 128, 0, 0.1);
+}
+
+/* .section {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+} */
+
+.section {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;                 /* more rounded corners */
+  background: linear-gradient(135deg, #f5fff5, #e8f5e9); /* soft green gradient */
+  box-shadow: 0 4px 8px rgba(0, 128, 0, 0.08); /* subtle shadow */
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.section:hover {
+  box-shadow: 0 6px 12px rgba(0, 128, 0, 0.15);
+  transform: translateY(-2px);         /* slight lift on hover */
+}
+
+/* Legend with pill style */
+legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color) !important;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  background: #88dd8b;                 /* soft green pill */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* legend {
+ font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color) !important;
+  margin-bottom: 0.25rem;
+} */
+/* --- Form field wrappers --- */
+.mat-mdc-form-field,
+.mat-mdc-form-field-infix {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+/* Input element */
+.mat-mdc-input-element {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  font-size: 15px;
+  color: var(--secondryform-color) !important;
+  background-color: white !important;
+  box-sizing: border-box;
+}
+
+/* Placeholder */
+.mat-mdc-input-element::placeholder {
+  text-decoration: none !important;
+  color: var(--secondryform-color) !important;
+  font-style: normal !important;
+}
+
+/* Hint / error wrapper */
+.mat-mdc-form-field-subscript-wrapper {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--secondryform-color) !important;
+  height: 32px !important;
+  background-color: #b71c1c;
+}
+
+/* Underline bar */
+.mat-mdc-form-field-bottom-align::before {
+  border-bottom: 1px solid #43a047;
+  height: 1px;
+}
+
+/* Filled text fields */
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #f5fff5;
+  border: 1px solid #a5d6a7;
+  border-radius: 4px;
+  min-height: 22px !important;
+  height: 32px !important;
+}
+
+/* --- Autocomplete --- */
+.mat-mdc-autocomplete-panel {
+  background-color: #f5fff5 !important;
+  border: 1px solid #a5d6a7 !important;
+  max-height: 200px !important;
+}
+
+.mat-mdc-option {
+  height: 22px !important;
+  font-size: 0.85rem;
+  background-color: #f5fff5 !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--secondryform-color) !important;
+}
+
+.mat-mdc-option.mat-mdc-option-active {
+  background-color: #c8e6c9 !important;
+  color: var(--secondryform-color) !important;
+}
+
+.mat-mdc-option.mat-mdc-option-selected {
+  background-color: #2e7d32 !important;
+  color: #fff !important;
+}
+
+
+mat-mdc-card-title{
+  color: var(--secondryform-color) !important;
+}
+
+mat-mdc-card {
+  background-color: #c8e6c9 !important;
+}
+
+/* --- Subjects row --- */
+.subjects-row {
+  display: flex;
+  align-items: center;      /* align all children on the same line */
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.combo {
+  max-width: 160px;
+}
+
+.combo .mat-input-element {
+  padding: 0.25rem 0.4rem !important;
+  font-size: 0.8rem !important;
+  height: 1rem !important;
+}
+
+/* Normalize mat-form-field height */
+.subjects-row .mat-mdc-form-field {
+  margin: 0;
+  display: flex;
+  align-items: center;      /* center the input vertically */
+  padding: 0 !important;    /* remove extra spacing */
+  height: auto !important;
+}
+
+/* Remove subscript wrapper space */
+.subjects-row .mat-mdc-form-field-subscript-wrapper {
+  display: none;             /* hide hint/error area if not needed */
+}
+/* .subjects-row button {
+  min-width: 32px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1;
+   align-self: center;
+} */
+
+/* Add button rounded */
+.subjects-row button {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;                  /* circular button */
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure button and chips align with input */
+.subjects-row button,
+.subjects-row .checkbox-list {
+  align-self: center;
+}
+/* Checkbox chips inline */
+.checkbox-list {
+  display: flex;
+  align-items: center;      /* align chips with input */
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+/* --- Checkbox list --- */
+.checkbox-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.checkbox-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+/* Legacy checkbox label */
+.mat-checkbox .mat-checkbox-label {
+  color: var(--primary-color) !important;
+  font-size: 0.85rem;
+}
+
+/* Legacy checkbox container */
+.mat-checkbox {
+  height: 0.5rem;
+  line-height: 0.5rem;
+}
+
+/* MDC checkbox */
+.mat-mdc-checkbox .mat-internal-form-field {
+  min-height: 15px;
+  height: 15px;
+  line-height: 1.2;
+}
+
+.mat-mdc-checkbox .mdc-checkbox {
+  width: 14px;
+  height: 14px;
+}
+
+.mat-mdc-checkbox .mdc-label {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  margin-left: 0.25rem;
+}
+
+/* Internal label override */
+.mat-internal-form-field label {
+  color: var(--secondryform-color) !important;
+  height: 1rem;
+}
+
+
+/* Compact add button */
+.inline-add button {
+  min-width: 32px;                 /* small square button */
+  padding: 0.25rem 0.5rem;
+  line-height: 1.0;
+  font-size: 0.8rem;
+}
+.form-group,
+.form-group-inline {
+  margin-bottom: 0.5rem;          /* tighter spacing */
+}
+
+.form-group-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* General input style */
+.input,
+.theInputs,
+mat-form-field input {
+  padding: 0.25rem 0.4rem;   /* smaller vertical padding */
+  line-height: 1.2;          /* tighter line height */
+  font-size: 0.8rem;         /* slightly smaller font */
+  height: 1.8rem;            /* fixed compact height */
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+/* Override Angular Material inputs */
+.mat-input-element {
+  padding: 0.25rem 0.4rem !important;
+  line-height: 1.0 !important;
+  font-size: 0.8rem !important;
+  height: 1.0rem !important;
+}
+
+
+
+.input.small {
+  width: 5rem;
+}
+
+
+.input.middle {
+  width: 6rem;
+}
+
+.input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 2px var(--secondary-color);
+}
+
+
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 0.1rem;
+}
+
+.add-item {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.add-item input {
+  flex: 1;
+  margin-right: 0.25rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  border: none;
+  padding: 0.2rem 0.6rem;         /* smaller buttons */
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.btn-primary { background: var(--primary-color); }
+.btn-secondary { background: var(--secondary-color); }
+.btn-danger { background: var(--danger-color); }
+
+.btn-primary:hover { background: #1b5e20; }
+.btn-secondary:hover { background: #2e7d32; }
+.btn-danger:hover { background: #b71c1c; }
+
+.form-actions {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Upload section */
+.upload-card {
+  background: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.upload-input {
+  padding: 0.4rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.upload-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.upload-table th,
+.upload-table td {
+  border: 1px solid var(--border-color);
+  padding: 0.4rem;
+}
+
+.upload-table th {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+/* Comment section */
+.comment-section {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f9f9f9 !important;
+  border-top: 2px solid var(--primary-color);
+}
+
+.comment-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.comment-card {
+  flex: 1 1 260px;
+  min-width: 260px;
+  background-color: var(--background-color)  !important;
+  color: #000;
+  padding: 0.5rem;
+}
+
+.comment-body {
+  width: 100%;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.file-indicator {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--secondryform-color) !important;
+}
+
+/* Submit buttons */
+.submit-btn {
+  padding: 0.4rem 0.8rem;
+  margin: 0.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* two columns for the inline rows */
+  grid-gap: 0.5rem;
+}
+
+.location-grid .form-group-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.address-row {
+  grid-column: 1 / span 2;          /* make address span across both columns */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.address-row .wide {
+  flex: 1;                          /* let address input stretch */
+}
+
+.mat-mdc-raised-button:disabled{
+  background-color: #e0e0e0 !important;
+  color: var(--secondryform-color) !important;
+  cursor: not-allowed;
+}
+
+
+
+.mat-mdc-raised-button{
+ background-color: var(--secondary-color) !important;/* strong green for active state */
+  color: white !important;
+  font-size: xx-large;
+}
+
+.mat-mdc-raised-button:hover {
+  background-color: var(--secondryform-color) !important; /* slightly lighter/darker shade for hover */
+}
+
+.mat-mdc-raised-button:active {
+  background-color: var(--secondryform-color) !important; /* deeper tone for pressed state */
+}

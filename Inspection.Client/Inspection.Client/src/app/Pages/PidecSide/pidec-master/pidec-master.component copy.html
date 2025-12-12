@@ -1,0 +1,29 @@
+<div *ngIf="isLoading">
+  <img src="../../../assets/close-icon" />
+</div>
+<div *ngIf="!isLoading">
+  <!-- Display your vendor basic info here -->
+
+  <div style="display: flex; flex-direction: row; background-color: #f6efff">
+    <div style="flex: 1">
+      <span>hello</span>
+      <app-pleft-sidebar
+        [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+        (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
+      ></app-pleft-sidebar>
+    </div>
+    <div style="flex: 6; margin-left: 0">
+      <div style="display: flex; flex-direction: column">
+        <div style="flex: 1; margin-left: 0; position: relative">
+          <app-ptop-menu [basicQCInfo]="basicQCInfo"></app-ptop-menu>
+        </div>
+        <div style="flex: 5; margin-left: 0">
+          <app-pmain
+            [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+            [screenWidth]="screenWidth()"
+          ></app-pmain>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

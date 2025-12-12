@@ -15,7 +15,7 @@ namespace Inspection.Domain.Entities.Common
         //public List<Circulation>? Circulations{ get; set; }
         public Contact? CreatorContactPerson { get; set; }
         public List<InspectionNotification.Entities.InspectionNotification> InspectionNotifications { get; set; }
-
+       // public int RequestType { get; set; }
         public static Request CreateNew(Contact Creator)
         {
             Request request = new Request();

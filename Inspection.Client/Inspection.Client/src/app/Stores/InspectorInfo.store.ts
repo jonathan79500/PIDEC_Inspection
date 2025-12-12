@@ -57,7 +57,7 @@ export const InspectorInfoStore = signalStore(
           return of(currentState);//stateSubject.asObservable();
         } else {
           const userService = inject(UserService);
-          const resultObservable = userService.GetVendorData();
+          const resultObservable = userService.GetInspectorData();
           resultObservable.subscribe((basicInfo) => {
             console.log('Fetched vendor data:', basicInfo);
             patchState(store, (state) => ({

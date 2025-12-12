@@ -1,62 +1,160 @@
+/* Root palette */
+:root {
+  --primary-color: #2e7d32;       /* deep green */
+  --secondary-color: #43a047;     /* lighter green accent */
+  --brown-dark: #5d4037;          /* rich brown */
+  --brown-light: #efebe9;         /* soft brown background */
+  --background-color: #f5fff5;    /* light green background */
+  --text-color: #3e2723;          /* dark brown text */
+  --border-color: #a1887f;        /* brown-gray border */
+  --font-family: "Tahoma", sans-serif;
+}
 
-.container
-{
-  background-color: #123C69; ;    
+/* Layout utilities */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
 
-  /* transition the background-color over 1s with a linear animation */
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.flex-6 { flex: 6; }
+.flex-10 { flex: 10; }
+.flex-14 { flex: 14; }
+
+.full-height { height: 100%; }
+.full-height-20 { height: 20vh; }
+
+/* Section backgrounds */
+.ostokhooniColor {
+  background-color: var(--background-color);
+  border-radius: 0.1rem;
+}
+
+.lightpinkColor {
+  background-color: var(--brown-light);
+  border-radius: 0.1rem;
+}
+
+.blueColor {
+  background-color: var(--brown-dark);
+  border-radius: 0.2rem;
+  color: #fff;
+}
+
+.pinkColor {
+  background-color: var(--secondary-color);
+  border-radius: 0.2rem;
+  color: #fff;
+}
+
+.grayColor {
+  background-color: var(--border-color);
+  border-radius: 0.1rem;
+  color: var(--text-color);
+}
+
+/* Typography */
+.section-title {
+  color: var(--brown-dark);
+  font-weight: bold;
+  font-size: 1.2rem;
+  font-family: var(--font-family);
+}
+
+.times-font {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.link-item {
+  text-decoration: underline;
+  color: var(--border-color);
+  font-size: 0.9rem;
+}
+
+/* Buttons */
+button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-family: var(--font-family);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--secondary-color);
+}
+
+/* Links */
+a {
+  color: var(--secondary-color);
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+a:hover {
+  color: var(--primary-color);
+}
+
+/* Select dropdown */
+select {
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+
+  color: var(--text-color);
+  background-color: var(--background-color);
+  border: 2px solid var(--border-color);
+
+  border-radius: 5px;
+  padding: 5px 10px;
+  width: 200px;
+  height: 30px;
+  box-shadow: 2px 4px 3px rgba(93, 64, 55, 0.2);
+
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+select:focus {
+  outline: 2px solid var(--secondary-color);
+}
+
+/* Inputs */
+input {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 2px var(--secondary-color);
+}
+
+/* Container */
+.container {
+  background-color: var(--primary-color);
   transition: background-color 1s linear;
-  
-}
-.lightpinkColor
-{
-  background-color: #edc7b7; 
-  border-radius: 0.1rem;
-}
-.blueColor
-{ 
-  background-color: #123C69; 
   border-radius: 0.2rem;
-  color:  #EEE2DC; 
+  color: #fff;
 }
-.pinkColor
-{
-  background-color: #Ac3B61;
-  border-radius: 0.2rem;
-}
-.grayColor
-{
-  background-color: #BAB2B5;
-  border-radius: 0.1rem;
-}
-.ostokhooniColor
-{
-  background-color: #EEE2DC;
-  border-radius: 0.1rem;
-}
-
-      select {
-        appearance: none; /* remove default appearance set by the browser */
-        outline: none; /* remove the outline shown on focus */
-        cursor: pointer; /* change the mouse cursor icon */
-
-        color: #123C69;   /* text color */
-        background-color: rgb(229, 237, 240);
-        border: 2px solid #3d5e81; ;
-
-        border-radius: 5px;  /* round the border corners */
-        padding: 5px 10px;
-        width: 200px;
-        height: 30px;
-        box-shadow: 3px 5px 3px rgba(0, 0, 0, 0.8);
-
-        font-family: serif;
-        font-size: 14px;
-        font-weight: bold;
-        text-align: center;
-      }
-
-      select:focus {
-        outline: 2px solid #edc7b7;  /* replace the focus outline removed with 'outline: none' */
-      }
- 
- 

@@ -1,16 +1,26 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Circulation } from '../../Models/Circulation.model';
 
-
 @Pipe({
   name: 'isActiveForUser',
-  pure: true // keeps it performant; change to false if inputs are dynamic and need re-evaluation
+  pure: true
 })
 export class IsActiveForUserPipe implements PipeTransform {
-  transform(circulation: Circulation, currentCirculation: Circulation): boolean {
+  transform(circulation: Circulation | null, currentCirculation: Circulation | null): boolean {
+    // if either circulation or currentCirculation is null, return false
+    if (!circulation || !currentCirculation) {
+      return false;
+    }
+
+    const performer1 = circulation.performerContactPerson;
+    const performer2 = currentCirculation.performerContactPerson;
+
     return (
-      circulation.performerContactPerson.id === currentCirculation.performerContactPerson.id &&
-      (circulation.actionType == null)
+      performer1 != null &&
+      performer2 != null &&
+      performer1.id === performer2.id &&
+      circulation.actionType == null
     );
   }
 }
+

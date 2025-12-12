@@ -33,6 +33,9 @@ import { PdnewinspectionComponent } from './Pages/PidecDeptSide/pdnewinspection/
 import { VnewinspectionComponent } from './Pages/VendorSide/vnewinspection/vnewinspection.component';
 import { NotStartedtasksComponent } from './Pages/PidecSide/not-startedtasks/not-startedtasks.component';
 import { NewinspectionComponent } from './Shared/newinspection/newinspection.component';
+import { InspectorMasterComponent } from './Pages/InspectorSide/inspector-master/inspector-master.component';
+import { inspectorbasicinfoResolver } from './Core/Resolvers/inspectorbasicinfo.resolver';
+import { NotstartedtasksComponent } from './Pages/InspectorSide/notstartedtasks/notstartedtasks.component';
 
 
 export const routes: Routes = [
@@ -141,11 +144,11 @@ export const routes: Routes = [
   },
    {
     path:'CompletedInspections',
-    component:InspectionManagementComponent
+   component:InspectionManagementComponent
   },
    {
       path:'editInspection/:id',
-      component:NewinspectionComponent,
+      component:VnewinspectionComponent,
       data:{reuse:true}
     }
 ]
@@ -199,33 +202,17 @@ export const routes: Routes = [
 ,
  {
   path :'inspector',
-  component:PidecdeptMasterComponent,
-  resolve:{pidecdeptBasicInfo:pidecdeptbasicinfoResolver},
+  component:InspectorMasterComponent,
+  resolve:{inspectorBasicInfo:inspectorbasicinfoResolver},
   children:[
-    {
-      path:'users',
-      component:ContactPersonListComponent
-    },
    {
       path:'ResetPassword',
       component:  ResetPasswordComponent
 
    },
-   {
-    path:'Orders',
-    component:OrderManagementComponent
-   },
-    {
-    path:'inspectionManagement',
-    component:InspectionManagementComponent
-  },
-  {
-    path:'projectManagement',
-    component:OrderManagementComponent
-  },
   {
     path:'NotStartedTasks',
-    component:PdnotStartedtasksComponent
+    component:NotstartedtasksComponent
   },
    {
     path:'CompletedInspections',
@@ -233,14 +220,9 @@ export const routes: Routes = [
   },
    {
       path:'editInspection/:id',
-      component:NewinspectionComponent,
+      component:VnewinspectionComponent,
       data:{reuse:true}
-    },
-     {
-  path:'newInspection/:id',
-  component:PdnewinspectionComponent,
-  data:{reuse:true}
- }
+    }
 ]
  }
 

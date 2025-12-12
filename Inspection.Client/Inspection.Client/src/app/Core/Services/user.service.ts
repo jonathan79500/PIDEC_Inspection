@@ -206,6 +206,39 @@ private currentAppState = inject(currentstateStore);
 
   }
 
+  GetInspectorData()
+  {
+
+    var userData = this.currentAppState.currentuser();
+    console.log(userData);
+    var MappeduserData :User = {
+      id:'00000000-0000-0000-0000-000000000000',
+      name:'',
+      email:'',
+      userName :userData.userName,
+      domainId :userData.domainId,
+      password :userData.password,
+      isActive:false,
+      isAuthenticated:false,
+      sAMAccountName:'',
+      use_Id:0,
+      userType:UserTypes.PIDEC_Inspector,
+      token:'',
+        newPassword:'',
+        oldPassword:'',
+      confirmPassword:''
+    }
+
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    console.log('In GetInspectorData :',token);
+    console.log('In GetInspectorData :', MappeduserData);
+    var query = this.http.post<any>(this.LoginAPIPath+'/'+"GetInspectorDataByInspectorInfo_Remotely",MappeduserData,{  headers: headers });
+    return query;
+
+  }
+
 GetPIDECDeptMemberData()
   {
 

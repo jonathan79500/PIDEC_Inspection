@@ -23,7 +23,7 @@ export class InstopMenuComponent {
 vendorData : any;
   public currentProject:Project = {} as Project;
   public order:Order;
-  public QCMemberProjects:Project[] =[];
+  public InspectorProjects:Project[] =[];
 
   currentAppState = inject(currentstateStore);
   currentInspectorState = inject(InspectorInfoStore);
@@ -39,7 +39,7 @@ vendorData : any;
 
     console.log('in ptop menu',this.currentInspectorState.projects());
 
-    this.QCMemberProjects = this.basicInspectorInfo.projects;//this.currentVendorState.orders();//this.vendorData['orders'];
+    this.InspectorProjects = this.basicInspectorInfo.projects;//this.currentVendorState.orders();//this.vendorData['orders'];
 
   }
 

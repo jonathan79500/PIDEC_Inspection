@@ -16,8 +16,8 @@ public sealed class Project : AggregateRoot<ProjectId>
     public string? Number { get;  set; }
     public string? FSId { get;  set; }//means Foreign System Id
 
-  
-
+    [NotMapped]
+    public List<ProjectContact>? PidecQCContacts { get; set; }
     [NotMapped]
     public List<ProjectContact> OwnerContacts { get; set; }
     [NotMapped]

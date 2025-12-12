@@ -1,5 +1,7 @@
 ﻿using Inspection.Application.Contracts.Persistence;
+using Inspection.Application.DTOs;
 using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Mapster;
 using MediatR;
 using MediatR.Pipeline;
@@ -12,20 +14,22 @@ using System.Threading.Tasks;
 
 namespace Inspection.Application.Features.InspectionNotifications.Commands.CompleteCirculation
 {
-    public class CompleteCirculationCommandHandler:IRequestHandler<CompleteCirculationCommand,Circulation>
+    public class CompleteCirculationCommandHandler:IRequestHandler<CompleteCirculationCommand,CirculationDto>
     {
         private IInspectionNotificationRepository _notificationRepository;
         public CompleteCirculationCommandHandler(IInspectionNotificationRepository inspectionNotificationRepository) {
         _notificationRepository = inspectionNotificationRepository;
         }
 
-        public Task<Circulation> Handle(CompleteCirculationCommand request, CancellationToken cancellationToken)
+        public Task<CirculationDto> Handle(CompleteCirculationCommand request, CancellationToken cancellationToken)
         {
             Circulation circulation = new Circulation();
             circulation = request.CirculationDto.Adapt<Circulation>();
-            var result = _notificationRepository.CompleteCirculation(circulation);
+            var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
+
+            var result = _notificationRepository.CompleteCirculation(circulation, attachments);
             Circulation resultCirc = result.Result;
-            return Task.FromResult(circulation);// Task.FromResult(circulation);
+            return Task.FromResult(resultCirc.Adapt<CirculationDto>());// Task.FromResult(circulation);
         }
     }
 

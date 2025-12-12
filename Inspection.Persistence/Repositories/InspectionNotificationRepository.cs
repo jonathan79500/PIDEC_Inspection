@@ -919,9 +919,12 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             else
             {
 
+                ContactType vendorType = ContactType.Vendor;
 
+                // Get int value
+                int vendorTypeValue = (int)vendorType;
 
-                Contact creator = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
+                Contact creator = inspectionNotification.Contacts?.FirstOrDefault(c => c.Contact != null && c.Contact.ContactType == vendorTypeValue)?.Contact;
                 string currentDatePersian = "";
                 DateTime currentTime = DateTime.Now;
 
@@ -951,6 +954,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
 
                     CirculationAttachments newCirculationAttachment = new CirculationAttachments();
+                    newCirculationAttachment.Id = Guid.NewGuid();
                     newCirculationAttachment.CirculationId = circulation.Id;
                     _dbContext.Entry(circulation).State = EntityState.Unchanged;
 
@@ -962,6 +966,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     else
                     {
                         Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0", attachment.ContentType);
+                        newAttachment.AttachmentId = attachment.Id;
                         _dbContext.Entry(newAttachment).State = EntityState.Added;
                         newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
                     }
@@ -1787,29 +1792,9 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                     PersianIssueDate = ins.PersianIssueDate,
 
                 }).ToList();
-
-                // projects = multi.Read<Project>().ToList();
-
-                //circulations = multi.Read().Select(cr => new Circulation()
-                //{
-                //    Id = new Guid(cr.Id.ToString()),
-                //    Request = cr.Request,
-                //    ActionType = cr.ActionType,
-                //    CreatedBy = cr.CreatedBy,
-                //    CreatedDate = cr.CreatedDate,
-                //    ModifiedBy = cr.ModifiedBy,
-                //    ModifiedDate = cr.ModifiedDate,
-                //    PerformedActionDate = cr.PerformedActionDate,
-                //    PerformedActionDateGregorian = cr.PerformedActionDateGregorian,
-                //    PerformerContactPerson = cr.PerformerContactPerson,
-                //    PerformerContactType = cr.PerformerContactType,
-                //    PerformerPN = cr.PerformerPN,
-                //    SequenceNo = cr.SequenceNo
-                //}).ToList();
-
             }
 
-            // connection.Close();
+        
 
 
             return Task.FromResult(inspectionNotifications);
@@ -1828,7 +1813,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
     }
 
-    public Task<List<InspectionNotification>> GetInspectionNotificationsByProjUsrIds(string ProjectId, string UserId)
+    public Task<List<InspectionNotificationDataSummaryDto>> GetInspectionNotificationsByProjUsrIds(string ProjectId, string UserId)
     {
 
         try
@@ -1850,6 +1835,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
             List<InspectionNotificationContact> inspectionNotificationContacts;
             List<OrderContact> orderContacts;
             List<Circulation> participatedCirculations;
+            List<InspectionNotificationDataSummaryDto> inspectionNotificationsSummary;
 
             using (var multi = connection.QueryMultiple(
             "GetInspectionNotificationData_ProjId_UserId",
@@ -1919,14 +1905,37 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                 ).ToList();
 
 
-                
+                inspectionNotificationsSummary = multi.Read().Select(ins => new InspectionNotificationDataSummaryDto()
+                {
+                    InspectionNotificationId = ins.InspectionNotificationId.ToString(),
+                    IssueDate = ins.IssueDate,
+                    PersianInspectionEndDate = ins.PersianInspectionEndDate == null ? "" : ins.PersianInspectionEndDate,
+                    CirculationId = ins.CirculationId,
+                    InspectionEndDate = ins.InspectionEndDate == null ? "" : ins.InspectionEndDate,
+                    InspectionStartDate = ins.InspectionStartDate == null ? "" : ins.InspectionStartDate,
+                    NotificationMCContacts = ins.NotificationMCContacts == null ? "" : ins.NotificationMCContacts,
+                    NotificationOwnerContacts = ins.NotificationOwnerContacts == null ? "" : ins.NotificationOwnerContacts,
+                    NotificationPIDECContacts = ins.NotificationPIDECContacts == null ? "" : ins.NotificationPIDECContacts,
+                    NotificationSubjects = ins.NotificationSubjects == null ? "" : ins.NotificationSubjects,
+                    NotificationTypes = ins.NotificationTypes == null ? "" : ins.NotificationTypes,
+                    PersianInspectionStartDate = ins.PersianInspectionStartDate,
+                    RelatedOrderName = ins.RelatedOrderName,
+                    RelatedOrderNumber = ins.RelatedOrderNumber == null ? "" : ins.RelatedOrderNumber,
+                    RelatedProjectName = ins.RelatedProjectName == null ? "" : ins.RelatedProjectName,
+                    RequestId = ins.RequestId,
+                    SequenceNo = ins.SequenceNo,
+                    NotificationNumber = ins.NotificationNumber,
+                    PersianIssueDate = ins.PersianIssueDate,
+
+                }).ToList();
+
 
             }
 
             //connection.Close();
 
 
-            return Task.FromResult(inspectionNotifications);
+            return Task.FromResult(inspectionNotificationsSummary);
         }
         catch (NullReferenceException aex)
         {
@@ -2055,7 +2064,148 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
         }
     }
 
-    public async Task<Circulation> CompleteCirculation(Circulation circulation)    {
+
+   
+    public Task<List<InspectionNotificationDataSummaryDto>> GetReadyNotificationsToAttachInspectionReportByProjIdUserId(string ProjectId, string UserId)
+    {
+
+        try
+        {
+
+
+            var connection = _dbContext.Database.GetDbConnection();
+            // ensure the connection is open
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
+
+            var adoTransaction =
+                _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+
+
+            List<InspectionNotification> inspectionNotifications;
+            List<Circulation> circulations;
+            List<InspectionType> inspectionTypes;
+            List<InspectionNotificationContact> inspectionNotificationContacts;
+            List<OrderContact> orderContacts;
+            List<Circulation> participatedCirculations;
+            List<InspectionNotificationDataSummaryDto> inspectionNotificationsSummary;
+
+            using (var multi = connection.QueryMultiple(
+            " [GetReadyNotificationsToAttachInspectionReport_UserId]",
+            new { ProjectId = new Guid(ProjectId), UserId = UserId },
+            commandType: CommandType.StoredProcedure,
+            transaction: adoTransaction))
+            {
+
+                inspectionNotifications = multi.Read().Select(ins => new InspectionNotification()
+                {
+                    InspectionNotificationId = new InspectionNotificationId(new Guid(ins.InspectionNotificationId.ToString())),
+                    IssueDate = ins.IssueDate,
+                    Name = ins.Name,
+                    NotificationNumber = ins.NotificationNumber,
+                    PersianIssueDate = ins.PersianIssueDate,
+                    RequestInspectionDateEnd = ins.RequestInspectionDateEnd,
+                    RequestInspectionDateStart = ins.RequestInspectionDateStart,
+                    RequestInspectionDueDate = ins.RequestInspectionDueDate,
+                    RequestInspectionPeriodDays = ins.RequestInspectionPeriodDays,
+                    RequestInspectionPersianDateEnd = ins.RequestInspectionPersianDateEnd,
+                    RequestInspectionPersianDateStart = ins.RequestInspectionPersianDateStart,
+                    RequestInspectionTimesInPeriod = ins.RequestInspectionTimesInPeriod,
+                    Version = ins.Version,
+                    ModifiedBy = ins.ModifiedBy,
+                    ModifiedDate = ins.ModifiedDate,
+                    CreatedBy = ins.CreatedBy,
+                    CreatedDate = ins.CreatedDate
+
+                }).ToList();
+
+
+                // projects = multi.Read<Project>().ToList();
+
+                circulations = multi.Read().Select(cr => new Circulation()
+                {
+                    Id = new Guid(cr.Id.ToString()),
+                    ActionType = cr.ActionType,
+                    CreatedBy = cr.CreatedBy,
+                    CreatedDate = cr.CreatedDate,
+                    ModifiedBy = cr.ModifiedBy,
+                    ModifiedDate = cr.ModifiedDate,
+                    PerformedActionDate = cr.PerformedActionDate,
+                    PerformedActionDateGregorian = cr.PerformedActionDateGregorian,
+                    PerformerContactPerson = cr.PerformerContactPerson,
+                    PerformerContactType = cr.PerformerContactType,
+                    PerformerPN = cr.PerformerPN,
+                    SequenceNo = cr.SequenceNo
+                }).ToList();
+
+
+
+                // Third result set
+
+                inspectionNotificationContacts = multi.Read<InspectionNotificationContact, Contact, InspectionNotificationContact>(
+                    (inspectionNotificationContact, contact) =>
+                    {
+                        inspectionNotificationContact.Contact = contact;
+                        if (inspectionNotificationContact?.InspectionNotificationId! != null)
+                        {
+                            inspectionNotificationContact.InspectionNotificationId = InspectionNotificationId.Create(new Guid(inspectionNotificationContact.InspectionNotificationId.Value.ToString()));
+                        }
+                        inspectionNotificationContact.ContactId = contact.ContactId;
+                        inspectionNotificationContact.Id = inspectionNotificationContact.Id;
+                        return inspectionNotificationContact;
+                    },
+                  splitOn: "ContactId"
+                ).ToList();
+
+
+                inspectionNotificationsSummary = multi.Read().Select(ins => new InspectionNotificationDataSummaryDto()
+                {
+                    InspectionNotificationId = ins.InspectionNotificationId.ToString(),
+                    IssueDate = ins.IssueDate,
+                    PersianInspectionEndDate = ins.PersianInspectionEndDate == null ? "" : ins.PersianInspectionEndDate,
+                    CirculationId = ins.CirculationId,
+                    InspectionEndDate = ins.InspectionEndDate == null ? "" : ins.InspectionEndDate,
+                    InspectionStartDate = ins.InspectionStartDate == null ? "" : ins.InspectionStartDate,
+                    NotificationMCContacts = ins.NotificationMCContacts == null ? "" : ins.NotificationMCContacts,
+                    NotificationOwnerContacts = ins.NotificationOwnerContacts == null ? "" : ins.NotificationOwnerContacts,
+                    NotificationPIDECContacts = ins.NotificationPIDECContacts == null ? "" : ins.NotificationPIDECContacts,
+                    NotificationSubjects = ins.NotificationSubjects == null ? "" : ins.NotificationSubjects,
+                    NotificationTypes = ins.NotificationTypes == null ? "" : ins.NotificationTypes,
+                    PersianInspectionStartDate = ins.PersianInspectionStartDate,
+                    RelatedOrderName = ins.RelatedOrderName,
+                    RelatedOrderNumber = ins.RelatedOrderNumber == null ? "" : ins.RelatedOrderNumber,
+                    RelatedProjectName = ins.RelatedProjectName == null ? "" : ins.RelatedProjectName,
+                    RequestId = ins.RequestId,
+                    SequenceNo = ins.SequenceNo,
+                    NotificationNumber = ins.NotificationNumber,
+                    PersianIssueDate = ins.PersianIssueDate,
+
+                }).ToList();
+
+
+            }
+
+            //connection.Close();
+
+
+            return Task.FromResult(inspectionNotificationsSummary);
+        }
+        catch (NullReferenceException aex)
+        {
+            var ttt = aex.Message;
+            throw new Exception(ttt);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+            //  return null;
+        }
+
+
+    }
+
+
+    public async Task<Circulation> CompleteCirculation(Circulation circulation,List<Attachment> attachments)    {
         // Circulation dbCirculation = _dbContext.Circulations.Where(cr=>cr.Id  == circulation.Id).Include(cr=>cr.InspectionNotification).FirstOrDefault();
         var dbCirculation = await _dbContext.Circulations
        .Include(cr => cr.InspectionNotification)
@@ -2068,6 +2218,8 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
         otherCirculationsInCurrentSequence = _dbContext.Circulations.Where(cr=>cr.SequenceNo == circulation.SequenceNo && cr.Id != circulation.Id
         && cr.InspectionNotification.InspectionNotificationId == dbCirculation.InspectionNotification.InspectionNotificationId).ToList();
         int countOfOtherCirculations = otherCirculationsInCurrentSequence.Count;
+
+
         if (dbCirculation != null) {
             
             //----------anyway the circulation will be complete
@@ -2079,7 +2231,47 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
             dbCirculation.PerformedActionDateGregorian = DateTime.UtcNow;
 
             //_dbContext.SaveChanges();
-            await _dbContext.SaveChangesAsync();
+
+            foreach (var attachment in attachments)
+            {
+                if (attachment == null) continue;
+
+                var existingAttachment = await _dbContext.Attachments
+                    .FirstOrDefaultAsync(a => a.AttachmentId == attachment.Id);
+
+                var newCirculationAttachment = new CirculationAttachments
+                {
+                    Id = Guid.NewGuid(),
+                    CirculationId = dbCirculation.Id
+                };
+
+                if (existingAttachment != null)
+                {
+                    newCirculationAttachment.AttachmentId = existingAttachment.AttachmentId;
+                }
+                else
+                {
+                    var newAttachment = Attachment.Create(
+                        attachment.Name,
+                        attachment.Description,
+                        attachment.Content,
+                        attachment.Version,
+                        "-1",
+                        "0",
+                        attachment.ContentType);
+
+                    newAttachment.AttachmentId = attachment.Id;
+                    _dbContext.Attachments.Add(newAttachment);
+
+                    newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
+                }
+
+                _dbContext.CirculationAttachments.Add(newCirculationAttachment);
+            }
+
+
+
+            _dbContext.SaveChanges();
 
             if (circulation.PerformerContactType == ContactType.PIDEC_CC.GetHashCode() || circulation.PerformerContactType == ContactType.PIDEC_TO.GetHashCode())
             {
@@ -2139,6 +2331,6 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
            // _dbContext.SaveChanges();
             }
 
-        return circulation;
+        return dbCirculation;
         }
 }

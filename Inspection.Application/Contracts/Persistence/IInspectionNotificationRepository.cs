@@ -30,7 +30,7 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<InspectionNotification> UpdateInspectionNotification(InspectionNotification inspectionNotification);
 
-    Task<List<InspectionNotification>> GetInspectionNotificationsByProjUsrIds(string ProjectId, string UserId);
+    Task<List<InspectionNotificationDataSummaryDto>> GetInspectionNotificationsByProjUsrIds(string ProjectId, string UserId);
 
     Task<List<InspectionNotificationDataSummaryDto>> GetDraftInspectionNotificationsByUserName(string userName);
 
@@ -38,9 +38,13 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<List<InspectionNotificationDataSummaryDto>> GetNotStartedInspectionNotificationsByUserName(string userName);
 
-   // InspectionNotification SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project);
+    //Generally For Inspectors to attach their InspectionReport
+    Task<List<InspectionNotificationDataSummaryDto>> GetReadyNotificationsToAttachInspectionReportByProjIdUserId(string ProjectId, string UserId);
+    
 
-    Task<Contact> AddNewContact(Contact contact);
+        // InspectionNotification SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project);
+
+        Task<Contact> AddNewContact(Contact contact);
 
     Task<Contact> GetContactByUserId(string userId);
 
@@ -48,5 +52,5 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations);
     
-    Task<Circulation> CompleteCirculation(Circulation circulation);
+    Task<Circulation> CompleteCirculation(Circulation circulation,List<Attachment> attachments);
 }

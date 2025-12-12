@@ -7,12 +7,284 @@
 @tailwind components;
 @tailwind utilities;
 html, body { height: 100%; }
-body { 
-  
+body {
+
   margin: 0;
-   font-family: Roboto, "Helvetica Neue", sans-serif; 
+   font-family: Roboto, "Helvetica Neue", sans-serif;
    font-family: "Inter", sans-serif;
+
   }
+
+  :root {
+  --danger-color: #b71c1c !important;
+  --active-color : #1b5e20 !important;
+  --deactive-color : #c5b7b7af !important;
+  --text-color: #181717;
+}
+
+  .green-theme {
+ --primary-color: #2e7d32 !important;       /* deep green */
+  --secondary-color: #43a047 !important;     /* lighter green accent */
+  --button-dark: #314026 !important;          /* rich brown */
+  --button-light: #efebe9 !important;         /* soft brown background */
+  --background-color: #ecf5ea !important;    /* light green background */
+  --text-color: #3e2723 !important;          /* dark brown text */
+  --text-color-light: #fff !important;
+  --border-color: #a1887f !important;        /* brown-gray border */
+  --font-family: "Tahoma", sans-serif !important;
+  --side-nav:#263700 !important;
+  --main-backgroundColor: #fff !important;
+   --list-background-light: #dcf5d6 !important;
+   --primaryform-color:  #dcf5d6 !important;
+   --secondryform-color :#d5eecf !important;
+    --row-alt-background : #e8f3e5 !important;
+     --row-background:#cbe7b6 !important;
+     --row-hover-color:#739559 !important;
+     --toolbar-text-Color : #133d15 !important;
+}
+
+.blue-theme {
+ --primary-color: #0a5281 !important;       /* deep green */
+  --secondary-color: #066ea7 !important;     /* lighter green accent */
+  --button-dark: #5d4037 !important;          /* rich brown */
+  --button-light: #efebe9 !important;         /* soft brown background */
+  --background-color: #dde7e7 !important;    /* light green background */
+  --text-color: #3e2723 !important;
+  --text-color-light: #fff !important;        /* dark brown text */
+  --border-color: #a1887f !important;        /* brown-gray border */
+  --font-family: "Tahoma", sans-serif !important;
+   --side-nav: #00385d !important;
+   --main-backgroundColor: #fff !important;
+   --list-background-light: #bfdeff !important;
+   --primaryform-color: #edf6fc !important;
+   --secondryform-color :#1572a1 !important;
+  --row-alt-background : #f7f9fa !important;
+  --row-background:#c0e0ee !important;
+  --row-hover-color:#476f95 !important;
+  --toolbar-text-Color : #123c69 !important;
+}
+
+.orange-brown-theme {
+  --primary-color: #e65100 !important;        /* deep orange */
+  --secondary-color: #ffb300 !important;      /* vibrant yellow accent */
+  --button-dark: #3e2723 !important;          /* dark brown/black */
+  --button-light: #fff3e0 !important;         /* soft orange background */
+  --background-color: #fff8e1 !important;     /* pale yellow background */
+  --text-color: #212121 !important;           /* near-black text */
+  --text-color-light: #ffffff !important;     /* white text for contrast */
+  --border-color: #8d6e63 !important;         /* warm brown-gray border */
+  --font-family: "Tahoma", sans-serif !important;
+  --side-nav: #4e342e !important;             /* rich brown for sidebar */
+  --main-backgroundColor: #ffffff !important;
+  --list-background-light: #ffe0b2 !important;/* light orange list background */
+  --primaryform-color: #fff3cd !important;    /* soft yellow form background */
+  --secondryform-color: #ffe082 !important;   /* brighter yellow form accent */
+  --row-alt-background: #fff9c4 !important;   /* light yellow alternate rows */
+  --row-background: #ffe0b2 !important;       /* light orange rows */
+  --row-hover-color: #ffcc80 !important;      /* warm orange hover */
+  --toolbar-text-Color : #853002 !important;
+}
+
+
+/* General table container */
+.mat-mdc-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent !important;
+  font-family: "Tahoma", sans-serif;
+}
+
+/* Header row */
+.mat-mdc-header-row {
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-color) !important;
+}
+
+/* Header cells */
+.mat-mdc-header-cell {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Data rows */
+.mat-mdc-row {
+  background-color: var(--row-background, #f9f9f9);
+  transition: background-color 0.3s ease;
+}
+
+.mat-mdc-row:nth-child(even) {
+  background-color: var(--row-alt-background, #f0f0f0);
+}
+
+.mat-mdc-row:nth-child(odd) {
+  background-color: var(--row-background, #ffffff);
+}
+
+/* Hover effect */
+.mat-mdc-row:hover {
+  background-color: var(--row-hover-color, #c8e6c9);
+  cursor: pointer;
+}
+
+/* Data cells */
+.mat-mdc-cell {
+  color: var(--row-text-color, #333);
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Selected row */
+.demo-row-is-clicked {
+  background-color: var(--secondary-color, #2e7d32) !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+
+/* ComboBox Autocomplete General styles */
+
+/* Input element line height */
+.mat-mdc-input-element {
+  line-height: 1.0 !important;   /* tighter line height */
+  height: 28px !important;       /* shorter input height */
+  font-size: 0.85rem !important; /* compact font size */
+  padding: 0.25rem 0.4rem !important;
+}
+
+/* Override the container text line height */
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  line-height: 1.0 !important;   /* ensures container aligns with input */
+  min-height: 24px !important;   /* compact overall field height */
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: var(--row-background) !important;  /* custom background */
+  border: 1px solid var(--button-dark) !important;
+  border-radius: 6px !important;         /* rounded corners */
+  min-height:24px !important;           /* shorter overall height */
+  height: 28px !important;
+  padding: 0 0.4rem !important;
+}
+
+/* Global style for autocomplete dropdown */
+.mat-mdc-autocomplete-panel {
+  background-color: var(--row-hover-color) !important;   /* your custom background */
+  border: 1px solid var(--row-background) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 8px var(--button-dark) !important;
+  padding: 0.25rem 0 !important;
+  max-height: 180px !important;           /* shorter overall dropdown height */
+  overflow-y: auto !important;
+}
+
+/* Option styling inside panel */
+.mat-mdc-option {
+  background-color: var(--row-hover-color) !important; /* keep transparent so panel color shows */
+  min-height: 28px !important;              /* shorter height */
+  font-size: 0.85rem !important;
+  padding: 0.25rem 0.75rem !important;
+}
+
+/* Hover effect */
+.mat-mdc-option:hover {
+  background-color: var(--row-background) !important;     /* light green hover */
+  color: var(--text-color);
+}
+
+/* Active option */
+.mat-mdc-option.mat-mdc-option-active {
+  background-color: var(--list-background-light) !important;
+  color: var(--primary-color) !important;
+}
+
+/* Selected option */
+.mat-mdc-option.mat-mdc-option-selected {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+}
+.combo .mat-mdc-autocomplete-panel {
+  background-color: var(--background-color) !important;
+   border: 1px solid #a5d6a7 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 8px rgba(0, 128, 0, 0.15) !important;
+  max-height: 180px !important;           /* compact dropdown height */
+  overflow-y: auto !important;
+}
+
+/* Compact input field inside autocomplete */
+.combo .mat-mdc-text-field {
+  min-height: 24px !important;          /* overall field height */
+  height: 24px !important;
+  border-radius: 8px !important;        /* rounded corners */
+  background-color: #f0f9f4 !important; /* match dropdown background */
+  padding: 0 0.5rem !important;
+}
+
+/* Input element itself */
+.combo .mat-mdc-input-element {
+  height: 24px !important;      /* your compact height */
+  line-height: 1.0 !important;
+  font-size: 0.85rem !important;
+  padding: 0.25rem 0.4rem !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box;
+}
+
+/* Placeholder styling */
+.combo .mat-mdc-input-element::placeholder {
+  font-size: 0.85rem !important;
+  color: var(--text-color) !important;            /* softer placeholder color */
+}
+
+/* Fix alignment of input inside mat-form-field */
+.combo .mat-mdc-form-field {
+  display: flex;
+  align-items: center;          /* center input vertically */
+  height: 30px !important;      /* slightly taller than input for padding */
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.combo .mat-mdc-text-field-wrapper {
+  display: flex;
+  align-items: center;
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 0 0.5rem !important;
+  border-radius: 8px;
+  background-color: #f0f9f4;    /* match dropdown background */
+  border: 1px solid #a5d6a7;
+}
+/* Remove extra underline spacing */
+.combo .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+
+/* Global override */
+.mdc-checkbox__background {
+  background-color: var(--row-alt-background) !important;   /* custom background */
+  border: 2px solid var(--active-color) !important;   /* custom border */
+  border-radius: 4px !important;          /* rounded corners */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Checked state */
+.mdc-checkbox--selected .mdc-checkbox__background {
+  background-color: var(--active-color) !important;   /* green when checked */
+  border-color: var(--active-color) !important;
+}
+
+/* Disabled state */
+.mdc-checkbox--disabled .mdc-checkbox__background {
+  background-color: #e0e0e0 !important;
+  border-color: #bdbdbd !important;
+}
+
 
 .disabledInput {
     border: none !important;

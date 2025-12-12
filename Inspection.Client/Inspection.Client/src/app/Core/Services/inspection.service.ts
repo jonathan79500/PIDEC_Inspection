@@ -151,7 +151,7 @@ export class InspectionService {
   {
     const headers = new HttpHeaders();
 
-     return this.http.post<Circulation>(this.InspectionAPIPath+'/'+"CompleteTask",formData,{ headers: headers });
+     return this.http.post<Circulation>(this.InspectionAPIPath+'/'+"CompleteTask",formData);//,{ headers: headers });
   }
 
   // async saveNewInspectionFull(formData: FormData)

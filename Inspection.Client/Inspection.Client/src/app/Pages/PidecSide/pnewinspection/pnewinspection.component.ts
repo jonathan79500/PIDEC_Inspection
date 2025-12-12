@@ -571,7 +571,7 @@ removeToContact(contactIndex:number):void
       return this.formBuilder.group({
 
           id:'00000000-0000-0000-0000-000000000000',
-          attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
+         // attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
           contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           pidecContacts: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           pidecInspectors:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
@@ -719,6 +719,7 @@ removeToContact(contactIndex:number):void
       number:this.currentVendorData.orders[0].project.number,
       title:this.currentVendorData.orders[0].project.title,
       //vendors:this.formBuilder.array<FormTypes.FormVendor>([]),
+      pidecQCContacts:this.formBuilder.array<FormTypes.FormContact>([]),
       mcContacts:this.formBuilder.array<FormTypes.FormContact>([]),
       ownerContacts:this.formBuilder.array<FormTypes.FormContact>([]),
       tpInspectors:this.formBuilder.array<FormTypes.FormContact>([]),
@@ -847,7 +848,7 @@ this.initializeInspectionForm(inspection.order);
   this.inspectionForm =  this.formBuilder.group({
 
     id:inspection.id,
-    attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
+    //attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
     contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
     location: inspection!.location != undefined ? this.generateLocationFromValue(inspection!.location!) : this.generateLocation(),
     order:inspection.order !=undefined ? this.generateOrderFromValue(inspection.order) : this.generateOrder(),
@@ -1496,10 +1497,10 @@ CalculateInspectionDuration():void{
         contacts:this.inspectionForm
           .get('contacts')
           .value.filter((contact) => contact.email !='' && contact.contactType !=ContactTypes.Undefined) as Contact[]
-          ,
-        attachments:this.inspectionForm
-          .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
+        //   ,
+        // attachments:this.inspectionForm
+        //   .get('attachments')
+        //   .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
         //    ,
         //  circulations: [this.currentCirculation]
     };
@@ -1550,10 +1551,10 @@ CalculateInspectionDuration():void{
         contacts:this.inspectionForm
           .get('contacts')
           .value.filter((contact) => contact.email !='' && contact.contactType !=ContactTypes.Undefined) as Contact[]
-          ,
-        attachments:this.inspectionForm
-          .get('attachments')
-          .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
+        //   ,
+        // attachments:this.inspectionForm
+        //   .get('attachments')
+        //   .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
     };
 
     this.formData.delete('Inspection');

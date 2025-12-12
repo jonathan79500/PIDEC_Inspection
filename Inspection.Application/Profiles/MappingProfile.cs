@@ -193,6 +193,13 @@ public class MappingProfile : IRegister
                 .Where(c => c != null && c.Contact != null)
                 .Select(c => c.Contact.Adapt<ContactDto>())
                 .ToList())
+           .Map(dest => dest.PidecQCContacts, src =>
+        src.PidecQCContacts == null
+            ? null
+            : src.PidecQCContacts
+                .Where(pc => pc != null && pc.Contact != null)
+                .Select(pc => pc.Contact.Adapt<ContactDto>())
+                .ToList())
          .Map(dest => dest.MCContacts, src =>
         src.MCContacts == null
             ? null
@@ -235,6 +242,32 @@ public class MappingProfile : IRegister
    .Map(dest => dest.Number, src => src.Number)
    .Map(dest => dest.FSId, src => src.FSId)
    .Map(dest => dest.ProjectId, src => new ProjectId(src.Id.Value))
+   .Map(dest => dest.PidecQCContacts, src => src.PidecQCContacts!.Select(x => new ProjectContact
+     {
+         Contact = new Contact
+         {
+             Email = x.Email,
+             DomainId = x.DomainId,
+             Fax = x.Fax,
+             HomePage = x.HomePage,
+             //Id = x.Id,
+             Address = x.Address.Adapt<Address>(),
+             Attention = x.Attention,
+             Cc = x.Cc,
+             ContactId = new ContactId(x.Id.Value),
+             ContactType = x.ContactType,
+             IsVisible = x.IsVisible,
+             Mobile = x.Mobile,
+             Name = x.Name,
+             Phone = x.Phone,
+             UserId = x.UserId,
+             UserName = x.UserName
+         },
+         ContactId = x.Id.Value,
+         Id = Guid.Empty,
+         Project = null,
+         ProjectId = src.Id
+     }).ToList())
    .Map(dest => dest.MCContacts, src => src.MCContacts!.Select(x => new ProjectContact {
        Contact = new Contact {
            Email = x.Email,
@@ -477,9 +510,9 @@ public class MappingProfile : IRegister
 
 
         TypeAdapterConfig<Contact, ContactDto>.NewConfig()
-    //.Map(dest => dest.Id,
-    //     src => (src.ContactId != null && src.ContactId.Value != null && src.ContactId.Value != Guid.Empty)
-    //         ? src.ContactId.Value: (src.Id.Value))
+    .Map(dest => dest.Id,
+         src => (src.ContactId != null && src.ContactId != Guid.Empty)
+             ? src.ContactId : Guid.NewGuid())
     .Map(dest => dest.Name, src => src.Name ?? string.Empty)
     .Map(dest => dest.UserName,
          src => !string.IsNullOrWhiteSpace(src.UserName)
@@ -656,7 +689,7 @@ public class MappingProfile : IRegister
        .Map(dest => dest.Name, src => src.Name)
        .Map(dest => dest.NotificationNumber, src => src.NotificationNumber)
        .Map(dest => dest.Order, src => src.Order == null ? new Order() : src.Order.Adapt<Order>())
-       .Map(dest => dest.Contacts, src => src.Contacts == null ? new List<InspectionNotificationContact>() : src.Contacts.Adapt<List<InspectionNotificationContact>>())
+       //.Map(dest => dest.Contacts, src => src.Contacts == null ? new List<InspectionNotificationContact>() : src.Contacts.Adapt<List<InspectionNotificationContact>>())
        .Map(dest => dest.Location, src => src.Location == null ? new Address() : src.Location.Adapt<Address>())
        .Map(dest => dest.RequestInspectionDateEnd, src => src.RequestInspectionDateEnd)
        .Map(dest => dest.RequestInspectionDateStart, src => src.RequestInspectionDateStart)
@@ -678,15 +711,22 @@ public class MappingProfile : IRegister
        .IgnoreNonMapped(true)
        .AfterMapping((src, dest) =>
        {
-           if (dest.Contacts != null)
+           dest.Contacts = new List<InspectionNotificationContact>();
+           InspectionNotificationContact inscontact;//= new InspectionNotificationContact();
+           if (src.Contacts != null)
            {
-               foreach (var contact in dest.Contacts)
+               foreach (var contact in src.Contacts)
                {
+                   inscontact = new InspectionNotificationContact();
+                   inscontact.Contact = contact.Adapt<Contact>();
+                   inscontact.ContactId = contact.Id;
+                   inscontact.InspectionNotificationId = dest.InspectionNotificationId;
                    // assign the parent InspectionNotificationId
-                   contact.InspectionNotificationId = dest.InspectionNotificationId;
+                   //contact.InspectionNotificationId = src.InspectionNotificationId;
 
                    // optionally also set navigation property
-                   contact.InspectionNotification = dest;
+                   // contact.InspectionNotification = dest;
+                   dest.Contacts.Add(inscontact);
                }
            }
        });

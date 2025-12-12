@@ -1,3 +1,4 @@
+import { InspectionNotificationDataSummary } from './../../../Core/Models/InspectionNotificationDataSummary.model';
 import { Component, ElementRef, inject, OnInit, runInInjectionContext, ViewChild, Injector, effect } from '@angular/core';
 import { InspectionService } from '../../../Core/Services/inspection.service';
 import { Inspection } from '../../../Core/Models/Inspection.model';
@@ -8,6 +9,7 @@ import { currentstateStore } from '../../../Stores/currentstate.store';
 import { UserTypes } from '../../../Core/Models/UserTypes.enum';
 import { Project } from '../../../Core/Models/Project.model';
 import { User } from '../../../Core/Models/User.model';
+import { Router } from '@angular/router';
 
 
 
@@ -118,20 +120,38 @@ currentUser :User;
   @ViewChild('myGrid',{static:true})  gridDiv: ElementRef;
 
 
-  columnDefs: [
-    { field: "name", width: 150 },
-   // {field:"order.name",width:200},
-    { field: "notificationNumber", width: 90 },
-  //   { field: "inspectionType.name", width: 150 },
-    { field: "inspectionSubject", width: 90 },
-    // { field: "contractShippingDueDate", width: 150 },
-    // { field: "actualShippingDueDate", width: 150 },
-  //  { field: "location.country", width: 100 },
-   // { field: "location.city", width: 100 },
-    // { field: "ownerId", width: 100 }
-  ]
+  // columnDefs: [
+  //   { field: "name", width: 150 },
+  //  // {field:"order.name",width:200},
+  //   { field: "notificationNumber", width: 90 },
+  // //   { field: "inspectionType.name", width: 150 },
+  //   { field: "inspectionSubject", width: 90 },
+  //   // { field: "contractShippingDueDate", width: 150 },
+  //   // { field: "actualShippingDueDate", width: 150 },
+  // //  { field: "location.country", width: 100 },
+  //  // { field: "location.city", width: 100 },
+  //   // { field: "ownerId", width: 100 }
+  // ]
+   columnDefs: [
+      { field: "relatedProjectName", width: 150 },
+      { field: "relatedOrderName", width: 150 },
+      {field: "relatedOrderNumber",width:200},
+      { field: "notificationNumber", width: 90 },
+      { field: "issueDate", width: 90 },
+      { field: "persianIssueDate", width: 90 },
+      { field: "inspectionStartDate", width: 90 },
+      { field: "persianInspectionStartDate", width: 90 },
+      { field: "inspectionEndDate", width: 90 },
+      { field: "persianInspectionEndDate", width: 90 },
+      { field: "notificationTypes", width: 90 },
+      { field: "notificationSubjects", width: 90 },
+      { field: "notificationPIDECContacts", width: 90 },
+       { field: "notificationOwnerContacts", width: 90 },
+        { field: "notificationMCContacts", width: 90 },
 
-  constructor(private inspectionService : InspectionService,) {
+    ]
+
+  constructor(private inspectionService : InspectionService, private router: Router) {
 
   }
   ngAfterViewInit(): void {
@@ -212,19 +232,35 @@ currentUser :User;
  });
 
  }
-    clickInspectionRow(cRow: Inspection): void {
+    // clickInspectionRow(cRow: Inspection): void {
 
-      // console.log('in selected Row',cRow);
-      // this.vendorSharedData.setInspection(cRow);
+    //   // console.log('in selected Row',cRow);
+    //   // this.vendorSharedData.setInspection(cRow);
 
-      this.clickedRows.add(cRow);
+    //   this.clickedRows.add(cRow);
 
-      if (Request != null) {
+    //   if (Request != null) {
 
 
-        let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
-       // w.opener.data = cRow;
-      }
+    //     let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
+    //    // w.opener.data = cRow;
+    //   }
 
-    }
+    // }
+     clickInspectionRow(cRow: InspectionNotificationDataSummary): void {
+
+          // console.log('in selected Row',cRow);
+          // this.vendorSharedData.setInspection(cRow);
+
+         // this.clickedRows.add(cRow);
+
+          if (Request != null) {
+
+            //let w = window.open("editInspection/" + cRow.inspectionNotificationId, "", "width:100px;height:200px;");
+            //let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
+           // w.opener.data = cRow;
+           this.router.navigate(["pidec/editInspection/" + cRow.inspectionNotificationId]);
+          }
+
+        }
 }

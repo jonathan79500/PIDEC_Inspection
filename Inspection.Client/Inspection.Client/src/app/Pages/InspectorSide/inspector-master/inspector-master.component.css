@@ -1,60 +1,107 @@
-:host .masterClass {
-  justify-content: left !important;
-  display: block !important;
-}
-.container {
-  background-color: #6aa0da;
-
-  /* transition the background-color over 1s with a linear animation */
-  transition: background-color 1s linear;
-}
-.lightpinkColor {
-  background-color: #edc7b7;
-  border-radius: 0.1rem;
-  border-style: solid;
-  border-color: black;
-  width: 100px;
-}
-.blueColor {
-  background-color: #6aa0da;
-  border-radius: 0.2rem;
-  color: #eee2dc;
-}
-.pinkColor {
-  background-color: #ac3b61;
-  border-radius: 0.2rem;
-}
-.grayColor {
-  background-color: #bab2b5;
-  border-radius: 0.1rem;
-}
-.ostokhooniColor {
-  background-color: #eee2dc;
-  border-radius: 0.1rem;
+:root {
+  --primary-color: #e65100 !important;        /* deep orange */
+  --secondary-color: #ffb300 !important;      /* vibrant yellow accent */
+  --button-dark: #3e2723 !important;          /* dark brown/black */
+  --button-light: #fff3e0 !important;         /* soft orange background */
+  --background-color: #fff8e1 !important;     /* pale yellow background */
+  --text-color: #212121 !important;           /* near-black text */
+  --text-color-light: #ffffff !important;     /* white text for contrast */
+  --border-color: #8d6e63 !important;         /* warm brown-gray border */
+  --font-family: "Tahoma", sans-serif !important;
+  --side-nav: #4e342e !important;             /* rich brown for sidebar */
+  --main-backgroundColor: #ffffff !important;
+  --list-background-light: #ffe0b2 !important;/* light orange list background */
+  --primaryform-color: #fff3cd !important;    /* soft yellow form background */
+  --secondryform-color: #ffe082 !important;   /* brighter yellow form accent */
+  --row-alt-background: #fff9c4 !important;   /* light yellow alternate rows */
+  --row-background: #ffe0b2 !important;       /* light orange rows */
+  --row-hover-color: #ffcc80 !important;      /* warm orange hover */
 }
 
-.vendorscreen {
-  /* display: flex; */
+/* Utility flex classes */
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.flex-5 { flex: 5; }
+.flex-6 { flex: 6; }
+
+/* Loading screen */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Vendor screen container */
+.inspectorscreen {
   width: 95vw;
   height: 100vh;
-  background: rgb(235, 223, 222);
+  background: var(--background-color);
   margin: 0;
   padding: 0;
-  color: violet !important;
+  font-family: var(--font-family);
+  color: var(--text-color);
 }
+
+/* Row layout */
+.vendor-row {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--background-color) !important;
+}
+
+/* Left sidebar */
+.vendor-left {
+  background-color: transparent !important;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+}
+
+/* Main content */
+.vendor-main {
+  margin-left: 0;
+  background-color: var(--background-color) !important;
+  border-radius: 0.2rem;
+}
+
+/* Top menu */
+.vendor-top {
+  position: relative;
+  margin-left: 0;
+  background-color: var(--secondary-color);
+  border-radius: 0.2rem;
+}
+
+/* Body content */
+.vendor-body {
+  margin-left: 0;
+  background-color: var(--background-color) !important;
+}
+
+/* Buttons */
 .button {
   text-align: center;
   border-radius: 6px;
-  border-style: solid;
-  color: white;
-  background: linear-gradient(to top, #ac3b61, #eee2dc);
+  border: none;
+  color: #fff;
+  background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
 }
 
+.button:hover {
+  background: var(--button-dark);
+}
+
+/* Navigation */
 nav {
-  background-color: #eee2dc;
-  color: #ac3b61;
+  background-color: var(--background-color);
+  color: var(--primary-color);
   font-weight: bold;
 }
+
 ul {
   margin: 0;
   padding: 0;

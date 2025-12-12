@@ -18,6 +18,8 @@ namespace Inspection.Application.DTOs.Common
         public string? FSId { get; set; } = string.Empty;
 
         public List<ContactDto>? Contacts { get; set; }
+        
+        public List<ContactDto>? PidecQCContacts { get; set; }
         public List<ContactDto>? OwnerContacts { get; set; }
         public List<ContactDto>? MCContacts { get; set; }
         public List<ContactDto>? PidecInspectors { get; set; } //Second Part Inspectors

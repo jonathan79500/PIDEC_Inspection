@@ -91,6 +91,33 @@ namespace Inspection.Persistence.Repositories
                 return null;
             }
         }
+        
+        public async Task<Contact> SaveContactWithUserId(Contact contact,string userId)
+        {
+
+            try
+            {
+                Contact existedContact = null;
+
+
+                //if(contact.Id != Guid.Empty && contact.Id != null)
+                existedContact = _dbcontext.Contacts.Where(ct => ct.ContactId == contact.ContactId).FirstOrDefault();
+                if (existedContact == null)
+                {
+                    
+                    contact.UserId = userId;
+                    Contact newcnt = _dbcontext.Add(contact).Entity;
+                    _dbcontext.SaveChanges();
+                    return await Task.FromResult(contact);
+                }
+                else
+                    return await Task.FromResult(existedContact);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
         public async Task<Contact> SaveContact(Contact contact) {
 

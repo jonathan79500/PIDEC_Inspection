@@ -12,38 +12,34 @@
     height: 5vh;
   "
 >
-  <!-- <mat-divider vertical="true"></mat-divider> -->
   <span
     class="selectItem"
     style="font-size: 1.1em !important; float: right !important; padding: 2rem"
-    >Projects:
-  </span>
+    >Projects:</span
+  >
   <mat-divider vertical="true"></mat-divider>
-  <!-- i;let i= $index) { -->
-  <!-- <div style="float: left !important"> -->
+
   <select
     class="selectClass"
     (change)="changeProject($event)"
     [(ngModel)]="currentProject"
   >
     <option [value]="-1" [ngValue]="null">----</option>
-    @for(project of QCMemberProjects;track i;let i= $index) {
+    @for(project of InspectorProjects; track i; let i = $index) {
     <option [ngValue]="project" class="selectItem">
       {{ project.title }}
     </option>
     }
   </select>
+
   <mat-divider
     vertical="true"
+    class="divider"
     style="width: auto; text-align: right"
   ></mat-divider>
-  <div style="text-align: right; width: 100% !important">
-    <button (click)="ShowWarnings()" style="background-color: red">
-      Warnings
-    </button>
-  </div>
-  <div style="text-align: right; width: 100% !important">
+
+  <div class="toolbar-actions LeftTopButtons">
+    <button (click)="ShowWarnings()">Warnings</button>
     <button (click)="Exit()">Log Out</button>
   </div>
-  <!-- </div> -->
 </div>

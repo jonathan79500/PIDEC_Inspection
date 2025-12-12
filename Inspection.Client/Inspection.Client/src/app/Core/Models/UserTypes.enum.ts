@@ -6,5 +6,7 @@ export enum UserTypes
   MC = 3,
   PIDEC_TO =4,
   PIDEC_CC = 7,
-  Department_Lead=10
+  Department_Lead=10,
+  ThirdPart_Inspector = 9,
+  PIDEC_Inspector = 8
 }

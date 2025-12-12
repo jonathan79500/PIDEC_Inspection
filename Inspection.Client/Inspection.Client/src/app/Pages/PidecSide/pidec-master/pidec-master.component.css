@@ -1,60 +1,99 @@
-:host .masterClass {
-  justify-content: left !important;
-  display: block !important;
-}
-.container {
-  background-color: #123c69;
-
-  /* transition the background-color over 1s with a linear animation */
-  transition: background-color 1s linear;
-}
-.lightpinkColor {
-  background-color: #edc7b7;
-  border-radius: 0.1rem;
-  border-style: solid;
-  border-color: black;
-  width: 100px;
-}
-.blueColor {
-  background-color: #123c69;
-  border-radius: 0.2rem;
-  color: #eee2dc;
-}
-.pinkColor {
-  background-color: #ac3b61;
-  border-radius: 0.2rem;
-}
-.grayColor {
-  background-color: #bab2b5;
-  border-radius: 0.1rem;
-}
-.ostokhooniColor {
-  background-color: #eee2dc;
-  border-radius: 0.1rem;
+/* Root palette */
+:root {
+  --primary-color: #2e7d32;       /* deep green */
+  --secondary-color: #43a047;     /* lighter green accent */
+  --brown-dark: #5d4037;          /* rich brown */
+  --brown-light: #efebe9;         /* soft brown background */
+  --background-color: #f5fff5;    /* light green background */
+  --text-color: #3e2723;          /* dark brown text */
+  --border-color: #a1887f;        /* brown-gray border */
+  --font-family: "Tahoma", sans-serif;
 }
 
+/* Utility flex classes */
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.flex-5 { flex: 5; }
+.flex-6 { flex: 6; }
+
+/* Loading screen */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Vendor screen container */
 .vendorscreen {
-  /* display: flex; */
   width: 95vw;
   height: 100vh;
-  background: rgb(235, 223, 222);
+  background: var(--background-color);
   margin: 0;
   padding: 0;
-  color: violet !important;
+  font-family: var(--font-family);
+  color: var(--text-color);
 }
+
+/* Row layout */
+.vendor-row {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--brown-light);
+}
+
+/* Left sidebar */
+.vendor-left {
+  background-color: transparent !important;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+}
+
+/* Main content */
+.vendor-main {
+  margin-left: 0;
+  background-color: var(--background-color);
+  border-radius: 0.2rem;
+}
+
+/* Top menu */
+.vendor-top {
+  position: relative;
+  margin-left: 0;
+  background-color: var(--secondary-color);
+  border-radius: 0.2rem;
+}
+
+/* Body content */
+.vendor-body {
+  margin-left: 0;
+  background-color: var(--background-color) !important;
+}
+
+/* Buttons */
 .button {
   text-align: center;
   border-radius: 6px;
-  border-style: solid;
-  color: white;
-  background: linear-gradient(to top, #ac3b61, #eee2dc);
+  border: none;
+  color: #fff;
+  background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
 }
 
+.button:hover {
+  background: var(--brown-dark);
+}
+
+/* Navigation */
 nav {
-  background-color: #eee2dc;
-  color: #ac3b61;
+  background-color: var(--background-color);
+  color: var(--primary-color);
   font-weight: bold;
 }
+
 ul {
   margin: 0;
   padding: 0;

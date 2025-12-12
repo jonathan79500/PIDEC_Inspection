@@ -35,19 +35,19 @@ effect(()=>{
     {
       routeLink: 'sentinspections',
       icon: 'fal fa-home',
-      label: 'Sent Inspection Notifications',
+      label: 'Sent Inspections',
       imageName:'../../../../assets/list02.png'
     },
     {
       routeLink: 'notstartedinspections',
       icon: 'fal fa-box-open',
-      label: 'NotStarted Inspection Notifications',
+      label: 'Received Inspections',
       imageName:'../../../../assets/list01.png'
     },
     {
       routeLink: 'draftedNotifications',
       icon: 'fal fa-box-open',
-      label: 'Drafted Inspection Notifications',
+      label: 'Drafted Inspections',
       imageName:'../../../../assets/list01.png'
     },
     {
@@ -59,7 +59,7 @@ effect(()=>{
     {
       routeLink: 'newInspection',
       icon: 'fal fa-cog',
-      label: 'Create New Inspection',
+      label: 'Create NewInspection',
       imageName:'../../../../assets/orange-plus-11974.svg'
     },
   ];

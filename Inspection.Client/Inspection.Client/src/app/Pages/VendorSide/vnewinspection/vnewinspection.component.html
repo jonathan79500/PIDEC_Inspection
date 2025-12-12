@@ -16,7 +16,7 @@
       />
     </div>
 
-    <div class="form-group">
+    <div class="form-group-inline">
       <label for="issueDate">Issue Date:</label>
       <ng-persian-datepicker
         class="date-toggle"
@@ -40,7 +40,7 @@
           style="width: 10rem !important; direction: ltr"
         />
       </ng-persian-datepicker>
-
+      <!-- Gregorian date -->
       <input
         matInput
         [matDatepicker]="IssueDatepicker"
@@ -174,38 +174,38 @@
           <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
         </div>
       </div>
+      <div class="form-group">
+        <div class="columns date-picker-wrapper">
+          <div class="date-picker-container">
+            <label class="theLabels inline-label">=</label>
+            <input
+              formControlName="RequestInspectionDueDate"
+              style="width: 5rem !important; direction: ltr"
+            />
+            <label class="theLabels inline-label">Days</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="columns">
+          <div class="date-picker-container">
+            <input
+              class="theInputs"
+              style="width: 3rem"
+              formControlName="RequestInspectionTimesInPeriod"
+            />
+            <label class="theLabels"> Times in </label>
+            <input
+              class="theInputs"
+              style="width: 3rem"
+              formControlName="RequestInspectionPeriodDays"
+              value="7"
+            />
+            <label class="theLabels"> Days </label>
+          </div>
+        </div>
+      </div>
       <!-- </div> -->
-    </div>
-    <div class="rows">
-      <div class="columns date-picker-wrapper">
-        <div class="date-picker-container">
-          <label class="theLabels inline-label">=</label>
-          <input
-            formControlName="RequestInspectionDueDate"
-            style="width: 5rem !important; direction: ltr"
-          />
-          <label class="theLabels inline-label">Days</label>
-        </div>
-      </div>
-    </div>
-    <div class="rows">
-      <div class="columns">
-        <div class="date-picker-container">
-          <input
-            class="theInputs"
-            style="width: 3rem"
-            formControlName="RequestInspectionTimesInPeriod"
-          />
-          <label class="theLabels"> Times in </label>
-          <input
-            class="theInputs"
-            style="width: 3rem"
-            formControlName="RequestInspectionPeriodDays"
-            value="7"
-          />
-          <label class="theLabels"> Days </label>
-        </div>
-      </div>
     </div>
 
     <fieldset class="section" formArrayName="inspectionTypes">
@@ -230,14 +230,20 @@
           [(ngModel)]="newInspectionType"
           placeholder="New Inspection Type"
           [ngModelOptions]="{ standalone: true }"
+          [hidden]="!editMode"
         />
-        <button type="button" class="btn-primary" (click)="addInspectionType()">
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="addInspectionType()"
+          [hidden]="!editMode"
+        >
           +
         </button>
       </div>
     </fieldset>
 
-    <fieldset class="section" formArrayName="inspectionSubjects">
+    <!-- <fieldset class="section" formArrayName="inspectionSubjects">
       <legend>Inspection Subjects</legend>
       <div class="checkbox-list">
         <div
@@ -271,40 +277,136 @@
           +
         </button>
       </div>
+    </fieldset> -->
+    <!-- <fieldset class="section" formArrayName="inspectionSubjects">
+      <legend>Inspection Subjects</legend>
+      <div class="inline-add">
+
+        <mat-form-field class="combo">
+          <input
+            type="text"
+            matInput
+            placeholder="Select or type subject"
+            [formControl]="subjectCtrl"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let subj of allSubjects" [value]="subj">
+              {{ subj }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="addInspectionSubject()"
+        >
+          +
+        </button>
+      </div>
+
+      <div class="checkbox-list">
+        <div
+          *ngFor="
+            let subject of inspectionSubjectsFormArray.controls;
+            let i = index
+          "
+          [formGroup]="subject"
+          class="checkbox-item"
+        >
+          <mat-checkbox formControlName="selected" (change)="toggleSubject(i)">
+            {{ subject.get("name")?.value }}
+          </mat-checkbox>
+        </div>
+      </div>
+    </fieldset> -->
+    <fieldset class="section" formArrayName="inspectionSubjects">
+      <legend>Inspection Subjects</legend>
+
+      <div class="subjects-row">
+        <!-- Combo box with autocomplete -->
+        <mat-form-field class="combo">
+          <input
+            type="text"
+            matInput
+            placeholder="Select or type subject"
+            [formControl]="subjectCtrl"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let subj of allSubjects" [value]="subj">
+              {{ subj }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <!-- Add button -->
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="addInspectionSubject()"
+        >
+          +
+        </button>
+
+        <!-- Checkbox chips inline -->
+        <div class="checkbox-list">
+          <div
+            *ngFor="
+              let subject of inspectionSubjectsFormArray.controls;
+              let i = index
+            "
+            [formGroup]="subject"
+            class="checkbox-item"
+          >
+            <mat-checkbox
+              formControlName="selected"
+              (change)="toggleSubject(i)"
+            >
+              {{ subject.get("name")?.value }}
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
     </fieldset>
 
     <!-- Contacts -->
     <fieldset class="section" formArrayName="pidecContacts">
       <legend>Contacts</legend>
       <div
-        *ngFor="let contact of pidecContactsFormArray.controls; let i = index"
+        *ngFor="let contact of pidecContactsControls; let i = index"
         [formGroup]="contact"
         class="contact-row"
       >
-        <input formControlName="name" placeholder="Name" class="input small" />
+        <input formControlName="name" placeholder="Name" class="input middle" />
         <input
           formControlName="email"
           placeholder="Email"
-          class="input small"
+          class="input large"
         />
         <input
           formControlName="phone"
           placeholder="Phone"
-          class="input small"
+          class="input middle"
         />
         <input
           formControlName="mobile"
           placeholder="Mobile"
-          class="input small"
+          class="input middle"
         />
         <input
           formControlName="attention"
           placeholder="Attention"
-          class="input small"
+          class="input middle"
         />
-        <input formControlName="cc" placeholder="CC" class="input small" />
-        <input formControlName="fax" placeholder="Fax" class="input small" />
-        <button type="button" class="btn-danger" (click)="removeToContact(i)">
+        <input formControlName="cc" placeholder="CC" class="input large" />
+        <!-- <input formControlName="fax" placeholder="Fax" class="input small" /> -->
+        <button
+          type="button"
+          class="btn-danger"
+          (click)="removeToContact(contact)"
+        >
           ✖
         </button>
       </div>
@@ -360,25 +462,30 @@
     <!-- Location -->
     <fieldset class="section" [formGroup]="inspectionForm.controls.location">
       <legend>Location Of Inspection</legend>
-      <div class="form-group-inline">
-        <label>Country:</label>
-        <input formControlName="country" class="input" />
-        <label>State:</label>
-        <input formControlName="state" class="input" />
-      </div>
-      <div class="form-group-inline">
-        <label>City:</label>
-        <input formControlName="city" class="input" />
-        <label>Zip Code:</label>
-        <input formControlName="zipCode" class="input" />
-      </div>
-      <div class="form-group">
-        <label>Address:</label>
-        <input formControlName="address" class="input" />
+
+      <div class="location-grid">
+        <div class="form-group-inline">
+          <label>Country:</label>
+          <input formControlName="country" class="input middle" />
+          <label>State:</label>
+          <input formControlName="state" class="input middle" />
+        </div>
+
+        <div class="form-group-inline">
+          <label>City:</label>
+          <input formControlName="city" class="input middle" />
+          <label>Zip Code:</label>
+          <input formControlName="zipCode" class="input middle" />
+        </div>
+
+        <div class="form-group address-row">
+          <label>Address:</label>
+          <input formControlName="address" class="input wide" />
+        </div>
       </div>
     </fieldset>
 
-    <div class="subSection">
+    <!-- <div class="subSection">
       <fieldset
         style="flex: 1; white-space: nowrap"
         [formGroup]="inspectionForm.controls.ownerContactPerson"
@@ -527,11 +634,11 @@
           </div>
         </div>
       </fieldset>
-    </div>
-
-    <div class="subSection">
+    </div> -->
+    <!-- Upload input -->
+    <!-- <div class="subSection">
       <div class="upload-card">
-        <!-- Upload input -->
+
         <div class="upload-body">
           <input
             type="file"
@@ -541,7 +648,7 @@
           />
         </div>
 
-        <!-- Editable table -->
+
         <div formArrayName="attachments">
           <table class="upload-table" *ngIf="Attachments.controls.length > 0">
             <thead>
@@ -587,8 +694,59 @@
           </table>
         </div>
       </div>
+    </div> -->
+    <div class="upload-card">
+      <div class="upload-body">
+        <input
+          type="file"
+          multiple
+          (change)="onFilesPicked($event)"
+          class="upload-input"
+          [hidden]="!editMode"
+        />
+      </div>
+      <table class="upload-table" *ngIf="attachments.length > 0">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let file of attachments; let i = index">
+            <td>
+              <a
+                [href]="file.downloadUrl"
+                (click)="fetchFile(file.id)"
+                target="_blank"
+              >
+                {{ file.name }}
+              </a>
+            </td>
+            <td>
+              <input
+                type="text"
+                [(ngModel)]="file.description"
+                placeholder="Enter description"
+                [disabled]="!editMode"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </td>
+            <td>
+              <button
+                type="button"
+                class="delete-btn"
+                (click)="removeFile(i)"
+                [hidden]="!editMode"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
     <!-- Signature area (shown after submit) -->
     <div class="submit-wrapper" *ngIf="!editMode">
       <div class="submit-card">
@@ -661,40 +819,64 @@
       <!-- Card header -->
       <mat-card-header>
         <mat-card-title>
-          {{ circulation.performerContactPerson.name }}'s Comment
+          {{ circulation.performerContactPerson?.name }}'s Comment
         </mat-card-title>
       </mat-card-header>
 
       <!-- Card content -->
       <mat-card-content>
         <!-- Comment input -->
-        <input
+        <!-- <input
           [(ngModel)]="circulation.comment"
           [disabled]="!(circulation | isActiveForUser : currentCirculation)"
           class="comment-body"
           type="text"
           placeholder="please insert your comment before be late"
-        />
-
+        /> -->
+        <textarea
+          [(ngModel)]="circulation.comment"
+          [disabled]="
+            !(circulation | isActiveForUser : currentCirculation) && editMode
+          "
+          class="comment-body"
+          placeholder="please insert your comment before be late"
+          rows="3"
+        ></textarea>
         <!-- Upload button -->
-        <button
+        <input
+          type="file"
+          multiple
+          (change)="onCommentFilesPicked($event, circulation)"
+          class="upload-input"
+          [hidden]="!editMode"
+        />
+        <!-- <button
           mat-stroked-button
           color="primary"
           (click)="onUploadFile(circulation)"
+          *ngIf="shouldShowButton(circulation, 'upload')"
         >
           <mat-icon>attach_file</mat-icon> Upload File
-        </button>
+        </button> -->
 
         <!-- Uploaded files indicator -->
-        <div *ngIf="circulation.attachments?.length > 0" class="file-indicator">
+        <!-- <div *ngIf="circulation.attachments?.length > 0" class="file-indicator">
           📎 {{ circulation.attachments.length }} file(s) uploaded
-        </div>
+        </div> -->
 
         <!-- Optional: show filenames as chips -->
         <mat-chip-listbox>
-          <mat-chip *ngFor="let file of circulation.attachments">
-            {{ file.name }}
-          </mat-chip>
+          <ng-container *ngFor="let file of circulation.attachments">
+            <mat-chip *ngIf="file">
+              <!-- {{ file?.name }} -->
+              <a
+                [href]="file.downloadUrl"
+                (click)="fetchFile(file.id)"
+                target="_blank"
+                >{{ file?.name }}</a
+              >
+            </mat-chip>
+          </ng-container>
         </mat-chip-listbox>
       </mat-card-content>
 
@@ -705,6 +887,7 @@
           color="primary"
           (click)="onAction(circulation, 1)"
           [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          *ngIf="shouldShowButton(circulation, 'approve')"
         >
           Approve
         </button>
@@ -713,8 +896,9 @@
           color="warn"
           (click)="onAction(circulation, 0)"
           [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          *ngIf="shouldShowButton(circulation, 'reject')"
         >
-          Not Approve
+          Reject
         </button>
       </mat-card-actions>
     </mat-card>

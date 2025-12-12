@@ -1,0 +1,68 @@
+/* Toolbar container */
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 10px;
+  height: 5vh;
+  font-size: 15px;
+  font-family: var(--font-family);
+  font-weight: bold;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Divider */
+.divider {
+  width: auto;
+  text-align: right;
+}
+
+/* Select label */
+.selectItem {
+  font-size: 1.1em !important;
+  padding: 2rem;
+  color: var(--text-color);
+}
+
+/* Select dropdown */
+.selectClass {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--button-light);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
+/* Actions container */
+.toolbar-actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 1rem;
+}
+
+/* Buttons */
+.warning-btn {
+  background-color: red;
+  color: var(--text-color-light);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-btn {
+  background-color: var(--secondary-color);
+  color: var(--text-color-light);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.warning-btn:hover,
+.logout-btn:hover {
+  opacity: 0.9;
+}

@@ -31,6 +31,7 @@ public sealed class Attachment:BaseDomainEntity<AttachmentId>
 
     }
 
+
     public Attachment()
     {
     }
@@ -54,4 +55,10 @@ public sealed class Attachment:BaseDomainEntity<AttachmentId>
         
         return new(name, description, content, version, edmsId, pdfSize,contentType);
     }
+
+    //public static Attachment CreateFromObject(Attachment attachment)
+    //{     
+
+    //    return new(name, description, content, version, edmsId, pdfSize, contentType);
+    //}
 }

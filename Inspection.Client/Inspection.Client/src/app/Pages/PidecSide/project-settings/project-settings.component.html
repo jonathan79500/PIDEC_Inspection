@@ -1,5 +1,35 @@
 <div class="prjContainer" *ngIf="projectForm" [formGroup]="">
   <div>
+    <label>PIDEC QC Contact Persons:</label>
+    <img
+      style="cursor: pointer"
+      src="../../../../assets/search.png"
+      (click)="openPIDECQCContactSelector()"
+    />
+
+    <div class="col-span-11">
+      <table style="width: 40vw; text-align: left; border-style: solid">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        <tr
+          *ngFor="
+            let pidecQCcontact of filteredPidecQCContacts;
+            let indexOfelement = index
+          "
+        >
+          <td>{{ indexOfelement + 1 }}</td>
+          <td>{{ pidecQCcontact.get("name").value }}</td>
+          <td>{{ pidecQCcontact?.get("email")?.value }}</td>
+          <td>{{ pidecQCcontact?.get("phone")?.value }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div>
     <label>Owner Contact Persons:</label>
     <img
       style="cursor: pointer"
