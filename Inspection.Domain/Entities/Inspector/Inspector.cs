@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace Inspection.Domain.Entities.Inspector
 {
-    public class Inspector
+    public class Inspector:Person
     {
-        public InspectorId InspectorId { get; set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string Description { get; set; }
-        public List<InspectorAttachment> inspectorAttachments { get; set; }
+        public ContactId? ContactId { get; set; }
+        public List<InspectorOrder> inspectedOrders { get; set; }
+        public List<InspectorProject> inspectedProjects { get; set; }
         public List<CirculationInspector> Circulations { get; set; }
     }
 }

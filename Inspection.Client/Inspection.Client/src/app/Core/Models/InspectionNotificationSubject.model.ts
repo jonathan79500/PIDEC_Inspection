@@ -1,8 +1,9 @@
 export interface InspectionNotificationSubject{
 
-  id:string,  
+  id:string,
   name:string,
   selected : boolean,
   sequenceNo:number,
-  inspectionNotificationId:string
+  inspectionNotificationId:string,
+  iTP_Row_No:string
 }

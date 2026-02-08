@@ -142,7 +142,7 @@ export class ProjectSettingsComponent implements OnInit{
        generateContact():FormTypes.FormContact{
           return this.formBuilder.group({
             id:'00000000-0000-0000-0000-000000000000',
-            attention:'',
+            note:'',
             cc:'',
             email:'',
             fax:'',
@@ -162,7 +162,7 @@ export class ProjectSettingsComponent implements OnInit{
   generateContactFromContactValue(contact:Contact):FormTypes.FormContact{
     return this.formBuilder.group({
       id:contact.id!=''? contact.id :'00000000-0000-0000-0000-000000000000',
-      attention:contact.attention,
+      note:contact.note,
       cc:contact.cc,
       email:contact.email,
       fax:contact.fax,

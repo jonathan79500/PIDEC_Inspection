@@ -19,7 +19,7 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
 
         ConfigureInspectionNotificationTable(builder);
         ConfigureAttachments(builder);
-        
+
     }
 
     private void ConfigureAttachments(EntityTypeBuilder<InspectionNotification> builder)
@@ -94,13 +94,13 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
         id => id.Value,
         guidValue => new InspectionNotificationId(guidValue));
         builder.HasKey(e => e.InspectionNotificationId);
-      
+
         builder.Property(e => e.InspectionNotificationId)
             .HasConversion(converter)
             .ValueGeneratedOnAdd();
 
         builder.Property(e => e.Name).HasMaxLength(200);
-       // builder.Property(e => e.InspectionSubject).HasMaxLength(600);
+        // builder.Property(e => e.InspectionSubject).HasMaxLength(600);
         builder.Property(e => e.CreatedBy).HasMaxLength(100);
         builder.Property(e => e.ModifiedBy).HasMaxLength(100);
         builder.Property(e => e.RequestInspectionDateStart).HasColumnName("RequestInspectionDateStart");
@@ -108,9 +108,9 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
         builder.Property(e => e.RequestInspectionPersianDateStart).HasColumnName("RequestInspectionPersianDateStart").HasMaxLength(50);
         builder.Property(e => e.RequestInspectionPersianDateEnd).HasColumnName("RequestInspectionPersianDateEnd").HasMaxLength(50);
         builder.Property(e => e.RequestInspectionDueDate).HasColumnName("RequestInspectionDueDate");
-        builder.Property(e => e.RequestInspectionTimesInPeriod).HasColumnName("RequestInspectionTimesInPeriod");
-        builder.Property(e => e.RequestInspectionPeriodDays).HasColumnName("RequestInspectionPeriodDays");
-        
+        builder.Property(e => e.InspectionAction).HasColumnName("InspectionAction");
+        builder.Property(e => e.InspectionActionComment).HasColumnName("InspectionActionComment");
+        builder.Property(e => e.InspectionTimeComment).HasColumnName("InspectionTimeComment");
 
         // builder.Property(e => e.MainInspectionNotificationId).HasConversion(converter);
 
@@ -121,14 +121,14 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
         //    nnb.Property(n => (n.ProjectNumber+"-"+n.OrderNumber+"-NFT-"+n.Version.ToString()+"."+n.Revision.ToString())).HasColumnName("NotificationNumber").IsRequired();
         //});
 
-        builder.Property(e=>e.NotificationNumber).HasColumnName("NotificationNumber").IsRequired().HasMaxLength(100);
+        builder.Property(e => e.NotificationNumber).HasColumnName("NotificationNumber").IsRequired().HasMaxLength(100);
 
-       // builder.HasOne(e => e.InspectionType).WithMany().HasForeignKey("InspectionTypeId");
-      
-       // builder.Property(e => e.ContractShippingDueDate);
+        // builder.HasOne(e => e.InspectionType).WithMany().HasForeignKey("InspectionTypeId");
+
+        // builder.Property(e => e.ContractShippingDueDate);
         //builder.ComplexProperty(i => i.NotificationNumber).IsRequired();        
         builder.HasOne(i => i.Order);//.WithMany().HasForeignKey("OrderId");
-        builder.HasOne(i => i.Request);//.WithMany().OnDelete(DeleteBehavior.NoAction);
-      
+        builder.HasOne(i => i.Revision);//.WithMany().OnDelete(DeleteBehavior.NoAction);
+
     }
 }

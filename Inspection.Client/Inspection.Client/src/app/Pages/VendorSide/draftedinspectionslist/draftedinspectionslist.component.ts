@@ -1,5 +1,5 @@
 import { InspectionNotificationDataSummary } from './../../../Core/Models/InspectionNotificationDataSummary.model';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, viewChild, ViewEncapsulation } from '@angular/core';
 import {  inject} from '@angular/core';
 import { currentstateStore } from '../../../Stores/currentstate.store';
 
@@ -53,13 +53,12 @@ const gridOptions: GridOptions<Inspection> = {
     { field: "requestInspectionDateEnd", width: 150 },
     { field: "requestInspectionPersianDateEnd", width: 150 },
     { field: "requestInspectionDueDate", width: 150 },
-    { field: "requestInspectionTimesInPeriod", width: 150 },
-    { field: "requestInspectionPeriodDays", width: 150 },
+    { field: "inspectionTimeComment", width: 150 },
     { field: "order.equipmentTagNo", width: 90 },
     { field: "contractShippingDueDate", width: 150 },
     { field: "actualShippingDueDate", width: 150 },
-    { field: "location.country", width: 100 },
-    { field: "location.city", width: 100 },
+    // { field: "location.country", width: 100 },
+    // { field: "location.city", width: 100 },
     { field:"issueDate",width:100},
     { field:"persianIssueDate",width:100},
     { field: "order.itP_NO", width: 100 }
@@ -72,6 +71,7 @@ const gridOptions: GridOptions<Inspection> = {
   imports: [MatTableModule],
   templateUrl: './draftedinspectionslist.component.html',
   styleUrl: './draftedinspectionslist.component.css'
+
 })
 export class DraftedinspectionslistComponent implements OnInit{
 
@@ -139,16 +139,7 @@ export class DraftedinspectionslistComponent implements OnInit{
 
    clickInspectionRow(cRow: InspectionNotificationDataSummary): void {
 
-      // console.log('in selected Row',cRow);
-      // this.vendorSharedData.setInspection(cRow);
-
-     // this.clickedRows.add(cRow);
-
       if (Request != null) {
-
-        //let w = window.open("editInspection/" + cRow.inspectionNotificationId, "", "width:100px;height:200px;");
-        //let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
-       // w.opener.data = cRow;
        this.router.navigate(["vendor/editInspection/" + cRow.inspectionNotificationId]);
       }
 

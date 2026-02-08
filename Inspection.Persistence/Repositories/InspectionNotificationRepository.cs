@@ -9,9 +9,11 @@ using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Common.ValueObjects;
 using Inspection.Domain.Entities.Contacts;
 using Inspection.Domain.Entities.EDMS;
+using Inspection.Domain.Entities.Enums;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.Enums;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.InspectionReport;
 using Inspection.Domain.Entities.Orders;
 using Inspection.Domain.Entities.Projects;
 using Inspection.Domain.Entities.User.Entities;
@@ -52,9 +54,11 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         _userManagerRepository = userManagerRepository;
     }
 
-    public async Task<Contact> AddNewContact(Contact contact) {
+    public async Task<Contact> AddNewContact(Contact contact)
+    {
 
-        if (contact == null) {
+        if (contact == null)
+        {
             throw new Exception("Contact is null");
         }
         var addedContact = _dbContext.Contacts.Add(contact);
@@ -63,7 +67,8 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         return await Task.FromResult(addedContact.Entity);
     }
 
-    public async Task<Contact> GetContactByUserId(string userId) {
+    public async Task<Contact> GetContactByUserId(string userId)
+    {
         if (userId == null)
         {
             throw new Exception("UserId Is Null");
@@ -72,7 +77,8 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         return await Task.FromResult(_dbContext.Contacts.Where(ct => ct.UserId == userId).FirstOrDefault());
     }
 
-    public async Task<InspectionNotification> AddNewInspectionNotification(InspectionNotification inspectionNotification) {
+    public async Task<InspectionNotification> AddNewInspectionNotification(InspectionNotification inspectionNotification)
+    {
 
         try
         {
@@ -85,7 +91,8 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             await _dbContext.SaveChangesAsync();
             return await Task.FromResult(addedInspectionNotification.Entity);
         }
-        catch (Exception exp) {
+        catch (Exception exp)
+        {
             return null;
         }
     }
@@ -133,13 +140,14 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     PersianIssueDate = ino.PersianIssueDate,
                     RequestInspectionDateEnd = ino.RequestInspectionDateEnd,
                     RequestInspectionDateStart = ino.RequestInspectionDateStart,
-                    RequestInspectionDueDate = ino.RequestInspectionDueDate,
-                    RequestInspectionPeriodDays = ino.RequestInspectionPeriodDays,
+                    RequestInspectionDueDate = ino.RequestInspectionDueDate,                  
                     RequestInspectionPersianDateEnd = ino.RequestInspectionPersianDateEnd,
                     RequestInspectionPersianDateStart = ino.RequestInspectionPersianDateStart,
-                    RequestInspectionTimesInPeriod = ino.RequestInspectionTimesInPeriod,
+                    InspectionAction= ino.InspectionAction,
+                    InspectionActionComment = ino.InspectionActionComment,
+                    InspectionTimeComment = ino.InspectionTimeComment,
                     NotificationNumberParts = ino.NotificationNumberParts,
-                    Version = ino.Version
+                    //Version = ino.Version
 
 
                 }).ToList();
@@ -498,29 +506,29 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     SyncSubjects(existing, inspectionNotification, _dbContext);
                     SyncTypes(existing, inspectionNotification, _dbContext);
 
-                    if (existing.Circulations != null && existing.Circulations.Count > 0)
-                    {
-                        //before this time , Request and circulation are created
-                    }
-                    else
-                    {
+                    //if (existing.Circulations != null && existing.Circulations.Count > 0)
+                    //{
+                    //    //before this time , Request and circulation are created
+                    //}
+                    //else
+                    //{
 
-                        Contact creator = existing.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
-                        string currentDatePersian = "";
-                        DateTime currentTime = DateTime.Now;
+                    //    Contact creator = existing.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
+                    //    string currentDatePersian = "";
+                    //    DateTime currentTime = DateTime.Now;
 
 
-                        // Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
+                    //    // Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
 
-                        Circulation circulation = Circulation.CreateNew(existingInspectionNotification, creator);
-                        //circulation.InspectionNotification = inspectionNotification;
-                        // circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-                        circulation.PerformerContactType = creator.ContactType;
-                        circulation.CreatedDate = currentTime;
-                        circulation.PerformedActionDateGregorian = currentTime;
-                        circulation.PerformedActionDate = "";// persianDate.ToString();
-                        existing.Circulations!.Add(circulation);
-                    }
+                    //    Circulation circulation = Circulation.CreateNew(existingInspectionNotification.Revision, creator);
+                    //    //circulation.InspectionNotification = inspectionNotification;
+                    //    // circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                    //    circulation.PerformerContactType = creator.ContactType;
+                    //    circulation.CreatedDate = currentTime;
+                    //    circulation.PerformedActionDateGregorian = currentTime;
+                    //    circulation.PerformedActionDate = "";// persianDate.ToString();
+                    //    existing.Circulations!.Add(circulation);
+                    //}
 
                     _dbContext.SaveChangesAsync();
 
@@ -577,7 +585,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 {
                     ContactId = inc.Contact.ContactId,
                     Name = inc.Contact.Name,
-                    Attention = inc.Contact.Attention,
+                    Note = inc.Contact.Note,
                     Fax = inc.Contact.Fax,
                     Cc = inc.Contact.Cc,
                     Email = inc.Contact.Email,
@@ -729,7 +737,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
 
 
-    public async Task<(InspectionNotification,Circulation )> CreateNewInspectionNotification(InspectionNotification rawinspectionNotification,List<Attachment> attachments)
+    public async Task<(InspectionNotification, Circulation)> CreateNewInspectionNotification(InspectionNotification rawinspectionNotification, NotificationNumber newNotificationNumber, List<Attachment> attachments)
     {
 
         InspectionNotification inspectionNotification = null;
@@ -748,28 +756,6 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             }
             else
                 _dbContext.Entry(inspectionNotification.Order!).State = EntityState.Added;
-
-
-            var currentLocation = _dbContext.Entry(inspectionNotification.Location!).Entity;
-            if (await _dbContext.Addresses.AnyAsync(a =>
-                 a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
-                 && a.StreetLine1 == currentLocation.StreetLine1))
-            {
-                var location = _dbContext.Addresses.Where(a =>
-                 a.ZipCode == currentLocation.ZipCode && a.Country == currentLocation.Country && a.City == currentLocation.City && a.State == currentLocation.State
-                 && a.StreetLine1 == currentLocation.StreetLine1).First();
-
-                inspectionNotification.SetLocation(location);
-
-                _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
-            }
-            else
-                _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Added;
-
-            //  _dbContext.Entry(inspectionNotification.Location!).State = EntityState.Unchanged;
-
-
-
 
 
 
@@ -859,6 +845,69 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
             }
 
+            foreach (InspectionNotificationLocation insLocation in inspectionNotification.Locations!.ToList())
+            {
+
+                Address existingLocation = null;
+                //string country = insLocation.Location!.Country!;
+                //string city = insLocation.Location!.City!;
+                //string state = insLocation.Location!.State!;
+                //string streetLine1 = insLocation.Location!.StreetLine1!;
+                //string streetLine2 = insLocation.Location!.StreetLine2!;
+                //string zipCode = insLocation.Location!.ZipCode!;
+
+                //var existAddress = await _dbContext.Addresses.AnyAsync(a =>
+                //      a.ZipCode == zipCode && a.Country == country && a.City == city && a.State == state
+                //      && a.StreetLine1 == streetLine1);
+                //if (existAddress)
+                //{
+                //    existingLocation = _dbContext.Addresses.Where(a =>
+                //     a.ZipCode == zipCode && a.Country == country && a.City == city && a.State == state
+                //     && a.StreetLine1 == streetLine1).FirstOrDefault();
+
+
+                //}
+                existingLocation = await _dbContext.Addresses.FirstOrDefaultAsync(c => c.Id == insLocation.AddressId);
+
+
+                Address locationEntity;
+
+                if (existingLocation != null)
+                {
+                    // If Table3 exists, use it
+                    locationEntity = existingLocation;
+                    // Make sure EF Core treats it as an existing record:
+                    _dbContext.Entry(locationEntity).State = EntityState.Unchanged;
+
+                    var existingInsLocation = await _dbContext.InspectionNotificationsLocations.FirstOrDefaultAsync(c => c.AddressId == insLocation.AddressId && c.InspectionNotificationId == insLocation.InspectionNotificationId);
+                    if (existingInsLocation != null)
+                        _dbContext.Entry(insLocation).State = EntityState.Unchanged;
+                    else
+                        _dbContext.Entry(insLocation).State = EntityState.Added;
+
+                }
+                else if (insLocation.AddressId != null)
+                {
+                    InspectionNotificationLocation findedLocation = rawinspectionNotification.Locations.Find((lct) => lct.AddressId == insLocation.AddressId);
+
+                    if (findedLocation != null)
+                    {
+                        //_dbContext.InspectionSubjects.Add(findedSubject.InspectionSubject);
+                        insLocation.Location = findedLocation.Location;
+                    }
+
+                    _dbContext.Entry(insLocation.Location).State = EntityState.Added;
+                    _dbContext.Entry(insLocation).State = EntityState.Added;
+                }
+                else
+                {
+                    locationEntity = null;
+                    inspectionNotification.Locations!.Remove(insLocation);
+                }
+
+            }
+
+
             foreach (InspectionNotificationType insType in inspectionNotification.Types!.ToList())
             {
                 //insType.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
@@ -904,15 +953,13 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             }
 
 
-
-
             var entries = _dbContext.ChangeTracker.Entries().ToList();
             foreach (var entry in entries)
             {
                 Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
             }
 
-            if (inspectionNotification.Circulations != null && inspectionNotification.Circulations.Count > 0)
+            if (inspectionNotification.Revision != null && inspectionNotification.Revision.RevisionId != null)
             {
                 //before this time , Request and circulation are created
             }
@@ -928,23 +975,32 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 string currentDatePersian = "";
                 DateTime currentTime = DateTime.Now;
 
-                Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNew(creator);
+                Domain.Entities.Common.Request newRequest = Domain.Entities.Common.Request.CreateNewRequestWithRevision(RequestTypes.InspectionNotification, creator);
 
-                Domain.Entities.Common.Request savedRequest = _dbContext.Requests.Add(newRequest).Entity;
+                newRequest.Revisions[0].RevisionNumber = newNotificationNumber.Revision;
+                newRequest.Revisions[0].VersionNumber = newNotificationNumber.Version;
+                newRequest.Revisions[0].Comment = "First Time Create";
+                newRequest.Revisions[0].IsFinal = false;
+                newRequest.Revisions[0].SubmittedBy = creator;
+                newRequest.Revisions[0].SubmittedDate = DateTime.Now;
 
-                inspectionNotification.Request = savedRequest;
-
+                inspectionNotification.Revision = newRequest.Revisions[0];
                 InspectionNotification savedNewInspection = _dbContext.InspectionNotifications.Add(inspectionNotification).Entity;
 
-                Circulation circulation = Circulation.CreateNew(inspectionNotification, creator);
-                //circulation.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+                Circulation circulation = Circulation.CreateNew(newRequest.Revisions[0], creator);
+
                 circulation.PerformerContactType = creator.ContactType;
                 circulation.CreatedDate = currentTime;
                 circulation.PerformedActionDateGregorian = currentTime;
-                circulation.PerformedActionDate = "";// persianDate.ToString();
-                inspectionNotification.Circulations!.Add(circulation);
+                circulation.PerformedActionDate = "";
+                // inspectionNotification.Circulations!.Add(circulation);
+                newRequest.Revisions[0].Circulations!.Add(circulation);
 
                 _dbContext.SaveChanges();
+
+                CirculationAttachments addedCA;
+                if(circulation.Attachments != null)
+                    circulation.Attachments.Clear();
 
                 foreach (Attachment attachment in attachments)//rawinspectionNotification.Attachments!.ToList())
                 {
@@ -965,13 +1021,14 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     }
                     else
                     {
-                        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0", attachment.ContentType);
+                        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0", attachment.ContentType,attachment.DocNo,attachment.Status);
                         newAttachment.AttachmentId = attachment.Id;
                         _dbContext.Entry(newAttachment).State = EntityState.Added;
                         newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
                     }
                     _dbContext.Entry(newCirculationAttachment).State = EntityState.Added;
-                    _dbContext.CirculationAttachments.Add(newCirculationAttachment);
+                   addedCA = _dbContext.CirculationAttachments.Add(newCirculationAttachment).Entity;
+                   // circulation.Attachments.Add(addedCA);
 
                 }
 
@@ -979,17 +1036,18 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 _dbContext.SaveChanges();
                 
 
-                return await Task.FromResult(( inspectionNotification,circulation));
+
+                return await Task.FromResult((inspectionNotification, circulation));
             }
         }
         catch (Exception ex)
         {
 
             string str = ex.Message;
-        }    
+        }
 
 
-        return (null,null);
+        return (null, null);
     }
 
     public Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations)
@@ -1115,7 +1173,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 // DepartmentleadUser.Roles.Add(LeadDepartmentRole);
 
                 LeadDepartmentContact = new Contact();
-                LeadDepartmentContact.Attention = "";
+                LeadDepartmentContact.Note = "";
                 LeadDepartmentContact.Address = null;
                 LeadDepartmentContact.Phone = "";
                 LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
@@ -1136,7 +1194,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 //DepartmentleadUser.contacts.Add(LeadDepartmentContact);
                 RoleNames.Clear();
                 RoleNames.Add("PIDECDepartment_Lead");
-                (DepartmentleadUser,DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUser(DepartmentleadUser,RoleNames).Result;
+                (DepartmentleadUser, DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUser(DepartmentleadUser, RoleNames).Result;
 
                 LeadDepartmentContact.UserId = DepartmentleadUser.Id;
 
@@ -1149,7 +1207,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             {
                 var existedPidecLead = _dbContext.Contacts.Where(ct => ct.UserId == usersLikeDeptLead[0].Id).FirstOrDefault();
                 PidecDepartmentContacts.Add(existedPidecLead);
-                    
+
             }
 
             if (usersLikeOriginator.Count == 0)
@@ -1165,7 +1223,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 //originatorUser.Roles.Add(originatorRole);
 
                 OriginatorContact = new Contact();
-                OriginatorContact.Attention = "";
+                OriginatorContact.Note = "";
                 OriginatorContact.Address = null;
                 OriginatorContact.Phone = "";
                 OriginatorContact.Mobile = "";
@@ -1186,7 +1244,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 RoleNames.Clear();
                 RoleNames.Add("PIDECDepartment_Originator");
 
-                (originatorUser,DeptOriginatorResetPasswordLink) = _userManagerRepository.RegisterNewUser(originatorUser,RoleNames).Result;
+                (originatorUser, DeptOriginatorResetPasswordLink) = _userManagerRepository.RegisterNewUser(originatorUser, RoleNames).Result;
                 OriginatorContact.UserId = originatorUser.Id;
 
                 _dbContext.Contacts.Add(OriginatorContact);
@@ -1209,10 +1267,10 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     //public async Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project)
     //{
     //    InspectionNotification notificationForSend = null;
-       
+
     //    string  newRevisedNumber = GenerateNewNotificationNumber(project.Number, inspectionNotification.Order.Name).Result.ToString();
     //    inspectionNotification.NotificationNumber = newRevisedNumber;      
-       
+
     //    try
     //        {
 
@@ -1229,7 +1287,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     //    }
     //        catch (Exception exp)
     //        {
-              
+
     //        }         
 
     //    return await Task.FromResult(inspectionNotification);     
@@ -1237,7 +1295,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
 
 
-    public Task<InspectionNotification> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId)
+    public Task<(InspectionNotification,List<InspectionReport>)> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId)
     {
 
         try
@@ -1255,9 +1313,12 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             List<InspectionNotificationContact>? contacts;
             List<Order> orders;
             List<InspectionType> inspectionTypes;
-            List<InspectionNotificationSubject> subjects;        
+            List<InspectionNotificationSubject> subjects;
+            List<InspectionNotificationLocation> locations;
             List<InspectionNotificationType> types;
             List<Circulation> participatedCirculations;
+            List<InspectionReport> relatedInspectionReports;
+
             var circulationDict = new Dictionary<Guid, Circulation>();
 
             using (var multi = connection.QueryMultiple(
@@ -1266,70 +1327,104 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             commandType: CommandType.StoredProcedure,
             transaction: adoTransaction))
             {
-                inspectionNotifications = multi.Read<InspectionNotification>().ToList();
+                // inspectionNotifications = multi.Read<InspectionNotification>().ToList();
                 //participatedCirculations = multi.Read<Circulation>().ToList();
 
                 //  participatedCirculations = multi.Read<Circulation, Contact, Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification, Circulation>(
                 //    (cr, ct,rq) => { cr.PerformerContactPerson = ct; cr.InspectionNotification = rq; return cr; },
                 //    splitOn: "ContactId,RequestId"
                 //).ToList();
-             
 
-               
 
-                var circulations =multi.Read<Circulation, Contact,  Request, CirculationAttachments, Attachment, Circulation>(
-                    
-                    (cr, ct,  rq, cra, atc) =>
+                var lookup = new Dictionary<Guid, InspectionNotification>();
+                inspectionNotifications = multi.Read<Circulation, Contact, Request, Revision, InspectionNotification, CirculationAttachments, Attachment, InspectionNotification>(
+                    (cr, ct, rq, rvs, ins, cra, atc) =>
                     {
-                        if (!circulationDict.TryGetValue(cr.Id, out var circulationEntry))
+                    if (!lookup.TryGetValue(ins.InspectionNotificationId, out var notification)) 
                         {
-                            circulationEntry = cr;
-                            circulationEntry.PerformerContactPerson = ct;
-                            //circulationEntry.InspectionNotification = ins;                            
-                            circulationEntry.Attachments = new List<CirculationAttachments>();
-                            circulationDict.Add(circulationEntry.Id, circulationEntry);
+                            notification = ins; notification.Revision = rvs; 
+                            notification.Revision.Circulations = new List<Circulation>();
+                            lookup.Add(notification.InspectionNotificationId, notification);
+                        } 
+                            // attach contact
+                         cr.PerformerContactPerson = ct; 
+                        // attach request
+                        rvs.Request = rq; 
+                        // attach attachments
+                        if (cra != null) {
+                            cra.Attachment = atc; cr.Attachments ??= new List<CirculationAttachments>(); cr.Attachments.Add(cra);
                         }
+                        // add circulation to revision
+                        if(!notification.Revision.Circulations.Contains(cr))
+                            notification.Revision.Circulations.Add(cr);
+                        
 
-                        if (cra != null)
-                        {
-                            cra.Attachment = atc;
-                            circulationEntry.Attachments.Add(cra);
-                        }
-
-                        return circulationEntry;
+                            return notification; 
                     },
-                    
-                    splitOn: "ContactId,RequestId,CirculationAttachmentId,AttachmentId"
-                );
+                    splitOn: "ContactId,RequestId,RevisionId,InspectionNotificationId,CirculationAttachmentId,AttachmentId").Distinct().ToList();
 
-                participatedCirculations = circulations.Distinct().ToList();
+                    //var circulations = multi.Read<Circulation, Contact, Request, CirculationAttachments, Attachment, Circulation>(
+
+                    //    (cr, ct, rq, cra, atc) =>
+                    //    {
+                    //        if (!circulationDict.TryGetValue(cr.Id, out var circulationEntry))
+                    //        {
+                    //            circulationEntry = cr;
+                    //            circulationEntry.PerformerContactPerson = ct;
+                    //            //circulationEntry.InspectionNotification = ins;                            
+                    //            circulationEntry.Attachments = new List<CirculationAttachments>();
+                    //            circulationDict.Add(circulationEntry.Id, circulationEntry);
+                    //        }
+
+                    //        if (cra != null)
+                    //        {
+                    //            cra.Attachment = atc;
+                    //            circulationEntry.Attachments.Add(cra);
+                    //        }
+
+                    //        return circulationEntry;
+                    //    },
+
+                    //    splitOn: "ContactId,RequestId,CirculationAttachmentId,AttachmentId"
+                    //);
+
+                   // participatedCirculations = circulations.Distinct().ToList();
 
 
                 orders = multi.Read<Order>().ToList();
-                 contacts = multi.Read<InspectionNotificationContact, Contact, InspectionNotificationContact>(
-                    (insc, cnt) => { insc.Contact = cnt; return insc; },
-                    splitOn: "ContactId"
-                ).ToList();
-                 subjects = multi.Read<InspectionNotificationSubject, InspectionSubject, InspectionNotificationSubject>(
-                    (inss, ins) => { inss.InspectionSubject = ins; return inss; },
-                    splitOn: "InspectionSubjectId"
-                ).ToList();
+                contacts = multi.Read<InspectionNotificationContact, Contact, InspectionNotificationContact>(
+                   (insc, cnt) => { insc.Contact = cnt; return insc; },
+                   splitOn: "ContactId"
+               ).ToList();
+                subjects = multi.Read<InspectionNotificationSubject, InspectionSubject, InspectionNotificationSubject>(
+                   (inss, ins) => { inss.InspectionSubject = ins; return inss; },
+                   splitOn: "InspectionSubjectId"
+               ).ToList();
+                locations = multi.Read<InspectionNotificationLocation, Address, InspectionNotificationLocation>(
+                   (insl, adr) => { insl.Location = adr; return insl; },
+                   splitOn: "AddressId"
+               ).ToList();
                 types = multi.Read<InspectionNotificationType, InspectionType, InspectionNotificationType>(
                     (inst, inty) => { inst.InspectionType = inty; return inst; },
                     splitOn: "InspectionTypeId"
                 ).ToList();
+
+                relatedInspectionReports = multi.Read<InspectionReport, Revision, InspectionReport>(
+                    (insr, rvs) => { insr.Revision = rvs;return insr; },
+                    splitOn: "RevisionId").ToList();
             }
 
-            if(inspectionNotifications.Count>0 && inspectionNotifications[0] != null)
+            if (inspectionNotifications.Count > 0 && inspectionNotifications[0] != null)
             {
                 inspectionNotifications[0].Order = orders[0];
                 inspectionNotifications[0].Contacts = contacts;
                 inspectionNotifications[0].Subjects = subjects;
                 inspectionNotifications[0].Types = types;
-                inspectionNotifications[0].Circulations = participatedCirculations;
+                inspectionNotifications[0].Locations = locations;  
+                
             }
             InspectionNotification result = inspectionNotifications[0];
-            return Task.FromResult(result);
+            return Task.FromResult((result,relatedInspectionReports));
         }
         catch (Exception ex)
         {
@@ -1367,16 +1462,14 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             {
 
 
-                inspectionNotifications = multi.Read<InspectionNotification, Order,Circulation,InspectionNotificationContact, Contact, InspectionNotification >(
-(inspectionNotification, order,circulation,inspectionNotificationContact, contact) =>
+                inspectionNotifications = multi.Read<InspectionNotification, Order, Circulation, InspectionNotificationContact, Contact, InspectionNotification>(
+(inspectionNotification, order, circulation, inspectionNotificationContact, contact) =>
 {
     inspectionNotification.Id = inspectionNotification.InspectionNotificationId.Value;
     inspectionNotification.NotificationNumberParts = NotificationNumber.CreateFromString(inspectionNotification.NotificationNumber);
-    if(inspectionNotification.Location == null)
-        inspectionNotification.Location = new Domain.Entities.Common.ValueObjects.Address();
-    
-    inspectionNotification.Order = order;
-    inspectionNotification.Circulations!.Add(circulation);
+   
+
+    inspectionNotification.Order = order;   
 
     // In case notificationContact exists, attach the contact from the Contacts table.
     if (inspectionNotificationContact != null)
@@ -1386,14 +1479,14 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         // Add to the collection.
         inspectionNotification.Contacts!.Add(inspectionNotificationContact);
     }
-   
 
-if (inspectionNotification?.InspectionNotificationId! != null)
-{
-   inspectionNotification.InspectionNotificationId = InspectionNotificationId.Create(new Guid(inspectionNotification.InspectionNotificationId.Value.ToString()));
-}
 
-return inspectionNotification;
+    if (inspectionNotification?.InspectionNotificationId! != null)
+    {
+        inspectionNotification.InspectionNotificationId = InspectionNotificationId.Create(new Guid(inspectionNotification.InspectionNotificationId.Value.ToString()));
+    }
+
+    return inspectionNotification;
 },
 splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 ).ToList();
@@ -1499,7 +1592,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
             }
 
-           // connection.Close();
+            // connection.Close();
 
 
             //            InspectionNotificationFlow inspectionNotificationFlow = new InspectionNotificationFlow();
@@ -1511,9 +1604,9 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
             //return await Task.FromResult(inspectionNotificationFlow);
 
-            InspectionNotification result=  inspectionNotifications[0];
-                return Task.FromResult(result);
-            }
+            InspectionNotification result = inspectionNotifications[0];
+            return Task.FromResult(result);
+        }
         catch (NullReferenceException aex)
         {
             var ttt = aex.Message;
@@ -1577,6 +1670,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                     IssueDate = ins.IssueDate,
                     PersianInspectionEndDate = ins.PersianInspectionEndDate == null ? "" : ins.PersianInspectionEndDate,
                     CirculationId = ins.CirculationId,
+                    RevisionId = ins.RevisionId,
                     InspectionEndDate = ins.InspectionEndDate == null ? "" : ins.InspectionEndDate,
                     InspectionStartDate = ins.InspectionStartDate == null ? "" : ins.InspectionStartDate,
                     NotificationMCContacts = ins.NotificationMCContacts == null ? "" : ins.NotificationMCContacts,
@@ -1616,7 +1710,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
             }
 
-           // connection.Close();
+            // connection.Close();
 
 
             return Task.FromResult(inspectionNotifications);
@@ -1767,7 +1861,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
             commandType: CommandType.StoredProcedure,
             transaction: adoTransaction))
             {
-               
+
 
                 inspectionNotifications = multi.Read().Select(ins => new InspectionNotificationDataSummaryDto()
                 {
@@ -1794,7 +1888,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                 }).ToList();
             }
 
-        
+
 
 
             return Task.FromResult(inspectionNotifications);
@@ -1836,11 +1930,14 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
             List<OrderContact> orderContacts;
             List<Circulation> participatedCirculations;
             List<InspectionNotificationDataSummaryDto> inspectionNotificationsSummary;
-
+            if (ProjectId == "")
+            {
+                ProjectId = Guid.Empty.ToString();
+            }
             using (var multi = connection.QueryMultiple(
             "GetInspectionNotificationData_ProjId_UserId",
             new { ProjectId = new Guid(ProjectId), UserId = UserId },
-            commandType: CommandType.StoredProcedure, 
+            commandType: CommandType.StoredProcedure,
             transaction: adoTransaction))
             {
 
@@ -1853,12 +1950,13 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                     PersianIssueDate = ins.PersianIssueDate,
                     RequestInspectionDateEnd = ins.RequestInspectionDateEnd,
                     RequestInspectionDateStart = ins.RequestInspectionDateStart,
-                    RequestInspectionDueDate = ins.RequestInspectionDueDate,
-                    RequestInspectionPeriodDays = ins.RequestInspectionPeriodDays,
+                    RequestInspectionDueDate = ins.RequestInspectionDueDate,                   
                     RequestInspectionPersianDateEnd = ins.RequestInspectionPersianDateEnd,
                     RequestInspectionPersianDateStart = ins.RequestInspectionPersianDateStart,
-                    RequestInspectionTimesInPeriod = ins.RequestInspectionTimesInPeriod,
-                    Version = ins.Version,
+                    InspectionAction = ins.InspectionAction,
+                    InspectionTimeComment = ins.InspectionTimeComment,
+                    InspectionActionComment = ins.InspectionActionComment,
+                    //Version = ins.Version,
                     ModifiedBy = ins.ModifiedBy,
                     ModifiedDate = ins.ModifiedDate,
                     CreatedBy = ins.CreatedBy,
@@ -1871,7 +1969,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
                 circulations = multi.Read().Select(cr => new Circulation()
                 {
-                    Id = new Guid(cr.Id.ToString()),                    
+                    Id = new Guid(cr.Id.ToString()),
                     ActionType = cr.ActionType,
                     CreatedBy = cr.CreatedBy,
                     CreatedDate = cr.CreatedDate,
@@ -1982,8 +2080,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
     {
         var inspectionNotification = await _dbContext.InspectionNotifications
          .Include(n => n.Contacts)
-         .Include(n => n.Order)
-         .Include(n => n.Location)
+         .Include(n => n.Order)         
 
          .FirstOrDefaultAsync(n => n.InspectionNotificationId == id);
 
@@ -1997,8 +2094,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
             var inspectionNotification = await _dbContext.InspectionNotifications
             //.Include(n=>n.Id)
             .Include(n => n.Contacts)
-            .Include(n => n.Order!.Project)
-            .Include(n => n.Location)
+            .Include(n => n.Order!.Project)            
 
             // .Include(n => n.Contacts)
             .ToListAsync();
@@ -2018,7 +2114,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
     public async Task<NotificationNumber> GenerateNewNotificationNumber(string projectNumber, string orderNumber)
     {
-        NotificationNumber notificationNumber = _dbContext.NotificationNumbers.Where(nn => nn.ProjectNumber == projectNumber && nn.OrderNumber == orderNumber).FirstOrDefault()!;
+        NotificationNumber notificationNumber = _dbContext.NotificationNumbers.AsNoTracking().Where(nn => nn.ProjectNumber == projectNumber && nn.OrderNumber == orderNumber).FirstOrDefault()!;
 
         if (notificationNumber?.Id != null)
         {
@@ -2065,7 +2161,7 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
     }
 
 
-   
+
     public Task<List<InspectionNotificationDataSummaryDto>> GetReadyNotificationsToAttachInspectionReportByProjIdUserId(string ProjectId, string UserId)
     {
 
@@ -2106,12 +2202,13 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                     PersianIssueDate = ins.PersianIssueDate,
                     RequestInspectionDateEnd = ins.RequestInspectionDateEnd,
                     RequestInspectionDateStart = ins.RequestInspectionDateStart,
-                    RequestInspectionDueDate = ins.RequestInspectionDueDate,
-                    RequestInspectionPeriodDays = ins.RequestInspectionPeriodDays,
+                    RequestInspectionDueDate = ins.RequestInspectionDueDate,                   
                     RequestInspectionPersianDateEnd = ins.RequestInspectionPersianDateEnd,
                     RequestInspectionPersianDateStart = ins.RequestInspectionPersianDateStart,
-                    RequestInspectionTimesInPeriod = ins.RequestInspectionTimesInPeriod,
-                    Version = ins.Version,
+                    InspectionTimeComment = ins.InspectionTimeComment,
+                    InspectionAction = ins.InspectionAction,
+                    InspectionActionComment = ins.InspectionActionComment,
+                    //Version = ins.Version,
                     ModifiedBy = ins.ModifiedBy,
                     ModifiedDate = ins.ModifiedDate,
                     CreatedBy = ins.CreatedBy,
@@ -2205,27 +2302,29 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
     }
 
 
-    public async Task<Circulation> CompleteCirculation(Circulation circulation,List<Attachment> attachments)    {
+    public async Task<Circulation> CompleteCirculation(Circulation circulation, List<Attachment> attachments)
+    {
         // Circulation dbCirculation = _dbContext.Circulations.Where(cr=>cr.Id  == circulation.Id).Include(cr=>cr.InspectionNotification).FirstOrDefault();
         var dbCirculation = await _dbContext.Circulations
-       .Include(cr => cr.InspectionNotification)
+       .Include(cr => cr.Revision)
        .FirstOrDefaultAsync(cr => cr.Id == circulation.Id);
 
-         List<Circulation> otherCirculationsInCurrentSequence = new List<Circulation>();
+        List<Circulation> otherCirculationsInCurrentSequence = new List<Circulation>();
         if (dbCirculation == null)
             throw new InvalidOperationException("Base circulation not found");
 
-        otherCirculationsInCurrentSequence = _dbContext.Circulations.Where(cr=>cr.SequenceNo == circulation.SequenceNo && cr.Id != circulation.Id
-        && cr.InspectionNotification.InspectionNotificationId == dbCirculation.InspectionNotification.InspectionNotificationId).ToList();
+        otherCirculationsInCurrentSequence = _dbContext.Circulations.Where(cr => cr.SequenceNo == circulation.SequenceNo && cr.Id != circulation.Id
+        && cr.Revision.RevisionId == dbCirculation.Revision.RevisionId).ToList();
         int countOfOtherCirculations = otherCirculationsInCurrentSequence.Count;
 
 
-        if (dbCirculation != null) {
-            
+        if (dbCirculation != null)
+        {
+
             //----------anyway the circulation will be complete
             dbCirculation.PerformedActionDateGregorian = DateTime.UtcNow;
             dbCirculation.ModifiedDate = DateTime.UtcNow;
-            dbCirculation.Comment = (circulation.Comment==null || circulation.Comment.Trim() == "") ?  "No Comment" : circulation.Comment;
+            dbCirculation.Comment = (circulation.Comment == null || circulation.Comment.Trim() == "") ? "No Comment" : circulation.Comment;
             dbCirculation.ActionType = circulation.ActionType;
             dbCirculation.QCActionType = circulation.ActionType;
             dbCirculation.PerformedActionDateGregorian = DateTime.UtcNow;
@@ -2258,7 +2357,9 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                         attachment.Version,
                         "-1",
                         "0",
-                        attachment.ContentType);
+                        attachment.ContentType,
+                        attachment.DocNo,
+                        attachment.Status);
 
                     newAttachment.AttachmentId = attachment.Id;
                     _dbContext.Attachments.Add(newAttachment);
@@ -2311,8 +2412,8 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
 
                 if (circulation.ActionType == ActionTypes.ConfirmInspectionNotification.GetHashCode())
                 {
-                   //Send an email to vendor to inform them
-                   //maybe a new circulation should create for QC or vendor so that they complete workflow later
+                    //Send an email to vendor to inform them
+                    //maybe a new circulation should create for QC or vendor so that they complete workflow later
                 }
                 else if (circulation.ActionType == ActionTypes.RejectInspectionNotification.GetHashCode())
                 {
@@ -2322,15 +2423,15 @@ splitOn: "OrderId,CirculationId,InspectionNotificationContactId,ContactId"
                 {
                     //Send an email to vendor to inform them
                     //workflow will continue to make new revisions and versions so that finally request be an acceptable version to QC
-                   // Circulation nextCirculationforVendor = Circulation.CreateForNextContact(circulation.Request.cre,)
+                    // Circulation nextCirculationforVendor = Circulation.CreateForNextContact(circulation.Request.cre,)
                 }
             }
             else if (circulation.PerformerContactType == ContactType.PIDEC_LeadDepartment.GetHashCode() || circulation.PerformerContactType == ContactType.PIDEC_Originator.GetHashCode())
-            {            
+            {
             }
-           // _dbContext.SaveChanges();
-            }
+            // _dbContext.SaveChanges();
+        }
 
         return dbCirculation;
-        }
+    }
 }

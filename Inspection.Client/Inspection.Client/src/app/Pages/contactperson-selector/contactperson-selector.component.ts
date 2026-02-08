@@ -107,7 +107,7 @@ get scontacts(): FormGroup[] {
   generateContactForm():FormTypes.FormContact{
     return this.fBuilder.group({
       id:'',
-      attention:'',
+      note:'',
       cc:'',
       email:'',
       fax:'',
@@ -151,7 +151,7 @@ get scontacts(): FormGroup[] {
  generateContactFromContactValue(contact:Contact):FormTypes.FormContact{
     return this.fBuilder.group({
       id:contact.id!=''? contact.id :'00000000-0000-0000-0000-000000000000',
-      attention:contact.attention,
+      note:contact.note,
       cc:contact.cc,
       email:contact.email,
       fax:contact.fax,

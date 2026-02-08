@@ -13,6 +13,7 @@ using Inspection.Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 
 namespace Inspection.Api.Controllers
@@ -86,41 +87,66 @@ namespace Inspection.Api.Controllers
         }
 
 
-
-        [Consumes("multipart/form-data")]
-        [Produces("application/json")]
         [HttpPost("SaveNewInspectionReport")]
-        public async Task<ActionResult> SaveNewInspectionReport(IFormFile[] reportAttachments, IFormCollection inspectionReportFull)
+        [Consumes("multipart/form-data")]
+        // [Produces("application/json")]
+        public async Task<ActionResult> SaveNewInspectionReport([FromForm] InspectionReportUploadDto inspectionReportUpload)
+        // IFormCollection inspectionUploadDto)
         {
             try
             {
-                //Debug.Write("File Name is: "+attachment.FileName);
-                //Debug.Write("File Type is: " + attachment.ContentType);
-                foreach (var attachment in reportAttachments)
+
+                List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
+                AttachmentDto attachmentDto;
+                if (inspectionReportUpload.Attachments != null)
                 {
-                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "reportAttachments", FileHelper.generateFileName(attachment.FileName));
-
-
-                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    for (int i = 0; i < inspectionReportUpload.Attachments.Count; i++)
                     {
-                        attachment.CopyTo(fileStream);
+                        attachmentDto = new AttachmentDto();
+                        attachmentDto.Content = inspectionReportUpload.Attachments[i];
+                        attachmentDto.ContentType = inspectionReportUpload.Attachments[i].ContentType;
+                        if (inspectionReportUpload.AttachmentIds[i] != null && inspectionReportUpload.AttachmentIds[i] != "")
+                            attachmentDto.Id = new Guid(inspectionReportUpload.AttachmentIds[i]);
+                        else
+                            attachmentDto.Id = Guid.NewGuid();
+                        attachmentDto.Name = inspectionReportUpload.AttachmentNames[i];
+                        attachmentDto.Version = inspectionReportUpload.AttachmentVersions[i];
+                        attachmentDto.Description = inspectionReportUpload.AttachmentDescriptions[i];
+                        attachmentDto.DocNo = inspectionReportUpload.AttachmentDocNos[i];
+                        attachmentDto.Status = inspectionReportUpload.AttachmentStatuses[i];
+
+                        var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
+
+
+
+
+                        using var stream = new FileStream(path, FileMode.Create);
+                        await attachmentDto.Content.CopyToAsync(stream);
+
+                        attachmentDtos.Add(attachmentDto);
+                        // Here you can persist metadata + file path to DB
                     }
-
                 }
-                var inspectionReport = JsonConvert.DeserializeObject<InspectionReportDto>(inspectionReportFull["InspectionReport"]!);
-                //var currentCirculation = JsonConvert.DeserializeObject<CirculationDto>(inspectionNotification["CurrentCirculation"]!);
-                //var project = JsonConvert.DeserializeObject<ProjectDto>(inspectionNotification["Project"]!);
-                var command = new CreateInspectionReportCommand { inspectionReport = inspectionReport };
-
+                var command = new CreateInspectionReportCommand
+                {
+                    inspectionReport = JsonConvert.DeserializeObject<InspectionReportDto>(inspectionReportUpload.inspectionReport),                   
+                    CurrentCirculationDto = (inspectionReportUpload.currentCirculation!=null ? JsonConvert.DeserializeObject<CirculationDto>(inspectionReportUpload.currentCirculation): null),
+                    AttachmentDtos = attachmentDtos
+                };
+                
                 var response = await _mediator.Send(command);
-
-                return Ok(reportAttachments);
+                return Ok(new
+                {
+                    InspectionReport = response.Item1,
+                    CurrentCirculation = response.Item2
+                });
+                //return Ok(response);
             }
-            catch (Exception ex)
+            catch (Exception exp)
             {
-                return BadRequest();
+                return Ok();
             }
-        }
+        }     
 
         [HttpPost]
         [Route("GetNewInspectionReportNumber")]
@@ -161,6 +187,33 @@ namespace Inspection.Api.Controllers
         public class queryReportResult
         {
             public string newInspectionReportNumber { get; set; }
+        }
+
+        public class CirculationDataDto
+        {
+            public string circulation { get; set; }
+            public List<string>? AttachmentIds { get; set; }
+            public List<string>? AttachmentNames { get; set; }
+            public List<string>? AttachmentVersions { get; set; }
+            public List<string>? AttachmentDescriptions { get; set; }
+            [ValidateNever]
+            public List<IFormFile> Attachments { get; set; }
+        }
+        public class InspectionReportUploadDto
+        {
+            public string? inspectionReport { get; set; }
+            public string? project { get; set; }
+            public string? currentCirculation { get; set; }
+            public List<string>? AttachmentIds { get; set; }
+            public List<string>? AttachmentNames { get; set; }
+            public List<string>? AttachmentVersions { get; set; }
+            public List<string>? AttachmentDescriptions { get; set; }
+            public List<string>? AttachmentDocNos { get; set; }
+            public List<string>? AttachmentStatuses { get; set; }
+            public List<IFormFile>? Attachments { get; set; }
+            //[ModelBinder(BinderType = typeof(AttachmentListBinder))]
+            //public List<AttachmentDto> Attachments { get; set; }
+
         }
     }
 }

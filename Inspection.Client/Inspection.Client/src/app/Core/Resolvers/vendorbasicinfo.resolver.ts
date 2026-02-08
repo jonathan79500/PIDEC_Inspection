@@ -8,10 +8,10 @@ import { BasicVendorInfo } from '../Models/BasicVendorInfo.model'; // Update wit
 
 export const vendorbasicinfoResolver: ResolveFn<BasicVendorInfo> = (route, state, currectAppStore = inject(currentstateStore), vendorinfoStore = inject(vendorInfoStore)) :
   Observable<BasicVendorInfo> => {
-    console.log('Resolver invoked');   
-  
-  return vendorinfoStore.fetchBasicVendorInfo().pipe(   
-    map((data: BasicVendorInfo) => {     
+    console.log('Resolver invoked');
+
+  return vendorinfoStore.fetchBasicVendorInfo().pipe(
+    map((data: BasicVendorInfo) => {
       console.log('Data in map:', data);
       if (data && data != null && data != undefined && data.orders?.length > 0) {
         console.log('in resolver when data: ', data);
@@ -28,4 +28,4 @@ export const vendorbasicinfoResolver: ResolveFn<BasicVendorInfo> = (route, state
       return of(null); // Return null or handle the error as needed
     })
   );
-};  
+};

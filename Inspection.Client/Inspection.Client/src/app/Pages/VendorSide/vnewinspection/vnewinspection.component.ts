@@ -1,20 +1,23 @@
+import { InspectionSubject } from './../../../Core/Models/InspectionSubject.model';
+import { InspectionForm } from './../../../Core/FormTypes/InspectionFormTypes';
+import { NewNotificationNumberQueryParams } from './../../../Core/Services/inspection.service';
 import { Circulation } from './../../../Core/Models/Circulation.model';
 import { qCMembersbasicinfoResolver } from './../../../Core/Resolvers/qcmembersbasicinfo.resolver';
 import { OrderSettingsException } from './../../../Core/Models/OrderSettingsException.model';
 import { Project } from './../../../Core/Models/Project.model';
 import { join } from 'node:path';
 import { FormContact } from '../../../Core/FormTypes/InspectionFormTypes';
-import { InspectionSubject } from '../../../Core/Models/InspectionSubject.model';
+
 import { Owner } from '../../../Core/Models/Owner.model';
 import { Contact } from '../../../Core/Models/Contact.model';
-import { ChangeDetectorRef, Component, effect, Inject, inject, Injector, OnInit, runInInjectionContext, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, Inject, inject, Injector, OnInit, runInInjectionContext, ViewEncapsulation, AfterViewInit, ViewChild } from '@angular/core';
 import { Inspection } from '../../../Core/Models/Inspection.model';
 import { InspectionService, queryNewNotificationNumberResult } from '../../../Core/Services/inspection.service';
 import { Order } from '../../../Core/Models/Order.model';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { UploadFilesComponent } from '../../../Core/General/Components/upload-files/upload-files.component';
-import { MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
 import { MatDatepickerModulePersian } from 'ngx-persian-datepicker';
 import { MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { toGregorian, toJalaali } from 'jalaali-js';
@@ -55,7 +58,7 @@ import {
 import { UserService } from '../../../Core/Services/user.service';
 import { Vendor } from '../../../Core/Models/Vendor.model';
 import { InspectionType } from '../../../Core/Models/InspectionType.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { BasicVendorInfo } from '../../../Core/Models/BasicVendorInfo.model';
 import { Address } from '../../../Core/Models/Address.model';
@@ -65,14 +68,16 @@ import { vendorInfoStore } from '../../../Stores/vendorInfo.store';
 import * as FormTypes from '../../../Core/FormTypes/InspectionFormTypes';
 import { ContactTypes } from '../../../Core/Models/ContactTypes.enum';
 import { UserTypes } from '../../../Core/Models/UserTypes.enum';
-import { inspect } from 'node:util';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Attachment } from '../../../Core/Models/Attachment.model';
 import { userInfo } from 'node:os';
 import { ObjectTypes } from '../../../Core/Models/ObjectTypes.enum';
 import { ProjectContact } from '../../../Core/Models/ProjectContact.model';
-
+import { InspectionreportComponent } from '../../InspectorSide/inspectionreport/inspectionreport.component';
+import { InspectionReportService } from '../../../Core/Services/inspectionReport.service';
+import { InspectionReport } from '../../../Core/Models/InspectionReport.model';
+import { User } from '../../../Core/Models/User.model';
 
 
 function fillLarge() {
@@ -124,14 +129,14 @@ export const MY_FORMATS: MatDateFormats = {
 @Component({
     selector: 'app-newinspection',
     imports: [CommonModule, ReactiveFormsModule, FormsModule,MatChipsModule,MatButtonModule,MatIconModule,MatCardModule,IsActiveForUserPipe,  NgPersianDatepickerModule, MatDatepickerModule,MatFormFieldModule,MatTooltipModule,MatInputModule,MatAutocompleteModule,MatSelectModule,MatCheckboxModule],
-    templateUrl: './vnewinspection.component.html',
+    templateUrl:'./vnewinspection.component.html',
     styleUrl: './vnewinspection.component.css',
     encapsulation: ViewEncapsulation.None,
     providers: [
       { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }, // <-- This line sets the custom date format for mat-datepicker
     ]
 })
-export class VnewinspectionComponent implements OnInit{
+export class VnewinspectionComponent implements OnInit,AfterViewInit{
 
   initialInspectionInfo: queryNewNotificationNumberResult;
   fgNewInspection !:FormGroup;
@@ -140,6 +145,7 @@ export class VnewinspectionComponent implements OnInit{
   formData : FormData;
   circulationData: FormData;
   requestCirculations: Circulation[];
+  vendorCirculation : Circulation;
   readonly dialog = inject(MatDialog);
   injector = inject(Injector);
   Project:Project;
@@ -147,11 +153,14 @@ export class VnewinspectionComponent implements OnInit{
   Orders:Order[];
   currentVendorData:Vendor;
   inspectionForm : FormTypes.InspectionForm ;
-  currentContacts : Contact[];
+  private currentContacts : Contact[];
   currentInspectionSubjects :InspectionSubject[];
   currentInspectionTypes:InspectionType[];
   editMode :boolean = true;
   attachments: Attachment[] = [];
+  inspectionReports : InspectionReport[];
+  currentUserId : string = '';
+  currentUser : User;
 
  // dateFormat: string = 'YYYY MMMM DD';
 uiIsVisible: boolean = true;
@@ -182,7 +191,9 @@ orderSettingsExceptions:OrderSettingsException[];
 currentOrderExceptionContacts: ProjectContact[];
 // control for combo box input
   subjectCtrl = new FormControl('');
+  itpRowNoCtrl = new FormControl('');
 allSubjects: string[] = [];
+disableAddButton :boolean=false;
 
 // Add this to your component
 private gregorianMonthNames = [
@@ -190,34 +201,42 @@ private gregorianMonthNames = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
- persianMonthNames = [
+  finglishpersianMonthNames = [
     'Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar',
     'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'
   ];
 
+   persianMonthNames = [
+    'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+    'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+  ];
     formattedGregorianIssueDate: string = '';
   formattedPersianIssueDate: string = '';
 
 
   formattedGregorianReqStartDate: string = '';
-  formattedPersianReqStartDate: string = '';
+  formattedPersianReqStartDate: string = 'QWEQW';
 
 
   formattedGregorianReqEndDate: string = '';
   formattedPersianReqEndDate: string = '';
 
-  constructor(private activatedRoute: ActivatedRoute,private inspectionService:InspectionService,private formBuilder:FormBuilder,private toastr:ToastrService,private cdr: ChangeDetectorRef) {
+  isInspector:boolean = false;
+
+  constructor(private router: Router,private activatedRoute: ActivatedRoute,private inspectionReportService:InspectionReportService,private inspectionService:InspectionService,private formBuilder:FormBuilder,private toastr:ToastrService,private cdr: ChangeDetectorRef) {
 
     this.formData = new FormData();
-      this.circulationData = new FormData();
+    this.circulationData = new FormData();
 
-    this.initialInspectionInfo = activatedRoute.snapshot.data['inspectionInfo'];
     this.currentProject = this.currentAppState.currentproject();
+    this.currentUser = this.currentAppState.currentuser();
 
     if(this.currentAppState.currentuser().userType == UserTypes.Vendor)
     {
        this.currentVendorData = this.currentAppState.vendorData();
        this.orderSettingsExceptions = this.currentAppState.vendorBasicInfo().orderSettingsExceptions;
+       let vendorBasicInfo = this.currentAppState.vendorBasicInfo();
+       this.currentInspectionTypes = vendorBasicInfo.inspectionTypes;
       this.Project = this.currentAppState.vendorBasicInfo().projects[0];
       this.Orders = this.currentAppState.vendorBasicInfo().orders;//this.currentVendorData['orders'];
 
@@ -228,20 +247,55 @@ private gregorianMonthNames = [
 
       this.currentInspectionTypes = qCUserBasicInfo.inspectionTypes;
     }
+    else if(this.currentAppState.currentuser().userType == UserTypes.PIDEC_Inspector)
+    {
+       this.isInspector = true;
+    }
+
   }
 
+
    isActiveForCurrentUser(circulation: Circulation) : boolean{
-  if(circulation.performerContactPerson.id == this.currentCirculation.performerContactPerson.id && circulation.actionType ==null)
+  if(circulation.performerContactPerson.id == this.currentCirculation.performerContactPerson.id && circulation.performedActionDateGregorian.toString().trim() == '0001-01-01T00:00:00')
     return true;
   return false;
 }
+
+ openReportDialog() {
+
+
+  //this.inspectionReportService.getInspectionReportsByInspectionId
+    const dialogRef = this.dialog.open(InspectionreportComponent, {
+    width: '60vw',   // 80% of viewport width
+    maxWidth: '100vw',
+    maxHeight:'60vh',
+    panelClass:'report-dialog',
+      data: {
+        notificationNumber: this.inspectionForm.get('notificationNumber')?.value,
+        notificationDate: this.inspectionForm.get('RequestInspectionDateStart')?.value,
+        reportsVersions : this.inspectionReports
+      }
+    });
+
+     dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.handleReportSubmission(result);
+    }
+  });
+  }
+
+  handleReportSubmission(reportData: any) {
+
+    console.log('report data is sent to QC');
+  }
+
+//---------------------Comment Section Actions---------------------------
 
 onAction(circulation: Circulation,actionType: number) {
 
   if(actionType == 1)
     {
-    // this.currentCirculation.actionType = 1;
-    // this.currentCirculation.comment =  circulation.comment;
+
      circulation.actionType = 1;
     circulation.comment =  circulation.comment;
     }
@@ -307,136 +361,130 @@ onCommentFilesPicked(event: Event,circulation: any): void {
   input.value = '';
 }
 
-// onUploadFile(circulation: any): void {
-//     // Create a hidden file input dynamically
-//     const fileInput = document.createElement('input');
-//     fileInput.type = 'file';
-//     fileInput.multiple = true;
+ shouldShowButton(circulation: Circulation, action: 'approve' | 'reject' | 'upload'): boolean {
+  if (!this.editMode || this.inspectionForm.get('id').value == '00000000-0000-0000-0000-000000000000') return false;
+  if (!this.isActiveForCurrentUser(circulation)) return false;
 
-//     fileInput.onchange = (event: any) => {
-//       const files: FileList = event.target.files;
-
-//       if (!circulation.attachments) {
-//         circulation.attachments = [];
-//       }
-
-//       for (let i = 0; i < files.length; i++) {
-//         const file = files.item(i);
-//         if (file) {
-//           // Push file metadata into attachments array
-//           circulation.attachments.push({
-//             id:'',
-//             name: file.name,
-//             size: file.size,
-//             type: file.type,
-//             file: file
-//           });
-//         }
-//       }
-//     };
-
-//     // Trigger the file picker
-//     fileInput.click();
-//   }
+  return action === 'approve' || action === 'reject' || action === 'upload';
+ }
 
   showAll = true;
+//-------------------End Of Comment Section Actions-------------------------
 
 toggleEditMode(on: boolean) {
   this.editMode = on;
 
+  const inspectionTypes = this.inspectionForm.get('inspectionTypes');
+    const inspectionSubjects = this.inspectionForm.get('inspectionSubjects');
+
   const notificationNumberCtrl =  this.inspectionForm.get('notificationNumber');
   const CtrlRequestInspectionPersianDateStartCtrl = this.inspectionForm.get('RequestInspectionPersianDateStart');
+
+  const CtrlInspectionTimeComment = this.inspectionForm.get('InspectionTimeComment');
 
   const CtrlRequestInspectionPersianDateEndCtrl = this.inspectionForm.get('RequestInspectionPersianDateEnd');
 
   const CtrlpersianIssueDateCtrl = this.inspectionForm.get('persianIssueDate');
+  const RequisitionTitle = this.inspectionForm.controls['order'].get('title');
 
-  if (on) {
+  const locations = this.inspectionForm.get('locations');
+  const contacts = this.inspectionForm.get('contacts');
+  const orderName = this.inspectionForm.get('orderName');
+  const equipmentTagNo = this.inspectionForm.get('equipmentTagNo');
+
+
+  RequisitionTitle?.disable();
+
+  if (on && this.currentCirculation.sequenceNo==0) {
+
+
     notificationNumberCtrl?.enable();
     CtrlRequestInspectionPersianDateStartCtrl?.enable();
     CtrlRequestInspectionPersianDateEndCtrl?.enable();
     CtrlpersianIssueDateCtrl?.enable();
-    //this.Attachments.enable();
+    CtrlInspectionTimeComment?.enable();
+    inspectionTypes?.enable();
+    inspectionSubjects?.enable();
+    locations?.enable();
+    contacts?.enable();
+    orderName?.enable();
+    equipmentTagNo?.enable();
 
-  } else {
+   }
+  //  else if(on && this.currentCirculation.sequenceNo==1)
+  //  {
+  //   notificationNumberCtrl?.disable();
+  //   CtrlRequestInspectionPersianDateStartCtrl?.disable();
+  //   CtrlRequestInspectionPersianDateEndCtrl?.disable();
+  //   CtrlpersianIssueDateCtrl?.disable();
+  //   CtrlInspectionTimeComment?.disable();
+  //   inspectionTypes?.disable();
+  //   inspectionSubjects?.disable();
+  //   locations?.disable();
+  //   contacts?.disable();
+  //   orderName?.disable();
+  //   equipmentTagNo?.disable();
+  //   const indexSubj0 = this.inspectionSubjectsFormArray.controls.findIndex((insSubj)=>(insSubj.get("id").value === "00000000-0000-0000-0000-000000000000"));
+  //   if(indexSubj0>-1)
+  //     this.inspectionSubjectsFormArray.removeAt(indexSubj0);
+
+  //   const indexType0 = this.inspectionTypesFormArray.controls.findIndex((insType)=>(insType.get("id").value === "00000000-0000-0000-0000-000000000000"));
+  //   if(indexType0>-1)
+  //     this.inspectionTypesFormArray.removeAt(indexType0);
+
+  //   const indexLoc0 = this.inspectionLocationFormArray.controls.findIndex((insLoc)=>(insLoc.get("id").value === "00000000-0000-0000-0000-000000000000"));
+  //   if(indexLoc0>-1)
+  //     this.inspectionLocationFormArray.removeAt(indexLoc0);
+
+  //    const indexCntc = this.contactsFormArray.controls.findIndex((cnt)=>(cnt.get("id").value === "00000000-0000-0000-0000-000000000000"));
+  //   if(indexCntc>-1)
+  //     this.contactsFormArray.removeAt(indexCntc);
+
+  //  }
+   else {
     notificationNumberCtrl?.disable();
     CtrlRequestInspectionPersianDateStartCtrl?.disable();
     CtrlRequestInspectionPersianDateEndCtrl?.disable();
     CtrlpersianIssueDateCtrl?.disable();
-    //this.Attachments.disable();
+    CtrlInspectionTimeComment?.disable();
+    inspectionTypes?.disable();
+    inspectionSubjects?.disable();
+    locations?.disable();
+    contacts?.disable();
+    orderName?.disable();
+    equipmentTagNo?.disable();
+    const indexSubj0 = this.inspectionSubjectsFormArray.controls.findIndex((insSubj)=>(insSubj.get("id").value === "00000000-0000-0000-0000-000000000000"));
+    if(indexSubj0>-1)
+      this.inspectionSubjectsFormArray.removeAt(indexSubj0);
+
+    const indexType0 = this.inspectionTypesFormArray.controls.findIndex((insType)=>(insType.get("id").value === "00000000-0000-0000-0000-000000000000"));
+    if(indexType0>-1)
+      this.inspectionTypesFormArray.removeAt(indexType0);
+
+    const indexLoc0 = this.inspectionLocationFormArray.controls.findIndex((insLoc)=>(insLoc.get("id").value === "00000000-0000-0000-0000-000000000000"));
+    if(indexLoc0>-1)
+      this.inspectionLocationFormArray.removeAt(indexLoc0);
+
+     const indexCntc = this.contactsFormArray.controls.findIndex((cnt)=>(cnt.get("id").value === "00000000-0000-0000-0000-000000000000"));
+    if(indexCntc>-1)
+      this.contactsFormArray.removeAt(indexCntc);
+
   }
 }
-  ngAfterViewInit() {
-  //console.log('Form:', this.inspectionForm);
-  //console.log('modifiedDate:', this.inspectionForm.get('ModifiedDate')?.value);
-}
+
+    ngAfterViewInit() {  }
 
   ngOnInit(): void {
 
-    let DateNow = new Date(Date.now());
+    this.initialInspectionInfo = this.activatedRoute.snapshot.data['inspectionInfo'];
 
-    this.activatedRoute.paramMap.subscribe(params=>{
-
-    if(params.keys.length>0)
-      {
-        if(params.keys[0]=='notificationNumber')
-        {
-      var inspectionNotificationNumber = params.get('notificationNumber').toString();
-
-      let obj :{} = {'notificationNumber':inspectionNotificationNumber};
-      this.formData.append('notificationNumber',JSON.stringify(obj));
-      this.inspectionService.getInspectionByNotificationNumber(inspectionNotificationNumber).subscribe((inspection)=>{
-        let lastInspectionIndex = inspection.inspectionNotifications.length-1;
-        let lastInspectionNotificationId = inspection.inspectionNotifications[lastInspectionIndex].id;
-        let relatedInspectionContact =  inspection.contacts.filter((contact)=>contact.inspectionNotificationId == lastInspectionNotificationId);
-        let relatedInspectionSubjects = inspection.subjects.filter((subject)=>subject.inspectionNotificationId == lastInspectionNotificationId);
-        let relatedInspectionTypes = inspection.types.filter((type)=>type.inspectionNotificationId == lastInspectionNotificationId);
-
-       this.generateInspectionFromValue(inspection.inspectionNotifications[lastInspectionIndex]);
-
-        relatedInspectionContact.forEach((relContact)=>{
-          this.contactsFormArray.push(this.generateContactFromContactValue(relContact));
-        })
-
-        if(relatedInspectionSubjects != null)
-          this.allSubjects = relatedInspectionSubjects.map(s => s.name);
-        relatedInspectionSubjects.forEach((relSubject)=>{
-          this.inspectionSubjectsFormArray.push(this.generateInspectionSubjectFromValue(relSubject));
-        })
-        relatedInspectionTypes.forEach((relType)=>{
-          this.inspectionTypesFormArray.push(this.generateInspectionTypeFromValue(relType));
-        })
-
-      });
-    }
-    else if(params.keys[0]=='id')
-        {
-           var inspectionNotificationId = params.get('id').toString();
-
-      let obj :{} = {'inspectionNotificationId':inspectionNotificationId};
-      this.formData.append('inspectionNotificationId',JSON.stringify(obj));
-      this.inspectionService.getInspectionById(inspectionNotificationId).subscribe((inspection)=>{
-
-       this.formData.append('readInspection',JSON.stringify(inspection));
-
-       this.generateInspectionFromValue(inspection);
-
-      });
-        }
-    }
-    else
-    {
-        this.inspectionForm = this.generateInspectionForm();
-
-    }
-    });
+   let [mainNo, rev] = this.initialInspectionInfo != null ? this.initialInspectionInfo.newNotificationNumber.split('.') : ["", ""];
 
     runInInjectionContext(this.injector,()=>{
       effect(()=>{
          this.activatedRoute.paramMap.subscribe(params=>{
 
-        // if(this.currentAppState.currentuser().userType == UserTypes.Vendor)
-        //   {
+
              if(params.keys[0]=='id')
               {
               var inspectionNotificationId = params.get('id').toString();
@@ -449,8 +497,9 @@ toggleEditMode(on: boolean) {
                }
                else
                {
-                 this.inspectionService.getInspectionById(inspectionNotificationId).subscribe((inspection)=>{
-                    this.generateInspectionFromValue(inspection);
+                 this.inspectionService.getInspectionById(inspectionNotificationId).subscribe((inspectioncmplx)=>{
+                    this.generateInspectionFromValue(inspectioncmplx.inspection);
+                    this.inspectionReports = inspectioncmplx.relatedReports;
                    });
                }
               }
@@ -459,11 +508,13 @@ toggleEditMode(on: boolean) {
 
                 let currentOrder:Order = this.currentAppState.currentorder();
                 this.currentOrderExceptionContacts = this.orderSettingsExceptions.filter((ose)=>ose.orderId== currentOrder.id).map((ose)=>ose.projectContact);
-               // let exceptedProjContacts = this.currentAppState.vendorBasicInfo().orderSettingsExceptions.filter((orderSetting)=>orderSetting.orderId == currentOrder.id);
 
                 this.initializeInspectionForm(currentOrder)
 
                   this.inspectionForm.patchValue({
+                    notificationNumber: this.initialInspectionInfo.newNotificationNumber,
+                    revNumber: this.revNumber,
+                    mainNumber:mainNo,
           'order':{
             name:currentOrder.name,
             no:currentOrder.no,
@@ -477,23 +528,18 @@ toggleEditMode(on: boolean) {
             edmsId:currentOrder.edmsId,
             equipmentTagNo:''  ,
             itP_NO:currentOrder.itP_NO,
-            //contacts: { currentContacts.filter((contact)=>contact.contactType==(ContactTypes.PIDEC_TO || ContactTypes.PIDEC_CC))},
             inspectionSubjects:currentOrder.inspectionSubjects
           },
-          // 'owner':{
-          //   domainId:1,
-          //   userName:'owner1',
-          //   project:currentOrder.project
-          // },
-          'ownerContactPerson': this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.Owner)[0],
-          'mcContactPerson':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.MC)[0],
-          'contacts':  this.currentContacts,
-          'pidecContacts':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.QC_Manager || contact.contactType==ContactTypes.QC_Lead),
-          'pidecInspectors':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.PIDEC_Inspector),
-          'thirdPartInspectors':this.currentContacts.filter((contact)=>contact.contactType==ContactTypes.ThirdPart_Inspector),
+
+          'ownerContactPerson': this.currentContacts!.filter((contact)=>contact.contactType==ContactTypes.Owner)[0],
+          'mcContactPerson':this.currentContacts!.filter((contact)=>contact.contactType==ContactTypes.MC)[0],
+          'contacts':  this.currentContacts!,
+          'pidecContacts':this.currentContacts!.filter((contact)=>contact.contactType==ContactTypes.QC_Manager || contact.contactType==ContactTypes.QC_Lead),
+          'pidecInspectors':this.currentContacts!.filter((contact)=>contact.contactType==ContactTypes.PIDEC_Inspector),
+          'thirdPartInspectors':this.currentContacts!.filter((contact)=>contact.contactType==ContactTypes.ThirdPart_Inspector),
               });
 
-
+              this.toggleEditMode(true);
 
        let pidecContacts = this.currentContacts?.filter(
             (contact) => contact.contactType === ContactTypes.QC_Manager || contact.contactType === ContactTypes.QC_Lead
@@ -509,7 +555,7 @@ toggleEditMode(on: boolean) {
               name: [contact.name],
               email: [contact.email],
               homePage: [contact.homePage],
-              attention: [contact.attention],
+              note: [contact.note],
               contactType: [contact.contactType],
               mobile: [contact.mobile],
               cc: [contact.cc],
@@ -536,7 +582,7 @@ toggleEditMode(on: boolean) {
                 name: contact.name,
                 email: contact.email,
                 homePage: contact.homePage,
-                attention: contact.attention,
+                note: contact.note,
                 contactType: contact.contactType,
                 mobile: contact.mobile,
                 cc: contact.cc,
@@ -559,7 +605,7 @@ toggleEditMode(on: boolean) {
                   name: contact.name,
                   email: contact.email,
                   homePage: contact.homePage,
-                  attention: contact.attention,
+                  note: contact.note,
                   contactType: contact.contactType,
                   mobile: contact.mobile,
                   cc: contact.cc,
@@ -583,31 +629,24 @@ toggleEditMode(on: boolean) {
 
           if(this.currentInspectionSubjects != null)
               this.allSubjects = this.currentInspectionSubjects.map(s => s.name);
-      //  if(this.currentInspectionSubjects != null && this.currentInspectionSubjects != undefined)
-      //  {
-      //   this.currentInspectionSubjects.forEach((subject)=>
-      //   this.inspectionSubjectsFormArray.push(
-      //     this.formBuilder.group({
-      //       name:[subject.name],
-      //       id:[subject.id],
-      //       selected : [false]
-      //     })
-      //  ));
-      // }
 
-
-
-       // }
       });
-      })
+
+      //  this.inspectionForm.valueChanges.subscribe(() => {
+      //  let HasEmptyField = this.inspectionSubjectsFormArray.controls.some(group => {
+      //    const fg = group as FormGroup;
+      //     return ( fg.get('name')?.value == undefined || fg.get('itpRowNo')?.value == undefined || fg.get('name')?.value.trim() === '' || fg.get('itpRowNo')?.value === '' );
+      //    });
+
+      //    if(!this.editMode || HasEmptyField)
+      //     this.inspectionForm.controls
+      // this.disableAddButton = !this.editMode || HasEmptyField ;});//
+
+       })
 
   })
 
-
-
-
-
-  }
+}
 
 LocalFormatDate(date:Date)
 {
@@ -622,8 +661,98 @@ LocalFormatDate(date:Date)
 }
 
 addInspectionSubject() {
+  // const name = this.subjectCtrl.value?.trim();
+  // const itpRowNo = this.itpRowNoCtrl.value?.trim();
+
+  // if (!name && !itpRowNo) return;
+
+  // check if already exists in FormArray
+  // const exists = this.inspectionSubjectsFormArray.controls.some(
+  //   ctrl => (ctrl.get('name')?.value === name &&  ctrl.get('itpRowNo')?.value === itpRowNo)
+  // );
+
+
+  // const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === '00000000-0000-0000-0000-000000000000'));
+  // if(indexOfNullId>=0)
+  //   this.inspectionSubjectsFormArray.removeAt(indexOfNullId);
+  // else
+    this.inspectionSubjectsFormArray.push(
+      this.formBuilder.group({
+        id: ['00000000-0000-0000-0000-000000000000'],
+        name: [''],
+        itpRowNo:[''],
+        selected: [false]
+      })
+    );
+
+  // if (!exists) {
+  //   const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === '00000000-0000-0000-0000-000000000000' && ctrl.get('name')?.value===name && ctrl.get('itpRowNo')?.value ===itpRowNo) );
+  //   if(indexOfNullId>=0)
+  //     this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({id: crypto.randomUUID(), selected:true});
+
+  //   this.inspectionSubjectsFormArray.push(
+  //     this.formBuilder.group({
+  //       id: [crypto.randomUUID()],
+  //       name: [name],
+  //       itpRowNo:[itpRowNo],
+  //       selected: [true]
+  //     })
+  //   );
+  // }
+
+  // add to allSubjects if new
+  // if (!this.allSubjects.includes(name)) {
+  //   this.allSubjects.push(name);
+  // }
+
+  //  this.subjectCtrl.setValue('');
+  //  this.itpRowNoCtrl.setValue('');
+}
+
+changeITPRow(newValue : string ,id:string){
+
+ const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === id));
+    if(indexOfNullId>=0)
+      this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({
+        id: (id==='00000000-0000-0000-0000-000000000000' ? crypto.randomUUID(): id),
+        itpRowNo:newValue,
+        name : this.subjectCtrl.value?.trim()
+      })
+}
+
+changeSubj(newValue : string ,id:string){
+  const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === id) );
+    if(indexOfNullId>=0)
+       this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({
+        id: (id==='00000000-0000-0000-0000-000000000000' ? crypto.randomUUID(): id),
+        itpRowNo: this.itpRowNoCtrl.value?.trim(),
+        name:newValue
+      })
+}
+removeInspectionSubject(index: number) {
+  this.inspectionSubjectsFormArray.removeAt(index);
+}
+
+removeInsSubject(insSubject: FormTypes.FormInspectionSubject): void {
+  const idx = this.inspectionSubjectsFormArray.controls.indexOf(insSubject);
+  if (idx >= 0) {
+    this.inspectionSubjectsFormArray.removeAt(idx);
+  }
+}
+
+
+// 🔑 Check if all groups have the specified value
+ allInspectionSubjectsHaveValue(): boolean {
+  return this.inspectionSubjectsFormArray.controls.every
+  (group => {
+    const fg = group as FormGroup;
+    return (fg.get('name')?.value.trim() != '' && fg.get('itpRowNo')?.value.trim() !=''); });
+   }
+
+  addNewInsSubject():void{
   const name = this.subjectCtrl.value?.trim();
-  if (!name) return;
+  const itpRowNo = this.itpRowNoCtrl.value?.trim();
+  if (!name || !itpRowNo) return;
 
   // check if already exists in FormArray
   const exists = this.inspectionSubjectsFormArray.controls.some(
@@ -635,6 +764,7 @@ addInspectionSubject() {
       this.formBuilder.group({
         id: [crypto.randomUUID()],
         name: [name],
+        itpRowNo:[itpRowNo],
         selected: [true]
       })
     );
@@ -645,12 +775,7 @@ addInspectionSubject() {
     this.allSubjects.push(name);
   }
 
-  this.subjectCtrl.setValue('');
-}
-
-removeInspectionSubject(index: number) {
-  this.inspectionSubjectsFormArray.removeAt(index);
-}
+  }
 
 toggleSubject(index: number) {
   const ctrl = this.inspectionSubjectsFormArray.at(index);
@@ -684,22 +809,7 @@ toggleSubject(index: number) {
       selected: [true]
     });
   }
-    // Adds a new InspectionType if the input is not empty
-  // addInspectionSubject(): void {
-  //   const trimmedName = this.newInspectionSubject.trim();
-  //   if (trimmedName) {
-  //     this.inspectionSubjectsFormArray.push(this.createInspectionSubject(trimmedName, false));
-  //     // Optionally clear the input after adding
-  //     this.newInspectionType = '';
-  //   }
-  // }
 
-// removeToContact(contactIndex:number):void
-// {
-//   this.pidecContactsFormArray.removeAt(contactIndex);
-//   //this.contactsFormArray.removeAt(contactIndex);
-// //this.contactsFormArray.value.splice(contactIndex,1);
-// }
 removeToContact(contact: FormContact): void {
   const idx = this.contactsFormArray.controls.indexOf(contact);
   if (idx >= 0) {
@@ -710,7 +820,7 @@ removeToContact(contact: FormContact): void {
 
    let rawContact = this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
-      attention:'',
+      note:'',
       cc:'',
       email:'',
       fax:'',
@@ -718,7 +828,7 @@ removeToContact(contact: FormContact): void {
       phone:'',
       mobile:'',
       address:this.generateAddress(),
-      contactType:ContactTypes.QC_Lead,
+      contactType:ContactTypes.Supplier,
       homePage:'',
       userId:'',
       isVisible:[true],
@@ -726,7 +836,29 @@ removeToContact(contact: FormContact): void {
       belongedTo:ObjectTypes.Undefined
     })
     this.contactsFormArray.push(rawContact);
-    this.pidecContactsFormArray.push(rawContact);
+    //this.contactsFormArray.push(rawContact);
+    //this.pidecContactsFormArray.push(rawContact);
+  }
+
+
+removeAddress(location: FormTypes.FormAddress): void {
+  const idx = this.inspectionLocationFormArray.controls.indexOf(location);
+  if (idx >= 0) {
+    this.inspectionLocationFormArray.removeAt(idx);
+  }
+}
+  addNewAddress():void{
+
+   let rawAddress = this.formBuilder.group({
+      id:'00000000-0000-0000-0000-000000000000',
+      country:'',
+      state:'',
+      city:'',
+      streetLine1:'',
+      streetLine2:'',
+      zipCode:''
+    })
+    this.inspectionLocationFormArray.push(rawAddress);
   }
 
   changeContactEmail(indexOfelement)
@@ -752,10 +884,56 @@ removeToContact(contact: FormContact): void {
       //   selected: !subject.value.selected });
     }
 
+    setIssueDate(issueDate: Date):void{
+    let formattedDateNow =  this.LocalFormatDate(issueDate);
+    this.formattedGregorianIssueDate = formattedDateNow;
+     const gregorianDate: Date = issueDate;
+      const { jy, jm, jd } = toJalaali(gregorianDate.getFullYear(), gregorianDate.getMonth() + 1, gregorianDate.getDate());
+
+      const formattedPersianDate = `${jy}/${jm}/${('0' + jd).slice(-2)}`;
+       const persianMonthName = this.getPersianMonthName(jm);
+      this.formattedPersianIssueDate = `${jd} ${persianMonthName} ${jy}`;
+      //this.formattedPersianIssueDate = formattedPersianDate;
+    }
+
+    GetPersianMonthName(finglishName:string):string
+    {
+      switch(finglishName.toLowerCase().trim()){
+        case "farvardin":
+          return "فروردین";
+        case "ordibehesht":
+          return "اردیبهشت";
+        case "khordad":
+          return "خرداد";
+        case "tir":
+          return "تیر";
+        case "mordad":
+          return "مرداد";
+        case "shahrivar":
+          return "شهریور";
+        case "mehr":
+          return "مهر";
+        case "aban":
+          return "آبان";
+        case "azar":
+          return "آذر";
+        case "dey":
+          return "دی";
+        case "bahman":
+          return "بهمن";
+        case "esfand":
+          return "اسفند";
+
+      }
+       return "";
+    }
 
     generateInspectionForm():FormTypes.InspectionForm{
 
+
+
       let DateNow = new Date(Date.now());
+      this.setIssueDate(DateNow);
     let formattedDateNow =  this.LocalFormatDate(DateNow);
     this.formattedGregorianIssueDate = formattedDateNow;
     this.formattedGregorianReqEndDate = formattedDateNow;
@@ -769,6 +947,8 @@ removeToContact(contact: FormContact): void {
 
 
         let currentOrderContacts = this.currentAppState.vendorBasicInfo().orderContacts;
+        this.formattedPersianReqStartDate = formattedPersianDate;
+        this.formattedPersianReqEndDate = formattedPersianDate;
         //this.vendorAttachments =  this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]);
       return this.formBuilder.group({
 
@@ -778,8 +958,10 @@ removeToContact(contact: FormContact): void {
           pidecContacts: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           pidecInspectors : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           thirdPartInspectors:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-          location: this.generateLocation(),
+          locations: this.formBuilder.array<FormTypes.FormAddress>([this.generateAddress()]),
           order:this.generateOrder(),
+          equipmentTagNo:[''],
+          orderName:[''],
         //  owner:this.generateOwner(),
          // vendor:this.generateVendor(),
           ownerContactPerson: this.generateContact(),
@@ -790,6 +972,8 @@ removeToContact(contact: FormContact): void {
           ownerDocNo:[''],
           pidecDocNo:[''],
           supplier:[''],
+          revNumber:[''],
+          mainNumber:[''],
           workProgress:new Date().toLocaleDateString('fa-IR-u-nu-latn', {
             year: 'numeric',
             day: '2-digit',
@@ -797,23 +981,24 @@ removeToContact(contact: FormContact): void {
           }),
           notificationNumber:[this.initialInspectionInfo.newNotificationNumber],
 
-          CreatedBy: [currentUserName],
-          ModifiedBy :[currentUserName],
-          CreatedDate:[ DateNow],
-          ModifiedDate : [DateNow],
+          createdBy: [currentUserName],
+          modifiedBy :[currentUserName],
+          createdDate:[ DateNow],
+          modifiedDate : [DateNow],
           issueDate:[DateNow],
           persianIssueDate:[formattedPersianDate] ,
-          RequestInspectionDateStart: [DateNow],
-          RequestInspectionDateEnd:[DateNow],
-          RequestInspectionPersianDateStart:[formattedPersianDate],
-          RequestInspectionPersianDateEnd:[formattedPersianDate],
-          RequestInspectionDueDate:[0],
-          RequestInspectionTimesInPeriod:[0],
-          RequestInspectionPeriodDays:[0],
+          requestInspectionDateStart: [DateNow],
+          requestInspectionDateEnd:[DateNow],
+          requestInspectionPersianDateStart:[formattedPersianDate],
+          requestInspectionPersianDateEnd:[formattedPersianDate],
+          requestInspectionDueDate:[1],
+          inspectionTimeComment:[''],
+          inspectionAction:[''],
           inspectionSubjects:this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()]),
           inspectionTypes: this.formBuilder.array<FormTypes.FormInspectionType>([this.generateInspectionType()]),
 
         });
+
     }
 
   generateInspectionType():FormTypes.FormInspectionType{
@@ -828,6 +1013,7 @@ removeToContact(contact: FormContact): void {
     return this.formBuilder.group({
       id:['00000000-0000-0000-0000-000000000000'],
       name:[''],
+      itpRowNo:[''],
       selected : new FormControl<boolean>(false)
     });
   }
@@ -839,7 +1025,9 @@ removeToContact(contact: FormContact): void {
       name:[''],
       content: [],
       description:[''],
-      downloadUrl:['']
+      downloadUrl:[''],
+      docNo:[''],
+      status:['']
     });
   }
 
@@ -851,7 +1039,9 @@ removeToContact(contact: FormContact): void {
       content:[attachment.content],
       description:[attachment.description],
       name:[attachment.name],
-      downloadUrl:[attachment.downloadUrl]
+      downloadUrl:[attachment.downloadUrl],
+       docNo:[attachment.docNo],
+      status:[attachment.status]
     })
   }
 
@@ -971,7 +1161,6 @@ console.log('current vendor:',this.currentVendorData);
     })
   }
 
-
   generateOwner():FormTypes.FormOwner{
     return this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
@@ -987,7 +1176,7 @@ console.log('current vendor:',this.currentVendorData);
   generateContact():FormTypes.FormContact{
     return this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
-      attention:'',
+      note:'',
       cc:'',
       email:'',
       fax:'',
@@ -1006,11 +1195,11 @@ console.log('current vendor:',this.currentVendorData);
 
   initializeInspectionForm(order:Order):void{
      let currentOrder:Order = order;
-    let currentOrderContacts;
-    let currentProjectContacts;
+    //const currentOrderContacts;
+    let currentProjectContacts =null;
 
 
-     currentOrderContacts = this.currentAppState.vendorBasicInfo().orderContacts?.filter((ordercontact)=>ordercontact.orderId==currentOrder.id);
+      const currentOrderContacts = this.currentAppState.vendorBasicInfo().orderContacts?.filter((ordercontact)=>ordercontact.orderId==currentOrder.id);
      let idsToExclude = null;
       if(this.currentOrderExceptionContacts != undefined)
          idsToExclude = new Set(this.currentOrderExceptionContacts.map(item => item.id));
@@ -1020,7 +1209,7 @@ console.log('current vendor:',this.currentVendorData);
       else
           currentProjectContacts = this.currentAppState.vendorBasicInfo().projectContacts?.filter((projectContact)=>projectContact.projectId==this.currentProject.id);
 
-       this.currentContacts = currentOrderContacts.map((ordercontact)=>ordercontact.contact)
+       this.currentContacts = currentOrderContacts.map((ordercontact)=>ordercontact.contact);
        this.currentContacts = this.currentContacts.concat(currentProjectContacts.map((projectcontact)=>projectcontact.contact));
 
         let currentOrderInspectionSubjects = this.currentAppState.vendorBasicInfo().orderInspectionSubjects?.filter((orderInspectionSubject)=>orderInspectionSubject.orderId == currentOrder.id);
@@ -1029,18 +1218,20 @@ console.log('current vendor:',this.currentVendorData);
 
          this.currentInspectionTypes = this.currentVendorStore.inspectionTypes();
 
-  }
-shouldShowButton(circulation: Circulation, action: 'approve' | 'reject' | 'upload'): boolean {
-  if (!this.editMode) return false;
-  if (!this.isActiveForCurrentUser(circulation)) return false;
 
-  return action === 'approve' || action === 'reject' || action === 'upload';
-}
+          this.inspectionForm = this.generateInspectionForm();
+
+
+  }
+
+
 
 
   VisibleCirculations(circulations:Circulation[]): Circulation[]
   {
     let result :Circulation[] = circulations;
+    if(circulations !=null)
+    {
     if(this.currentAppState.currentuser().userType == UserTypes.Vendor)
     {
       result = circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Vendor || cr.performerContactType == ContactTypes.QC_Lead || cr.performerContactType == ContactTypes.QC_Manager )
@@ -1061,15 +1252,17 @@ shouldShowButton(circulation: Circulation, action: 'approve' | 'reject' | 'uploa
     {
         result = circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Owner || cr.performerContactType == ContactTypes.Vendor )
     }
-
+  }
     return result;
   }
+
   CheckIfInspectionIsActiveForCurrentUser(circulations: Circulation[]): boolean{
 
-    let currentUserId = this.currentAppState.currentuser().id
+    this.currentUserId = this.currentAppState.currentuser().id;
     for(let i=0; i<circulations.length;i++)
     {
-      if( circulations[i].performerContactPerson.userId ==currentUserId && circulations[i].performedActionDateGregorian == null && circulations[i].actionType == null)
+
+      if( circulations[i].performerContactPerson.userId ==this.currentUserId && (circulations[i].performedActionDateGregorian== undefined || circulations[i].performedActionDateGregorian == null || circulations[i].performedActionDateGregorian.toString().trim()=== '0001-01-01T00:00:00') || circulations[i].actionType == null)
       {
         this.currentCirculation = circulations[i];
         return true;
@@ -1078,25 +1271,31 @@ shouldShowButton(circulation: Circulation, action: 'approve' | 'reject' | 'uploa
     return false;
 
   }
-generateInspectionFromValue(inspection :Inspection):void
+ generateInspectionFromValue(inspection :Inspection):void
 {
 
 
   //first should initialize form based on inspection order
 
-//this.initializeInspectionForm(inspection.order);
 
-this.requestCirculations = this.VisibleCirculations(inspection.circulations);
+const [mainNo, rev] = inspection.notificationNumber.split('.');
 
+this.requestCirculations = this.VisibleCirculations(inspection.revision.circulations);
+this.requestCirculations = this.requestCirculations.filter((circ)=> circ.performerContactType != ContactTypes.Vendor);
+this.vendorCirculation =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Vendor)[0];
+
+this.attachments = this.vendorCirculation.attachments;
   //this.vendorAttachments =  this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]);
   this.inspectionForm =  this.formBuilder.group({
 
     id:inspection.id,
     //attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
     contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-    location: inspection!.location != undefined ? this.generateLocationFromValue(inspection!.location!) : this.generateLocation(),
-    order:inspection.order !=undefined ? this.generateOrderFromValue(inspection.order) : this.generateOrder(),
+    locations: this.formBuilder.array<FormTypes.FormAddress>([this.generateAddress()]),
 
+    order:inspection.order !=undefined ? this.generateOrderFromValue(inspection.order) : this.generateOrder(),
+    orderName:inspection.orderName,
+    equipmentTagNo:inspection.equipmentTagNo,
     //owner:this.generateOwner(),
     pidecContacts:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
     pidecInspectors : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
@@ -1106,8 +1305,8 @@ this.requestCirculations = this.VisibleCirculations(inspection.circulations);
     mcContactPerson: this.generateContact(),
     supplierContactPerson:this.generateContact(),
     subSupplierContactPerson:this.generateContact(),
-
-
+    revNumber:[rev.padStart(2,"0")],
+    mainNumber:[mainNo],
     notificationNumber:inspection.notificationNumber,
     ownerDocNo:'',
     pidecDocNo:'',
@@ -1115,22 +1314,24 @@ this.requestCirculations = this.VisibleCirculations(inspection.circulations);
     sub_supplier:'',
     workProgress:'',
 
-    CreatedBy: inspection.createdBy,
-    ModifiedBy: inspection.modifiedBy,
-    CreatedDate:inspection.createdDate,
-    ModifiedDate :inspection.modifiedDate,
+    createdBy: inspection.createdBy,
+    modifiedBy: inspection.modifiedBy,
+    createdDate:inspection.createdDate,
+    modifiedDate :inspection.modifiedDate,
     issueDate:inspection.issueDate,
     persianIssueDate: inspection.persianIssueDate,
 
-    RequestInspectionDateEnd:inspection.requestInspectionDateEnd,
-    RequestInspectionDateStart:inspection.requestInspectionDateStart,
+    requestInspectionDateEnd:inspection.requestInspectionDateEnd,
+    requestInspectionDateStart:inspection.requestInspectionDateStart,
 
-    RequestInspectionDueDate: inspection.requestInspectionDueDate,
-    RequestInspectionPeriodDays: inspection.requestInspectionPeriodDays,
-    RequestInspectionTimesInPeriod: inspection.requestInspectionPeriodDays,
+    requestInspectionDueDate: inspection.requestInspectionDueDate,
+    inspectionTimeComment : inspection.inspectionTimeComment,
+    inspectionAction:inspection.inspectionAction,
+    // RequestInspectionPeriodDays: inspection.requestInspectionPeriodDays,
+    // RequestInspectionTimesInPeriod: inspection.requestInspectionPeriodDays,
 
-    RequestInspectionPersianDateEnd: inspection.requestInspectionPersianDateEnd,
-    RequestInspectionPersianDateStart: inspection.requestInspectionPersianDateStart,
+    requestInspectionPersianDateEnd: inspection.requestInspectionPersianDateEnd,
+    requestInspectionPersianDateStart: inspection.requestInspectionPersianDateStart,
 
 
     inspectionSubjects:this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()]),//this.generateInspectionSubjectsFormArrayFromValue(inspection.inspectionSubjects),
@@ -1138,19 +1339,14 @@ this.requestCirculations = this.VisibleCirculations(inspection.circulations);
 
   });
 
+  //  this.formattedPersianReqStartDate = inspection.requestInspectionPersianDateStart; //1404/09/29
+  // this.formattedPersianReqEndDate = inspection.requestInspectionPersianDateEnd;
+  this.formattedPersianReqStartDate = this.ConvertGregorianDateToPersianDate(inspection.requestInspectionDateStart);
+  this.formattedPersianReqEndDate = this.ConvertGregorianDateToPersianDate(inspection.requestInspectionDateEnd);
+  let retrievedIssueDate = new Date (this.inspectionForm.get('issueDate').value);
+  this.setIssueDate(retrievedIssueDate);
 
- if(this.CheckIfInspectionIsActiveForCurrentUser(inspection.circulations) == true)
- {
-    this.editMode = true;
-    this.toggleEditMode(true);
-  //   this.inspectionForm.patchValue({
 
-  // })
- }
- else{
-  this.editMode = false;
-   this.toggleEditMode(false);
- }
       inspection.contacts.forEach((relContact)=>{
           this.contactsFormArray.push(this.generateContactFromContactValue(relContact));
         });
@@ -1173,23 +1369,39 @@ this.requestCirculations = this.VisibleCirculations(inspection.circulations);
         else {
            this.allSubjects =  inspection.inspectionSubjects.map(s => s.name);
         }
-      //  if(this.currentInspectionSubjects != null && this.currentInspectionSubjects != undefined)
-      //  {
-      //   this.currentInspectionSubjects.forEach((subject)=>
-      //   this.inspectionSubjectsFormArray.push(
-      //     this.formBuilder.group({
-      //       name:[subject.name],
-      //       id:[subject.id],
-      //       selected : [false]
-      //     })
-      //  ));
-      // }
+
 
       this.generateInspectionSubjectsFormArrayFromValue(inspection.inspectionSubjects);
       this.generateInspectionTypesFormArrayFromValue(inspection.inspectionTypes);
-}
+      this.generateContactsFormArrayFromValue(inspection.contacts);
+      this.generateInspectionLocationsFormArrayFromValue(inspection.locations);
 
-generateInspectionSubjectsFormArrayFromValue(inspectionSubjects: InspectionSubject[]):void//FormArray<FormTypes.FormInspectionSubject>
+       if(this.CheckIfInspectionIsActiveForCurrentUser(inspection.revision.circulations) == true)
+ {
+    this.editMode = true;
+    this.toggleEditMode(true);
+  //   this.inspectionForm.patchValue({
+
+  // })
+ }
+ else{
+  this.editMode = false;
+   this.toggleEditMode(false);
+ }
+ }
+
+ get revNumber(): string
+ {
+   const raw_Revision = this.inspectionForm.get('revNumber')?.value ?? '';
+   const padded = raw_Revision.padStart(2, "0");
+   return padded;
+ }
+set revNumber(value: string) {
+   const padded = value.padStart(2, "0");
+  this.inspectionForm.get('revNumber')?.setValue(padded);
+ }
+
+ generateInspectionSubjectsFormArrayFromValue(inspectionSubjects: InspectionSubject[]):void//FormArray<FormTypes.FormInspectionSubject>
 {
       if(inspectionSubjects != null && inspectionSubjects != undefined)
         {
@@ -1202,6 +1414,9 @@ generateInspectionSubjectsFormArrayFromValue(inspectionSubjects: InspectionSubje
     );
     if(index != -1)
       this.inspectionSubjectsFormArray.at(index).patchValue({
+        itpRowNo:inspectionSubject.itpRowNo,
+        name : inspectionSubject.name,
+        id: inspectionSubject.id,
         selected:true
       });
     else
@@ -1209,17 +1424,9 @@ generateInspectionSubjectsFormArrayFromValue(inspectionSubjects: InspectionSubje
   }
   );
 
+ }
 
-  // let a : FormArray<FormTypes.FormInspectionSubject>;
-  // if(inspectionSubjects != undefined)
-  //   inspectionSubjects!.forEach(inspectionSubject=>a.push(this.generateInspectionSubjectFromValue(inspectionSubject)));
-
-  // if(a == undefined  || a==null)
-  //   return this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()])
-  //  return a;
-}
-
-generateInspectionTypesFormArrayFromValue(inspectionTypes: InspectionType[]):void//FormArray<FormTypes.FormInspectionType>
+ generateInspectionTypesFormArrayFromValue(inspectionTypes: InspectionType[]):void//FormArray<FormTypes.FormInspectionType>
 {
 
    inspectionTypes!.forEach(inspectionType=>
@@ -1229,7 +1436,7 @@ generateInspectionTypesFormArrayFromValue(inspectionTypes: InspectionType[]):voi
     (item: FormTypes.FormInspectionType) => item?.['id'] === inspectionType.id
     );
     if(index != -1)
-      this.inspectionTypesFormArray.at(index).patchValue({
+      this.inspectionTypesFormArray.controls.at(index).patchValue({
         selected:true
       });
     else
@@ -1238,15 +1445,80 @@ generateInspectionTypesFormArrayFromValue(inspectionTypes: InspectionType[]):voi
   }
   );
 
-}
+ }
+
+  generateContactsFormArrayFromValue(contacts: Contact[]):void//FormArray<FormTypes.FormInspectionSubject>
+{
+
+  contacts!.forEach(contact=>
+  {
+    const index = this.contactsFormArray.value.findIndex(
+    (item: FormTypes.FormContact) => item?.['id'] === contact.id
+    );
+    if(index != -1)
+      this.contactsFormArray.at(index).patchValue({
+        email: contact.email,
+        contactType:contact.contactType,
+        mobile: contact.mobile,
+        phone:contact.phone,
+        homePage:contact.homePage,
+        name : contact.name,
+        id: contact.id,
+
+      });
+    else
+      this.contactsFormArray.push(this.generateContactFromContactValue(contact));
+  }
+  );
+
+ }
+
+ generateInspectionLocationsFormArrayFromValue(locations: Address[]):void//FormArray<FormTypes.FormInspectionSubject>
+{
+
+  locations!.forEach(location=>
+  {
+    const index = this.inspectionLocationFormArray.value.findIndex(
+    (item: FormTypes.FormAddress) => item?.['id'] === location.id
+    );
+    if(index != -1)
+      this.inspectionLocationFormArray.at(index).patchValue({
+        country: location.country,
+        state:location.state,
+        city : location.city,
+        streetLine1: location.streetLine1,
+        streetLine2: location.streetLine2,
+        zipCode : location.zipCode,
+        id: location.id
+      });
+    else
+      this.inspectionLocationFormArray.push(this.generateInspectionLocationFromValue(location));
+  }
+  );
+
+ }
+
+ generateInspectionLocationFromValue(location: Address):FormTypes.FormAddress
+ {
+     return this.formBuilder.group({
+        country: location.country,
+        state:location.state,
+        city : location.city,
+        streetLine1: location.streetLine1,
+        streetLine2: location.streetLine2,
+        zipCode : location.zipCode,
+        id: location.id
+     });
+ }
+
   generateInspectionTypeFromValue(inspectionType:InspectionType):FormTypes.FormInspectionType
   {
-return this.formBuilder.group({
+     return this.formBuilder.group({
 
   id:inspectionType.id,
   name:inspectionType.name,
   selected:inspectionType.selected?? false
-});
+     });
   }
 
 
@@ -1256,6 +1528,7 @@ return this.formBuilder.group({
 
   id:[inspectionSubject.id],
   name:[inspectionSubject.name],
+  itpRowNo:[inspectionSubject.itpRowNo],
   selected:[true]
   //selected:inspectionSubject.selected
 });
@@ -1287,7 +1560,7 @@ return this.formBuilder.group({
   generateContactFromContactValue(contact:Contact):FormTypes.FormContact{
     return this.formBuilder.group({
       id:[contact.id],
-      attention:[contact.attention],
+      note:[contact.note],
       cc:[contact.cc],
       email:[contact.email],
       fax:[contact.fax],
@@ -1348,23 +1621,6 @@ selectOwner() {
 throw new Error('Method not implemented.');
 }
 
-// get Attachments():FormArray<FormTypes.FormAttachment>{
-
-//   if(this.vendorAttachments== null && this.vendorAttachments==undefined)
-//     this.vendorAttachments =  this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]);
-//   return this.vendorAttachments;
-
-// }
-
-// get inspectionSubjectsFormArray(): FormArray<FormGroup> {
-//   if(this.inspectionForm != null && this.inspectionForm != undefined)
-//   {
-//    if(this.inspectionForm.get('inspectionSubjects')== null && this.inspectionForm.get('inspectionSubjects')==undefined)
-//     this.inspectionForm.addControl('inspectionSubjects', new FormArray([]));
-//   return (<FormArray>this.inspectionForm.get('inspectionSubjects'));
-//   }
-//   return new FormArray([]);
-// }
 
 get inspectionSubjectsFormArray(): FormArray<FormGroup> {
   if (this.inspectionForm) {
@@ -1385,6 +1641,7 @@ get filteredInspectionSubjectsFormArray() : FormGroup[]  {
      return ((this.inspectionForm?.get('inspectionSubjects') as FormArray)?.controls
       ?.filter(ctrl => ctrl.get('name')?.value?.toString().trim() !== '') || []) as FormGroup[];
    }
+
 get inspectionTypesFormArray(): FormArray<FormGroup> {
   if(this.inspectionForm != null && this.inspectionForm != undefined)
   {
@@ -1407,12 +1664,34 @@ get filteredContactsFormArray():FormGroup[]{
     ?.filter(ctrl => ctrl.get('email')?.value?.toString().trim() !== '' || ctrl.get('id')?.value?.toString().trim() !== '00000000-0000-0000-0000-000000000000') || []) as FormGroup[];
 
 }
-get contactsFormArray() :FormArray<FormTypes.FormContact> {
 
-   if(this.inspectionForm.get('contacts')== null && this.inspectionForm.get('contacts')==undefined)
+get contactsFormArray() :FormArray<FormGroup> {
+
+   if(this.inspectionForm.get('contacts')== null || this.inspectionForm.get('contacts')==undefined)
     this.inspectionForm.addControl('contacts', new FormArray([]));
     return this.inspectionForm?.get('contacts') as FormArray ?? new FormArray([]);
 
+}
+// filtered view only
+get contactsControls(): FormContact[] {
+  return this.contactsFormArray.controls  as FormContact[];
+  // .filter(ctrl =>
+  //   [ContactTypes.Supplier, ContactTypes.SubSupplier].includes(
+  //     ctrl.get('contactType')?.value
+  //   )
+  // ) as FormContact[];
+}
+
+get inspectionLocationFormArray() :FormArray<FormGroup> {
+
+   if(this.inspectionForm.get('locations')== null || this.inspectionForm.get('locations')==undefined)
+    this.inspectionForm.addControl('locations', new FormArray([]));
+    return this.inspectionForm?.get('locations') as FormArray ?? new FormArray([]);
+
+}
+
+get inspectionLocations():FormTypes.FormAddress[]{
+  return this.inspectionLocationFormArray.controls as FormTypes.FormAddress[];
 }
 
 get pidecContactsFormArray(): FormArray<FormContact> {
@@ -1448,6 +1727,44 @@ get ownerContact() :FormTypes.FormContact | undefined{
 }
 
 
+ConvertGregorianDateToPersianDate(gDate : Date):string {
+
+
+    try {
+    let gregorianDate : Date;
+    let formattedGregorian;
+    let formattedPersian;
+
+    gregorianDate = new Date(gDate);
+      // Format Gregorian date with month name
+      const gregorianDay = gregorianDate.getDate();
+      const gregorianMonth = gregorianDate.getMonth();
+      const gregorianYear = gregorianDate.getFullYear();
+      const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
+
+      // Set formatted Gregorian date with month name
+     formattedGregorian = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
+
+      // Convert to Persian
+      const { jy, jm, jd } = toJalaali(gregorianYear, gregorianMonth + 1, gregorianDay);
+
+      // Format Persian date with numeric representation for the input
+      const numericPersianDate = `${jy}/${String(jm).padStart(2, '0')}/${String(jd).padStart(2, '0')}`;
+
+      // Format Persian date with month name for display
+      const persianMonthName = this.getPersianMonthName(jm);
+      formattedPersian = `${jd} ${persianMonthName} ${jy}`;
+
+      return formattedPersian;
+
+
+    } catch (error) {
+      this.toastr.error('Error updating Persian date');
+      return "";
+    } finally {
+      //return "";
+    }
+  }
 
  /**
    * Get Persian month name by month number (1-12)
@@ -1542,41 +1859,41 @@ getGregorianMonthName(monthIndex: number): string {
 //---------------End For Methods For IssueDate and PersianIssueDate-------------------
 
 //-----------------Methods For RequestInspectionPersianDateStart and RequestInspectionDateStart-------------------
-onRequestInspectionDateStartSelect(event: any): void {
+// onRequestInspectionDateStartSelect(event: any): void {
 
-     if (this.isManualUpdateRequestInspectionDateStart) {
-      // Prevent event handler from running if the update is manual
-      this.isManualUpdateRequestInspectionDateStart = false;
-      return;
-    }
+//      if (this.isManualUpdateRequestInspectionDateStart) {
+//       // Prevent event handler from running if the update is manual
+//       this.isManualUpdateRequestInspectionDateStart = false;
+//       return;
+//     }
 
-    try {
-      // Get Gregorian date from the event
-      const viaGregorianDate = new Date(event.gregorian);
+//     try {
+//       // Get Gregorian date from the event
+//       const viaGregorianDate = new Date(event.gregorian);
 
-      // Update Gregorian date in form
-      this.isManualUpdateRequestInspectionDateStart = true;
-       this.inspectionForm?.controls?.RequestInspectionDateStart?.patchValue(viaGregorianDate);
+//       // Update Gregorian date in form
+//       this.isManualUpdateRequestInspectionDateStart = true;
+//        this.inspectionForm?.controls?.RequestInspectionDateStart?.patchValue(viaGregorianDate);
 
-      // Format Gregorian date with month name
-      const gregorianDay = viaGregorianDate.getDate();
-      const gregorianMonth = viaGregorianDate.getMonth();
-      const gregorianYear = viaGregorianDate.getFullYear();
-      const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
+//       // Format Gregorian date with month name
+//       const gregorianDay = viaGregorianDate.getDate();
+//       const gregorianMonth = viaGregorianDate.getMonth();
+//       const gregorianYear = viaGregorianDate.getFullYear();
+//       const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
 
-      // Set formatted Gregorian date with month name
-      this.formattedGregorianReqStartDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
-      this.CalculateInspectionDuration();
-      // Reset flag after a short delay
-      setTimeout(() => {
-        this.isManualUpdateRequestInspectionDateStart = false;
-      }, 100);
-    } catch (error) {
-      console.error('Error in onIssueDateSelect:', error);
-      this.toastr.error('Error updating Gregorian date');
-    }
+//       // Set formatted Gregorian date with month name
+//       this.formattedGregorianReqStartDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
+//       this.CalculateInspectionDuration();
+//       // Reset flag after a short delay
+//       setTimeout(() => {
+//         this.isManualUpdateRequestInspectionDateStart = false;
+//       }, 100);
+//     } catch (error) {
+//       console.error('Error in onIssueDateSelect:', error);
+//       this.toastr.error('Error updating Gregorian date');
+//     }
 
-  }
+//   }
 
   setRequestInspectionPersianDateStart(event: any) {
     this.isManualUpdateRequestInspectionDateStart = true;
@@ -1605,8 +1922,8 @@ onRequestInspectionDateStartSelect(event: any): void {
       this.formattedPersianReqStartDate = `${jd} ${persianMonthName} ${jy}`;
 
       // Update Persian date in form
-      this.inspectionForm.get('RequestInspectionPersianDateStart').setValue(numericPersianDate);
-
+     // this.inspectionForm.get('RequestInspectionPersianDateStart').setValue(numericPersianDate);
+      this.CalculateInspectionDuration();
       this.toastr.success('Dates synchronized successfully');
     } catch (error) {
       console.error('Error in setPersianReqStartDate:', error);
@@ -1622,41 +1939,41 @@ onRequestInspectionDateStartSelect(event: any): void {
 //--------------------------------------------------------------------------------------------------------------------
 
 //-----------------Methods For RequestInspectionPersianDateStart and RequestInspectionDateStart-------------------
-onRequestInspectionDateEndSelect(event: any): void {
-if (this.isManualUpdateRequestInspectionDateEnd) {
-      // Prevent event handler from running if the update is manual
-      this.isManualUpdateRequestInspectionDateEnd = false;
-      return;
-    }
+// onRequestInspectionDateEndSelect(event: any): void {
+// if (this.isManualUpdateRequestInspectionDateEnd) {
+//       // Prevent event handler from running if the update is manual
+//       this.isManualUpdateRequestInspectionDateEnd = false;
+//       return;
+//     }
 
-    try {
-      // Get Gregorian date from the event
-      const viaGregorianDate = new Date(event.gregorian);
+//     try {
+//       // Get Gregorian date from the event
+//       const viaGregorianDate = new Date(event.gregorian);
 
-      // Update Gregorian date in form
-      this.isManualUpdateRequestInspectionDateEnd = true;
-       this.inspectionForm?.controls?.RequestInspectionDateEnd?.patchValue(viaGregorianDate);
+//       // Update Gregorian date in form
+//       this.isManualUpdateRequestInspectionDateEnd = true;
+//        this.inspectionForm?.controls?.RequestInspectionDateEnd?.patchValue(viaGregorianDate);
 
-      // Format Gregorian date with month name
-      const gregorianDay = viaGregorianDate.getDate();
-      const gregorianMonth = viaGregorianDate.getMonth();
-      const gregorianYear = viaGregorianDate.getFullYear();
-      const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
+//       // Format Gregorian date with month name
+//       const gregorianDay = viaGregorianDate.getDate();
+//       const gregorianMonth = viaGregorianDate.getMonth();
+//       const gregorianYear = viaGregorianDate.getFullYear();
+//       const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
 
-      // Set formatted Gregorian date with month name
-      this.formattedGregorianReqEndDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
+//       // Set formatted Gregorian date with month name
+//       this.formattedGregorianReqEndDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
 
-      this.CalculateInspectionDuration();
+//       this.CalculateInspectionDuration();
 
-      // Reset flag after a short delay
-      setTimeout(() => {
-        this.isManualUpdateRequestInspectionDateEnd = false;
-      }, 100);
-    } catch (error) {
-      console.error('Error in onReqEndDateSelect:', error);
-      this.toastr.error('Error updating Gregorian date');
-    }
-}
+//       // Reset flag after a short delay
+//       setTimeout(() => {
+//         this.isManualUpdateRequestInspectionDateEnd = false;
+//       }, 100);
+//     } catch (error) {
+//       console.error('Error in onReqEndDateSelect:', error);
+//       this.toastr.error('Error updating Gregorian date');
+//     }
+// }
 
 setRequestInspectionPersianDateEnd(event: any) {
   this.isManualUpdateRequestInspectionDateEnd = true;
@@ -1685,8 +2002,8 @@ setRequestInspectionPersianDateEnd(event: any) {
       this.formattedPersianReqEndDate = `${jd} ${persianMonthName} ${jy}`;
 
       // Update Persian date in form
-      this.inspectionForm.get('RequestInspectionPersianDateEnd').setValue(numericPersianDate);
-
+      this.inspectionForm.get('requestInspectionPersianDateEnd').setValue(numericPersianDate);
+      this.CalculateInspectionDuration();
       this.toastr.success('Dates synchronized successfully');
     } catch (error) {
       console.error('Error in setPersianReqEndDate:', error);
@@ -1703,15 +2020,15 @@ setRequestInspectionPersianDateEnd(event: any) {
 
 CalculateInspectionDuration():void{
 
-  let startDate = this.inspectionForm.controls.RequestInspectionDateStart.value;
-  let endDate = this.inspectionForm.controls.RequestInspectionDateEnd.value;
+  let startDate = this.inspectionForm.controls.requestInspectionDateStart.value;
+  let endDate = this.inspectionForm.controls.requestInspectionDateEnd.value;
 //this.inspectionForm.controls.RequestInspectionDueDate
  const start = new Date(startDate).setHours(0, 0, 0, 0);
   const end = new Date(endDate).setHours(0, 0, 0, 0);
 
   const msInDay = 1000 * 60 * 60 * 24;
 
-  this.inspectionForm.controls.RequestInspectionDueDate.setValue( Math.floor((end - start) / msInDay));
+  this.inspectionForm.controls.requestInspectionDueDate.setValue( Math.floor((end - start) / msInDay));
 }
 
   formatPersianDate(year: number, month: number, day: number): string {
@@ -1719,43 +2036,7 @@ CalculateInspectionDuration():void{
     return `${year} ${monthName} ${('0' + day).slice(-2)}`;
   }
 
-  //---------------------File Upload Section--------------------------
-//   filesFormArray = this.formBuilder.array<FormGroup<{
-//   fileName: FormControl<string>;
-//   description: FormControl<string>;
-//   file: FormControl<File>;
-// }>>([]);
-
-
-
-// onFilesPicked(event: Event): void {
-//   const input = event.target as HTMLInputElement;
-//   if (!input.files) return;
-//   console.log(this.Attachments.value);
-//   Array.from(input.files).forEach(file => {
-//     return this.Attachments.push(
-//       this.formBuilder.group({
-//         name: [file.name],
-//         description: [''],
-//         content: [file],
-//         id:[''],
-//         version:[''],
-//         downloadUrl:['']
-
-//       })
-//     );
-//   });
-
-//   // Reset input so same file can be re-added if needed
-//   input.value = '';
-// }
-
-// removeFile(index: number): void {
-//   //this.filesFormArray.removeAt(index);
-//   this.Attachments.removeAt(index);
-// }
-
-onFilesPicked(event: Event): void {
+ onFilesPicked(event: Event): void {
   const input = event.target as HTMLInputElement;
   if (!input.files) return;
 
@@ -1766,32 +2047,42 @@ onFilesPicked(event: Event): void {
       description: '',
       downloadUrl: '', // fill after upload
       version: '0',
-      content: file
+      content: file,
+      docNo:'',
+      status:''
     });
   });
 
   // Reset input so same file can be re-added if needed
   input.value = '';
-}
+ }
 
-addFile(file: File) {
+ addFile(file: File) {
     this.attachments.push({
       id: crypto.randomUUID(),
       name: file.name,
       description: '',
       downloadUrl: '', // fill after upload
       version: '0',
-      content: file
+      content: file,
+      docNo:'',
+      status:''
     });
   }
-   removeFile(index: number) {
+
+ removeFile(index: number) {
     this.attachments.splice(index, 1);
   }
 
-  // fetchFile(id: string) {
-  //   // custom download logic
-  //   console.log('fetching file with id', id);
-  // }
+ fetchFile(id){
+    this.inspectionService.FetchFileFromServer(id);
+
+  }
+
+  get selectedInspectionSubjects(): InspectionSubject[]
+  {
+    return this.inspectionForm.get('inspectionSubjects').value.filter((subj)=>subj.name !='') as InspectionSubject[];
+  }
   //-------------------End of File Upload Section---------------------
 
   SaveNewInspection():void
@@ -1803,23 +2094,26 @@ addFile(file: File) {
     rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.pidecInspectors);
     rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.thirdPartInspectors);
 
+
       const filteredInspectionForm = {
       ...rawFormValue,
 
-       createdDate : rawFormValue.CreatedDate ?? new Date(Date.now()),
-      createdBy:rawFormValue.CreatedBy ?? this.currentAppState.currentuser().userName,
+       createdDate : rawFormValue.createdDate ?? new Date(Date.now()),
+      createdBy:rawFormValue.createdBy ?? this.currentAppState.currentuser().userName,
 
       modifiedDate:new Date(Date.now()),
       modifiedBy:this.currentAppState.currentuser().userName,
 
       inspectionSubjects: this.inspectionForm
         .get('inspectionSubjects')
-        .value.filter((subject) => subject.selected && subject.name !='') as InspectionSubject[]
+        .value.filter((subject) => subject.itpRowNo !='' || subject.name !='') as InspectionSubject[]
         ,
         inspectionTypes: this.inspectionForm
           .get('inspectionTypes')
           .value.filter((inspetionType) => inspetionType.selected && inspetionType.name !='') as InspectionType[]// Keep only selected subjects
         ,
+        locations: this.inspectionForm.get('locations').value.filter((location)=>location.city !='' && location.state != '' && location.state !=''),
+
         contacts:rawFormValue.contacts
         //this.inspectionForm.get('contacts').value
         .filter((contact) => contact.email !='' && contact.contactType !=ContactTypes.Undefined) as Contact[]
@@ -1840,6 +2134,8 @@ addFile(file: File) {
      this.formData.delete('AttachmentNames');
      this.formData.delete('AttachmentVersions');
      this.formData.delete('AttachmentDescriptions');
+     this.formData.delete('AttachmentDocNos');
+     this.formData.delete('AttachmentStatuses');
 
     // this.formData.append('attachments',JSON.stringify(this.Attachments));
    this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
@@ -1864,6 +2160,8 @@ addFile(file: File) {
     this.formData.append('AttachmentNames', attachment.name);
     this.formData.append('AttachmentVersions', attachment.version);
     this.formData.append('AttachmentDescriptions', attachment.description);
+    this.formData.append('AttachmentDocNos',attachment.docNo);
+    this.formData.append('AttachmentStatuses',attachment.status);
   }
   });
 //   this.Attachments.controls.forEach((ctrl, index) => {
@@ -1902,37 +2200,24 @@ addFile(file: File) {
     })
  }
   this.toggleEditMode(false);
-
-//       const attachmentsArray = this.inspectionForm.get('attachments') as FormArray;
-//this.Attachments.clear();
-// sentInspection.attachments.forEach(a => this.Attachments.push(  this.formBuilder.group({
-//         name: [a.name],
-//         description: [a.description],
-//         content: [a.content],
-//         id:[a.id],
-//         version:[a.version],
-//         downloadUrl:[a.id]
-//       })
-//     )
-//   );
-
     });
   }
 
-  fetchFile(id){
-    this.inspectionService.FetchFileFromServer(id);
-
-  }
   DraftNewInspection():void
   {
     console.log("in draft :", this.inspectionForm.getRawValue());
+     const rawFormValue = this.inspectionForm.getRawValue();
+    rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.ownerContactPerson);
+    rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.mcContactPerson);
+    rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.pidecInspectors);
+    rawFormValue.contacts = rawFormValue.contacts.concat(rawFormValue.thirdPartInspectors);
 
     const filteredInspectionForm = {
       ...this.inspectionForm.getRawValue(),
 
       createdDate : new Date(Date.now()),
       createdBy:this.currentAppState.currentuser().userName,
-      modifiedDate:Date.now(),
+      modifiedDate:new Date(Date.now()),
       modifiedBy:this.currentAppState.currentuser().userName,
 
       inspectionSubjects: this.inspectionForm
@@ -1952,76 +2237,63 @@ addFile(file: File) {
         //   .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
     };
 
-    this.formData.delete('Inspection');
-    this.formData.append('Inspection',JSON.stringify(filteredInspectionForm));
+     this.formData.delete('inspection');
+     this.formData.delete('project');
+     this.formData.delete('currentCirculation');
+     this.formData.delete('Attachments');
+     this.formData.delete('AttachmentIds');
+     this.formData.delete('AttachmentNames');
+     this.formData.delete('AttachmentVersions');
+     this.formData.delete('AttachmentDescriptions');
+     this.formData.delete('AttachmentDocNos');
+     this.formData.delete('AttachmentStatuses');
 
-    this.inspectionService.draftNewInspectionFull(this.formData).subscribe((savedNewInspection : Inspection)=>{
+   this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
+   this.formData.append('project',JSON.stringify(this.Project ))
+   this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
 
-    const insTypesformArray = this.inspectionForm?.get('inspectionTypes') as FormArray;
-
-if (insTypesformArray) {
-  // Loop backward to avoid index shifting issues while removing
-  for (let i = insTypesformArray.length - 1; i >= 0; i--) {
-    const control = insTypesformArray.at(i);
-    const id = control?.get('id')?.value?.toString().trim();
-    if (id == undefined ||  id === '00000000-0000-0000-0000-000000000000') {
-      insTypesformArray.removeAt(i);
-    }
+  this.attachments.forEach((attachment)=>{
+     const name = attachment.name;
+ if (name && name.trim() !== '') {
+    this.formData.append('Attachments', attachment.content); // File object
+    this.formData.append('AttachmentIds', attachment.id);
+    this.formData.append('AttachmentNames', attachment.name);
+    this.formData.append('AttachmentVersions', attachment.version);
+    this.formData.append('AttachmentDescriptions', attachment.description);
+     this.formData.append('AttachmentDocNos',attachment.docNo);
+    this.formData.append('AttachmentStatuses',attachment.status);
   }
-}
-
-
-let findedInsType = null;
-    for(let j= 0; j<savedNewInspection.inspectionTypes.length;j++)
-    {
-      findedInsType =  insTypesformArray.controls?.find((insType)=>insType.get('id').value?.toString().trim()===savedNewInspection.inspectionTypes.at(j).id);
-      if(findedInsType  != null)
-        findedInsType.selected = true;
-      else
-      {
-        savedNewInspection.inspectionTypes.at(j).selected = true;
-        this.inspectionTypesFormArray.push(this.generateInspectionTypeFromValue(savedNewInspection.inspectionTypes.at(j)));
-      }
-
-    }
-
-    const insSubjectsformArray = this.inspectionForm?.get('inspectionSubjects') as FormArray;
-
-if (insSubjectsformArray) {
-  // Loop backward to avoid index shifting issues while removing
-  for (let i = insSubjectsformArray.length - 1; i >= 0; i--) {
-    const control = insSubjectsformArray.at(i);
-    const id = control?.get('id')?.value?.toString().trim();
-    if (id == undefined ||  id === '00000000-0000-0000-0000-000000000000') {
-      insSubjectsformArray.removeAt(i);
-    }
-  }
-}
-
-
-let findedInsSubject = null;
-    for(let j= 0; j<savedNewInspection.inspectionSubjects.length;j++)
-    {
-      findedInsSubject =  insTypesformArray.controls?.find((insSubject)=>insSubject.get('id').value?.toString().trim()===savedNewInspection.inspectionSubjects.at(j).id);
-      if(findedInsSubject  != null)
-        findedInsSubject.selected = true;
-      else
-      {
-        savedNewInspection.inspectionSubjects.at(j).selected = true;
-        this.inspectionSubjectsFormArray.push(this.generateInspectionSubjectFromValue(savedNewInspection.inspectionSubjects.at(j)));
-      }
-
-    }
-      this.inspectionForm.patchValue({
-        ...this.inspectionForm.getRawValue(),
-        id:savedNewInspection.id,
-        contacts:savedNewInspection.contacts,
-       // inspectionSubjects: savedNewInspection.inspectionSubjects,
-       // inspectionTypes:savedNewInspection.inspectionTypes,
-      //  attachments :savedNewInspection.attachments
-      })
   });
 
+
+    this.inspectionService.draftNewInspectionFull(this.formData).subscribe((result)=>{
+
+
+      this.inspectionForm.patchValue({
+        //...this.inspectionForm.getRawValue(),
+        id:result.inspection.id,
+        contacts:result.inspection.contacts,
+        inspectionSubjects: result.inspection.inspectionSubjects,
+        inspectionTypes:result.inspection.inspectionTypes
+      })
+
+
+      this.currentCirculation = result.currentCirculation;
+
+ if(this.currentCirculation != null){
+    this.currentCirculation.attachments.forEach((ra)=>{
+     // this.Attachments.push(this.generateAttachmentFromValue(ra));
+    })
+ }
+  this.toggleEditMode(false);
+    });
   }
 
+printForm() {
+  let inspection = this.inspectionForm.getRawValue();
+  this.router.navigate(
+    ['../../inspection-print'],
+    { state: {  inspection} ,relativeTo:this.activatedRoute}
+  );
+}
 }

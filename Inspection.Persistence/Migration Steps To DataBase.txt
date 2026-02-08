@@ -7,3 +7,7 @@
 For Update DataBase based on New Changes in Entities
 1- Package Manager Console : dotnet ef migrations add <New_Migration_Name> --project Inspection.Persistence
 2- Package Manager Console : dotnet ef database update <New_Migration_Name> --project Inspection.persistence
+------------------------
+
+For Removing Last Migration Use ...
+3- dotnet ef migrations remove --project Inspection.Persistence

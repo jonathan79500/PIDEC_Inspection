@@ -1,6 +1,7 @@
 ﻿using Inspection.Application.Contracts.Persistence;
 using Inspection.Application.DTOs;
 using Inspection.Application.DTOs.Common;
+using Inspection.Application.DTOs.InspectionReport;
 using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.DTOs.User;
 using Inspection.Application.Features.InspectionNotifications.Commands.CompleteCirculation;
@@ -138,12 +139,16 @@ public class InspectionNotificationController : ControllerBase
 
     [HttpPost]
     [Route("GetInspectionByInspectionNotificationId")]
-    public async Task<ActionResult<InspectionNotificationDto>> GetInspectionByInspectionNotificationId([FromBody] InspectionNotificationIdQuery inspectionNotificationId)
+    public async Task<ActionResult<(InspectionNotificationDto,List<InspectionReportDto>)>> GetInspectionByInspectionNotificationId([FromBody] InspectionNotificationIdQuery inspectionNotificationId)
     {
         try
         {
-            var inspectionNotification = await _mediator.Send(new GetInspectionNotificationByIdRequest { InspectionNotificationId = inspectionNotificationId.InspectionNotificationId });
-            return Ok(inspectionNotification);
+            var inspectionNotificationComplex = await _mediator.Send(new GetInspectionNotificationByIdRequest { InspectionNotificationId = inspectionNotificationId.InspectionNotificationId });
+            return Ok(new
+                  {
+                      Inspection = inspectionNotificationComplex.Item1,
+                      RelatedReports = inspectionNotificationComplex.Item2
+                  }); 
         }
         catch (Exception exp)
         {
@@ -261,32 +266,71 @@ public class InspectionNotificationController : ControllerBase
     //    }
     //}
     [Consumes("multipart/form-data")]
-    [Produces("application/json")]
+  //  [Produces("application/json")]
     [HttpPost("DraftInspectionNotification")]
-    public async Task<ActionResult<InspectionNotificationDto>> DraftInspectionNotification(IFormFile[] attachments,IFormCollection inspectionNotification)
+    public async Task<ActionResult> DraftInspectionNotification([FromForm] InspectionUploadDto inspectionUpload)
     {
         try
         {
-            //Debug.Write("File Name is: "+attachment.FileName);
-            //Debug.Write("File Type is: " + attachment.ContentType);
-            foreach (var attachment in attachments)
+                List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
+                AttachmentDto attachmentDto;
+            if (inspectionUpload.Attachments != null)
             {
-                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachment.FileName));
-
-
-                using (var fileStream = new FileStream(path, FileMode.Create))
+                for (int i = 0; i < inspectionUpload.Attachments.Count; i++)
                 {
-                    attachment.CopyTo(fileStream);
-                }
+                    attachmentDto = new AttachmentDto();
+                    attachmentDto.Content = inspectionUpload.Attachments[i];
+                    attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
+                    if (inspectionUpload.AttachmentIds[i] != null && inspectionUpload.AttachmentIds[i] != "")
+                        attachmentDto.Id = new Guid(inspectionUpload.AttachmentIds[i]);
+                    else
+                        attachmentDto.Id = Guid.NewGuid();
+                    attachmentDto.Name = inspectionUpload.AttachmentNames[i];
+                    attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
+                    attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
+                    attachmentDto.DocNo = inspectionUpload.AttachmentDocNos[i];
+                    attachmentDto.Status = inspectionUpload.AttachmentStatuses[i];
+                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
 
+
+
+
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await attachmentDto.Content.CopyToAsync(stream);
+
+                    attachmentDtos.Add(attachmentDto);
+                    // Here you can persist metadata + file path to DB
+                }
             }
-            var inspection = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionNotification["Inspection"]!);
-            var command = new CreateInspectionNotificationCommand { createInspectionNotificationDto = inspection! };
+            //    var inspection = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionNotification["Inspection"]!);
+            //var command = new CreateInspectionNotificationCommand { createInspectionNotificationDto = inspection! };
+
+            var command = new CreateInspectionNotificationCommand
+            {
+                createInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
+                ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
+                CurrentCirculationDto = JsonConvert.DeserializeObject<CirculationDto>(inspectionUpload.currentCirculation),
+                AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
+            };
+            //var command = new SendInspectionNotificationCommand
+            //{
+            //    CreateInspectionNotificationDto = null,
+            //    ProjectDto = null,
+            //    CurrentCirculationDto = null,
+            //    AttachmentDtos = null
+            //};
 
             var response = await _mediator.Send(command);
+            return Ok(new
+            {
+                Inspection = response.Item1,
+                CurrentCirculation = response.Item2
+            });
 
-            InspectionNotificationDto dd= response.Adapt<InspectionNotificationDto>();
-            return Ok(dd);
+            //var response = await _mediator.Send(command);
+
+            //InspectionNotificationDto dd= response.Adapt<InspectionNotificationDto>();
+            //return Ok(dd);
         }
         catch (Exception ex)
         {
@@ -354,30 +398,35 @@ public class InspectionNotificationController : ControllerBase
 
             List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
             AttachmentDto attachmentDto;
-            for (int i = 0; i < inspectionUpload.Attachments.Count; i++)
+            if (inspectionUpload.Attachments != null)
             {
-                attachmentDto = new AttachmentDto();
-                attachmentDto.Content = inspectionUpload.Attachments[i];
-                attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
-                if(inspectionUpload.AttachmentIds[i] != null && inspectionUpload.AttachmentIds[i] != "")
-                    attachmentDto.Id = new Guid(inspectionUpload.AttachmentIds[i]);
-                else
-                    attachmentDto.Id =Guid.NewGuid();
-                attachmentDto.Name = inspectionUpload.AttachmentNames[i];
-                attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
-                attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
-                var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
+                for (int i = 0; i < inspectionUpload.Attachments.Count; i++)
+                {
+                    attachmentDto = new AttachmentDto();
+                    attachmentDto.Content = inspectionUpload.Attachments[i];
+                    attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
+                    if (inspectionUpload.AttachmentIds[i] != null && inspectionUpload.AttachmentIds[i] != "")
+                        attachmentDto.Id = new Guid(inspectionUpload.AttachmentIds[i]);
+                    else
+                        attachmentDto.Id = Guid.NewGuid();
+                    attachmentDto.Name = inspectionUpload.AttachmentNames[i];
+                    attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
+                    attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
+                    attachmentDto.DocNo = inspectionUpload.AttachmentDocNos[i];
+                    attachmentDto.Status = inspectionUpload.AttachmentStatuses[i];
+                    
+                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
 
 
 
 
-                using var stream = new FileStream(path, FileMode.Create);
-                await attachmentDto.Content.CopyToAsync(stream);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await attachmentDto.Content.CopyToAsync(stream);
 
-                attachmentDtos.Add(attachmentDto);
-                // Here you can persist metadata + file path to DB
+                    attachmentDtos.Add(attachmentDto);
+                    // Here you can persist metadata + file path to DB
+                }
             }
-
             var command = new SendInspectionNotificationCommand
             {
                 CreateInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
@@ -461,23 +510,25 @@ public class InspectionNotificationController : ControllerBase
 public class CirculationDataDto
 {
         public string circulation { get; set; }      
-        public List<string> AttachmentIds { get; set; }
-        public List<string> AttachmentNames { get; set; }
-        public List<string> AttachmentVersions { get; set; }
-        public List<string> AttachmentDescriptions { get; set; }
+        public List<string>? AttachmentIds { get; set; }
+        public List<string>? AttachmentNames { get; set; }
+        public List<string>? AttachmentVersions { get; set; }
+        public List<string>? AttachmentDescriptions { get; set; }
         [ValidateNever]
         public List<IFormFile> Attachments { get; set; }
 }
     public class InspectionUploadDto
 {
-    public string inspection { get; set; }
-     public string project { get; set; }
-      public string currentCirculation { get; set; }
-    public List<string> AttachmentIds { get; set; }
-    public List<string> AttachmentNames { get; set; }
-    public List<string> AttachmentVersions { get; set; }
-    public List<string> AttachmentDescriptions { get; set; }
-    public List<IFormFile> Attachments { get; set; }
+    public string? inspection { get; set; }
+     public string? project { get; set; }
+      public string? currentCirculation { get; set; }
+    public List<string>? AttachmentIds { get; set; } 
+    public List<string>? AttachmentNames { get; set; }
+    public List<string>? AttachmentVersions { get; set; }
+    public List<string>? AttachmentDescriptions { get; set; }
+    public List<string>? AttachmentDocNos { get; set; }
+    public List<string>? AttachmentStatuses { get; set; }
+    public List<IFormFile>? Attachments { get; set; }
     //[ModelBinder(BinderType = typeof(AttachmentListBinder))]
     //public List<AttachmentDto> Attachments { get; set; }
 

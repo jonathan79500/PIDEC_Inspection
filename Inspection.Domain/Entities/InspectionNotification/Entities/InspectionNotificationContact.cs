@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Inspection.Domain.Entities.InspectionNotification.Entities
 {
-    public class InspectionNotificationContact:BaseDomainEntity<Guid>
+    public class InspectionNotificationContact//:BaseDomainEntity<Guid>
     {       
         public InspectionNotificationContact() { }
 
@@ -22,7 +22,12 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
 
 
         public InspectionNotification? InspectionNotification { get;  set; }
-        public Contact? Contact { get;  set; }   
+        public Contact? Contact { get;  set; }
+
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? ModifiedDate { get; set; } = DateTime.Now.AddSeconds(5);
+        public string? CreatedBy { get; set; } = "Admin";
+        public string? ModifiedBy { get; set; } = string.Empty;
 
         public static InspectionNotificationContact Create(Contact contact, InspectionNotification inspectionNotification, ContactType contactType)
         {

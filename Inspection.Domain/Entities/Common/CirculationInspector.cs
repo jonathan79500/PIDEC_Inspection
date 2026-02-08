@@ -14,7 +14,7 @@ namespace Inspection.Domain.Entities.Common
         public CirculationInspector() { }
 
         public Guid CirculationId{ get; set; }
-        public InspectorId? InspectorId { get; set; }
+        public Guid? InspectorId { get; set; }
 
         public Circulation? Circulation{ get; set; }
         public Inspector.Inspector? Inspector { get; set; }

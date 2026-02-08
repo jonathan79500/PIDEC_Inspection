@@ -13,7 +13,7 @@ namespace Inspection.Domain.Entities.Common
     public class InspectionSubject
     {
         public InspectionSubjectId? InspectionSubjectId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; }      
         public ContactId? CreatedBy_ContactId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool? VisibleByDefault { get; set; }

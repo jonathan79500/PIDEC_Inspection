@@ -10,7 +10,7 @@ export interface Contact{
   name:string,
   email:string,
    homePage:string,
-   attention:string,
+   note:string,
    contactType:number,
    mobile:string,
    cc:string,

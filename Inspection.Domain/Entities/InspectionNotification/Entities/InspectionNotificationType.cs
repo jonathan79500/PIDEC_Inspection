@@ -1,4 +1,5 @@
 ﻿using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.Common.ValueObjects;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.ValueObjects;
 using System;
@@ -9,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Inspection.Domain.Entities.InspectionNotification.Entities
 {
-    public class InspectionNotificationType : BaseDomainEntity<Guid>
+    public class InspectionNotificationLocation : BaseDomainEntity<Guid>
     {
-        public InspectionNotificationType() { }
+        public InspectionNotificationLocation() { }
 
         public InspectionNotificationId InspectionNotificationId { get; set; }
-        public InspectionTypeId InspectionTypeId { get; set; }
+        public Guid AddressId { get; set; }
 
         public InspectionNotification InspectionNotification { get;  set; }
-        public InspectionType InspectionType { get;  set; }
+        public Address Location { get;  set; }
     }
 }

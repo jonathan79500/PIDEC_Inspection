@@ -31,7 +31,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
     private InspectionNotification (InspectionNotificationId inspectionNotificationId,string name, NotificationNumber notificationNumberParts,string notificationNmber
         , DateTime issueDate, string persianIssueDate, DateTime requestInspectionDateStart, DateTime requestInspectionDateEnd, string requestInspectionPersianDateStart,
         string requestInspectionPersianDateEnd, Order order,
-        Address location, string description):base(inspectionNotificationId)
+         string description, string inspectionTimeComment,string equipmentTagNo,int? requestInspectionDueDate, string? orderName) :base(inspectionNotificationId)
     { 
         InspectionNotificationId = inspectionNotificationId;
         Name = name;
@@ -43,61 +43,56 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
         RequestInspectionDateEnd = requestInspectionDateEnd;
         RequestInspectionPersianDateEnd = requestInspectionPersianDateEnd;
         RequestInspectionPersianDateStart = requestInspectionPersianDateStart;
-        
+        InspectionTimeComment = inspectionTimeComment;
         Order = order;
-        Location = location;       
+        OrderName = orderName;
+        EquipmentTagNo = equipmentTagNo;
         Description = description;
-
+        RequestInspectionDueDate = requestInspectionDueDate;
     }
 
 
     public InspectionNotificationId InspectionNotificationId { get; set; }
-    public Request Request { get; set; }
-   // public InspectionNotificationId MainInspectionNotificationId { get; set; }
-    public int Version { get; set; }
+    public Guid? RevisionId { get; set; }
+    public Revision? Revision { get; set; } = null!;   
     public string? Name { get;  set; }= string.Empty;
+    public string? OrderName { get; set; } = string.Empty;
+    public string? EquipmentTagNo { get; set; } = string.Empty;
     public NotificationNumber NotificationNumberParts { get; set; }
     public string NotificationNumber { get;  set; }  
-  //  public DateTime? ContractShippingDueDate { get;  set; } = DateTime.Now;
-  //  public DateTime? ActualShippingDueDate { get;  set; } = DateTime.Now;
     public DateTime? IssueDate { get;  set; } = DateTime.Now;
     public string? PersianIssueDate { get; set; } = string.Empty;
     public DateTime? RequestInspectionDateStart { get;  set; } = DateTime.Now;
     public DateTime? RequestInspectionDateEnd { get;  set; } = DateTime.Now;
     public string? RequestInspectionPersianDateStart { get;  set; } = string.Empty;
     public string? RequestInspectionPersianDateEnd { get;  set; } = string.Empty;
-    public int RequestInspectionDueDate { get;  set; }
-    public int RequestInspectionTimesInPeriod { get;  set; }
-    public int RequestInspectionPeriodDays { get;  set; } //for emaple we want to do inspection twice each 7 days , so RequestInspectionTimesInPeriod will be 2 and RequestInspectionPeriodDays will be 7 
-    //public DateTime? ProposedDate { get;  set; }= DateTime.Now; 
+    public int? RequestInspectionDueDate { get;  set; }
+    public string? InspectionTimeComment { get; set; } = string.Empty;
+    public string? InspectionAction { get; set; } = string.Empty;
+    public string? InspectionActionComment { get; set; } = string.Empty;
+    //public int? RequestInspectionTimesInPeriod { get;  set; }
+    //public int? RequestInspectionPeriodDays { get;  set; } //for emaple we want to do inspection twice each 7 days , so RequestInspectionTimesInPeriod will be 2 and RequestInspectionPeriodDays will be 7 
     public Order? Order { get;  set; }
-    public Address? Location { get;  set; }
+   
     public string? Description { get;  set; } = string.Empty;
 
+    private List<InspectionNotificationLocation>? _locations = new List<InspectionNotificationLocation>();
     private List<InspectionNotificationType> _types = new List<InspectionNotificationType>() ;
     private List<InspectionNotificationSubject> _subjects = new List<InspectionNotificationSubject>();  
-    //private List<Attachment>? _attachments = new List<Attachment>();
     private List<InspectionNotificationContact>? _contacts = new List<InspectionNotificationContact>();
-    private List<Circulation>? _circulations = new List<Circulation>();
 
-
-    //public List<Attachment> Attachments
-    //{
-    //    get => _attachments;
-    //    set => _attachments = value;
-    //}
+    public List<InspectionNotificationLocation>? Locations { get => _locations; set => _locations = value; }
     public List<InspectionNotificationContact>? Contacts { get => _contacts; set => _contacts = value; }
     public List<InspectionNotificationSubject>? Subjects { get => _subjects; set => _subjects = value; }
-    public List<InspectionNotificationType>? Types { get => _types; set => _types = value; }
-    public List<Circulation>? Circulations { get => _circulations; set => _circulations = value; }
+    public List<InspectionNotificationType>? Types { get => _types; set => _types = value; } 
 
     public static InspectionNotification Create(string ?name,NotificationNumber ?notificationNumberParts,string? notificationNumber
-        , DateTime? IssueDate,string? PersianIssueDate,DateTime? RequestInspectionDateStart,DateTime? RequestInspectionDateEnd,string? RequestInspectionPersianDateStart,
+       , DateTime? IssueDate,string? PersianIssueDate,DateTime? RequestInspectionDateStart,DateTime? RequestInspectionDateEnd,string? RequestInspectionPersianDateStart,
         string RequestInspectionPersianDateEnd, Order ?order,
-        Address ?location, string ?description)
+         string? description,string? inspectionTimeComment,string? equipmentTagNo,int? requestInspectionDueDate,string? orderName)
     {
         var inspectionNotification =  new InspectionNotification( InspectionNotificationId.CreateUnique() ,name!, notificationNumberParts!,notificationNumber, IssueDate!.Value, PersianIssueDate, RequestInspectionDateStart!.Value
-        ,RequestInspectionDateEnd!.Value, RequestInspectionPersianDateStart!, RequestInspectionPersianDateEnd!, order!, location!,  description!);
+        ,RequestInspectionDateEnd!.Value, RequestInspectionPersianDateStart!, RequestInspectionPersianDateEnd!, order!,   description!, inspectionTimeComment!,equipmentTagNo!,requestInspectionDueDate!,orderName!);
         inspectionNotification.RaiseEvent(new InspectionNotificationCreatedEvent(inspectionNotification.InspectionNotificationId));
         return inspectionNotification;
     }
@@ -116,7 +111,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                
         var newinspectionNotification = InspectionNotification.Create(ins.Name!,ins.NotificationNumberParts!,ins.NotificationNumber,ins.IssueDate!,ins.PersianIssueDate,ins.RequestInspectionDateStart!
           ,ins.RequestInspectionDateEnd!,ins.RequestInspectionPersianDateStart,ins.RequestInspectionPersianDateEnd!,
-          ins.Order!,ins.Location!,ins.Description!);
+          ins.Order!,ins.Description!,ins.InspectionTimeComment!,ins.EquipmentTagNo,ins.RequestInspectionDueDate,ins.OrderName);
 
         if(inspectionNotification.InspectionNotificationId != null && inspectionNotification.InspectionNotificationId.Value !=Guid.Empty)
             newinspectionNotification.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
@@ -134,7 +129,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                     newInspectionNotificationContact = new InspectionNotificationContact();
                     newInspectionNotificationContact.InspectionNotificationId = newinspectionNotification.InspectionNotificationId;
                     newInspectionNotificationContact.ContactId = inspectionNotification.Contacts[i].ContactId;
-                   // newInspectionNotificationContact.Contact = inspectionNotification.Contacts![i].Contact;
+                  //  newInspectionNotificationContact.Contact = inspectionNotification.Contacts![i].Contact;
                     newinspectionNotification.Contacts!.Add(newInspectionNotificationContact);
                 }
             }
@@ -150,7 +145,8 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                 newInspectionNotificationSubject = new InspectionNotificationSubject();
                 newInspectionNotificationSubject.InspectionNotificationId = newinspectionNotification.InspectionNotificationId;
                 newInspectionNotificationSubject.InspectionSubjectId = inspectionNotification.Subjects[i].InspectionSubjectId;
-               // newInspectionNotificationSubject.InspectionSubject = inspectionNotification.Subjects[i].InspectionSubject;
+                // newInspectionNotificationSubject.InspectionSubject = inspectionNotification.Subjects[i].InspectionSubject;
+                newInspectionNotificationSubject.ITP_Row_No = inspectionNotification.Subjects[i].ITP_Row_No;
                 newinspectionNotification.Subjects!.Add(newInspectionNotificationSubject);
             }
         }
@@ -168,31 +164,35 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             }
         }
 
-        //Attachment newAttachment;
-        //if (inspectionNotification.Attachments != null && inspectionNotification.Attachments.Count > 0)
-        //{
-            
-        //    for (int i = 0; i < inspectionNotification.Attachments.Count; i++)
-        //    {
-        //        if (inspectionNotification.Attachments[i].Content == null || inspectionNotification.Attachments[i].Content.Length == 0)
-        //            inspectionNotification.Attachments.RemoveAt(i);
-        //        else
-        //        {
-        //            newAttachment = new Attachment();
-        //            newAttachment.AttachmentId = inspectionNotification.Attachments[i].AttachmentId.Value == null ? AttachmentId.CreateUnique() : inspectionNotification.Attachments[i].AttachmentId;
-        //            newAttachment.Id = newAttachment.AttachmentId;
-        //            newAttachment.Content = inspectionNotification.Attachments[i].Content;
-        //            newAttachment.Version = inspectionNotification.Attachments[i].Version;
-        //            newAttachment.Name = inspectionNotification.Attachments[i].Name;
-        //            newAttachment.PDFSize = inspectionNotification.Attachments[i].PDFSize;
-        //            newAttachment.ContentType = inspectionNotification.Attachments[i].ContentType;
-        //            newAttachment.DownloadUrl = inspectionNotification.Attachments[i].DownloadUrl;
-        //            newAttachment.Base64Content = inspectionNotification.Attachments[i].Base64Content;
-        //            newinspectionNotification.Attachments!.Add(newAttachment);
-        //        }
+        InspectionNotificationLocation newInspectionNotificationLocation;
+        Address newLocation;
+        if (inspectionNotification.Locations != null && inspectionNotification.Locations.Count > 0)
+        {
+            for (int i = 0; i < inspectionNotification.Locations.Count; i++)
+            {
+                newInspectionNotificationLocation = new InspectionNotificationLocation();
+                newInspectionNotificationLocation.InspectionNotificationId = newinspectionNotification.InspectionNotificationId;
                 
-        //    }
-        //}
+                if (inspectionNotification.Locations[i].AddressId == Guid.Empty || inspectionNotification.Locations[i].AddressId == null)
+                {
+                    newLocation = new Address();
+                    newLocation.Id = Guid.NewGuid();
+                    newLocation.ZipCode = inspectionNotification.Locations[i].Location.ZipCode;
+                    newLocation.StreetLine2 = inspectionNotification.Locations[i].Location.StreetLine2;
+                    newLocation.StreetLine1 = inspectionNotification.Locations[i].Location.StreetLine1;
+                    newLocation.City = inspectionNotification.Locations[i].Location.City;
+                    newLocation.State = inspectionNotification.Locations[i].Location.State;
+                    newLocation.Country = inspectionNotification.Locations[i].Location.Country;
+                    newInspectionNotificationLocation.Location = newLocation;
+                    newInspectionNotificationLocation.AddressId = newLocation.Id;
+                }
+                else
+                    newInspectionNotificationLocation.AddressId = inspectionNotification.Locations[i].AddressId;               
+                
+                newinspectionNotification.Locations!.Add(newInspectionNotificationLocation);
+            }
+        }
+
 
         newinspectionNotification.RaiseEvent(new InspectionNotificationCreatedEvent(newinspectionNotification.InspectionNotificationId));
 
@@ -215,22 +215,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
         this.Order = order;
     }
 
-    public void SetLocation(Address location)
-    {
-        this.Location = location;
-    }
-
-  
    
-    //public  void AddAttachment(string name, string description, byte[] content,int version,string edmsId,string pdfSize,string contentType)
-    //{
-    //    var attachment = Attachment.Create(name, description, content,version,edmsId,pdfSize,contentType);          
-    //    _attachments.Add(attachment);
-    //}
-
-    //public void AddAttachment1(Attachment attachment) {
-    //    _attachments.Add(attachment);
-    //}
 
     public void AddContact(string name,Address address,string phone,string mobile,string fax, string email,string homepage,string attention,string cc,ContactType contactType,bool isVisible)
     {
@@ -260,12 +245,10 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             InspectionNotificationId clonedInspectionNotificationId = InspectionNotificationId.CreateUnique();
             clonedInspectionNotification.InspectionNotificationId = clonedInspectionNotificationId;
             clonedInspectionNotification.Id = clonedInspectionNotificationId;
-            clonedInspectionNotification.Name = this.Name;
-            clonedInspectionNotification.Version = this.Version;
+            clonedInspectionNotification.Name = this.Name;     
             clonedInspectionNotification.Description = this.Description;
             clonedInspectionNotification.CreatedBy = this.CreatedBy;
-            clonedInspectionNotification.CreatedDate = currentDate;
-            clonedInspectionNotification.Version = this.Version;
+            clonedInspectionNotification.CreatedDate = currentDate;        
             clonedInspectionNotification.IssueDate = this.IssueDate;
             clonedInspectionNotification.NotificationNumber = this.NotificationNumber;
             clonedInspectionNotification.NotificationNumberParts = this.NotificationNumberParts;
@@ -273,12 +256,15 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             clonedInspectionNotification.RequestInspectionDueDate = this.RequestInspectionDueDate;
             clonedInspectionNotification.RequestInspectionDateEnd = this.RequestInspectionDateEnd;
             clonedInspectionNotification.RequestInspectionPersianDateEnd = this.RequestInspectionPersianDateEnd;
-            clonedInspectionNotification.RequestInspectionDateStart = this.RequestInspectionDateStart;
-            clonedInspectionNotification.RequestInspectionPeriodDays = this.RequestInspectionPeriodDays;
+            clonedInspectionNotification.RequestInspectionDateStart = this.RequestInspectionDateStart;         
             clonedInspectionNotification.RequestInspectionPersianDateStart = this.RequestInspectionPersianDateStart;
-            clonedInspectionNotification.RequestInspectionTimesInPeriod = this.RequestInspectionTimesInPeriod;
-
-
+            clonedInspectionNotification.InspectionAction = this.InspectionAction;
+            clonedInspectionNotification.InspectionActionComment = this.InspectionActionComment;
+            clonedInspectionNotification.InspectionTimeComment = this.InspectionTimeComment;
+            clonedInspectionNotification.EquipmentTagNo = this.EquipmentTagNo;
+            clonedInspectionNotification.OrderName = this.OrderName;
+            clonedInspectionNotification.Revision = this.Revision;
+            clonedInspectionNotification.RevisionId = this.RevisionId;
             clonedInspectionNotification.Subjects =  this.Subjects.Select(subject =>new InspectionNotificationSubject
             {
                 CreatedBy = subject.CreatedBy,
@@ -306,8 +292,16 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                 ModifiedDate = type.ModifiedDate
             }).ToList();
 
-            clonedInspectionNotification.Location = this.Location;
-          // clonedInspectionNotification.Location.Id = Guid.NewGuid();
+            clonedInspectionNotification.Locations = this.Locations.Select(location => new InspectionNotificationLocation
+            {
+                CreatedBy = location.CreatedBy,                
+                CreatedDate = location.CreatedDate,
+                Id = Guid.NewGuid(),                
+                InspectionNotificationId = clonedInspectionNotificationId,
+                AddressId = location.Id,
+                ModifiedBy = location.ModifiedBy,
+                ModifiedDate = location.ModifiedDate
+            }).ToList();
 
             clonedInspectionNotification.Contacts = this.Contacts.Select(contact=>new InspectionNotificationContact
             {                
@@ -322,37 +316,13 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                  ModifiedDate = currentDate
             }).ToList();
 
-         
-            //clonedInspectionNotification.Attachments = this.Attachments.Select(attachment=>new Attachment { 
-            //    AttachmentId = AttachmentId.CreateUnique(),
-            //    Content = attachment.Content,   
-            //    CreatedBy  = attachment.CreatedBy,
-            //    CreatedDate= currentDate,
-            //    Description = attachment.Description,
-            //    edmsId = attachment.edmsId,
-            //    ModifiedBy = attachment.ModifiedBy,
-            //    ModifiedDate = currentDate,
-            //    Name = attachment.Name,
-            //    PDFSize = attachment.PDFSize,
-            //    Version = attachment.Version
-            //}).ToList();
-
-
-            return clonedInspectionNotification;
+              return clonedInspectionNotification;
 
         }
         catch(Exception ex) 
         {
             return null;
         }
-    //{
-    //    try
-    //    {
-    //        var json = JsonSerializer.Serialize(this);
-    //        return JsonSerializer.Deserialize<InspectionNotification>(json);
-    //    }catch (Exception ex)
-    //    {
-    //        return new InspectionNotification();
-    //    }
+    
     }
 }

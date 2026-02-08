@@ -15,34 +15,66 @@ namespace Inspection.Persistence.Configurations.Entities
 {
 
 
+    //public class InspectionReportAttachmentConfiguration : IEntityTypeConfiguration<InspectionReportAttachment>
+    //{
+    //    public void Configure(EntityTypeBuilder<InspectionReportAttachment> builder)
+    //    {
+    //        ConfigureInspectionReportAttachments(builder);
+    //    }
+
+    //    private void ConfigureInspectionReportAttachments(EntityTypeBuilder<InspectionReportAttachment> builder)
+    //    {
+    //        builder.ToTable("InspectionReportAttachments");
+
+
+    //        var converter = new ValueConverter<InspectionReportAttachmentId, Guid>(
+    //        id => id.Value,
+    //        guidValue => new InspectionReportAttachmentId(guidValue));
+    //        builder.HasKey(e => e.InspectionReportAttachmentId);
+
+    //        builder.Property(e => e.InspectionReportAttachmentId)
+    //            .HasConversion(converter)
+    //            .ValueGeneratedOnAdd();
+
+
+
+
+    //    }
+    //}
     public class InspectionReportAttachmentConfiguration : IEntityTypeConfiguration<InspectionReportAttachment>
     {
         public void Configure(EntityTypeBuilder<InspectionReportAttachment> builder)
         {
-
-          
-            ConfigureInspectionReportAttachments(builder);
-
-        }
-
-      
-        private void ConfigureInspectionReportAttachments(EntityTypeBuilder<InspectionReportAttachment> builder)
-        {
             builder.ToTable("InspectionReportAttachments");
-         
 
-            var converter = new ValueConverter<InspectionReportAttachmentId, Guid>(
-            id => id.Value,
-            guidValue => new InspectionReportAttachmentId(guidValue));
+            // Primary key
             builder.HasKey(e => e.InspectionReportAttachmentId);
 
             builder.Property(e => e.InspectionReportAttachmentId)
-                .HasConversion(converter)
+                .HasConversion(
+                    id => id.Value,
+                    guid => new InspectionReportAttachmentId(guid))
                 .ValueGeneratedOnAdd();
 
-            builder.Property(e => e.Name).HasMaxLength(200);
+            // Foreign key to InspectionReport
+            builder.Property(e => e.InspectionReportId)
+                .HasConversion(
+                    id => id.Value,
+                    guid => new InspectionReportId(guid));
 
+            builder.HasOne(e => e.InspectionReport)
+                .WithMany(r => r.Attachments) // assuming InspectionReport has ICollection<InspectionReportAttachment>
+                .HasForeignKey(e => e.InspectionReportId);
 
+            // Foreign key to Attachment
+            builder.Property(e => e.AttachmentId)
+                .HasConversion(
+                    id => id.Value,
+                    guid => new AttachmentId(guid));
+
+            builder.HasOne(e => e.Attachment)
+                .WithMany(a => a.InspectionReports) // matches Attachment.InspectionReports
+                .HasForeignKey(e => e.AttachmentId);
         }
     }
 

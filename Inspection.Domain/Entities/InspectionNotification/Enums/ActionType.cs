@@ -17,7 +17,7 @@ namespace Inspection.Domain.Entities.InspectionNotification.Enums
             RejectInspectionNotification = 5,
             BackwardInspectionNotification = 6,
             CompleteInspectionNotification = 7,
-            NotAvailable = -1
+            NoAction = -1
         }
     
 }

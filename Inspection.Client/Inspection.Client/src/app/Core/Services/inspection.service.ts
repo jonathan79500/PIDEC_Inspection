@@ -1,3 +1,4 @@
+import { InspectionReport } from './../Models/InspectionReport.model';
 import { Attachment } from './../Models/Attachment.model';
 import { Circulation } from './../Models/Circulation.model';
 import { inspect } from 'util';
@@ -93,6 +94,8 @@ export class InspectionService {
 
    getInspectionListByProjectIdUserId(projectId:string,userId:string)
   {
+    if(projectId == undefined)
+      projectId = '';
       const body = { projectId, userId };
     //console.log("in Inspection Service")
     return this.http.post<Inspection[]>(this.InspectionAPIPath+'/'+"GetReceivedInspectionsByProjectId_UserId",body);
@@ -103,7 +106,7 @@ export class InspectionService {
     //console.log("in Inspection Service")
     const headers = new HttpHeaders();
     console.log('ins id',inspectionId);
-    return this.http.post<Inspection>(this.InspectionAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
+    return this.http.post<{inspection:Inspection,relatedReports :InspectionReport[]}>(this.InspectionAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
   }
 
 
@@ -173,7 +176,7 @@ FetchFileFromServer(id:string)
   draftNewInspectionFull(formData: FormData)
   {
      const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionAPIPath+'/'+"DraftInspectionNotification",formData,{ headers: headers });
+     return this.http.post<{inspection:Inspection,currentCirculation:Circulation}>(this.InspectionAPIPath+'/'+"DraftInspectionNotification",formData);
 
     //return await lastValueFrom()
   }

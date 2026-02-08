@@ -11,13 +11,25 @@ export type FormOrderManagement = FormGroup<{
   newInspectionSubject : FormInspectionSubject
 }>
 
+export type FormPerson = FormGroup<{
+  id: FormControl<string>,
+  firstName : FormControl<string>,
+  lastName : FormControl<string>,
+  name: FormControl<string>,
+  phone : FormControl<string>,
+  email: FormControl<string>,
+  position: FormControl<string>
+}>
+
 export type FormAttachment = FormGroup<{
   id:FormControl<string>,
   version : FormControl<string>,
   name :FormControl<string>,
   content:FormControl<File>
   description:FormControl<string>,
-  downloadUrl:FormControl<string>
+  downloadUrl:FormControl<string>,
+  docNo:FormControl<string>,
+  status:FormControl<string>
 }>
 
 export type FormInspectionType = FormGroup<{
@@ -29,6 +41,7 @@ export type FormInspectionType = FormGroup<{
 export type FormInspectionSubject = FormGroup<{
   id:FormControl<string> ,
   name : FormControl<string>,
+  itpRowNo:FormControl<string>,
   selected:FormControl<boolean>
 }>
 
@@ -95,7 +108,7 @@ export type FormContact = FormGroup<{
   id:FormControl<string>,
   contactType :FormControl<number>,//for example "To", "CC","Bcc"
   email:FormControl<string>,
-  attention :FormControl<string>,
+  note :FormControl<string>,
   name :FormControl<string>,
   phone:FormControl<string>,
   mobile:FormControl<string>,
@@ -155,11 +168,11 @@ export type InspectionForm = FormGroup<{
   pidecDocNo:FormControl<string>,
  // attachments: FormArray<FormAttachment>,
   order : FormOrder,
-  //owner : FormOwner,
+    orderName:FormControl<string>,
+   equipmentTagNo:FormControl<string>,
   contacts : FormArray<FormContact>,
   supplier : FormControl<string>,
   sub_supplier :FormControl<string>,
-  location: FormLocation,
   supplierContactPerson: FormContact,
   subSupplierContactPerson: FormContact,
   pidecContacts:FormArray<FormContact>,
@@ -169,15 +182,19 @@ export type InspectionForm = FormGroup<{
   mcContactPerson:FormContact,
   workProgress :  FormControl<string>,
   notificationNumber: FormControl<string>,
-  RequestInspectionPersianDateStart :FormControl<string>,
-  RequestInspectionDateStart :FormControl<Date>,
+  revNumber:FormControl<string>,
+  mainNumber:FormControl<string>,
+  requestInspectionPersianDateStart :FormControl<string>,
+  requestInspectionDateStart :FormControl<Date>,
 
-  RequestInspectionPersianDateEnd :FormControl<string>,
-  RequestInspectionDateEnd :FormControl<Date>,
+  requestInspectionPersianDateEnd :FormControl<string>,
+  requestInspectionDateEnd :FormControl<Date>,
 
-  RequestInspectionDueDate:FormControl<number>,
-  RequestInspectionTimesInPeriod:FormControl<number>,
-  RequestInspectionPeriodDays:FormControl<number>,
+  requestInspectionDueDate:FormControl<number>,
+  inspectionTimeComment : FormControl<string>,
+  inspectionAction:FormControl<string>,
+  // RequestInspectionTimesInPeriod:FormControl<number>,
+  // RequestInspectionPeriodDays:FormControl<number>,
 
   issueDate :FormControl<Date>,
   persianIssueDate :FormControl<string>,
@@ -185,10 +202,11 @@ export type InspectionForm = FormGroup<{
   // persianRequestInspectionDate:FormControl<string>,
   inspectionTypes:FormArray<FormInspectionType>,
   inspectionSubjects :FormArray<FormInspectionSubject>,
-  CreatedDate: FormControl<Date>,
-  ModifiedDate: FormControl<Date>,
-  CreatedBy: FormControl<string>,
-  ModifiedBy: FormControl<string>,
+  locations: FormArray<FormAddress>,
+  createdDate: FormControl<Date>,
+  modifiedDate: FormControl<Date>,
+  createdBy: FormControl<string>,
+  modifiedBy: FormControl<string>,
 }>
 
 export type InspectionReportForm = FormGroup<{
@@ -196,13 +214,17 @@ export type InspectionReportForm = FormGroup<{
     inspectionReportNumber:FormControl<string>,
     currentStatus : FormControl<number>,
     inspectorContacts:FormArray<FormContact>,
-    relatedInspectionNotification:InspectionForm,
+   // relatedInspectionNotification:InspectionForm,
     relatedInspectionNotificationId: FormControl<string>,
+    revisionId: FormControl<string>,
     inspectionReportAttachments: FormArray<FormAttachment>,
+    requestIdOfRelatedInspectionNotification : FormControl<string>,
+    inspectors : FormArray<FormPerson>,
     issueDate : FormControl<Date>,
+    inspectionDate : FormControl<Date>,
     persianIssueDate :FormControl<string>,
     createdBy : FormControl<string>,
-    ReportNotes : FormControl<string>,
-    ReportType: FormControl<number> //Packing List = 1| Not Packing=0
+    reportNotes : FormControl<string>,
+    reportType: FormControl<number> //Packing List = 1| Not Packing=0
     // InspectorType : FormControl<number> //ThirdPart Inspector = 3 | SecondPart Inspector = 2
 }>

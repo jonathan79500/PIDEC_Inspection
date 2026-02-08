@@ -1,3 +1,4 @@
+import { Inspection } from './Core/Models/Inspection.model';
 import { NotstartedinspectionsComponent } from './Pages/VendorSide/notstartedinspections/notstartedinspections.component';
 import { SentinspectionsComponent } from './Pages/VendorSide/sentinspections/sentinspections.component';
 import { Routes } from '@angular/router';
@@ -28,14 +29,12 @@ import { ResetPasswordComponent } from './Shared/reset-password/reset-password.c
 import { PidecdeptMasterComponent } from './Pages/PidecDeptSide/pidecdept-master/pidecdept-master.component';
 import { pidecdeptbasicinfoResolver } from './Core/Resolvers/pidecdeptbasicinfo.resolver';
 import { PdnotStartedtasksComponent } from './Pages/PidecDeptSide/pdnot-startedtasks/pdnot-startedtasks.component';
-import { PnewinspectionComponent } from './Pages/PidecSide/pnewinspection/pnewinspection.component';
-import { PdnewinspectionComponent } from './Pages/PidecDeptSide/pdnewinspection/pdnewinspection.component';
 import { VnewinspectionComponent } from './Pages/VendorSide/vnewinspection/vnewinspection.component';
 import { NotStartedtasksComponent } from './Pages/PidecSide/not-startedtasks/not-startedtasks.component';
-import { NewinspectionComponent } from './Shared/newinspection/newinspection.component';
 import { InspectorMasterComponent } from './Pages/InspectorSide/inspector-master/inspector-master.component';
 import { inspectorbasicinfoResolver } from './Core/Resolvers/inspectorbasicinfo.resolver';
 import { NotstartedtasksComponent } from './Pages/InspectorSide/notstartedtasks/notstartedtasks.component';
+import { InspectionPrintComponent } from './Pages/VendorSide/inspection-print/inspection-print.component';
 
 
 export const routes: Routes = [
@@ -87,7 +86,8 @@ export const routes: Routes = [
     {
       path:'newInspection',
       component:VnewinspectionComponent,
-      resolve:{inspectionInfo: inspectionInfoResolver}
+      resolve:{inspectionInfo: inspectionInfoResolver},
+      runGuardsAndResolvers: 'always'
     },
     {
       path:'inspectionList',
@@ -109,6 +109,11 @@ export const routes: Routes = [
       path:'editInspection/:id',
       component:VnewinspectionComponent,
       data:{reuse:true}
+    },
+    {
+      path:'inspection-print',
+      component:InspectionPrintComponent,
+
     }
   ]
  },
@@ -151,6 +156,12 @@ export const routes: Routes = [
       component:VnewinspectionComponent,
       data:{reuse:true}
     }
+    ,
+    {
+      path:'inspection-print',
+      component:InspectionPrintComponent,
+
+    }
 ]
  },
 {
@@ -189,12 +200,17 @@ export const routes: Routes = [
   },
    {
       path:'editInspection/:id',
-      component:NewinspectionComponent,
+      component:VnewinspectionComponent,
       data:{reuse:true}
+    },
+    {
+      path:'inspection-print',
+      component:InspectionPrintComponent,
+
     },
      {
   path:'newInspection/:id',
-  component:PdnewinspectionComponent,
+  component:VnewinspectionComponent,
   data:{reuse:true}
  }
 ]
@@ -222,6 +238,11 @@ export const routes: Routes = [
       path:'editInspection/:id',
       component:VnewinspectionComponent,
       data:{reuse:true}
+    },
+    {
+      path:'inspection-print',
+      component:InspectionPrintComponent,
+
     }
 ]
  }

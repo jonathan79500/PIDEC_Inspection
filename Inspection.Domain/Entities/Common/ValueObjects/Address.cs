@@ -1,4 +1,5 @@
 ﻿using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Primitives;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace Inspection.Domain.Entities.Common.ValueObjects
         public string? StreetLine1 { get;  set; }
         public string? StreetLine2 { get;  set; }
         public string? ZipCode { get;  set; }
+
+        public List<InspectionNotificationLocation> InspectionNotifications { get; set; }
 
         //public Address address { get; private set; }
 

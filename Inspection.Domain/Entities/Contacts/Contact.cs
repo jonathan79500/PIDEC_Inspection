@@ -36,7 +36,7 @@ namespace Inspection.Domain.Entities.Contacts
         public string? Email { get; set; } = string.Empty ;
         public string? HomePage { get; set; } = string.Empty;
         public string? Mobile { get; set; }= string.Empty;
-        public string? Attention { get; set; }
+        public string? Note { get; set; }
         public string? Cc { get; set; }
         public bool? IsVisible { get; set; }
         public string? UserId { get; set; }
@@ -58,7 +58,7 @@ namespace Inspection.Domain.Entities.Contacts
         public List<InspectionNotificationContact>? InspectionNotifications { get; set; }
 
 
-        private Contact(Guid contactId, string name, Address address, string phone, string mobile, string fax, string email, string homepage, string attention, string cc, int contactType,bool isVisible)
+        private Contact(Guid contactId, string name, Address address, string phone, string mobile, string fax, string email, string homepage, string note, string cc, int contactType,bool isVisible)
         {
             ContactId = contactId;
             Name = name;
@@ -67,7 +67,7 @@ namespace Inspection.Domain.Entities.Contacts
             Fax = fax;
             Email = email;
             HomePage = homepage;
-            Attention = attention;
+            Note = note;
             Cc = cc;
             ContactType = contactType;
             Mobile = mobile;

@@ -13,14 +13,19 @@ using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 
 namespace Inspection.Domain.Entities.Common
 {
-    public class Circulation :BaseDomainEntity<Guid>
+    public class Circulation : BaseDomainEntity<Guid>
     {
-        public Circulation() :base(){ 
-       
-           
+        public Circulation() : base()
+        {
+
+
         }
-       // public Request? Request { get; set; }
+        // public Request? Request { get; set; }
         //public ActionType ActionType { get; set; }
+
+        public Revision Revision { get; set; } = null!;
+        public Guid RevisionId { get; set; }
+
         public int? ActionType { get; set; }
         public string? PerformerPN { get; set; }
         public string? PerformedActionDate { get; set; }
@@ -31,24 +36,21 @@ namespace Inspection.Domain.Entities.Common
         public int? QCActionType { get; set; }
 
         public string Comment { get; set; }
-       // public InspectionNotificationId InspectionNotificationId { get; set; }
-        
-        //[NotMapped]
-        public InspectionNotification.Entities.InspectionNotification InspectionNotification { get; set; }
+
 
         public List<CirculationAttachments> Attachments { get; set; }
         public List<CirculationInspector> Inspectors { get; set; }
 
-        public static Circulation CreateNew(InspectionNotification.Entities.InspectionNotification inspectionNotification,Contact creatorContactPerson)
-        {          
-          
+        public static Circulation CreateNew(Revision revision, Contact creatorContactPerson)
+        {
+
 
             string currentDate = "";
             return new Circulation()
             {
                 Id = Guid.NewGuid(),
-                InspectionNotification = inspectionNotification,
-                ActionType = ActionTypes.CreateInspection.GetHashCode(),
+                Revision = revision,
+                ActionType =(int) ActionTypes.CreateInspection,
                 PerformerContactPerson = creatorContactPerson,
                 SequenceNo = 0,
                 Comment = ""
@@ -63,7 +65,8 @@ namespace Inspection.Domain.Entities.Common
             return new Circulation()
             {
                 Id = Guid.NewGuid(),
-                InspectionNotification = inspectionNotification,
+                Revision = inspectionNotification.Revision!,
+                RevisionId = inspectionNotification.RevisionId!.Value,
                 ActionType = null,
                 PerformerContactPerson = contactPerson,
                 SequenceNo = 1,

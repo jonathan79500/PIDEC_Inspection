@@ -4,5 +4,7 @@ id:string,
   name :string,
   content:File,
   description:string,
+  docNo:string,
+  status:string,
    downloadUrl:string
 }

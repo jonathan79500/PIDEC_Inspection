@@ -4,6 +4,7 @@ using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Contacts;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.InspectionReport;
 using Inspection.Domain.Entities.Projects;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
@@ -16,9 +17,9 @@ namespace Inspection.Application.Contracts.Persistence;
 
 public interface IInspectionNotificationRepository : IGenericRepository<InspectionNotification, InspectionNotificationId>
 {
-    Task<InspectionNotification> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
+    Task<(InspectionNotification,List<InspectionReport>)> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
 
-    Task<(InspectionNotification,Circulation)> CreateNewInspectionNotification(InspectionNotification inspectionNotification,List<Attachment> attachments);
+    Task<(InspectionNotification, Circulation)> CreateNewInspectionNotification(InspectionNotification inspectionNotification, NotificationNumber newNotificationNumber, List<Attachment> attachments);
 
     //Task<InspectionNotification> SendNewInspectionNotification(InspectionNotification inspectionNotification,Project project);
 
@@ -40,17 +41,17 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     //Generally For Inspectors to attach their InspectionReport
     Task<List<InspectionNotificationDataSummaryDto>> GetReadyNotificationsToAttachInspectionReportByProjIdUserId(string ProjectId, string UserId);
-    
 
-        // InspectionNotification SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project);
 
-        Task<Contact> AddNewContact(Contact contact);
+    // InspectionNotification SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project);
+
+    Task<Contact> AddNewContact(Contact contact);
 
     Task<Contact> GetContactByUserId(string userId);
 
     Task<InspectionNotification> AddNewInspectionNotification(InspectionNotification inspectionNotification);
 
     Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations);
-    
-    Task<Circulation> CompleteCirculation(Circulation circulation,List<Attachment> attachments);
+
+    Task<Circulation> CompleteCirculation(Circulation circulation, List<Attachment> attachments);
 }

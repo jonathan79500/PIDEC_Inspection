@@ -6,13 +6,16 @@ import { InspectionType } from "./InspectionType.model";
 import { InspectionSubject } from "./InspectionSubject.model";
 import { Contact } from "./Contact.model";
 import { Attachment } from "./Attachment.model";
+import { Revision } from './Revision.model';
 
 export interface Inspection{
 
   id:string,
   name:string,
    order:Order | undefined,
-  //  vendor:Vendor,
+   orderName: string,
+   equipmentTagNo:string,
+  revision:Revision,
   createdDate:Date |undefined,
   modifiedDate:Date |undefined,
   createdBy: string,
@@ -28,7 +31,7 @@ export interface Inspection{
    contractShippingDueDate:Date | undefined,
    actualShippingDueDate:Date | undefined,
    proposedDate:Date | undefined,
-   location: Address,
+   locations: Address[],
 
    issueDate :Date |undefined,
    persianIssueDate : string |undefined,
@@ -40,6 +43,9 @@ export interface Inspection{
     requestInspectionDateEnd :Date |undefined,
 
     requestInspectionDueDate: number |undefined,
-    requestInspectionTimesInPeriod: number |undefined,
-    requestInspectionPeriodDays: number |undefined
+    inspectionTimeComment:string,
+    inspectionAction:string,
+    inspectionActionComment:string
+    // requestInspectionTimesInPeriod: number |undefined,
+    // requestInspectionPeriodDays: number |undefined
 }

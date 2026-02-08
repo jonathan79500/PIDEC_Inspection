@@ -1030,25 +1030,57 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "attachments",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile[]",
+        "Name": "inspection",
+        "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "inspectionNotification",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
+        "Name": "project",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "currentCirculation",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentNames",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentVersions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDescriptions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDocNos",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentStatuses",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Attachments",
+        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
         "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto",
-        "MediaTypes": [
-          "application/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Inspection.Api.Controllers.InspectionNotificationController",
@@ -1154,7 +1186,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto",
+        "Type": "System.ValueTuple\u00602[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.List\u00601[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1354,6 +1386,16 @@
         "IsRequired": false
       },
       {
+        "Name": "AttachmentDocNos",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentStatuses",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
         "Name": "Attachments",
         "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
         "IsRequired": false
@@ -1545,13 +1587,53 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "reportAttachments",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile[]",
+        "Name": "inspectionReport",
+        "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "inspectionReportFull",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
+        "Name": "project",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "currentCirculation",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentNames",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentVersions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDescriptions",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentDocNos",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentStatuses",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Attachments",
+        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
         "IsRequired": false
       }
     ],

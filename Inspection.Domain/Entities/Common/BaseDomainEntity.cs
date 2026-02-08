@@ -12,11 +12,11 @@ namespace Inspection.Domain.Entities.Common
         //public string ModifiedBy { get; private set; } = string.Empty;
 
         
-        public TId Id { get;  set; }
-        public DateTime CreatedDate { get; set; } =DateTime.Now;
-        public DateTime ModifiedDate { get; set; }= DateTime.Now.AddSeconds(5);
-        public string CreatedBy { get; set; } ="Admin";
-        public string ModifiedBy { get; set; } = string.Empty;
+        public TId? Id { get;  set; }
+        public DateTime? CreatedDate { get; set; } =DateTime.Now;
+        public DateTime? ModifiedDate { get; set; }= DateTime.Now.AddSeconds(5);
+        public string? CreatedBy { get; set; } ="Admin";
+        public string? ModifiedBy { get; set; } = string.Empty;
 
 
         protected BaseDomainEntity(TId id)

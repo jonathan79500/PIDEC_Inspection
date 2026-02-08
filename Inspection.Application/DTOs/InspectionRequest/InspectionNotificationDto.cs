@@ -16,18 +16,22 @@ namespace Inspection.Application.DTOs.InspectionRequest
         public Guid? Id { get; set; }
         public string? Name { get; set; }
         public OrderDto? Order { get; set; }
-        public RequestDto? Request { get; set; }
+        public string? OrderName { get; set; }
+        public string? EquipmentTagNo { get; set; }
+        public Guid RevisionId { get; set; }
+        public RevisionDto Revision { get; set; } = null!;
         public string? NotificationNumber { get; set; }
         public DateTime? ProposedDate { get; set; }
-        public AddressDto? Location { get; set; }
+        public List<AddressDto>? Locations { get; set; }
 
         public DateTime? RequestInspectionDateStart { get; set; } = DateTime.Now;
         public DateTime? RequestInspectionDateEnd { get; set; } = DateTime.Now;
         public string? RequestInspectionPersianDateStart { get; set; } = string.Empty;
         public string? RequestInspectionPersianDateEnd { get; set; } = string.Empty;
-        public int? RequestInspectionDueDate { get; set; }
-        public int? RequestInspectionTimesInPeriod { get; set; }
-        public int? RequestInspectionPeriodDays { get; set; }
+        public int? RequestInspectionDueDate { get; set; } = 0;
+        public string? InspectionTimeComment { get; set; } = string.Empty;
+        public string? InspectionAction { get; set; } = string.Empty;
+        public string? InspectionActionComment { get; set; } = string.Empty;
 
         public DateTime? IssueDate { get; set; }
         public string? PersianIssueDate { get; set; }
@@ -43,7 +47,7 @@ namespace Inspection.Application.DTOs.InspectionRequest
         public List<ContactDto>? Contacts { get; set; }
         public ContactType? ContactType { get; private set; }
         //public List<AttachmentDto>? Attachments { get; set; }
-        public List<CirculationDto>? Circulations { get; set; }
+        //public List<CirculationDto>? Circulations { get; set; }
 
     }
 }

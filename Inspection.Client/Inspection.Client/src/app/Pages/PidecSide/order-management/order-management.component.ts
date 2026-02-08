@@ -77,6 +77,7 @@ export class OrderManagementComponent implements OnInit{
       this.inspectionSubjects.push(this.formBuilder.group({
         id: new FormControl<string>(inspectionSubject.inspectionSubject.id),
         name :new FormControl<string>(inspectionSubject.inspectionSubject.name),
+        itpRowNo:new FormControl<string>(''),
         selected: new FormControl<boolean>(false)
 
       }) as FormTypes.FormInspectionSubject);
@@ -102,7 +103,7 @@ export class OrderManagementComponent implements OnInit{
   generateContact():FormTypes.FormContact{
     return this.formBuilder.group({
       id:'00000000-0000-0000-0000-000000000000',
-      attention:'',
+      note:'',
       cc:'',
       email:'',
       fax:'',
@@ -123,6 +124,7 @@ export class OrderManagementComponent implements OnInit{
     return this.formBuilder.group({
       id:'' ,
       name:'',
+      itpRowNo:'',
       selected : new FormControl<boolean>(false)
     });
   }
@@ -170,6 +172,7 @@ export class OrderManagementComponent implements OnInit{
       newInspectionSubject : this.formBuilder.group(
         {
           name:'',
+          itpRowNo:'',
           selected:new FormControl<boolean>(false),
           id:'0'
         }
@@ -290,6 +293,7 @@ addNewSubject(): void {
     newSubject = this.formBuilder.group({
       id:new FormControl('00000000-0000-0000-0000-000000000000'),
       name: new FormControl(newSubjectName),
+      itpRowNo:new FormControl(''),
       selected: new FormControl(true),
     });
 
@@ -330,7 +334,7 @@ toggleSelection(subject: FormTypes.FormInspectionSubject): void {
   generateContactFromContactValue(contact:Contact):FormTypes.FormContact{
     return this.formBuilder.group({
       id:contact.id!=''? contact.id :'00000000-0000-0000-0000-000000000000',
-      attention:contact.attention,
+      note:contact.note,
       cc:contact.cc,
       email:contact.email,
       fax:contact.fax,
@@ -494,6 +498,7 @@ removeOwnerContactPerson(index: number) {
     return this.formBuilder.group({
       id:inspectionSubjectId,
       name:'inspectionSubject.name',
+      itpRowNo:'inspectionSubject.itpRowNo',
       selected: new FormControl<boolean>(true)
     });
   }
@@ -529,7 +534,7 @@ if(currentSelectedOrder != null )
       name: [contact.name],
       email: [contact.email],
       homePage: [contact.homePage],
-      attention: [contact.attention],
+      note: [contact.note],
       contactType: [contact.contactType],
       mobile: [contact.mobile],
       cc: [contact.cc],
@@ -554,7 +559,7 @@ if(currentSelectedOrder != null )
       name: [contact.name],
       email: [contact.email],
       homePage: [contact.homePage],
-      attention: [contact.attention],
+      note: [contact.note],
       contactType: [contact.contactType],
       mobile: [contact.mobile],
       cc: [contact.cc],
@@ -580,7 +585,7 @@ if(currentSelectedOrder.exceptionContacts != null){
       name: [contact.name],
       email: [contact.email],
       homePage: [contact.homePage],
-      attention: [contact.attention],
+      note: [contact.note],
       contactType: [contact.contactType],
       mobile: [contact.mobile],
       cc: [contact.cc],
@@ -604,6 +609,7 @@ if(currentSelectedOrder.exceptionContacts != null){
       this.formBuilder.group({
         id: [inspectionSubject.id],
         name: [inspectionSubject.name],
+        itpRowNo:[inspectionSubject.itpRowNo],
         selected:[true]
       })
     );
@@ -643,7 +649,7 @@ if(currentSelectedOrder.exceptionContacts != null){
       name: [vendorcontact.name],
       email: [vendorcontact.email],
       homePage: [vendorcontact.homePage],
-      attention: [vendorcontact.attention],
+      note: [vendorcontact.note],
       contactType: [vendorcontact.contactType],
       mobile: [vendorcontact.mobile],
       cc: [vendorcontact.cc],

@@ -41,7 +41,7 @@ namespace Inspection.Persistence.Configurations.Entities
                 .ValueGeneratedOnAdd();
 
             //builder.Property(e => e.InspectionReportId).HasColumnName("InspectionReportId");
-            builder.HasMany(e => e.inspectionReportAttachments);
+           // builder.HasMany(e => e.inspectionReportAttachments);
         }
     }
 

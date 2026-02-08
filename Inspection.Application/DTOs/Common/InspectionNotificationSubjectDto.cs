@@ -12,5 +12,6 @@ namespace Inspection.Application.DTOs.Common
         public string? Name { get; set; }
         public int SequenceNo { get; set; }
         public Guid InspectionNotificationId { get; set; }
+        public string ITP_Row_No { get; set; } = string.Empty;
     }
 }

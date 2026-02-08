@@ -19,7 +19,11 @@
   border-collapse: collapse;
 
 }
-
+.mat-column-no {
+  width: 45px;
+  max-width: 50px;
+  text-align: center;
+}
 .header-cell {
   text-align: right;
   background-color: var(--primary-color) !important;

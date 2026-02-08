@@ -14,7 +14,7 @@ namespace Inspection.Application.DTOs.Common
         }
         public string RequestId { get; set; }
         public string CirculationId { get; set; }
-    
+        public string RevisionId { get; set; }
 
         public string SequenceNo { get; set; }
         public string InspectionNotificationId { get; set; }

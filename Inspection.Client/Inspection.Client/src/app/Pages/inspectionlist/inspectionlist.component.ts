@@ -49,14 +49,13 @@ const gridOptions: GridOptions<Inspection> = {
     { field: "requestInspectionDateEnd", width: 150 },
     { field: "requestInspectionPersianDateEnd", width: 150 },
     { field: "requestInspectionDueDate", width: 150 },
-    { field: "requestInspectionTimesInPeriod", width: 150 },
-    { field: "requestInspectionPeriodDays", width: 150 },
+    { field: "inspectionTimeComment", width: 150 },
     { field: "order.equipmentTagNo", width: 90 },
     { field: "contractShippingDueDate", width: 150 },
     { field: "actualShippingDueDate", width: 150 },
-    { field: "location.country", width: 100 },
-    { field: "location.city", width: 100 },
-    // { field: "ownerId", width: 100 }    
+    // { field: "location.country", width: 100 },
+    // { field: "location.city", width: 100 },
+    // { field: "ownerId", width: 100 }
   ],
   domLayout:'normal'
 };
@@ -132,7 +131,7 @@ public agInspection :GridApi;
     // { field: "actualShippingDueDate", width: 150 },
   //  { field: "location.country", width: 100 },
    // { field: "location.city", width: 100 },
-    // { field: "ownerId", width: 100 }    
+    // { field: "ownerId", width: 100 }
   ]
 
   constructor(private inspectionService : InspectionService) {
@@ -144,12 +143,12 @@ public agInspection :GridApi;
 
   ngOnInit(): void {
 
-    
+
     //let gridDiv = document.querySelector<HTMLElement>("#myGrid")!;
     // console.log('inspectionList oninit',document,document.querySelector,this.gridDiv);
     // console.log('sadjhjd');
     // gridApi = createGrid(this.gridDiv.nativeElement, gridOptions);
-  
+
     this.inspectionService.getInspectionList().subscribe((result)=>
     {
       this.inspections = result;
@@ -169,7 +168,7 @@ public agInspection :GridApi;
       // });
       this.dataSource.data = result;
       this.inspectionTable.dataSource = this.dataSource;
-      
+
      // this.agInspection.setGridOption("rowData",this.reorgData);
     //  console.log(result);
     //    gridApi!.setGridOption("rowData", result);
@@ -179,7 +178,7 @@ public agInspection :GridApi;
       // fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
       // .then((response) => response.json())
       // .then((data: IOlympicData[]) => gridApi!.setGridOption("rowData", data));
-    
+
     if (typeof window !== "undefined") {
       // Attach external event handlers to window so they can be called from index.html
       (<any>window).fillLarge = fillLarge;
@@ -193,14 +192,14 @@ public agInspection :GridApi;
       // this.vendorSharedData.setInspection(cRow);
 
       this.clickedRows.add(cRow);
-  
+
       if (Request != null) {
-  
+
         let w = window.open("newInspection/" + cRow.notificationNumber, "", "width:100px;height:200px;");
         //let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
        // w.opener.data = cRow;
       }
-  
+
     }
-    
+
 }

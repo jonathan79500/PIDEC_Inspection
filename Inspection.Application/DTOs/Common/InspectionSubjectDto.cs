@@ -10,5 +10,6 @@ namespace Inspection.Application.DTOs.Common
     {
         public Guid? Id { get; set; }=Guid.Empty;
         public string? Name { get; set; }
+        public string? ItpRowNo { get; set; }=string.Empty;
     }
 }

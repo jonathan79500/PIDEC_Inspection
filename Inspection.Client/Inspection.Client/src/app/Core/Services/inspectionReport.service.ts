@@ -120,12 +120,22 @@ export class InspectionReportService {
     return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionReportAPIPath+'/'+"GetSentInspectionsByUserName", body);
   }
 
+FetchFileFromServer(id:string)
+{
+  window.open(this.InspectionReportAPIPath + "/GetAttachmentById/" + id, "_blank");
+  //return this.http.get<any>(this.InspectionAPIPath+"/"+"GetAttachmentById/"+id);
+}
+   saveCirculationData(formData: FormData)
+  {
+    const headers = new HttpHeaders();
 
+     return this.http.post<Circulation>(this.InspectionReportAPIPath+'/'+"CompleteTask",formData);//,{ headers: headers });
+  }
 
    saveNewInspectionReport(formData: FormData)
   {
     const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"SaveNewInspectionReport",formData,{ headers: headers });
+     return this.http.post<{inspectionReport: InspectionReport,currentCirculation:Circulation}>(this.InspectionReportAPIPath+'/'+"SaveNewInspectionReport",formData,{ headers: headers });
   }
 
 
@@ -136,7 +146,7 @@ export class InspectionReportService {
   draftNewInspectionReport(formData: FormData)
   {
      const headers = new HttpHeaders();
-     return this.http.post<Inspection>(this.InspectionReportAPIPath+'/'+"DraftInspectionNotification",formData,{ headers: headers });
+     return this.http.post<{inspectionReport: InspectionReport,currentCirculation:Circulation}>(this.InspectionReportAPIPath+'/'+"DraftInspectionNotification",formData,{ headers: headers });
 
     //return await lastValueFrom()
   }

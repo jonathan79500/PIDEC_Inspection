@@ -16,19 +16,19 @@ namespace Inspection.Application.DTOs
 
         }
         public Guid Id { get; set; }
-        //public RequestDto? Request { get; set; }
+        public Guid RevisionId { get; set; }
         public int? ActionType { get; set; }
         public int QcActionType { get; set; }//because QC Lead befor any action related to vendor Request,
                                              //should gather all commennts and attachments belongs to technical departments and inspectors and then send that to vendor.
                                              //it should do that by approving or rejecting that circulation and its attachments
         public string? PerformerPN { get; set; }
-        public string? PerformedActionDate { get; set; }
+        public string? PerformedActionDate { get; set; } = string.Empty;
         public int? SequenceNo { get; set; }
-        public DateTime? PerformedActionDateGregorian { get; set; }
+        public DateTime? PerformedActionDateGregorian { get; set; } = DateTime.MinValue;
         public ContactDto? PerformerContactPerson { get; set; }
         public int? PerformerContactType { get; set; }
-        public DateTime? CreatedDate { set; get; }
-        public DateTime? ModifiedDate { set; get; }
+        public DateTime? CreatedDate { set; get; } = DateTime.MinValue;
+        public DateTime? ModifiedDate { set; get; } = DateTime.MinValue;
         public string? Comment { set; get; }
         public string? Description { set; get; }
         public List<AttachmentDto> Attachments { get; set; }

@@ -1,0 +1,149 @@
+
+            <div class="grid-container">
+              <div style="grid-column: span 4">
+                <label class="theLabels" style="width: 100% !important"
+                  >Inspection Period From:</label
+                >
+              </div>
+              <div style="grid-column: span 4">
+                <ng-persian-datepicker
+                  class="theInputs"
+                  style="width: 5rem !important"
+                  [uiTheme]="uiTheme"
+                  [timeEnable]="timeEnable"
+                  [timeMeridian]="timeMeridian"
+                  [uiTodayBtnEnable]="uiTodayBtnEnable"
+                  [dateFormat]="'jYYYY/jMM/jDD'"
+                  [dateInitValue]="false"
+                  (dateOnSelect)="onRequestInspectionDateStartSelect($event)"
+                >
+                  <input
+                    type="text"
+                    style="width: 5rem !important"
+                    class="theInputs"
+                    name="RequestInspectionPersianDateStart"
+                    formControlName="RequestInspectionPersianDateStart"
+                    [ngClass]="{ disabledInput: !editMode }"
+                    style="width: 5rem !important; direction: ltr"
+                  />
+                </ng-persian-datepicker>
+                <input
+                  matInput
+                  [matDatepicker]="RequestInspectionDateStartDatePicker"
+                  formControlName="RequestInspectionDateStart"
+                  name="RequestInspectionDateStartDatePicker"
+                  style="width: 5rem !important; direction: ltr"
+                  class="theInputs"
+                  placeholder="MM/DD/YYYY"
+                  [value]="
+                    inspectionForm.controls['RequestInspectionDateStart'].value
+                  "
+                  (dateChange)="setRequestInspectionPersianDateStart($event)"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="RequestInspectionDateStartDatePicker"
+                  style="width: 10px !important; height: 10px !important"
+                  (select)="setRequestInspectionPersianDateStart($event)"
+                >
+                </mat-datepicker-toggle>
+                <mat-datepicker
+                  #RequestInspectionDateStartDatePicker
+                ></mat-datepicker>
+              </div>
+
+              <div style="grid-column: span 1">
+                <label class="theLabels"> To:</label>
+              </div>
+              <div style="grid-column: span 4">
+                <ng-persian-datepicker
+                  class="theInputs"
+                  style="width: 5rem !important"
+                  [uiTheme]="uiTheme"
+                  [timeEnable]="timeEnable"
+                  [timeMeridian]="timeMeridian"
+                  [uiTodayBtnEnable]="uiTodayBtnEnable"
+                  [dateFormat]="'jYYYY/jMM/jDD'"
+                  [dateInitValue]="false"
+                  (dateOnSelect)="onRequestInspectionDateEndSelect($event)"
+                >
+                  <input
+                    type="text"
+                    style="width: 5rem !important"
+                    class="theInputs"
+                    name="RequestInspectionPersianDateEnd"
+                    formControlName="RequestInspectionPersianDateEnd"
+                    [ngClass]="{ disabledInput: !editMode }"
+                    style="width: 5rem !important; direction: ltr"
+                  />
+                </ng-persian-datepicker>
+                <input
+                  matInput
+                  [matDatepicker]="RequestInspectionDateEndDatePicker"
+                  formControlName="RequestInspectionDateEnd"
+                  name="RequestInspectionDateEndDatePicker"
+                  style="width: 5rem !important; direction: ltr"
+                  class="theInputs"
+                  placeholder="MM/DD/YYYY"
+                  [value]="
+                    inspectionForm.controls['RequestInspectionDateEnd'].value
+                  "
+                  (dateChange)="setRequestInspectionPersianDateEnd($event)"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="RequestInspectionDateEndDatePicker"
+                  style="width: 10px !important; height: 10px !important"
+                  (select)="setRequestInspectionPersianDateEnd($event)"
+                >
+                </mat-datepicker-toggle>
+                <mat-datepicker
+                  #RequestInspectionDateEndDatePicker
+                ></mat-datepicker>
+              </div>
+              <div style="grid-column: span 1; align-items: center !important">
+                <label style="width: 1rem"> = </label>
+              </div>
+              <div style="grid-column: span 1; align-items: center !important">
+                <input
+                  formControlName="RequestInspectionDueDate"
+                  style="width: 2rem"
+                />
+              </div>
+              <div style="grid-column: span 1; align-items: center !important">
+                <label style="width: 1rem"> Days </label>
+              </div>
+            </div>
+
+            <div class="grid-container">
+              <div style="grid-column: span 2; align-items: center !important">
+                <input
+                  style="width: 3rem; height: 23px"
+                  formControlName="RequestInspectionTimesInPeriod"
+                />
+              </div>
+              <div style="grid-column: span 3; align-items: center !important">
+                <label> Times in </label>
+              </div>
+              <div
+                style="
+                  grid-column: span 1;
+                  align-items: center !important;
+                  align-self: center;
+                "
+              >
+                <input
+                  style="width: 3rem; height: 23px"
+                  formControlName="RequestInspectionPeriodDays"
+                  value="7"
+                />
+              </div>
+              <div style="grid-column: span 1">
+                <label> Days </label>
+              </div>
+            </div>
+            <div class="grid-container">
+              <div style="grid-column: span 17">
+                -------------------------------------------------------------------------------------
+              </div>
+            </div>

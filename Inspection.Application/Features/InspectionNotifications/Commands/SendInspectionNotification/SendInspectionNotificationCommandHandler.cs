@@ -28,87 +28,97 @@ using System.Threading.Tasks;
 
 namespace Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
 
-public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInspectionNotificationCommand, (InspectionNotificationDto,CirculationDto)>
+public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInspectionNotificationCommand, (InspectionNotificationDto, CirculationDto)>
 {
     private readonly IInspectionNotificationRepository _inspectionNotificationRepository;
     private readonly IUserManagerRepository _userManagerRepository;
     private readonly IEDMSService _edmsService;
-  
+
     private readonly IEmailSender _emailSender;
     private readonly IPublisher _publisher;
- 
 
-    public SendInspectionNotificationCommandHandler(IInspectionNotificationRepository inspectionRequestRepository,IUserManagerRepository userManagerRepository,IEDMSService eDMSService, IEmailSender emailSender,IPublisher publisher)//,IUnitOfWork unitOfWork)
+
+    public SendInspectionNotificationCommandHandler(IInspectionNotificationRepository inspectionRequestRepository, IUserManagerRepository userManagerRepository, IEDMSService eDMSService, IEmailSender emailSender, IPublisher publisher)//,IUnitOfWork unitOfWork)
     {
-        _inspectionNotificationRepository = inspectionRequestRepository;    
+        _inspectionNotificationRepository = inspectionRequestRepository;
         _userManagerRepository = userManagerRepository;
         _emailSender = emailSender;
-        _publisher = publisher;  
+        _publisher = publisher;
         _edmsService = eDMSService;
     }
 
 
-    public async Task<(InspectionNotificationDto,CirculationDto)> Handle(SendInspectionNotificationCommand request, CancellationToken cancellationToken)
+    public async Task<(InspectionNotificationDto, CirculationDto)> Handle(SendInspectionNotificationCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateInspectionNotificationValidator();
-        var validationResult = await validator.ValidateAsync(request.CreateInspectionNotificationDto);
-        if (validationResult.IsValid != true)
-        {
-            throw new Exception();
-        }
-        
-        var InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
-        var currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
-        var project = request.ProjectDto.Adapt<Project>();
-        var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
-
-        //var newinspectionNotification = await _inspectionNotificationRepository.SendNewInspectionNotification(InspectionNotification,project);
-        //-------------------------------------------------------------------------------------------------
-
-        InspectionNotification notificationForSend = null;
-
-        string newRevisedNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result.ToString();
-        InspectionNotification.NotificationNumber = newRevisedNumber;
-          
-        //InspectionNotification.Attachments = attachments;
 
         try
         {
 
-            if (InspectionNotification.InspectionNotificationId != null && !InspectionNotification.InspectionNotificationId.Value.Equals(Guid.Empty))
+            var validator = new CreateInspectionNotificationValidator();
+            var validationResult = await validator.ValidateAsync(request.CreateInspectionNotificationDto);
+            if (validationResult.IsValid != true)
             {
-                notificationForSend =await _inspectionNotificationRepository.UpdateInspectionNotification(InspectionNotification);
+                throw new Exception();
             }
-            else
-                (notificationForSend,currentCirculation) =await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification,attachments);
 
-            //var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend, project);
-            var result =  CreateNextUsersCirculations(notificationForSend,project);
+            var InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
 
-           // notificationForSend.Circulations.AddRange(result.Result);
+            var currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
+            var project = request.ProjectDto.Adapt<Project>();
+            var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
 
-            await _inspectionNotificationRepository.UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
+            //var newinspectionNotification = await _inspectionNotificationRepository.SendNewInspectionNotification(InspectionNotification,project);
+            //-------------------------------------------------------------------------------------------------
+
+            InspectionNotification notificationForSend = null;
+            NotificationNumber newNotificationNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result;
+            string newRevisedNumber = newNotificationNumber.ToString();
+
+            InspectionNotification.NotificationNumber = newRevisedNumber;
+
+            //InspectionNotification.Attachments = attachments;
+
+            try
+            {
+
+                if (InspectionNotification.InspectionNotificationId != null && !InspectionNotification.InspectionNotificationId.Value.Equals(Guid.Empty))
+                {
+                    notificationForSend = await _inspectionNotificationRepository.UpdateInspectionNotification(InspectionNotification);
+                }
+                else
+                    (notificationForSend, currentCirculation) = await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification, newNotificationNumber, attachments);
+
+                //var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend, project);
+                var result = CreateNextUsersCirculations(notificationForSend, project);
+
+                // notificationForSend.Circulations.AddRange(result.Result);
+
+                await _inspectionNotificationRepository.UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
+            }
+            catch (Exception exp)
+            {
+
+            }
+
+            //return await Task.FromResult(InspectionNotification);
+
+            var finalInspectionNotification = notificationForSend.Adapt<InspectionNotificationDto>();
+            CirculationDto currentCirculationDto = currentCirculation.Adapt<CirculationDto>();
+            return await Task.FromResult((finalInspectionNotification, currentCirculationDto));
         }
-        catch (Exception exp)
-        {
-
+        catch (Exception exp) {
+            throw;
         }
 
-        //return await Task.FromResult(InspectionNotification);
-        var finalInspectionNotification = notificationForSend.Adapt<InspectionNotificationDto>();
-        CirculationDto currentCirculationDto= currentCirculation.Adapt<CirculationDto>();
-        return await Task.FromResult((finalInspectionNotification,currentCirculationDto));
+   //-------------------------------------------------------------------------------------------------
 
+   //await _publisher.Publish(newinspectionNotification.Events.First(),cancellationToken);
+   // await _publisher.Publish(newinspectionNotification.Events,cancellationToken);
 
-        //-------------------------------------------------------------------------------------------------
-
-        //await _publisher.Publish(newinspectionNotification.Events.First(),cancellationToken);
-        // await _publisher.Publish(newinspectionNotification.Events,cancellationToken);
-
-        var email = new Email
+   var email = new Email
         {
             To = "akbari.elahe@pidec.com",
-          //  Body = $"Email From Inspection System at {request.createInspectionNotificationDto.ProposedDate: D}",
+            //  Body = $"Email From Inspection System at {request.createInspectionNotificationDto.ProposedDate: D}",
             Subject = "Inspection Notification"
         };
 
@@ -120,10 +130,10 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
         //await _unitOfWork.SaveChangesAsync();
 
-    //    return newinspectionNotification;
+        //    return newinspectionNotification;
     }
 
-    public async void SendEmail(string link,string emailAddress)
+    public async void SendEmail(string link, string emailAddress)
     {
         var email = new Email
         {
@@ -148,9 +158,10 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
         string orderDotId = inspectionNotification.Order.EdmsId;
         List<Circulation> circulations = new List<Circulation>();
 
-       
 
-        try {
+
+        try
+        {
             List<InspectionNotificationContact> PidecContacts = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.PIDEC_TO.GetHashCode() || contact.Contact.ContactType == ContactType.PIDEC_CC.GetHashCode()).ToList();
             List<InspectionNotificationContact> PidecInspectorContacts = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.PIDEC_Inspector.GetHashCode()).ToList();
             List<InspectionNotificationContact> ThirdPartInspectorContacts = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.ThirdPart_Inspector.GetHashCode()).ToList();
@@ -217,7 +228,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 {
                     Circulation nextCirculation = Circulation.CreateForNextContact(inspectionNotification, departmentLeadsContacts.ElementAt(i).Key);
                     circulations.Add(nextCirculation);
-                   // inspectionNotification.Circulations.Add(nextCirculation);
+                    // inspectionNotification.Circulations.Add(nextCirculation);
 
                     try
                     {
@@ -242,7 +253,8 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
             return await Task.FromResult(circulations);
         }
-        catch (Exception exp) {
+        catch (Exception exp)
+        {
             return null;
         }
     }
@@ -322,10 +334,10 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
     //    }
     //}
 
-    private async Task<Dictionary<Contact,string>> GetDepartmentLeadContacts(Task<EDMSOrderDepartmentLeads> departmentLeads)
+    private async Task<Dictionary<Contact, string>> GetDepartmentLeadContacts(Task<EDMSOrderDepartmentLeads> departmentLeads)
     {
         List<Contact> PidecDepartmentContacts = new List<Contact>();
-        Dictionary<Contact,string> PidecDepartmentContacts_UserLink = new Dictionary<Contact,string>();
+        Dictionary<Contact, string> PidecDepartmentContacts_UserLink = new Dictionary<Contact, string>();
         SystematicUser originatorUser = new SystematicUser();
         SystematicUser DepartmentleadUser = new SystematicUser();
         EDMSOrderDepartmentLeads eDMSOrderDepartmentLeads = departmentLeads.Result;
@@ -346,8 +358,8 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
         List<string> RoleNames = new List<string>();
         try
         {
-            userLikeOriginator =await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.originator, 0) ;
-            userLikeDeptLead = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.leadEngineer, 0); 
+            userLikeOriginator = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.originator, 0);
+            userLikeDeptLead = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.leadEngineer, 0);
 
 
             // LeadDepartmentRole = _userManagerRepository.AddNewRole(eDMSOrderDepartmentLeads.deptCode + "_Lead", UserType.PIDECDepartmentLead.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(LeadDepartmentRole).Entity;
@@ -371,7 +383,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 // DepartmentleadUser.Roles.Add(LeadDepartmentRole);
 
                 LeadDepartmentContact = new Contact();
-                LeadDepartmentContact.Attention = "";
+                LeadDepartmentContact.Note = "";
                 LeadDepartmentContact.Address = null;
                 LeadDepartmentContact.Phone = "";
                 LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
@@ -398,7 +410,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 LeadDepartmentContact.UserId = DepartmentleadUser.Id;
 
                 PidecDepartmentContacts.Add(LeadDepartmentContact);
-                PidecDepartmentContacts_UserLink.Add(LeadDepartmentContact,DeptLeadResetPasswordLink);
+                PidecDepartmentContacts_UserLink.Add(LeadDepartmentContact, DeptLeadResetPasswordLink);
 
                 _inspectionNotificationRepository?.AddNewContact(LeadDepartmentContact);
 
@@ -406,7 +418,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
             }
             else
             {
-                var existedPidecLead =await _inspectionNotificationRepository.GetContactByUserId(userLikeDeptLead.Id);
+                var existedPidecLead = await _inspectionNotificationRepository.GetContactByUserId(userLikeDeptLead.Id);
                 PidecDepartmentContacts.Add(existedPidecLead);
 
             }
@@ -424,7 +436,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 //originatorUser.Roles.Add(originatorRole);
 
                 OriginatorContact = new Contact();
-                OriginatorContact.Attention = "";
+                OriginatorContact.Note = "";
                 OriginatorContact.Address = null;
                 OriginatorContact.Phone = "";
                 OriginatorContact.Mobile = "";

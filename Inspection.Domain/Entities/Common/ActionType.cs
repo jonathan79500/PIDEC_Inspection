@@ -10,8 +10,8 @@ namespace Inspection.Domain.Entities.Common
     {
         public ActionType() { }
         public Guid ActionTypeId { get; set; }
-        public string ActionName { get; set; } = "Save | Submit | QCControl | NewVersion | Confirm | Reject |Distribute";
-        public int Code { get; set; } // Save =0 | Submit = 1 |Confirm = 2 | Distribute = 3 | Reject = 4
+        public string ActionName { get; set; } = "NoAction | Save | Submit | QCControl | NewVersion | Confirm | Reject |Distribute";
+        public int Code { get; set; } // NoAction = -1 | Save =0 | Submit = 1 |Confirm = 2 | Distribute = 3 | Reject = 4
 
     }
 }

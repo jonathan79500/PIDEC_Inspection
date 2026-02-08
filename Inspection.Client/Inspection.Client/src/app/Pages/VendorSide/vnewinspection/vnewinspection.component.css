@@ -32,6 +32,14 @@
   box-shadow: 0 6px 12px var(--secondryform-color);
 }
 
+.report-dialog .mat-dialog-container {
+  height: auto !important;       /* grow naturally with content */
+  max-height: 10vh !important;   /* stop growing beyond 90% of viewport */
+  overflow-y: auto;              /* scroll inside if content exceeds max-height */
+  border: 2px solid black;   /* solid black border */
+  border-radius: 6px;        /* optional rounded corners */
+}
+
 /* Legend with pill style */
 legend {
   font-size: 1rem;
@@ -43,6 +51,11 @@ legend {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+.date-toggle {
+  width: 20px !important;
+  height: 20px !important;
+  align-self: center; /* Keeps it at the same level */
+}
 /* legend {
  font-size: 0.9rem;
   font-weight: 600;
@@ -184,26 +197,56 @@ mat-form-field input {
 }
 
 
+.input.xsmall,.theInputs.xsmall {
+  width: 3rem !important;
+}
 
-.input.small {
-  width: 5rem;
+.input.small,.theInputs.small {
+  width: 5rem !important;
 }
 
 
-.input.middle {
-  width: 6rem;
+.input.middle ,.theInputs.middle {
+  width: 6rem !important;
 }
-.input.large{
-  width: 8rem;
+.input.large,.theInputs.large{
+  width: 8rem !important;
 }
 
+.input.Xlarge,.theInputs.Xlarge{
+  width: 10rem !important;
+}
+
+.input.XXlarge,.theInputs.XXlarge{
+  width: 12rem !important;
+}
+.input.XXXlarge, .theInputs.XXXlarge{
+  width: 14rem !important;
+}
 .input:focus {
   border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 2px var(--secondary-color);
 }
 
-
+.special-label {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+   /* make text bold */
+  color: var(--text-color) !important;
+  /* dark slate color */
+   background-color: var(--secondryform-color) !important;
+  /* light yellow background */
+  padding: 2px 4px !important;
+  /* some spacing around text */
+  border-radius: 4px !important;
+  /* rounded corners */
+   border: 1px solid var(--toolbar-text-Color) !important;
+  /* thin border to highlight */
+  display: inline-block !important;
+  /* keeps padding and background tight */
+  margin-top: 4px !important; /* space above label */
+}
 
 .checkbox-item input[type="checkbox"] {
   margin-right: 0.1rem;
@@ -305,6 +348,8 @@ mat-form-field input {
   width: 100%;
   margin-bottom: 0.25rem;
   font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
 .file-indicator {
@@ -314,12 +359,51 @@ mat-form-field input {
 }
 
 /* Submit buttons */
+/* .submit-btn {
+  padding: 0.4rem 0.8rem !important;
+  margin: 0.2rem !important;
+  border: none !important;
+  border-radius: 4px !important;
+  font-size: 0.85rem !important;
+} */
 .submit-btn {
-  padding: 0.4rem 0.8rem;
-  margin: 0.2rem;
-  border: none;
-  border-radius: 4px;
+display: inline-block;
+ padding: 0.55rem 1.1rem;
+ /* compact size */
   font-size: 0.85rem;
+  /* smaller but bold */
+  font-weight: 700;
+  text-transform: uppercase;
+   letter-spacing: 0.04rem;
+   color: #fff;
+   background: linear-gradient(185deg,var(--row-background),var(--toolbar-text-Color));
+    border: none;
+     border-radius: 0.35rem;
+     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+     cursor: pointer;
+     transition: all 0.25s ease;
+     position: relative;
+   overflow: hidden;
+   margin-right: 0.5rem;
+}
+
+.submit-btn:hover
+{ background-color: var(--secondary-color);
+  /* lighter green accent */
+}
+.submit-btn:disabled {
+   background-color: var(--button-dark);
+    /* muted brown for disabled state */
+  color: var(--button-light);
+  /* soft contrast */
+  cursor: not-allowed;
+ }
+
+.submit-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100
 }
 
 .location-grid {
@@ -365,4 +449,110 @@ mat-form-field input {
 
 .mat-mdc-raised-button:active {
   background-color: var(--secondryform-color) !important; /* deeper tone for pressed state */
+}
+
+cdk-overlay-container
+{
+  position:  relative !important;
+}
+
+/* Target the icon inside the toggle */
+.date-toggle .mat-icon
+{ font-weight: 700;
+   /* bolder font glyph if using Material Icons font */
+    transform: scale(1.2);
+  /* enlarge slightly */
+   color: #123c69;
+   /* emphasize with your palette color */
+  }
+.mat-mdc-icon-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 48px;
+    left: 50%;
+    width: 48px;
+    transform: translate(-50%, -50%);
+    display: var(--mat-icon-button-touch-target-display);
+    font-weight: 700; /* bolder font glyph if using Material Icons font */ transform: scale(1.2); /* enlarge slightly */ color: #123c69;
+}
+
+.submit-wrapper{
+  font-style: italic;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.submit-info{
+  text-align: center !important;
+}
+.submit-card{
+  text-align: left !important;
+}
+
+.Comment-Title
+{
+  color: var(--toolbar-text-Color);
+  font-size: 1rem !important;
+  font-weight: bold;
+}
+
+@media print {
+  /* Hide everything except the form */
+  body * {
+    visibility: hidden;
+  }
+
+  #newInspection,
+  #newInspection * {
+    visibility: visible;
+  }
+
+  #newInspection {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Hide buttons, inputs, upload, datepickers */
+  button,
+  mat-datepicker-toggle,
+  input[type="file"],
+  mat-slide-toggle,
+  mat-card-actions {
+    display: none !important;
+  }
+
+  /* Replace inputs with clean text */
+  input,
+  textarea,
+  select,
+  mat-form-field {
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  /* Better typography for print */
+  label {
+    font-weight: bold;
+  }
+
+  .special-label {
+    border-bottom: 1px solid #000;
+    padding: 2px 6px;
+    display: inline-block;
+    min-width: 120px;
+  }
+
+  fieldset {
+    page-break-inside: avoid;
+    border: 1px solid #000;
+  }
+
+  legend {
+    font-weight: bold;
+    font-size: 14px;
+  }
 }

@@ -4,328 +4,257 @@
   [formGroup]="inspectionForm"
   class="inspection-form"
 >
+  <button mat-raised-button color="accent" (click)="printForm()">Print</button>
+  <button
+    mat-raised-button
+    color="primary"
+    *ngIf="isInspector"
+    (click)="openReportDialog()"
+  >
+    Write Report
+  </button>
   <fieldset class="section">
-    <legend>General Information</legend>
+    <legend style="text-align: center !important">
+      Inspection Notification
+    </legend>
     <div class="form-group">
-      <label for="notificationNumber">Notification No:</label>
-      <input
-        id="notificationNumber"
+      <label for="notificationNumber">Inspection Notification No:</label>
+      <label class="special-label">{{
+        inspectionForm.get("mainNumber")?.value
+      }}</label>
+      <Label style="padding: 1.2rem !important"> Rev: </Label>
+      <label class="special-label">{{
+        inspectionForm.get("revNumber")?.value
+      }}</label>
+      <!-- <input
+        id="mainNumber"
         type="text"
-        formControlName="notificationNumber"
-        class="input"
+        formControlName="mainNumber"
+        class="input XXlarge"
       />
+      <Label style="padding: 1.2rem !important"> Rev: </Label>
+      <input
+        id="revisionNumber"
+        type="text"
+        formControlName="revNumber"
+        class="input small"
+      /> -->
     </div>
 
     <div class="form-group-inline">
       <label for="issueDate">Issue Date:</label>
-      <ng-persian-datepicker
-        class="date-toggle"
-        [uiTheme]="uiTheme"
-        [timeEnable]="timeEnable"
-        [timeMeridian]="timeMeridian"
-        [uiTodayBtnEnable]="uiTodayBtnEnable"
-        [dateFormat]="'jYYYY/jMM/jDD'"
-        [dateInitValue]="false"
-        (dateOnSelect)="onIssueDateSelect($event)"
-        [matTooltip]="formattedPersianIssueDate"
-        matTooltipPosition="above"
-        [ngClass]="{ 'no-click': !editMode }"
-      >
-        <input
-          type="text"
-          class="theInputs"
-          name="persianIssueDate"
-          formControlName="persianIssueDate"
-          [ngClass]="{ 'no-click': !editMode }"
-          style="width: 10rem !important; direction: ltr"
-        />
-      </ng-persian-datepicker>
-      <!-- Gregorian date -->
-      <input
-        matInput
-        [matDatepicker]="IssueDatepicker"
-        formControlName="issueDate"
-        name="IssueDatepicker"
-        class="theInputs"
-        placeholder="MM/DD/YYYY"
-        [value]="inspectionForm?.controls?.
-                    ['issueDate']
-                    .value
-                    "
-        (dateChange)="setPersianIssueDate($event)"
-        [disabled]="!editMode"
-        style="width: 10rem !important; direction: ltr"
-        [matTooltip]="formattedGregorianIssueDate"
-        matTooltipPosition="above"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        class="date-toggle"
-        [disabled]="!editMode"
-        [for]="IssueDatepicker"
-        (select)="setPersianIssueDate($event)"
-      >
-      </mat-datepicker-toggle>
-      <mat-datepicker #IssueDatepicker></mat-datepicker>
+      <label class="special-label">{{ formattedPersianIssueDate }}</label>
+      <label class="special-label">{{ formattedGregorianIssueDate }}</label>
     </div>
 
     <div class="form-group-inline">
       <label>Inspection Period:</label>
       <div class="form-group">
         <label>From:</label>
-        <ng-persian-datepicker
-          class="date-toggle"
-          [uiTheme]="uiTheme"
-          [timeEnable]="timeEnable"
-          [timeMeridian]="timeMeridian"
-          [uiTodayBtnEnable]="uiTodayBtnEnable"
-          [dateFormat]="'jYYYY/jMM/jDD'"
-          [dateInitValue]="false"
-          (dateOnSelect)="onRequestInspectionDateStartSelect($event)"
-          [matTooltip]="formattedPersianReqStartDate"
-          matTooltipPosition="above"
-          [ngClass]="{ 'no-click': !editMode }"
-        >
-          <input
-            type="text"
-            class="theInputs"
-            [disabled]="!editMode"
-            name="RequestInspectionPersianDateStart"
-            formControlName="RequestInspectionPersianDateStart"
-            [ngClass]="{ 'no-click': !editMode }"
-            style="width: 6rem !important; direction: ltr"
-          />
-        </ng-persian-datepicker>
-
         <input
           matInput
           [matDatepicker]="RequestInspectionDateStartDatePicker"
-          formControlName="RequestInspectionDateStart"
+          formControlName="requestInspectionDateStart"
           name="RequestInspectionDateStartDatePicker"
           class="theInputs"
           placeholder="MM/DD/YYYY"
-          [value]="inspectionForm?.controls?.['RequestInspectionDateStart']
+          [value]="inspectionForm?.controls?.['requestInspectionDateStart']
                         .value
                     "
           (dateChange)="setRequestInspectionPersianDateStart($event)"
           style="width: 6rem !important; direction: ltr"
-          [disabled]="!editMode"
+          [disabled]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
           [matTooltip]="formattedGregorianReqStartDate"
           matTooltipPosition="above"
         />
         <mat-datepicker-toggle
           matSuffix
           class="date-toggle"
-          [disabled]="!editMode"
+          [disabled]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
           [for]="RequestInspectionDateStartDatePicker"
           (select)="setRequestInspectionPersianDateStart($event)"
         >
         </mat-datepicker-toggle>
-        <mat-datepicker #RequestInspectionDateStartDatePicker></mat-datepicker>
+        <mat-datepicker
+          #RequestInspectionDateStartDatePicker
+          panelClass="custom-datepicker"
+        ></mat-datepicker>
+        <label class="special-label">{{ formattedPersianReqStartDate }}</label>
       </div>
       <div *ngIf="inspectionForm" class="form-group">
         <label class="theLabels">To:</label>
-        <ng-persian-datepicker
-          class="date-toggle"
-          [uiTheme]="uiTheme"
-          [timeEnable]="timeEnable"
-          [timeMeridian]="timeMeridian"
-          [uiTodayBtnEnable]="uiTodayBtnEnable"
-          [dateFormat]="'jYYYY/jMM/jDD'"
-          [dateInitValue]="false"
-          (dateOnSelect)="onRequestInspectionDateEndSelect($event)"
-          [matTooltip]="formattedPersianReqEndDate"
+        <input
+          matInput
+          [matDatepicker]="RequestInspectionDateEndDatePicker"
+          formControlName="requestInspectionDateEnd"
+          name="RequestInspectionDateEndDatePicker"
+          class="theInputs"
+          placeholder="MM/DD/YYYY"
+          [value]="inspectionForm.controls['requestInspectionDateEnd'].value"
+          (dateChange)="setRequestInspectionPersianDateEnd($event)"
+          style="width: 6rem !important; direction: ltr"
+          [disabled]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
+          [matTooltip]="formattedGregorianReqEndDate"
           matTooltipPosition="above"
-          [ngClass]="{ 'no-click': !editMode }"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="RequestInspectionDateEndDatePicker"
+          [disabled]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
+          class="date-toggle"
+          (select)="setRequestInspectionPersianDateEnd($event)"
         >
-          <input
-            type="text"
-            class="theInputs"
-            name="RequestInspectionPersianDateEnd"
-            formControlName="RequestInspectionPersianDateEnd"
-            [disabled]="!editMode"
-            [ngClass]="{ 'no-click': !editMode }"
-            style="width: 6rem !important; direction: ltr"
-          />
-        </ng-persian-datepicker>
-        <div *ngIf="inspectionForm" class="date-picker-container">
-          <input
-            matInput
-            [matDatepicker]="RequestInspectionDateEndDatePicker"
-            formControlName="RequestInspectionDateEnd"
-            name="RequestInspectionDateEndDatePicker"
-            class="theInputs"
-            placeholder="MM/DD/YYYY"
-            [value]="inspectionForm.controls['RequestInspectionDateEnd'].value"
-            (dateChange)="setRequestInspectionPersianDateEnd($event)"
-            style="width: 6rem !important; direction: ltr"
-            [disabled]="!editMode"
-            [matTooltip]="formattedGregorianReqEndDate"
-            matTooltipPosition="above"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="RequestInspectionDateEndDatePicker"
-            [disabled]="!editMode"
-            class="date-toggle"
-            (select)="setRequestInspectionPersianDateEnd($event)"
-          >
-          </mat-datepicker-toggle>
-          <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
-        </div>
+        </mat-datepicker-toggle>
+        <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
+        <!-- </div> -->
+        <label class="special-label">{{ formattedPersianReqEndDate }}</label>
       </div>
       <div class="form-group">
         <div class="columns date-picker-wrapper">
           <div class="date-picker-container">
-            <label class="theLabels inline-label">=</label>
+            <label
+              class="theLabels inline-label"
+              style="
+                padding-top: 0.5rem !important;
+                padding-right: 0.5rem !important;
+              "
+              >=</label
+            >
             <input
-              formControlName="RequestInspectionDueDate"
+              formControlName="requestInspectionDueDate"
               style="width: 5rem !important; direction: ltr"
             />
             <label class="theLabels inline-label">Days</label>
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <div class="columns">
-          <div class="date-picker-container">
-            <input
-              class="theInputs"
-              style="width: 3rem"
-              formControlName="RequestInspectionTimesInPeriod"
-            />
-            <label class="theLabels"> Times in </label>
-            <input
-              class="theInputs"
-              style="width: 3rem"
-              formControlName="RequestInspectionPeriodDays"
-              value="7"
-            />
-            <label class="theLabels"> Days </label>
-          </div>
-        </div>
-      </div>
+
       <!-- </div> -->
     </div>
-
-    <fieldset class="section" formArrayName="inspectionTypes">
-      <legend>Inspection Types</legend>
-      <div class="checkbox-list">
-        <div
-          *ngFor="let type of inspectionTypesFormArray.controls; let i = index"
-          [formGroup]="type"
-          class="checkbox-item"
-        >
+    <div class="form-group-inline">
+      <label>Inspection Date and Time Comments:</label>
+      <input
+        class="input wide"
+        style="width: 31.5rem !important"
+        formControlName="inspectionTimeComment"
+      />
+    </div>
+    <div class="subSection">
+      <fieldset class="section">
+        <legend>Order</legend>
+        <div class="form-group-inline">
+          <div class="columns" formGroupName="order">
+            <label for="RequisitionNO" class="theLabels">Order NO :</label>
+            <input type="hidden" formControlName="id" />
+            <input
+              id="RequisitionTitle"
+              class="theInputs middle"
+              formControlName="title"
+            />
+          </div>
+        </div>
+        <div class="form-group-inline">
+          <label for="Order Title" class="theLabels">Order Title :</label>
           <input
-            type="checkbox"
-            formControlName="selected"
-            (change)="onInspectionTypeChange(i)"
+            id="RequisitionNO"
+            class="theInputs"
+            formControlName="orderName"
           />
-          {{ type.get("name")?.value }}
+          <label for="EQUNO" class="theLabels">EQUIPMENT/ITEM/TAG NO. :</label>
+          <input
+            id="EQUNO"
+            class="theInputs"
+            formControlName="equipmentTagNo"
+          />
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="section">
+      <legend>Inspection Actions/Types</legend>
+      <div class="checkbox-list">
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Witness"
+              formControlName="inspectionAction"
+            />
+            Witness
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Hold"
+              formControlName="inspectionAction"
+            />
+            Hold
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Review"
+              formControlName="inspectionAction"
+            />
+            Review
+          </label>
         </div>
       </div>
-      <div class="add-item">
-        <input
-          type="text"
-          [(ngModel)]="newInspectionType"
-          placeholder="New Inspection Type"
-          [ngModelOptions]="{ standalone: true }"
-          [hidden]="!editMode"
-        />
-        <button
-          type="button"
-          class="btn-primary"
-          (click)="addInspectionType()"
-          [hidden]="!editMode"
-        >
-          +
-        </button>
+      <div formArrayName="inspectionTypes">
+        <div class="checkbox-list">
+          <div
+            *ngFor="
+              let type of inspectionTypesFormArray.controls;
+              let i = index
+            "
+            [formGroup]="type"
+            class="checkbox-item"
+          >
+            <input
+              type="checkbox"
+              formControlName="selected"
+              (change)="onInspectionTypeChange(i)"
+            />
+            {{ type.get("name")?.value }}
+          </div>
+        </div>
+        <div class="add-item">
+          <input
+            type="text"
+            [(ngModel)]="newInspectionType"
+            placeholder="New Inspection Type"
+            [ngModelOptions]="{ standalone: true }"
+            [hidden]="
+              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            "
+          />
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="addInspectionType()"
+            [hidden]="
+              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            "
+          >
+            +
+          </button>
+        </div>
       </div>
     </fieldset>
 
     <!-- <fieldset class="section" formArrayName="inspectionSubjects">
       <legend>Inspection Subjects</legend>
-      <div class="checkbox-list">
-        <div
-          *ngFor="
-            let subject of inspectionSubjectsFormArray.controls;
-            let i = index
-          "
-          [formGroup]="subject"
-          class="checkbox-item"
-        >
-          <input
-            type="checkbox"
-            formControlName="selected"
-            (change)="onInspectionSubjectChange(i)"
-          />
-          {{ subject.get("name")?.value }}
-        </div>
-      </div>
-      <div class="add-item">
-        <input
-          type="text"
-          [(ngModel)]="newInspectionSubject"
-          placeholder="New Inspection Subject"
-          [ngModelOptions]="{ standalone: true }"
-        />
-        <button
-          type="button"
-          class="btn-primary"
-          (click)="addInspectionSubject()"
-        >
-          +
-        </button>
-      </div>
-    </fieldset> -->
-    <!-- <fieldset class="section" formArrayName="inspectionSubjects">
-      <legend>Inspection Subjects</legend>
-      <div class="inline-add">
-
-        <mat-form-field class="combo">
-          <input
-            type="text"
-            matInput
-            placeholder="Select or type subject"
-            [formControl]="subjectCtrl"
-            [matAutocomplete]="auto"
-          />
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let subj of allSubjects" [value]="subj">
-              {{ subj }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="addInspectionSubject()"
-        >
-          +
-        </button>
-      </div>
-
-      <div class="checkbox-list">
-        <div
-          *ngFor="
-            let subject of inspectionSubjectsFormArray.controls;
-            let i = index
-          "
-          [formGroup]="subject"
-          class="checkbox-item"
-        >
-          <mat-checkbox formControlName="selected" (change)="toggleSubject(i)">
-            {{ subject.get("name")?.value }}
-          </mat-checkbox>
-        </div>
-      </div>
-    </fieldset> -->
-    <fieldset class="section" formArrayName="inspectionSubjects">
-      <legend>Inspection Subjects</legend>
 
       <div class="subjects-row">
-        <!-- Combo box with autocomplete -->
+
         <mat-form-field class="combo">
           <input
             type="text"
@@ -333,24 +262,29 @@
             placeholder="Select or type subject"
             [formControl]="subjectCtrl"
             [matAutocomplete]="auto"
+            [disabled]="!editMode"
           />
           <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let subj of allSubjects" [value]="subj">
+            <mat-option
+              [disabled]="!editMode"
+              *ngFor="let subj of allSubjects"
+              [value]="subj"
+            >
               {{ subj }}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
 
-        <!-- Add button -->
         <button
           mat-raised-button
           color="primary"
           (click)="addInspectionSubject()"
+          [disabled]="!editMode"
         >
           +
         </button>
 
-        <!-- Checkbox chips inline -->
+
         <div class="checkbox-list">
           <div
             *ngFor="
@@ -369,22 +303,151 @@
           </div>
         </div>
       </div>
+    </fieldset> -->
+
+    <fieldset class="section" formArrayName="inspectionSubjects">
+      <legend>Inspection Notification Subjects</legend>
+      <div style="max-height: 10rem !important; overflow-y: scroll">
+        <div
+          [hidden]="editMode"
+          *ngFor="
+            let insSubject of inspectionSubjectsFormArray.controls;
+            let i = index
+          "
+          [formGroup]="insSubject"
+          class="contact-row"
+        >
+          <label class="special-label" style="width: 10vw !important">{{
+            insSubject.get("name")?.value
+          }}</label>
+          <label class="special-label" style="width: 6vw !important">{{
+            insSubject.get("itpRowNo")?.value
+          }}</label>
+        </div>
+      </div>
+      <div style="max-height: 10rem !important; overflow-y: scroll">
+        <div
+          [hidden]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
+          *ngFor="
+            let insSubject of inspectionSubjectsFormArray.controls;
+            let i = index
+          "
+          [formGroup]="insSubject"
+          class="contact-row"
+        >
+          <!-- <input
+          formControlName="name"
+          placeholder="Name"
+          class="input xxlarge"
+        /> -->
+          <mat-form-field class="combo">
+            <input
+              type="text"
+              matInput
+              placeholder="Select or type subject"
+              [formControl]="subjectCtrl"
+              [matAutocomplete]="auto"
+              [disabled]="
+                !editMode ||
+                (editMode && this.currentCirculation.sequenceNo != 0)
+              "
+              (change)="
+                changeSubj(
+                  subjectCtrl.value?.trim(),
+                  insSubject.get('id').value
+                )
+              "
+            />
+            <mat-autocomplete #auto="matAutocomplete" formControlName="subject">
+              <mat-option
+                [disabled]="
+                  !editMode ||
+                  (editMode && this.currentCirculation.sequenceNo != 0)
+                "
+                *ngFor="let subj of allSubjects"
+                [value]="subj"
+              >
+                {{ subj }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <input
+            type="text"
+            matInput
+            [formControl]="itpRowNoCtrl"
+            placeholder="ITP Row Number"
+            class="input middle"
+            (change)="
+              changeITPRow(
+                itpRowNoCtrl.value?.trim(),
+                insSubject.get('id')?.value
+              )
+            "
+          />
+
+          <button
+            type="button"
+            class="btn-danger"
+            [disabled]="
+              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            "
+            [hidden]="
+              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            "
+            (click)="removeInsSubject(insSubject)"
+          >
+            ✖
+          </button>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="addInspectionSubject()"
+        [hidden]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+      >
+        Add New Subject
+      </button>
     </fieldset>
 
     <!-- Contacts -->
-    <fieldset class="section" formArrayName="pidecContacts">
-      <legend>Contacts</legend>
+    <fieldset class="section" formArrayName="contacts">
+      <legend>Contact Persons</legend>
       <div
-        *ngFor="let contact of pidecContactsControls; let i = index"
+        [hidden]="editMode"
+        *ngFor="let contact of contactsControls; let i = index"
         [formGroup]="contact"
         class="contact-row"
       >
+        <input class="theInputs large" formControlName="name" />
+
+        <input class="theInputs large" formControlName="phone" />
+
+        <input class="theInputs large" formControlName="mobile" />
+        <input class="theInputs xlarge" formControlName="email" />
+        <input class="theInputs large" formControlName="cc" />
+      </div>
+
+      <div
+        [hidden]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+        *ngFor="let contact of contactsControls; let i = index"
+        [formGroup]="contact"
+        class="contact-row"
+      >
+        <select>
+          <option value="none">------</option>
+          <option value="vendor">Vendor</option>
+          <option value="sub_vendor">sub_Vendor</option>
+        </select>
         <input formControlName="name" placeholder="Name" class="input middle" />
-        <input
-          formControlName="email"
-          placeholder="Email"
-          class="input large"
-        />
+
         <input
           formControlName="phone"
           placeholder="Phone"
@@ -396,71 +459,136 @@
           class="input middle"
         />
         <input
+          formControlName="email"
+          placeholder="Email"
+          class="input large"
+        />
+        <input
+          formControlName="cc"
+          placeholder="Description"
+          class="input middle"
+        />
+        <!-- <input
           formControlName="attention"
           placeholder="Attention"
           class="input middle"
         />
-        <input formControlName="cc" placeholder="CC" class="input large" />
+        <input formControlName="cc" placeholder="CC" class="input large" /> -->
         <!-- <input formControlName="fax" placeholder="Fax" class="input small" /> -->
         <button
           type="button"
           class="btn-danger"
+          [disabled]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
+          [hidden]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
           (click)="removeToContact(contact)"
         >
           ✖
         </button>
       </div>
-      <button type="button" class="btn-secondary" (click)="addNewToContact()">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="addNewToContact()"
+        [disabled]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+        [hidden]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+      >
         Add Contact
       </button>
     </fieldset>
-    <div class="subSection">
-      <fieldset
-        style="flex: 2; white-space: nowrap"
-        [formGroup]="inspectionForm.controls.order"
+
+    <!-- Contacts -->
+    <fieldset class="section" formArrayName="locations">
+      <legend>Location/Locations Of Inspection</legend>
+
+      <div
+        [hidden]="editMode"
+        *ngFor="let location of inspectionLocations; let i = index"
+        [formGroup]="location"
+        class="contact-row"
       >
-        <div class="row">
-          <!-- <div class="columns">
-            <label for="RequisitionNO" class="theLabels"
-              >Requisition NO. :</label
-            >
-            <input type="hidden" formControlName="id" />
-            <input id="RequisitionNO" class="theInputs" formControlName="no" />
-          </div>
-        </div>
-        <div class="rows"> -->
-          <div class="col-md-2">
-            <label for="RequisitionTitle" class="theLabels"
-              >Requisition Title :</label
-            >
-          </div>
-          <div class="col-md-4" style="float: left">
-            <input
-              id="RequisitionTitle"
-              class="theInputs"
-              formControlName="title"
-              style="width: 70%"
-            />
-          </div>
-          <div class="col-md-2">
-            <label for="EQUNO" class="theLabels"
-              >EQUIPMENT /ITEM /TAG NO. :</label
-            >
-          </div>
-          <div class="col-md-4" style="float: left">
-            <input
-              id="EQUNO"
-              class="theInputs"
-              formControlName="equipmentTagNo"
-              style="width: 70%"
-            />
-          </div>
-        </div>
-      </fieldset>
-    </div>
+        <input class="theInputs large" formControlName="country" />
+        <input class="theInputs large" formControlName="state" />
+
+        <input class="theInputs large" formControlName="city" />
+        <input class="theInputs large" formControlName="streetLine1" />
+
+        <input class="theInputs large" formControlName="streetLine2" />
+
+        <input class="theInputs large" formControlName="zipCode" />
+      </div>
+
+      <div
+        [hidden]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+        *ngFor="let location of inspectionLocations; let i = index"
+        [formGroup]="location"
+        class="contact-row"
+      >
+        <input
+          formControlName="country"
+          placeholder="Country"
+          class="input middle"
+        />
+
+        <input
+          formControlName="state"
+          placeholder="State"
+          class="input middle"
+        />
+        <input formControlName="city" placeholder="City" class="input middle" />
+        <input
+          formControlName="streetLine1"
+          placeholder="Street Line 1"
+          class="input large"
+        />
+        <input
+          formControlName="streetLine2"
+          placeholder="street Line 2"
+          class="input middle"
+        />
+        <input
+          formControlName="zipCode"
+          placeholder="zipCode"
+          class="input middle"
+        />
+        <!--<input formControlName="cc" placeholder="CC" class="input large" /> -->
+        <!-- <input formControlName="fax" placeholder="Fax" class="input small" /> -->
+        <button
+          type="button"
+          class="btn-danger"
+          [disabled]="!editMode"
+          [hidden]="!editMode"
+          (click)="removeAddress(location)"
+        >
+          ✖
+        </button>
+      </div>
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="addNewAddress()"
+        [disabled]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+        [hidden]="
+          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+        "
+      >
+        Add New Location
+      </button>
+    </fieldset>
 
     <!-- Location -->
-    <fieldset class="section" [formGroup]="inspectionForm.controls.location">
+    <!-- <fieldset class="section" [formGroup]="inspectionForm.controls.location">
       <legend>Location Of Inspection</legend>
 
       <div class="location-grid">
@@ -483,7 +611,7 @@
           <input formControlName="address" class="input wide" />
         </div>
       </div>
-    </fieldset>
+    </fieldset> -->
 
     <!-- <div class="subSection">
       <fieldset
@@ -696,13 +824,17 @@
       </div>
     </div> -->
     <div class="upload-card">
+      <legend>Vendor DOC. For Execution Of Applied Inspection</legend>
+
       <div class="upload-body">
         <input
           type="file"
           multiple
           (change)="onFilesPicked($event)"
           class="upload-input"
-          [hidden]="!editMode"
+          [hidden]="
+            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          "
         />
       </div>
       <table class="upload-table" *ngIf="attachments.length > 0">
@@ -710,6 +842,8 @@
           <tr>
             <th>File Name</th>
             <th>Description</th>
+            <th>DOC. NO.</th>
+            <th>STATUS</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -729,16 +863,57 @@
                 type="text"
                 [(ngModel)]="file.description"
                 placeholder="Enter description"
-                [disabled]="!editMode"
+                [disabled]="
+                  !editMode ||
+                  (editMode && this.currentCirculation.sequenceNo != 0)
+                "
                 [ngModelOptions]="{ standalone: true }"
               />
+            </td>
+            <td>
+              <input
+                type="text"
+                [(ngModel)]="file.docNo"
+                placeholder="Enter Document Number"
+                [disabled]="
+                  !editMode ||
+                  (editMode && this.currentCirculation.sequenceNo != 0)
+                "
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </td>
+            <td>
+              <select
+                [(ngModel)]="file.status"
+                placeholder="Enter Status"
+                [disabled]="
+                  !editMode ||
+                  (editMode && this.currentCirculation.sequenceNo != 0)
+                "
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <option value="">--</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="NOT_KNOWN">NOT_KNOWN</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+              <!-- <input
+                type="text"
+                [(ngModel)]="file.status"
+                placeholder="Enter Status"
+                [disabled]="!editMode"
+                [ngModelOptions]="{ standalone: true }"
+              /> -->
             </td>
             <td>
               <button
                 type="button"
                 class="delete-btn"
                 (click)="removeFile(i)"
-                [hidden]="!editMode"
+                [hidden]="
+                  !editMode ||
+                  (editMode && this.currentCirculation.sequenceNo != 0)
+                "
               >
                 Delete
               </button>
@@ -748,16 +923,19 @@
       </table>
     </div>
     <!-- Signature area (shown after submit) -->
-    <div class="submit-wrapper" *ngIf="!editMode">
+    <div
+      class="submit-wrapper"
+      *ngIf="!editMode || (editMode && this.currentCirculation.sequenceNo != 0)"
+    >
       <div class="submit-card">
         <div class="submit-info">
           <span class="submit-date">
             {{
-              inspectionForm.get("ModifiedDate")?.value | date : "yyyy-MM-dd"
+              inspectionForm.get("modifiedDate")?.value | date : "yyyy-MM-dd"
             }}
           </span>
           <span class="submit-user">
-            {{ inspectionForm.get("ModifiedBy")?.value }}
+            {{ inspectionForm.get("modifiedBy")?.value }}
           </span>
           <span class="submit-status">Submitted ✔</span>
         </div>
@@ -765,7 +943,10 @@
     </div>
 
     <!-- Button area (shown in edit mode) -->
-    <div class="submit-wrapper" *ngIf="editMode">
+    <div
+      class="submit-wrapper"
+      *ngIf="editMode && this.currentCirculation!.sequenceNo == 0"
+    >
       <div class="submit-card">
         <button
           type="submit"
@@ -774,6 +955,7 @@
         >
           Submit
         </button>
+
         <button
           type="submit"
           (click)="DraftNewInspection()"
@@ -818,21 +1000,13 @@
     >
       <!-- Card header -->
       <mat-card-header>
-        <mat-card-title>
-          {{ circulation.performerContactPerson?.name }}'s Comment
+        <mat-card-title class="Comment-Title">
+          {{ circulation.performerContactPerson?.name }}
         </mat-card-title>
       </mat-card-header>
 
       <!-- Card content -->
       <mat-card-content>
-        <!-- Comment input -->
-        <!-- <input
-          [(ngModel)]="circulation.comment"
-          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
-          class="comment-body"
-          type="text"
-          placeholder="please insert your comment before be late"
-        /> -->
         <textarea
           [(ngModel)]="circulation.comment"
           [disabled]="
@@ -848,29 +1022,26 @@
           multiple
           (change)="onCommentFilesPicked($event, circulation)"
           class="upload-input"
-          [hidden]="!editMode"
+          [hidden]="
+            !(circulation | isActiveForUser : currentCirculation) || !editMode
+          "
         />
-        <!-- <button
-          mat-stroked-button
-          color="primary"
-          (click)="onUploadFile(circulation)"
-          *ngIf="shouldShowButton(circulation, 'upload')"
-        >
-          <mat-icon>attach_file</mat-icon> Upload File
-        </button> -->
-
-        <!-- Uploaded files indicator -->
-        <!-- <div *ngIf="circulation.attachments?.length > 0" class="file-indicator">
-          📎 {{ circulation.attachments.length }} file(s) uploaded
-        </div> -->
 
         <!-- Optional: show filenames as chips -->
-        <mat-chip-listbox>
+        <mat-chip-listbox
+          *ngIf="
+            circulation.performerContactPerson != undefined &&
+            circulation.performerContactPerson != null &&
+            (this.currentUser.id == circulation.performerContactPerson?.id ||
+              this.currentUser.userType == 4 ||
+              this.currentUser.userType == 7)
+          "
+        >
           <ng-container *ngFor="let file of circulation.attachments">
             <mat-chip *ngIf="file">
               <!-- {{ file?.name }} -->
               <a
-                [href]="file.downloadUrl"
+                [href]="file?.downloadUrl"
                 (click)="fetchFile(file.id)"
                 target="_blank"
                 >{{ file?.name }}</a
@@ -901,6 +1072,40 @@
           Reject
         </button>
       </mat-card-actions>
+
+      <div
+        class="submit-wrapper"
+        *ngIf="
+          circulation.performedActionDateGregorian.toString().trim() !=
+          '0001-01-01T00:00:00'
+        "
+      >
+        <div class="submit-card">
+          <div class="submit-info">
+            <span class="submit-status"
+              >{{
+                circulation.actionType == 0 ||
+                circulation.actionType == null ||
+                circulation.actionType == undefined ||
+                circulation.actionType == -1
+                  ? "✖ Rejected "
+                  : circulation.actionType == 6
+                  ? "↩ Backwarded"
+                  : "✔ Approved"
+              }}
+            </span>
+            <span class="submit-user">
+              {{ "By " + circulation.performerContactPerson.name }}
+            </span>
+            <br />
+            <span class="submit-date">
+              {{
+                circulation.performedActionDateGregorian | date : "yyyy-MM-dd"
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
     </mat-card>
   </div>
 </div>

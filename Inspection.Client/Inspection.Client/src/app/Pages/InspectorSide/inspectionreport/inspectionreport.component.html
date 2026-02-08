@@ -1,0 +1,292 @@
+<!-- report-form.component.html -->
+<h3 mat-dialog-title class="report-Title">Report #{{ reportNumber }}</h3>
+
+<form mat-dialog-content [formGroup]="reportForm" class="report-form">
+  <!-- Notification info -->
+  <div class="form-info">
+    <label>Notification Number:</label>
+    <span class="readonly">{{ data.notificationNumber }}</span>
+
+    <label>Date of Notification:</label>
+    <span class="readonly">{{
+      data.notificationDate | date : "yyyy-MM-dd"
+    }}</span>
+
+    <label for="inspectionDate">Inspection Date:</label>
+    <input id="inspectionDate" type="date" formControlName="inspectionDate" />
+  </div>
+
+  <!-- <mat-form-field appearance="fill" class="comment-field full-width"> -->
+  <mat-label>Comment</mat-label>
+  <textarea
+    matInput
+    formControlName="reportNotes"
+    rows="6"
+    placeholder="Write your report comment here..."
+    class="comment-textarea"
+  ></textarea>
+  <mat-hint align="end">Max 500 characters</mat-hint>
+  <!-- </mat-form-field> -->
+
+  <div class="section" formArrayName="inspectors">
+    <legend>Persons presented In Inspection</legend>
+    <div
+      [hidden]="editMode"
+      *ngFor="let person of personsControls; let i = index"
+      [formGroup]="person"
+      class="contact-row"
+    >
+      <input class="theInputs large" formControlName="name" />
+      <input class="theInputs large" formControlName="position" />
+      <input class="theInputs large" formControlName="phone" />
+      <input class="theInputs xlarge" formControlName="email" />
+    </div>
+
+    <div
+      [hidden]="!editMode"
+      *ngFor="let person of personsControls; let i = index"
+      [formGroup]="person"
+      class="contact-row"
+    >
+      <select>
+        <option value="none">------</option>
+        <option value="vendor">Vendor</option>
+        <option value="sub_vendor">sub_Vendor</option>
+        <option value="owner">owner</option>
+        <option value="owner">MC</option>
+        <option value="SPInspector">SecondPart_Inspector</option>
+        <option value="TPInspector">ThirdPart_Inspector</option>
+      </select>
+      <input formControlName="name" placeholder="Name" class="input middle" />
+
+      <input
+        formControlName="position"
+        placeholder="position"
+        class="input middle"
+      />
+      <input formControlName="phone" placeholder="phone" class="input middle" />
+      <input formControlName="email" placeholder="email" class="input large" />
+
+      <button
+        type="button"
+        class="btn-danger"
+        [disabled]="!editMode"
+        [hidden]="!editMode"
+        (click)="removePresentPerson(person)"
+      >
+        ✖
+      </button>
+    </div>
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="addNewPresentPerson()"
+      [disabled]="!editMode"
+      [hidden]="!editMode"
+    >
+      Add Person who was Present in Inspection
+    </button>
+  </div>
+</form>
+
+<!-- File attachments -->
+<div class="upload-card">
+  <legend>Inspector DOC. For Executed Of Applied Inspection</legend>
+
+  <div class="upload-body">
+    <input
+      type="file"
+      multiple
+      (change)="onFilesPicked($event)"
+      class="upload-input"
+      [hidden]="!editMode"
+    />
+  </div>
+  <table class="upload-table" *ngIf="attachments.length > 0">
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Description</th>
+        <th>DOC. NO.</th>
+        <th>STATUS</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let file of attachments; let i = index">
+        <td>
+          <a
+            [href]="file.downloadUrl"
+            (click)="fetchFile(file.id)"
+            target="_blank"
+          >
+            {{ file.name }}
+          </a>
+        </td>
+        <td>
+          <input
+            type="text"
+            [(ngModel)]="file.description"
+            placeholder="Enter description"
+            [disabled]="!editMode"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            [(ngModel)]="file.docNo"
+            placeholder="Enter Document Number"
+            [disabled]="!editMode"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+        <td>
+          <select
+            [(ngModel)]="file.status"
+            placeholder="Enter Status"
+            [disabled]="!editMode"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="">--</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="NOT_KNOWN">NOT_KNOWN</option>
+            <option value="REJECTED">REJECTED</option>
+          </select>
+        </td>
+        <td>
+          <button
+            type="button"
+            class="delete-btn"
+            (click)="removeFile(i)"
+            [hidden]="!editMode"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Action types -->
+<!-- <fieldset class="section">
+  <legend>Action Types</legend>
+  <div class="checkbox-list two-columns">
+    <mat-checkbox
+      *ngFor="let action of actionTypes; let i = index"
+      [formControlName]="'action_' + i"
+      class="action-checkbox"
+    >
+      {{ action }}
+    </mat-checkbox>
+  </div>
+</fieldset> -->
+<fieldset class="section">
+  <legend>Action Types</legend>
+  <div class="checkbox-list two-columns">
+    <mat-checkbox
+      *ngFor="let action of actionTypes; let i = index"
+      (ngModel)="(action)"
+      class="action-checkbox"
+    >
+      {{ action }}
+    </mat-checkbox>
+  </div>
+</fieldset>
+
+<div mat-dialog-actions align="end" class="mat-actions">
+  <button mat-raised-button color="primary" (click)="submitReport()">
+    Submit
+  </button>
+  <button mat-button mat-dialog-close (click)="close()">Cancel</button>
+</div>
+
+<div class="comment-section">
+  <!--*ngIf="currentCirculation">-->
+  <!-- Toggle to show/hide all comments -->
+  <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle>
+
+  <!-- Responsive grid of comment cards -->
+  <div
+    class="comment-grid"
+    *ngIf="requestCirculations != undefined && requestCirculations.length > 0"
+  >
+    <mat-card
+      *ngFor="let circulation of requestCirculations"
+      class="comment-card"
+    >
+      <!-- Card header -->
+      <mat-card-header>
+        <mat-card-title>
+          {{ circulation.performerContactPerson?.name }}'s Comment
+        </mat-card-title>
+      </mat-card-header>
+
+      <!-- Card content -->
+      <mat-card-content>
+        <!-- Comment input -->
+        <!-- <input
+          [(ngModel)]="circulation.comment"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          class="comment-body"
+          type="text"
+          placeholder="please insert your comment before be late"
+        /> -->
+        <textarea
+          [(ngModel)]="circulation.comment"
+          [disabled]="
+            !(circulation | isActiveForUser : currentCirculation) && editMode
+          "
+          class="comment-body"
+          placeholder="please insert your comment before be late"
+          rows="3"
+        ></textarea>
+        <!-- Upload button -->
+        <input
+          type="file"
+          multiple
+          (change)="onCommentFilesPicked($event, circulation)"
+          class="upload-input"
+          [hidden]="!editMode"
+        />
+
+        <!-- Optional: show filenames as chips -->
+        <mat-chip-listbox>
+          <ng-container *ngFor="let file of circulation.attachments">
+            <mat-chip *ngIf="file">
+              <a
+                [href]="file.downloadUrl"
+                (click)="fetchFile(file.id)"
+                target="_blank"
+                >{{ file?.name }}</a
+              >
+            </mat-chip>
+          </ng-container>
+        </mat-chip-listbox>
+      </mat-card-content>
+
+      <!-- Action buttons -->
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onAction(circulation, 1)"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          *ngIf="shouldShowButton(circulation, 'approve')"
+        >
+          Approve
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="onAction(circulation, 0)"
+          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          *ngIf="shouldShowButton(circulation, 'reject')"
+        >
+          Reject
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

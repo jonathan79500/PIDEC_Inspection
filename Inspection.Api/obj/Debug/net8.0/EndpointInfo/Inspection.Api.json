@@ -1619,17 +1619,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
+                  "$ref": "#/components/schemas/System.ValueTuple`2[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.List`1[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
+                  "$ref": "#/components/schemas/System.ValueTuple`2[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.List`1[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
+                  "$ref": "#/components/schemas/System.ValueTuple`2[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.List`1[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
                 }
               }
             }
@@ -1981,26 +1981,89 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "attachments": {
+                  "inspection": {
+                    "type": "string"
+                  },
+                  "project": {
+                    "type": "string"
+                  },
+                  "currentCirculation": {
+                    "type": "string"
+                  },
+                  "AttachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentVersions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentDescriptions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentDocNos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentStatuses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "Attachments": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "format": "binary"
                     }
-                  },
-                  "inspectionNotification": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/System.Collections.Generic.KeyValuePair`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[Microsoft.Extensions.Primitives.StringValues, Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]"
-                    }
                   }
                 }
               },
               "encoding": {
-                "attachments": {
+                "inspection": {
                   "style": "form"
                 },
-                "inspectionNotification": {
+                "project": {
+                  "style": "form"
+                },
+                "currentCirculation": {
+                  "style": "form"
+                },
+                "AttachmentIds": {
+                  "style": "form"
+                },
+                "AttachmentNames": {
+                  "style": "form"
+                },
+                "AttachmentVersions": {
+                  "style": "form"
+                },
+                "AttachmentDescriptions": {
+                  "style": "form"
+                },
+                "AttachmentDocNos": {
+                  "style": "form"
+                },
+                "AttachmentStatuses": {
+                  "style": "form"
+                },
+                "Attachments": {
                   "style": "form"
                 }
               }
@@ -2009,14 +2072,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -2142,6 +2198,18 @@
                       "type": "string"
                     }
                   },
+                  "AttachmentDocNos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentStatuses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "Attachments": {
                     "type": "array",
                     "items": {
@@ -2171,6 +2239,12 @@
                   "style": "form"
                 },
                 "AttachmentDescriptions": {
+                  "style": "form"
+                },
+                "AttachmentDocNos": {
+                  "style": "form"
+                },
+                "AttachmentStatuses": {
                   "style": "form"
                 },
                 "Attachments": {
@@ -2435,26 +2509,89 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "reportAttachments": {
+                  "inspectionReport": {
+                    "type": "string"
+                  },
+                  "project": {
+                    "type": "string"
+                  },
+                  "currentCirculation": {
+                    "type": "string"
+                  },
+                  "AttachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentVersions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentDescriptions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentDocNos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentStatuses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "Attachments": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "format": "binary"
                     }
-                  },
-                  "inspectionReportFull": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/System.Collections.Generic.KeyValuePair`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[Microsoft.Extensions.Primitives.StringValues, Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]"
-                    }
                   }
                 }
               },
               "encoding": {
-                "reportAttachments": {
+                "inspectionReport": {
                   "style": "form"
                 },
-                "inspectionReportFull": {
+                "project": {
+                  "style": "form"
+                },
+                "currentCirculation": {
+                  "style": "form"
+                },
+                "AttachmentIds": {
+                  "style": "form"
+                },
+                "AttachmentNames": {
+                  "style": "form"
+                },
+                "AttachmentVersions": {
+                  "style": "form"
+                },
+                "AttachmentDescriptions": {
+                  "style": "form"
+                },
+                "AttachmentDocNos": {
+                  "style": "form"
+                },
+                "AttachmentStatuses": {
+                  "style": "form"
+                },
+                "Attachments": {
                   "style": "form"
                 }
               }
@@ -2827,6 +2964,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "actionType": {
             "type": "integer",
             "format": "int32",
@@ -2943,6 +3084,14 @@
             "nullable": true
           },
           "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "docNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
             "type": "string",
             "nullable": true
           },
@@ -3348,7 +3497,7 @@
             "type": "string",
             "nullable": true
           },
-          "attention": {
+          "note": {
             "type": "string",
             "nullable": true
           },
@@ -3428,7 +3577,7 @@
             "type": "string",
             "nullable": true
           },
-          "attention": {
+          "note": {
             "type": "string",
             "nullable": true
           },
@@ -3466,6 +3615,10 @@
             "nullable": true
           },
           "circulationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "revisionId": {
             "type": "string",
             "nullable": true
           },
@@ -3600,6 +3753,10 @@
           "inspectionNotificationId": {
             "type": "string",
             "format": "uuid"
+          },
+          "itP_Row_No": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3667,6 +3824,10 @@
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "itpRowNo": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3680,6 +3841,65 @@
           },
           "name": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Common.InspectorDto": {
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectedOrders": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "inspectedProjects": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
             "nullable": true
           }
         },
@@ -3708,6 +3928,44 @@
           },
           "projectContact": {
             "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ProjectContactDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Common.PersonDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3812,6 +4070,77 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Application.DTOs.Common.RevisionDto": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "submittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "submittedById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "submittedBy": {
+            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "isFinal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "circulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.CirculationDto"
+            },
+            "nullable": true
+          },
+          "inspectionNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
+            },
+            "nullable": true
+          },
+          "inspectionReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionReport.InspectionReportDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Inspection.Application.DTOs.Common.VendorDocumentDto": {
         "type": "object",
         "properties": {
@@ -3840,7 +4169,8 @@
         "properties": {
           "inspectionReportId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "inspectionReportNumber": {
             "type": "string",
@@ -3848,7 +4178,8 @@
           },
           "currentStatus": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "inspectorContacts": {
             "type": "array",
@@ -3857,12 +4188,65 @@
             },
             "nullable": true
           },
-          "relatedInspectionNotification": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
-          },
           "relatedInspectionNotificationId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "inspectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.InspectorDto"
+            },
+            "nullable": true
+          },
+          "reportType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "reportNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "persianIssueDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionPersons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.PersonDto"
+            },
+            "nullable": true
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+          },
+          "inspectionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "requestIdOfRelatedInspectionNotification": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "inspectionReportAttachments": {
             "type": "array",
@@ -3889,20 +4273,31 @@
           "order": {
             "$ref": "#/components/schemas/Inspection.Application.DTOs.OrderDto"
           },
-          "request": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.RequestDto"
+          "orderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "equipmentTagNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
           },
           "notificationNumber": {
             "type": "string",
             "nullable": true
           },
-          "proposedDate": {
-            "type": "string",
-            "format": "date-time",
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.AddressDto"
+            },
             "nullable": true
-          },
-          "location": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.AddressDto"
           },
           "requestInspectionDateStart": {
             "type": "string",
@@ -3926,13 +4321,17 @@
             "type": "integer",
             "format": "int32"
           },
-          "requestInspectionTimesInPeriod": {
-            "type": "integer",
-            "format": "int32"
+          "inspectionTimeComment": {
+            "type": "string",
+            "nullable": true
           },
-          "requestInspectionPeriodDays": {
-            "type": "integer",
-            "format": "int32"
+          "inspectionAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionActionComment": {
+            "type": "string",
+            "nullable": true
           },
           "issueDate": {
             "type": "string",
@@ -3988,13 +4387,6 @@
           },
           "contactType": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Enums.ContactType"
-          },
-          "circulations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Inspection.Application.DTOs.CirculationDto"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4014,8 +4406,20 @@
           "order": {
             "$ref": "#/components/schemas/Inspection.Application.DTOs.OrderDto"
           },
-          "request": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.RequestDto"
+          "orderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "equipmentTagNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
           },
           "notificationNumber": {
             "type": "string",
@@ -4026,8 +4430,12 @@
             "format": "date-time",
             "nullable": true
           },
-          "location": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.AddressDto"
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.AddressDto"
+            },
+            "nullable": true
           },
           "requestInspectionDateStart": {
             "type": "string",
@@ -4052,14 +4460,16 @@
             "format": "int32",
             "nullable": true
           },
-          "requestInspectionTimesInPeriod": {
-            "type": "integer",
-            "format": "int32",
+          "inspectionTimeComment": {
+            "type": "string",
             "nullable": true
           },
-          "requestInspectionPeriodDays": {
-            "type": "integer",
-            "format": "int32",
+          "inspectionAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionActionComment": {
+            "type": "string",
             "nullable": true
           },
           "issueDate": {
@@ -4116,13 +4526,6 @@
           },
           "contactType": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Enums.ContactType"
-          },
-          "circulations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Inspection.Application.DTOs.CirculationDto"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4257,45 +4660,6 @@
           },
           "inspectionSubject": {
             "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.InspectionSubjectDto"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Inspection.Application.DTOs.RequestDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "inspectionNotifications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
-            },
-            "nullable": true
-          },
-          "creatorContactPerson": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "modifiedDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "modifiedBy": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4733,11 +5097,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -4746,6 +5112,13 @@
           "modifiedBy": {
             "type": "string",
             "nullable": true
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
           },
           "actionType": {
             "type": "integer",
@@ -4786,9 +5159,6 @@
           "comment": {
             "type": "string",
             "nullable": true
-          },
-          "inspectionNotification": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
           },
           "attachments": {
             "type": "array",
@@ -4841,11 +5211,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -4860,7 +5232,9 @@
             "format": "uuid"
           },
           "inspectorId": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.InspectorId"
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "circulation": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Circulation"
@@ -4914,6 +5288,81 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Domain.Entities.Common.Person": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.PersonAttachment"
+            },
+            "nullable": true
+          },
+          "inspectionReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportPerson"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.Common.PersonAttachment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attachmentId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.AttachmentId"
+          },
+          "person": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Person"
+          },
+          "attachment": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.Attachment"
+          }
+        },
+        "additionalProperties": false
+      },
       "Inspection.Domain.Entities.Common.Request": {
         "type": "object",
         "properties": {
@@ -4923,11 +5372,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -4940,10 +5391,91 @@
           "creatorContactPerson": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Contacts.Contact"
           },
+          "currentRevisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
+            },
+            "nullable": true
+          },
+          "requestType": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentStatus": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.Common.Revision": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "submittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "submittedBy": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Contacts.Contact"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "isFinal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "request": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Request"
+          },
+          "circulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Circulation"
+            },
+            "nullable": true
+          },
           "inspectionNotifications": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
+            },
+            "nullable": true
+          },
+          "inspectionReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReport"
             },
             "nullable": true
           }
@@ -4959,11 +5491,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -4995,6 +5529,13 @@
           },
           "zipCode": {
             "type": "string",
+            "nullable": true
+          },
+          "inspectionNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationLocation"
+            },
             "nullable": true
           }
         },
@@ -5048,7 +5589,7 @@
             "type": "string",
             "nullable": true
           },
-          "attention": {
+          "note": {
             "type": "string",
             "nullable": true
           },
@@ -5121,11 +5662,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5175,10 +5718,32 @@
             "type": "string",
             "nullable": true
           },
+          "docNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
           "circulations": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.CirculationAttachments"
+            },
+            "nullable": true
+          },
+          "inspectionReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportAttachment"
+            },
+            "nullable": true
+          },
+          "persons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.PersonAttachment"
             },
             "nullable": true
           }
@@ -5193,11 +5758,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5218,14 +5785,23 @@
           "inspectionNotificationId": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
           },
-          "request": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Request"
+          "revisionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
-          "version": {
-            "type": "integer",
-            "format": "int32"
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "equipmentTagNo": {
             "type": "string",
             "nullable": true
           },
@@ -5265,24 +5841,33 @@
           },
           "requestInspectionDueDate": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
-          "requestInspectionTimesInPeriod": {
-            "type": "integer",
-            "format": "int32"
+          "inspectionTimeComment": {
+            "type": "string",
+            "nullable": true
           },
-          "requestInspectionPeriodDays": {
-            "type": "integer",
-            "format": "int32"
+          "inspectionAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionActionComment": {
+            "type": "string",
+            "nullable": true
           },
           "order": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Orders.Order"
           },
-          "location": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.ValueObjects.Address"
-          },
           "description": {
             "type": "string",
+            "nullable": true
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationLocation"
+            },
             "nullable": true
           },
           "contacts": {
@@ -5305,13 +5890,6 @@
               "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationType"
             },
             "nullable": true
-          },
-          "circulations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Circulation"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5322,22 +5900,6 @@
           "id": {
             "type": "string",
             "format": "uuid"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "modifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "modifiedBy": {
-            "type": "string",
-            "nullable": true
           },
           "inspectionNotificationId": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
@@ -5352,6 +5914,65 @@
           },
           "contact": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Contacts.Contact"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationLocation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionNotificationId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
+          },
+          "addressId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionNotification": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.ValueObjects.Address"
           }
         },
         "additionalProperties": false
@@ -5365,11 +5986,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5390,6 +6013,10 @@
           },
           "inspectionSubject": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.InspectionSubject"
+          },
+          "itP_Row_No": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5403,11 +6030,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5473,11 +6102,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5584,16 +6215,17 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.InspectionReportId"
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5614,8 +6246,19 @@
           "inspectionReportId": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.InspectionReportId"
           },
-          "inspectionReportNumber": {
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
+          },
+          "inspectionReportNumberParts": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportNumber"
+          },
+          "inspectionReportNumber": {
+            "type": "string",
+            "nullable": true
           },
           "currentStatus": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.Enums.InspectionReportStates"
@@ -5642,13 +6285,27 @@
             "type": "string",
             "nullable": true
           },
+          "inspectionPersons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportPerson"
+            },
+            "nullable": true
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Contacts.Contact"
+          },
           "relatedInspectionNotification": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
           },
           "relatedInspectionNotificationId": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
           },
-          "inspectionReportAttachments": {
+          "requestIdOfRelatedInspectionNotification": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attachments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportAttachment"
@@ -5670,33 +6327,14 @@
           "inspectionReport": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReport"
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "version": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "edmsId": {
-            "type": "string",
-            "nullable": true
-          },
-          "pdfSize": {
-            "type": "string",
-            "nullable": true
-          },
           "reportAttachmentType": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.Enums.ReportAttachmentType"
+          },
+          "attachmentId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.AttachmentId"
+          },
+          "attachment": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.Attachment"
           }
         },
         "additionalProperties": false
@@ -5710,11 +6348,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5736,6 +6376,10 @@
             "type": "string",
             "nullable": true
           },
+          "reportNumber": {
+            "type": "string",
+            "nullable": true
+          },
           "version": {
             "type": "integer",
             "format": "int32"
@@ -5743,26 +6387,49 @@
           "revision": {
             "type": "integer",
             "format": "int32"
+          },
+          "inspectorType": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "Inspection.Domain.Entities.Inspector.Enums.InspectorAttachmentTypes": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
-        "type": "integer",
-        "format": "int32"
+      "Inspection.Domain.Entities.InspectionReport.InspectionReportPerson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionReportId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.InspectionReportId"
+          },
+          "personId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionReport": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReport"
+          },
+          "person": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Person"
+          }
+        },
+        "additionalProperties": false
       },
       "Inspection.Domain.Entities.Inspector.Inspector": {
         "type": "object",
         "properties": {
-          "inspectorId": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.InspectorId"
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
             "type": "string",
             "nullable": true
           },
@@ -5774,10 +6441,46 @@
             "type": "string",
             "nullable": true
           },
-          "inspectorAttachments": {
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "attachments": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorAttachment"
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.PersonAttachment"
+            },
+            "nullable": true
+          },
+          "inspectionReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionReport.InspectionReportPerson"
+            },
+            "nullable": true
+          },
+          "contactId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.ContactId"
+          },
+          "inspectedOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorOrder"
+            },
+            "nullable": true
+          },
+          "inspectedProjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorProject"
             },
             "nullable": true
           },
@@ -5791,51 +6494,48 @@
         },
         "additionalProperties": false
       },
-      "Inspection.Domain.Entities.Inspector.InspectorAttachment": {
+      "Inspection.Domain.Entities.Inspector.InspectorOrder": {
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inspectorId": {
             "type": "string",
             "format": "uuid"
           },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "modifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "modifiedBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "size": {
-            "type": "string",
-            "nullable": true
-          },
-          "attachmentTypes": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Enums.InspectorAttachmentTypes"
+          "orderId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.OrderId"
           },
           "inspector": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Inspector"
+          },
+          "order": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Orders.Order"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.Inspector.InspectorProject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inspectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.ValueObjects.ProjectId"
+          },
+          "inspector": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Inspector"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Projects.Project"
           }
         },
         "additionalProperties": false
@@ -5848,11 +6548,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -5890,7 +6592,8 @@
           },
           "version": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "edmsId": {
             "type": "string",
@@ -5908,6 +6611,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.Orders.OrderContact"
+            },
+            "nullable": true
+          },
+          "inspectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorOrder"
             },
             "nullable": true
           },
@@ -6017,11 +6727,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -6090,6 +6802,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.Projects.ProjectContact"
+            },
+            "nullable": true
+          },
+          "inspectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorProject"
             },
             "nullable": true
           },
@@ -6349,17 +7068,6 @@
         },
         "additionalProperties": false
       },
-      "Inspection.Domain.Entities.ValueObjects.InspectorId": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Inspection.Domain.Entities.ValueObjects.OrderId": {
         "type": "object",
         "properties": {
@@ -6401,11 +7109,13 @@
           },
           "createdDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "modifiedDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdBy": {
             "type": "string",
@@ -6711,20 +7421,8 @@
         },
         "additionalProperties": false
       },
-      "System.Collections.Generic.KeyValuePair`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[Microsoft.Extensions.Primitives.StringValues, Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]": {
+      "System.ValueTuple`2[[Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.List`1[[Inspection.Application.DTOs.InspectionReport.InspectionReportDto, Inspection.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]": {
         "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
         "additionalProperties": false
       }
     },

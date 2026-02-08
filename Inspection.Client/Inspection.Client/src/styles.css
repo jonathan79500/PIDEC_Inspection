@@ -86,6 +86,30 @@ body {
 }
 
 
+.mat-icon svg { stroke-width: 2; /* makes lines thicker */ }
+
+.mat-dialog-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--row-background) !important; /* Material Indigo or your theme color */
+  margin: 0;
+}
+.mat-dialog-container {
+  height: auto !important;       /* grow naturally with content */
+  max-height: 100vh !important;   /* stop growing beyond 90% of viewport */
+  overflow-y: auto;              /* scroll inside if content exceeds max-height */
+  border: 2px solid black !important;   /* solid black border */
+  border-radius: 6px !important;        /* optional rounded corners */
+}
+
+
+.mat-mdc-dialog-surface, .mdc-dialog__surface
+{
+  background-color: var(--primaryform-color) !important;
+  border-color: var(--side-nav) !important;
+  border-width: 2rem !important;
+}
+
 /* General table container */
 .mat-mdc-table {
   width: 100%;
@@ -144,7 +168,8 @@ body {
   font-weight: bold;
 }
 
-
+.custom-datepicker .mat-datepicker-content { background-color: #f9e79f; /* example */ border-radius: 8px; }
+.mat-datepicker-toggle .mat-icon { font-weight: 700; transform: scale(1.2); color: #123c69; }
 /* ComboBox Autocomplete General styles */
 
 /* Input element line height */

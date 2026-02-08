@@ -15,8 +15,10 @@ namespace Inspection.Domain.Entities.InspectionReport
         public string ProjectNumber { get; set; }
         public string InfoPart { get; set; } = "IVR | PL";
         public string NotificationNumber { get; set; }
+        public string ReportNumber { get; set; }
         public int Version { get; set; }
         public int Revision { get; set; }
+        public string InspectorType { get; set; } = "TP | SP";//TP = ThirdPart , SP = SecondPart Inspector
 
 
         public InspectionReportNumber CreateNewVersion()
@@ -31,21 +33,21 @@ namespace Inspection.Domain.Entities.InspectionReport
             return newReportNumber;
         }
 
-        public static InspectionReportNumber CreateFromString(string strNotificationNumber)
+        public static InspectionReportNumber CreateFromString(string strReportNumber)
         {
-            string prjPart = strNotificationNumber.Substring(0, 4);
-            string ordPart = strNotificationNumber.Substring(5,Math.Max(strNotificationNumber.IndexOf("IVR-") , strNotificationNumber.IndexOf("PL-")) - 6);
-            int IndexForStartOfVersionPart = Math.Max(strNotificationNumber.IndexOf("IVR-"), strNotificationNumber.IndexOf("PL-")) + 4;
-            int IndexForEndOfVersionPart = strNotificationNumber.IndexOf(".");
+            string prjPart = strReportNumber.Substring(0, 4);
+            string ordPart = strReportNumber.Substring(5,Math.Max(strReportNumber.IndexOf("IVR-") , strReportNumber.IndexOf("PL-")) - 6);
+            int IndexForStartOfVersionPart = Math.Max(strReportNumber.IndexOf("IVR-"), strReportNumber.IndexOf("PL-")) + 4;
+            int IndexForEndOfVersionPart = strReportNumber.IndexOf(".");
             int LengthOfVersionPart = IndexForEndOfVersionPart - IndexForStartOfVersionPart;
             int IndexForStartRevisionPart = IndexForEndOfVersionPart + 1;
-            int LengthOfRevisionPart = strNotificationNumber.Length - IndexForStartRevisionPart;
-            int versionPart = int.Parse(strNotificationNumber.Substring(IndexForStartOfVersionPart, LengthOfVersionPart));
-            int revisionPart = int.Parse(strNotificationNumber.Substring(IndexForStartRevisionPart, LengthOfRevisionPart));
+            int LengthOfRevisionPart = strReportNumber.Length - IndexForStartRevisionPart;
+            int versionPart = int.Parse(strReportNumber.Substring(IndexForStartOfVersionPart, LengthOfVersionPart));
+            int revisionPart = int.Parse(strReportNumber.Substring(IndexForStartRevisionPart, LengthOfRevisionPart));
 
-            if (strNotificationNumber.IndexOf("IVR-") > 0)
+            if (strReportNumber.IndexOf("IVR-") > 0)
             {
-                InspectionReportNumber newNotificationNumber = new InspectionReportNumber()
+                InspectionReportNumber newReportNumber = new InspectionReportNumber()
                 {
 
 
@@ -55,11 +57,11 @@ namespace Inspection.Domain.Entities.InspectionReport
                     Version = versionPart,
                     Revision = revisionPart
                 };
-                return newNotificationNumber;
+                return newReportNumber;
             }
-            else if (strNotificationNumber.IndexOf("PL-") > 0)
+            else if (strReportNumber.IndexOf("PL-") > 0)
             {
-                InspectionReportNumber newNotificationNumber = new InspectionReportNumber()
+                InspectionReportNumber newReportNumber = new InspectionReportNumber()
                 {
 
 
@@ -69,49 +71,52 @@ namespace Inspection.Domain.Entities.InspectionReport
                     Version = versionPart,
                     Revision = revisionPart
                 };
-                return newNotificationNumber;
+                return newReportNumber;
             }
             return null;
         }
 
-        public static InspectionReportNumber CreateFromNull(string projectNumber, string notificationNumber, string infoPart)
-        {
-
-            InspectionReportNumber newNotificationNumber = new InspectionReportNumber()
-            {
-                InfoPart = infoPart,
-                ProjectNumber = projectNumber,
-                NotificationNumber = notificationNumber,
-                Version = 1,
-                Revision = 0
-            };
-
-            return newNotificationNumber;
-        }
-
-        public InspectionReportNumber CreateNewVersion(string projectNumber, string notificationNumber, string infoPart)
-        {
-
-            InspectionReportNumber newNotificationNumber = new InspectionReportNumber()
-            {
-                InfoPart = infoPart,
-                ProjectNumber = projectNumber,
-                NotificationNumber = notificationNumber,
-                Version = 1,
-                Revision = 0
-            };
-
-            return newNotificationNumber;
-        }
-
-        public InspectionReportNumber GenerateNewRevision(string projectNumber, string notificationNumber, string infoPart, int version, int revision)
+        public static InspectionReportNumber CreateFromNull(string projectNumber, string NotificationNumber, string reportNumber, string infoPart)
         {
 
             InspectionReportNumber newReportNumber = new InspectionReportNumber()
             {
                 InfoPart = infoPart,
                 ProjectNumber = projectNumber,
-                NotificationNumber = notificationNumber,
+                NotificationNumber = NotificationNumber,
+                ReportNumber = reportNumber,
+                Version = 1,
+                Revision = 0
+            };
+
+            return newReportNumber;
+        }
+
+        public InspectionReportNumber CreateNewVersion(string projectNumber, string NotificationNumber, string reportNumber, string infoPart)
+        {
+
+            InspectionReportNumber newReportNumber = new InspectionReportNumber()
+            {
+                InfoPart = infoPart,
+                ProjectNumber = projectNumber,
+                NotificationNumber = NotificationNumber,
+                ReportNumber = reportNumber,
+                Version = 1,
+                Revision = 0
+            };
+
+            return newReportNumber;
+        }
+
+        public InspectionReportNumber GenerateNewRevision(string projectNumber,string NotificationNumber, string reportNumber, string infoPart, int version, int revision)
+        {
+
+            InspectionReportNumber newReportNumber = new InspectionReportNumber()
+            {
+                InfoPart = infoPart,
+                ProjectNumber = projectNumber,
+                NotificationNumber = NotificationNumber,
+                ReportNumber = reportNumber,
                 Version = version,
                 Revision = revision + 1
             };

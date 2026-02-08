@@ -18,5 +18,6 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
 
         public InspectionNotification? InspectionNotification { get; set; }
         public InspectionSubject? InspectionSubject { get; set; }
+        public string ITP_Row_No { get; set; } = string.Empty;
     }
 }

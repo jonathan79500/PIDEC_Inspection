@@ -49,13 +49,12 @@ const gridOptions: GridOptions<Inspection> = {
     { field: "requestInspectionDateEnd", width: 150 },
     { field: "requestInspectionPersianDateEnd", width: 150 },
     { field: "requestInspectionDueDate", width: 150 },
-    { field: "requestInspectionTimesInPeriod", width: 150 },
-    { field: "requestInspectionPeriodDays", width: 150 },
+    { field: "inspectionTimeComment", width: 150 },
     { field: "order.equipmentTagNo", width: 90 },
     { field: "contractShippingDueDate", width: 150 },
     { field: "actualShippingDueDate", width: 150 },
-    { field: "location.country", width: 100 },
-    { field: "location.city", width: 100 },
+    // { field: "location.country", width: 100 },
+    // { field: "location.city", width: 100 },
     { field:"issueDate",width:100},
     { field:"persianIssueDate",width:100},
     { field: "order.itP_NO", width: 100 }
@@ -73,7 +72,7 @@ export class NotStartedtasksComponent {
     @ViewChild(MatSort) sort !: MatSort;
 
     clickedRows = new Set<Inspection>();
-    displayedColumns: string[] = ['relatedProjectName', 'notificationNumber','relatedOrderName','notificationTypes', 'notificationSubjects','issueDate','persianIssueDate'];
+    displayedColumns: string[] = ['no','relatedProjectName', 'notificationNumber','relatedOrderName','notificationTypes', 'notificationSubjects','issueDate','persianIssueDate'];
     dataSource: MatTableDataSource<InspectionNotificationDataSummary> = new MatTableDataSource<InspectionNotificationDataSummary>();
 
     public gridOptions: GridOptions = {

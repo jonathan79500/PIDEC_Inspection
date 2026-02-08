@@ -2,6 +2,8 @@ using Dapper;
 using Inspection;
 using Inspection.Api;
 using Inspection.Application;
+using Inspection.Domain.Entities.InspectionNotification.Entities;
+using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.User.Entities;
 using Inspection.Domain.Entities.ValueObjects;
 using Inspection.Infrastructure;
@@ -29,8 +31,13 @@ SqlMapper.AddTypeHandler(new ContactIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionSubjectIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionNotificationIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionTypeIdTypeHandler());
+SqlMapper.AddTypeHandler(new InspectorIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionReportIdTypeHandler());
 SqlMapper.AddTypeHandler(new InspectionReportAttachmentIdTypeHandler());
+SqlMapper.SetTypeMap(typeof(InspectionNotificationId), new CustomPropertyTypeMap(typeof(InspectionNotificationId), (type, columnName) => {
+    if (columnName == "InspectionNotificationId") return type.GetProperty("Id"); // map to base Id
+    return type.GetProperty(columnName);
+}));
 
 var builder = WebApplication.CreateBuilder(args);   
 

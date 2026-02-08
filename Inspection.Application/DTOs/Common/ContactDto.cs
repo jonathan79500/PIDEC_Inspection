@@ -16,7 +16,7 @@ public class ContactDto
     public string? Fax { get; set; } = string.Empty;
     public string? Email { get; set; } = string.Empty;
     public string? HomePage { get; set; } = string.Empty;
-    public string? Attention { get; set; } = string.Empty;
+    public string? Note { get; set; } = string.Empty;
     public string? Cc { get; set; } = string.Empty;
     public string? Mobile { get; set; } = string.Empty;
     public int? ContactType { get; set; }

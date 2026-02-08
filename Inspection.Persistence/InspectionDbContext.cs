@@ -39,45 +39,29 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Ignore<ContactId>();
         modelBuilder.Ignore<InspectionReportId>();
         modelBuilder.Ignore<InspectorId>();
+        modelBuilder.Ignore<InspectionReportAttachmentId>();
+
 
         //modelBuilder.Ignore("Attachments");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InspectionDbContext).Assembly);
 
-        //modelBuilder.Entity<InspectionNotification>(entity => {
-        //    entity.HasKey(i=>i.InspectionNotificationId);
-        //    entity.Property(i => i.NotificationNumber).IsRequired();
-        //    entity.Property(i=>i.Owner).IsRequired();
-        //    entity.Property(i=>i.Order).IsRequired();   
-        //    });
-
-        //modelBuilder.Entity<InspectionNotification>(entity => {  entity.HasKey(i=>i.Id); });
-
-        //modelBuilder.Entity<InspectionNotification>().HasMany(inf => inf.Attachments);//.WithMany().UsingEntity(a=>a.);
-        //  modelBuilder.Entity<InspectionNotification>().OwnsOne(inf => inf.InspectionType);
-
-        //modelBuilder.Entity<QCContactPerson>().ToTable("QCContactPersons");
-        //modelBuilder.Entity<MCContactPerson>().ToTable("MCContactPersons");
+        var converterAttachmentId = new ValueConverter<AttachmentId, Guid>(
+            id => id.Value,
+        guidValue => new AttachmentId(guidValue));
 
 
-        //modelBuilder.Entity<InspectionNotification>()
-        //.HasMany<InspectionNotificationContact>("_contacts") // Reference backing field
-        //.WithOne()
-        //.OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<InspectionNotification>()
+.HasOne(n => n.Revision)
+.WithMany(r => r.InspectionNotifications)
+.HasForeignKey(n => n.RevisionId)
+.OnDelete(DeleteBehavior.NoAction); // or DeleteBehavior.Restrict
 
-        // Composite key for IdentityUserRole<string>
-
-        //      modelBuilder.Entity<InspectionNotification>()
-        //.HasOne(insp => insp.Request)
-        //.WithMany(req => req.InspectionNotifications)
-        //.HasForeignKey(insp => insp.Request)
-        //.OnDelete(DeleteBehavior.Restrict);    // Restrict == NO ACTION 
-
-        modelBuilder.Entity<InspectionReportAttachment>()
-    .HasOne(a => a.InspectionReport)
-    .WithMany(r => r.inspectionReportAttachments)
-    .HasForeignKey(a => a.InspectionReportId)
-    .IsRequired(); // or false if optional
+    //    modelBuilder.Entity<InspectionReportAttachment>()
+    //.HasOne(a => a.InspectionReport)
+    //.WithMany(r => r.inspectionReportAttachments)
+    //.HasForeignKey(a => a.InspectionReportId)
+    //.IsRequired(); // or false if optional
 
         modelBuilder.Entity<IdentityUserRole<string>>()
             .HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -94,6 +78,7 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
 
+
         modelBuilder.Entity<CirculationAttachments>()
         .ToTable("CirculationAttachments")
         .HasKey(ca => ca.Id);
@@ -108,6 +93,54 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Entity<CirculationAttachments>()
            .HasOne(ca => ca.Attachment)
            .WithMany(ca => ca.Circulations)
+           .HasForeignKey(ca => ca.AttachmentId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InspectorOrder>()
+           .ToTable("InspectorOrders")
+           .HasKey(ca => ca.Id);
+
+        modelBuilder.Entity<InspectorOrder>()
+            .HasOne(ca => ca.Inspector)
+            .WithMany(ca => ca.inspectedOrders)
+            .HasForeignKey(ca => ca.InspectorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InspectorOrder>()
+           .HasOne(ca => ca.Order)
+           .WithMany(ca => ca.Inspectors)
+           .HasForeignKey(ca => ca.OrderId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InspectorProject>()
+           .ToTable("InspectorProjects")
+           .HasKey(ca => ca.Id);
+
+        modelBuilder.Entity<InspectorProject>()
+            .HasOne(ca => ca.Project)
+            .WithMany(ca => ca.Inspectors)
+            .HasForeignKey(ca => ca.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InspectorProject>()
+           .HasOne(ca => ca.Inspector)
+           .WithMany(ca => ca.inspectedProjects)
+           .HasForeignKey(ca => ca.InspectorId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PersonAttachment>()
+            .ToTable("PersonAttachments")
+            .HasKey(ca => ca.Id);
+
+        modelBuilder.Entity<PersonAttachment>()
+            .HasOne(ca => ca.Person)
+            .WithMany(ca => ca.Attachments)
+            .HasForeignKey(ca => ca.PersonId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PersonAttachment>()
+           .HasOne(ca => ca.Attachment)
+           .WithMany(ca => ca.Persons)
            .HasForeignKey(ca => ca.AttachmentId)
            .OnDelete(DeleteBehavior.Restrict);
 
@@ -148,17 +181,9 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
            .OnDelete(DeleteBehavior.Restrict);
 
 
-        var converterAttachmentId = new ValueConverter<AttachmentId, Guid>(
-         id => id.Value,
-         guidValue => new AttachmentId(guidValue));
 
-        modelBuilder.Entity<CirculationAttachments>()
-            .ToTable("CirculationAttachmens")
-                .Property(e => e.AttachmentId)
-               .HasConversion(converterAttachmentId)
-               .ValueGeneratedOnAdd();
         
-        modelBuilder.Entity<CirculationAttachments>().HasKey(e => e.AttachmentId);
+   
 
 
         var converterProjectId = new ValueConverter<ProjectId, Guid>(
@@ -209,12 +234,22 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Entity<InspectionNotificationSubject>()
         .ToTable("InspectionNotificationSubjects")
         .HasKey(pq => pq.Id);
-        
+
+        modelBuilder.Entity<InspectionNotificationLocation>()
+       .ToTable("InspectionNotificationLocations")
+       .HasKey(inl => inl.Id);
+
 
         modelBuilder.Entity<InspectionNotificationType>()
         .ToTable("InspectionNotificationTypes")
         .HasKey(inst => inst.Id);
-    
+
+
+        modelBuilder.Entity<InspectionReportPerson>()
+            .HasOne(ins => ins.InspectionReport)
+            .WithMany(ins => ins.InspectionPersons)
+            .HasForeignKey(ins => ins.InspectionReportId);
+
 
         modelBuilder.Entity<InspectionNotificationSubject>()
             .HasOne(ins => ins.InspectionNotification)
@@ -226,6 +261,15 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
             .WithMany(ins=>ins.InspectionNotifications)
             .HasForeignKey(ins=>ins.InspectionSubjectId);
 
+        modelBuilder.Entity<InspectionNotificationLocation>()
+           .HasOne(ins => ins.InspectionNotification)
+           .WithMany(ins => ins.Locations)
+           .HasForeignKey(ins => ins.InspectionNotificationId);
+
+        modelBuilder.Entity<InspectionNotificationLocation>()
+            .HasOne(ins => ins.Location)
+            .WithMany(ins => ins.InspectionNotifications)
+            .HasForeignKey(ins => ins.AddressId);
 
         modelBuilder.Entity<InspectionNotificationType>()
             .HasOne(it => it.InspectionNotification)
@@ -243,6 +287,10 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         .ToTable("CirculationInspectors")
         .HasKey(cin => cin.Id);
 
+
+        modelBuilder.Entity<Person>()
+      .ToTable("Persons")
+      .HasKey(cin => cin.Id);
 
         modelBuilder.Entity<CirculationInspector>()
             .HasOne(cin => cin.Circulation)
@@ -304,13 +352,17 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
     public DbSet<InspectionNotificationContact> InspectionNotificationsContacts { get; set;}
     public DbSet<InspectionNotificationSubject> InspectionNotificationSubjects { get; set; }
     public DbSet<InspectionNotificationType> InspectionNotificationsTypes { get; set;}
+    public DbSet<InspectionNotificationLocation> InspectionNotificationsLocations { get; set; }
     public DbSet<CirculationAttachments> CirculationAttachments { get; set; }
     public DbSet<ProjectUser> ProjectUsers { get; set; }
     public DbSet<OrdersettingException> OrdersettingExceptions { get; set; }
     public DbSet<InspectionReport>  InspectionReports{ get; set; }
     public DbSet<InspectionReportAttachment>  InspectionReportAttachments{ get; set; }
-    public DbSet<Inspector> Inspectors { get; set; }
-    public DbSet<InspectorAttachment> InspectorAttachments { get; set; }
+    public DbSet<Inspector> Inspectors { get; set; }  
     public DbSet<CirculationInspector> CirculationInspectors { get; set; }
-
+    public DbSet<Revision> Revisions { get; set; }
+    public DbSet<Person> Persons { get; set; }
+    public DbSet<InspectionReportPerson> InspectionReportPersons { get; set; }
+    public DbSet<InspectorOrder> InspectorOrders { get; set; }
+    public DbSet<InspectorProject> InspectorProjects { get; set; }
 }

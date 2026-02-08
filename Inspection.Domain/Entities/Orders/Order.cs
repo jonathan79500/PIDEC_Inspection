@@ -1,8 +1,10 @@
 ﻿using Inspection.Domain.Entities.Common;
+using Inspection.Domain.Entities.Inspector;
 using Inspection.Domain.Entities.Projects;
 using Inspection.Domain.Entities.ValueObjects;
 using Inspection.Domain.Entities.Vendor;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 
@@ -12,17 +14,21 @@ public sealed class Order : AggregateRoot<OrderId>
 {
     
     public OrderId OrderId { get;  set; }
-    private readonly List<VendorDocument> _vendorDocuments = new();
-    public Project Project { get;  set; }
+    private readonly List<VendorDocument>? _vendorDocuments = new();
+    public Project? Project { get;  set; }
     public string? No { get;  set; }
     public string? Title { get;  set; }
     public string? Name { get;  set; }
-    public int Version { get;  set; }
+    public int? Version { get;  set; }
     public string? EdmsId { get;  set; }
     public string? EquipmentTagNo { get;  set; }
     public string? ITP_NO { get;  set; }
 
     public List<OrderContact>? Contacts { get;  set; }
+
+    [NotMapped]
+    public List<InspectorOrder>? Inspectors { get; set; }
+
     public List<OrdersettingException>? ExceptionContacts { get; set; } = new();
 
     public List<OrderInspectionSubject>? Subjects { get;  set; } =new();

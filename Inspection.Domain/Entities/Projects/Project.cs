@@ -1,5 +1,6 @@
 ﻿using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Contacts;
+using Inspection.Domain.Entities.Inspector;
 using Inspection.Domain.Entities.Orders;
 using Inspection.Domain.Entities.ValueObjects;
 using System;
@@ -27,6 +28,8 @@ public sealed class Project : AggregateRoot<ProjectId>
     [NotMapped]
     public List<ProjectContact> TPInspectors { get; set; }//Third Part Inspectors
 
+    [NotMapped]
+    public List<InspectorProject> Inspectors { get; set; }
     //public List<ProjectContact> OwnerContacts { get; set; }
     //public List<ProjectContact> MCContacts { get; set; }
     //public List<ProjectContact> PidecInspectors { get; set; } //Second Part Inspectors

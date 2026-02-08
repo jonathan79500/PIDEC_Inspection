@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
@@ -138,7 +139,7 @@ public class BasicInformationRepository : IBasicInformationRepository
             List<OrdersettingException> ordersettingExceptions;
 
             using (var multi = connection.QueryMultiple(
-            "GetBesicInfo_VendorContact1",
+            "GetBesicInfo_VendorContact",
             new { userName = vendorUserName },
             commandType: CommandType.StoredProcedure,
             transaction: adoTransaction))
@@ -297,15 +298,25 @@ public class BasicInformationRepository : IBasicInformationRepository
 
 
                 // Fifth result set
-                participatedCirculations = multi.Read().Select(cr => new Circulation()
-                {
+                //participatedCirculations = multi.Read().Select(cr => new Circulation()
+                //{
 
-                    ActionType = GetActionType_ById(cr.ActionType.ToString()),
-                    CreatedBy = cr.CreatedBy,
-                    CreatedDate = cr.CreatedDate,
-                    ModifiedDate = cr.ModifiedDate,
-                    ModifiedBy = cr.ModifiedBy
-                }).ToList();
+                //    ActionType = GetActionType_ById(cr.ActionType.ToString()),
+                //    CreatedBy = cr.CreatedBy,
+                //    CreatedDate = cr.CreatedDate,
+                //    ModifiedDate = cr.ModifiedDate,
+                //    ModifiedBy = cr.ModifiedBy
+                //}).ToList();
+                participatedCirculations = multi.Read<Circulation, Contact, Revision, Circulation>(
+
+                    (circulation, contact, revision) =>     
+                    {
+                        circulation.PerformerContactPerson = contact;
+                        circulation.Revision = revision;
+                        return circulation;    
+                    },
+                splitOn: "ContactId,RequestId"   // tells Dapper where each new object starts
+).ToList();
 
             }
 
@@ -403,10 +414,13 @@ public class BasicInformationRepository : IBasicInformationRepository
                     RequestInspectionDateStart = ins.RequestInspectionDateStart,
                     RequestInspectionDateEnd = ins.RequestInspectionDateEnd,
                     RequestInspectionDueDate = ins.RequestInspectionDueDate,
-                    RequestInspectionPeriodDays = ins.RequestInspectionPeriodDays,
+                   // RequestInspectionPeriodDays = ins.RequestInspectionPeriodDays,
                     RequestInspectionPersianDateEnd = ins.RequestInspectionPersianDateEnd,
                     RequestInspectionPersianDateStart = ins.RequestInspectionPersianDateStart,
-                    RequestInspectionTimesInPeriod = ins.RequestInspectionTimesInPeriod,                    
+                    //RequestInspectionTimesInPeriod = ins.RequestInspectionTimesInPeriod,                    
+                    InspectionAction = ins.InspectionAction,
+                    InspectionActionComment = ins.InspectionActionComment,
+                    InspectionTimeComment= ins.InspectionTimeComment,
                     Description = ins.Description,
                     PersianIssueDate = ins.PersianIssueDate,
                     Name = ins.Name
@@ -471,18 +485,30 @@ public class BasicInformationRepository : IBasicInformationRepository
              return orderInspectionSubject;
          },
          splitOn: "InspectionSubjectId"
-     ).ToList();             
+     ).ToList();
 
                 // Fifth result set
-                participatedCirculations = multi.Read().Select(cr => new Circulation()
-                {
 
-                    ActionType = GetActionType_ById(cr.ActionType.ToString()),
-                    CreatedBy = cr.CreatedBy,
-                    CreatedDate = cr.CreatedDate,
-                    ModifiedDate = cr.ModifiedDate,
-                    ModifiedBy = cr.ModifiedBy
-                }).ToList();
+                participatedCirculations = multi.Read<Circulation, Contact, Revision, Circulation>(
+
+                (circulation, contact, revision) =>
+                {
+                    circulation.PerformerContactPerson = contact;
+                    circulation.Revision = revision;
+                    return circulation;
+                },
+            splitOn: "ContactId,RequestId"   // tells Dapper where each new object starts
+).ToList();
+
+                //participatedCirculations = multi.Read().Select(cr => new Circulation()
+                //{
+
+                //    ActionType = GetActionType_ById(cr.ActionType.ToString()),
+                //    CreatedBy = cr.CreatedBy,
+                //    CreatedDate = cr.CreatedDate,
+                //    ModifiedDate = cr.ModifiedDate,
+                //    ModifiedBy = cr.ModifiedBy
+                //}).ToList();
 
             }
 
@@ -722,9 +748,12 @@ public class BasicInformationRepository : IBasicInformationRepository
 
     public ActionType GetActionType_ById(string ActionTypeId)
     {
-        var actionType = _dbcontext.ActionTypes.Where(at => at.ActionTypeId.ToString() == ActionTypeId).FirstOrDefault();
+       
+       ActionType resultl=null;
+        if(ActionTypeId != null)
+            resultl = _dbcontext.ActionTypes.Where(at => at.ActionTypeId.ToString() == ActionTypeId).FirstOrDefault();
 
-        return actionType;
+        return resultl;
     }
 
     public Task<BasicQCMemberInfo> GetBasicQCMemberInfo(string QCMemberUserName, int QCMemberDomainId)
@@ -841,15 +870,26 @@ public class BasicInformationRepository : IBasicInformationRepository
 
 
                 // Fifth result set
-                participatedCirculations = multi.Read().Select(cr => new Circulation()
-                {
+                //participatedCirculations = multi.Read().Select(cr => new Circulation()
+                //{
+                //    PerformerContactPerson = cr.PerformerContactPerson,
+                //   //  ActionType = GetActionType_ById(cr.ActionType),
+                //    CreatedBy = cr.CreatedBy,
+                //    CreatedDate = cr.CreatedDate==null ? null:cr.CreatedDate,
+                //    ModifiedDate = cr.ModifiedDate,
+                //    ModifiedBy = cr.ModifiedBy
+                //}).ToList();
 
-                    ActionType = GetActionType_ById(cr.ActionType),
-                    CreatedBy = cr.CreatedBy,
-                    CreatedDate = cr.CreatedDate,
-                    ModifiedDate = cr.ModifiedDate,
-                    ModifiedBy = cr.ModifiedBy
-                }).ToList();
+                participatedCirculations = multi.Read<Circulation, Contact, Revision, Circulation>(
+
+                  (circulation, contact, revision) =>
+                  {
+                      circulation.PerformerContactPerson = contact;
+                      circulation.Revision = revision;
+                      return circulation;
+                  },
+              splitOn: "ContactId,RequestId"   // tells Dapper where each new object starts
+).ToList();
 
                 usefulContacts = multi.Read().Select(co=>new Contact()                 
                 {                    
@@ -858,7 +898,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                     Phone = co.Phone == null ? "" : co.Phone,
                     Cc = co.Cc,
                     Address = co.Address,
-                    Attention = co.Attention,
+                    Note = co.Note,
                     ContactType = co.ContactType,
                     CreatedBy = "",
                     CreatedDate = DateTime.Now,
@@ -1610,7 +1650,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                                     newContact.Phone = orderContacts[i].Phone == null? "" : orderContacts[i].Phone;
                                     newContact.Cc = orderContacts[i].Cc;
                                     //newContact.Address = orderContacts[i].Address;
-                                    newContact.Attention = orderContacts[i].Attention;
+                                    newContact.Note = orderContacts[i].Note;
                                     newContact.ContactType = orderContacts[i].ContactType;
                                     newContact.CreatedBy = newOrderInInspectionSystem.CreatedBy;
                                     newContact.CreatedDate = newOrderInInspectionSystem.CreatedDate;
@@ -1768,7 +1808,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                 newContact.Phone = contacts[i].Phone == null ? "" : contacts[i].Phone;
                 newContact.Cc = contacts[i].Cc;
                 //newContact.Address = orderContacts[i].Address;
-                newContact.Attention = contacts[i].Attention;
+                newContact.Note = contacts[i].Note;
                 newContact.ContactType = contacts[i].ContactType;
                 newContact.CreatedBy = order.CreatedBy;
                 newContact.CreatedDate = order.CreatedDate;
@@ -2202,7 +2242,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2248,7 +2288,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2324,7 +2364,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2585,7 +2625,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2632,7 +2672,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2679,7 +2719,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2725,7 +2765,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2771,7 +2811,7 @@ public class BasicInformationRepository : IBasicInformationRepository
                         IsVisible = row.IsVisible,
                         CreatedBy = row.CreatedBy,
                         CreatedDate = row.CreatedDate,
-                        Attention = row.Attention,
+                        Note = row.Note,
                         Cc = row.Cc,
                         Mobile = row.Mobile,
                         Address = row.Address,
@@ -2977,6 +3017,7 @@ public class BasicInformationRepository : IBasicInformationRepository
 
 }
 
+
 public class InspectionNotificationIdTypeHandler : SqlMapper.TypeHandler<InspectionNotificationId>
 {
     public override void SetValue(IDbDataParameter parameter, InspectionNotificationId value)
@@ -3127,3 +3168,19 @@ public class InspectionReportAttachmentIdTypeHandler : SqlMapper.TypeHandler<Ins
     }
 }
 
+public class InspectorIdTypeHandler : SqlMapper.TypeHandler<InspectorId>
+{
+    public override void SetValue(IDbDataParameter parameter, InspectorId value)
+    {
+        parameter.Value = value?.Value;
+    }
+
+    public override InspectorId Parse(object value)
+    {
+        if (value == null || value is DBNull)
+        {
+            return null; // or throw a custom exception if null is not acceptable in your domain
+        }
+        return InspectorId.Create(Guid.Parse(value.ToString()));
+    }
+}
