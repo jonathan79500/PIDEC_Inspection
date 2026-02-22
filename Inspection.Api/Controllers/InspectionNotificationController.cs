@@ -1,4 +1,5 @@
-﻿using Inspection.Application.Contracts.Persistence;
+﻿using EllipticCurve.Utils;
+using Inspection.Application.Contracts.Persistence;
 using Inspection.Application.DTOs;
 using Inspection.Application.DTOs.Common;
 using Inspection.Application.DTOs.InspectionReport;
@@ -344,32 +345,61 @@ public class InspectionNotificationController : ControllerBase
     {
         try
         {
+            
             List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
             AttachmentDto attachmentDto;
-            for (int i = 0; i < circulationDate.Attachments.Count; i++)
+            if (circulationDate.Attachments != null)
             {
-                attachmentDto = new AttachmentDto();
-                attachmentDto.Content = circulationDate.Attachments[i];
-                attachmentDto.ContentType = circulationDate.Attachments[i].ContentType;
-                if (circulationDate.AttachmentIds[i] != null && circulationDate.AttachmentIds[i] != "")
-                    attachmentDto.Id = new Guid(circulationDate.AttachmentIds[i]);
-                else
-                    attachmentDto.Id = Guid.NewGuid();
-                attachmentDto.Name = circulationDate.AttachmentNames[i];
-                attachmentDto.Version = circulationDate.AttachmentVersions[i];
-                attachmentDto.Description = circulationDate.AttachmentDescriptions[i];
-                var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
+                for (int i = 0; i < circulationDate.HasContent!.Count; i++)
+                {
+                    attachmentDto = new AttachmentDto();
+                    if (circulationDate.HasContent[i] == false)
+                    {
+                        var taskResult = _fileService.DownloadFileById(new Guid(circulationDate.AttachmentIds[i]));
+
+                        if (taskResult != null)
+                        {
+
+                            var FileDto = taskResult.Result;
+                            // Return as downloadable file
+                            // return File(FileDto.Content, FileDto.ContentType);
+                            //Use MemoryStream for large files
+                            MemoryStream filestr = new MemoryStream(FileDto.Content);
+                            attachmentDto.Content = new FormFile(filestr, 0, FileDto.Content.Length, "file", circulationDate.AttachmentNames[i])
+                            {
+                                Headers = new HeaderDictionary(),
+                                ContentType = FileDto.ContentType
+                            };
+                            attachmentDto.ContentType = FileDto.ContentType;
+                        }
+
+                    }
+                    else
+                    {
+                        attachmentDto.Content = circulationDate.Attachments[i];
+                        attachmentDto.ContentType = circulationDate.Attachments[i].ContentType;
+                    }
+                    if (circulationDate.AttachmentIds[i] != null && circulationDate.AttachmentIds[i] != "")
+                        attachmentDto.Id = new Guid(circulationDate.AttachmentIds[i]);
+                    else
+                        attachmentDto.Id = Guid.NewGuid();
+                    attachmentDto.Name = circulationDate.AttachmentNames[i];
+                    attachmentDto.Version = circulationDate.AttachmentVersions[i];
+                    attachmentDto.Description = circulationDate.AttachmentDescriptions[i];
+                    attachmentDto.Status = circulationDate.AttachmentStatuses[i];
+                    attachmentDto.DocNo = circulationDate.AttachmentDocNos[i];
+                    var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
 
 
 
 
-                using var stream = new FileStream(path, FileMode.Create);
-                await attachmentDto.Content.CopyToAsync(stream);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await attachmentDto.Content.CopyToAsync(stream);
 
-                attachmentDtos.Add(attachmentDto);
-                // Here you can persist metadata + file path to DB
+                    attachmentDtos.Add(attachmentDto);
+                    // Here you can persist metadata + file path to DB
+                }
             }
-
             var command = new CompleteCirculationCommand
             {
                 CirculationDto = JsonConvert.DeserializeObject<CirculationDto>(circulationDate.circulation),
@@ -398,13 +428,38 @@ public class InspectionNotificationController : ControllerBase
 
             List<AttachmentDto> attachmentDtos = new List<AttachmentDto>();
             AttachmentDto attachmentDto;
+        
             if (inspectionUpload.Attachments != null)
             {
-                for (int i = 0; i < inspectionUpload.Attachments.Count; i++)
+                for (int i = 0; i < inspectionUpload.HasContent!.Count; i++)
                 {
                     attachmentDto = new AttachmentDto();
-                    attachmentDto.Content = inspectionUpload.Attachments[i];
-                    attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
+                    if (inspectionUpload.HasContent[i] == false)
+                    {
+                        var taskResult = _fileService.DownloadFileById(new Guid(inspectionUpload.AttachmentIds[i]));
+
+                        if (taskResult != null)
+                        {
+
+                            var FileDto = taskResult.Result;
+                            // Return as downloadable file
+                            // return File(FileDto.Content, FileDto.ContentType);
+                            //Use MemoryStream for large files
+                            MemoryStream filestr = new MemoryStream(FileDto.Content);
+                            attachmentDto.Content = new FormFile(filestr, 0, FileDto.Content.Length, "file", inspectionUpload.AttachmentNames[i])
+                            {
+                                Headers = new HeaderDictionary(),
+                                ContentType = FileDto.ContentType
+                            };
+                            attachmentDto.ContentType = FileDto.ContentType;
+                        }
+
+                    }
+                    else
+                    {
+                        attachmentDto.Content = inspectionUpload.Attachments[i];
+                        attachmentDto.ContentType = inspectionUpload.Attachments[i].ContentType;
+                    }
                     if (inspectionUpload.AttachmentIds[i] != null && inspectionUpload.AttachmentIds[i] != "")
                         attachmentDto.Id = new Guid(inspectionUpload.AttachmentIds[i]);
                     else
@@ -412,9 +467,8 @@ public class InspectionNotificationController : ControllerBase
                     attachmentDto.Name = inspectionUpload.AttachmentNames[i];
                     attachmentDto.Version = inspectionUpload.AttachmentVersions[i];
                     attachmentDto.Description = inspectionUpload.AttachmentDescriptions[i];
-                    attachmentDto.DocNo = inspectionUpload.AttachmentDocNos[i];
                     attachmentDto.Status = inspectionUpload.AttachmentStatuses[i];
-                    
+                    attachmentDto.DocNo = inspectionUpload.AttachmentDocNos[i];
                     var path = Path.Combine(webHostEnvironment.ContentRootPath, "Attachments", FileHelper.generateFileName(attachmentDto.Name));
 
 
@@ -514,8 +568,12 @@ public class CirculationDataDto
         public List<string>? AttachmentNames { get; set; }
         public List<string>? AttachmentVersions { get; set; }
         public List<string>? AttachmentDescriptions { get; set; }
+        public List<string>? AttachmentDocNos { get; set; }
+        public List<string>? AttachmentStatuses { get; set; }
+        public List<Boolean>? HasContent { get; set; }
         [ValidateNever]
         public List<IFormFile> Attachments { get; set; }
+
 }
     public class InspectionUploadDto
 {
@@ -529,6 +587,7 @@ public class CirculationDataDto
     public List<string>? AttachmentDocNos { get; set; }
     public List<string>? AttachmentStatuses { get; set; }
     public List<IFormFile>? Attachments { get; set; }
+    public List<Boolean>? HasContent { get; set; }
     //[ModelBinder(BinderType = typeof(AttachmentListBinder))]
     //public List<AttachmentDto> Attachments { get; set; }
 

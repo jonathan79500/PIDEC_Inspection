@@ -8,10 +8,11 @@ using Inspection.Application.DTOs.Common;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using System.Collections.Generic;
 using Inspection.Application.DTOs.InspectionReport;
+using System;
 
 namespace Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById
 {
-    public class GetInspectionNotificationRequestHandler : IRequestHandler<GetInspectionNotificationByIdRequest, (InspectionNotificationDto,List<InspectionReportDto>)>
+    public class GetInspectionNotificationRequestHandler : IRequestHandler<GetInspectionNotificationByIdRequest, (List<InspectionNotificationDto>,List<InspectionReportDto>)>
     {
         private readonly IInspectionNotificationRepository _inspectionRequestRepository;
        //
@@ -22,14 +23,21 @@ namespace Inspection.Application.Features.InspectionNotifications.Queries.GetIns
             _inspectionRequestRepository = inspectionRequestRepository;
         }
 
-        public async Task<(InspectionNotificationDto, List<InspectionReportDto>)> Handle(GetInspectionNotificationByIdRequest request, CancellationToken cancellationToken)
+        public async Task<(List<InspectionNotificationDto>, List<InspectionReportDto>)> Handle(GetInspectionNotificationByIdRequest request, CancellationToken cancellationToken)
         {
-            string strInspectionNotificationId = request.InspectionNotificationId;
-            InspectionNotificationId newInspectionNotificationId = InspectionNotificationId.Create(new System.Guid(strInspectionNotificationId));
-            var inspectionRequest = await _inspectionRequestRepository.GetInspectionNotificationById(newInspectionNotificationId);
-            InspectionNotificationDto insNoteDto = inspectionRequest.Item1.Adapt<InspectionNotificationDto>();
-            List<InspectionReportDto> relinsReportsDto = inspectionRequest.Item2.Adapt<List<InspectionReportDto>>();
-            return (insNoteDto, relinsReportsDto);
+            try
+            {
+                string strInspectionNotificationId = request.InspectionNotificationId;
+                InspectionNotificationId newInspectionNotificationId = InspectionNotificationId.Create(new System.Guid(strInspectionNotificationId));
+                var inspectionRequest = await _inspectionRequestRepository.GetInspectionNotificationById(newInspectionNotificationId);
+                List<InspectionNotificationDto> insNotesDto = inspectionRequest.Item1.Adapt<List<InspectionNotificationDto>>();
+                List<InspectionReportDto> relinsReportsDto = inspectionRequest.Item2.Adapt<List<InspectionReportDto>>();
+                return (insNotesDto, relinsReportsDto);
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
         }
     }
 }

@@ -40,8 +40,10 @@ namespace Inspection.Persistence.Configurations.Entities
                 .HasConversion(converter)
                 .ValueGeneratedOnAdd();
 
-            //builder.Property(e => e.InspectionReportId).HasColumnName("InspectionReportId");
-           // builder.HasMany(e => e.inspectionReportAttachments);
+            builder.HasOne(x => x.Creator)
+       .WithMany()
+       .HasForeignKey(x => x.CreatorContactId);
+            
         }
     }
 

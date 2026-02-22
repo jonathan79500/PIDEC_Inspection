@@ -31,7 +31,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
     private InspectionNotification (InspectionNotificationId inspectionNotificationId,string name, NotificationNumber notificationNumberParts,string notificationNmber
         , DateTime issueDate, string persianIssueDate, DateTime requestInspectionDateStart, DateTime requestInspectionDateEnd, string requestInspectionPersianDateStart,
         string requestInspectionPersianDateEnd, Order order,
-         string description, string inspectionTimeComment,string equipmentTagNo,int? requestInspectionDueDate, string? orderName) :base(inspectionNotificationId)
+         string description, string inspectionTimeComment,string equipmentTagNo,int? requestInspectionDueDate, string? orderName,string? inspectionAction) :base(inspectionNotificationId)
     { 
         InspectionNotificationId = inspectionNotificationId;
         Name = name;
@@ -44,17 +44,18 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
         RequestInspectionPersianDateEnd = requestInspectionPersianDateEnd;
         RequestInspectionPersianDateStart = requestInspectionPersianDateStart;
         InspectionTimeComment = inspectionTimeComment;
-        Order = order;
+        Order = order;        
         OrderName = orderName;
         EquipmentTagNo = equipmentTagNo;
         Description = description;
         RequestInspectionDueDate = requestInspectionDueDate;
+        InspectionAction = inspectionAction;
     }
 
 
     public InspectionNotificationId InspectionNotificationId { get; set; }
-    public Guid? RevisionId { get; set; }
-    public Revision? Revision { get; set; } = null!;   
+    //public Guid? RevisionId { get; set; }
+    //public Revision? Revision { get; set; } = null!;   
     public string? Name { get;  set; }= string.Empty;
     public string? OrderName { get; set; } = string.Empty;
     public string? EquipmentTagNo { get; set; } = string.Empty;
@@ -80,19 +81,21 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
     private List<InspectionNotificationType> _types = new List<InspectionNotificationType>() ;
     private List<InspectionNotificationSubject> _subjects = new List<InspectionNotificationSubject>();  
     private List<InspectionNotificationContact>? _contacts = new List<InspectionNotificationContact>();
+    private List<InspectionNotificationRevision>? _revisions = new List<InspectionNotificationRevision>();
 
     public List<InspectionNotificationLocation>? Locations { get => _locations; set => _locations = value; }
     public List<InspectionNotificationContact>? Contacts { get => _contacts; set => _contacts = value; }
     public List<InspectionNotificationSubject>? Subjects { get => _subjects; set => _subjects = value; }
-    public List<InspectionNotificationType>? Types { get => _types; set => _types = value; } 
+    public List<InspectionNotificationType>? Types { get => _types; set => _types = value; }
+    public List<InspectionNotificationRevision>? Revisions { get => _revisions; set => _revisions = value; }
 
     public static InspectionNotification Create(string ?name,NotificationNumber ?notificationNumberParts,string? notificationNumber
        , DateTime? IssueDate,string? PersianIssueDate,DateTime? RequestInspectionDateStart,DateTime? RequestInspectionDateEnd,string? RequestInspectionPersianDateStart,
         string RequestInspectionPersianDateEnd, Order ?order,
-         string? description,string? inspectionTimeComment,string? equipmentTagNo,int? requestInspectionDueDate,string? orderName)
+         string? description,string? inspectionTimeComment,string? equipmentTagNo,int? requestInspectionDueDate,string? orderName,string? inspectionAction)
     {
         var inspectionNotification =  new InspectionNotification( InspectionNotificationId.CreateUnique() ,name!, notificationNumberParts!,notificationNumber, IssueDate!.Value, PersianIssueDate, RequestInspectionDateStart!.Value
-        ,RequestInspectionDateEnd!.Value, RequestInspectionPersianDateStart!, RequestInspectionPersianDateEnd!, order!,   description!, inspectionTimeComment!,equipmentTagNo!,requestInspectionDueDate!,orderName!);
+        ,RequestInspectionDateEnd!.Value, RequestInspectionPersianDateStart!, RequestInspectionPersianDateEnd!, order!,   description!, inspectionTimeComment!,equipmentTagNo!,requestInspectionDueDate!,orderName!,inspectionAction!);
         inspectionNotification.RaiseEvent(new InspectionNotificationCreatedEvent(inspectionNotification.InspectionNotificationId));
         return inspectionNotification;
     }
@@ -111,7 +114,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                
         var newinspectionNotification = InspectionNotification.Create(ins.Name!,ins.NotificationNumberParts!,ins.NotificationNumber,ins.IssueDate!,ins.PersianIssueDate,ins.RequestInspectionDateStart!
           ,ins.RequestInspectionDateEnd!,ins.RequestInspectionPersianDateStart,ins.RequestInspectionPersianDateEnd!,
-          ins.Order!,ins.Description!,ins.InspectionTimeComment!,ins.EquipmentTagNo,ins.RequestInspectionDueDate,ins.OrderName);
+          ins.Order!,ins.Description!,ins.InspectionTimeComment!,ins.EquipmentTagNo,ins.RequestInspectionDueDate,ins.OrderName,ins.InspectionAction);
 
         if(inspectionNotification.InspectionNotificationId != null && inspectionNotification.InspectionNotificationId.Value !=Guid.Empty)
             newinspectionNotification.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
@@ -250,6 +253,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             clonedInspectionNotification.CreatedBy = this.CreatedBy;
             clonedInspectionNotification.CreatedDate = currentDate;        
             clonedInspectionNotification.IssueDate = this.IssueDate;
+            clonedInspectionNotification.PersianIssueDate = this.PersianIssueDate;
             clonedInspectionNotification.NotificationNumber = this.NotificationNumber;
             clonedInspectionNotification.NotificationNumberParts = this.NotificationNumberParts;
             clonedInspectionNotification.Order = this.Order;
@@ -263,8 +267,9 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             clonedInspectionNotification.InspectionTimeComment = this.InspectionTimeComment;
             clonedInspectionNotification.EquipmentTagNo = this.EquipmentTagNo;
             clonedInspectionNotification.OrderName = this.OrderName;
-            clonedInspectionNotification.Revision = this.Revision;
-            clonedInspectionNotification.RevisionId = this.RevisionId;
+            //clonedInspectionNotification.Revision = this.Revision;
+            //clonedInspectionNotification.RevisionId = this.RevisionId;
+            
             clonedInspectionNotification.Subjects =  this.Subjects.Select(subject =>new InspectionNotificationSubject
             {
                 CreatedBy = subject.CreatedBy,
@@ -295,10 +300,10 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             clonedInspectionNotification.Locations = this.Locations.Select(location => new InspectionNotificationLocation
             {
                 CreatedBy = location.CreatedBy,                
-                CreatedDate = location.CreatedDate,
-                Id = Guid.NewGuid(),                
+                CreatedDate = location.CreatedDate,                               
                 InspectionNotificationId = clonedInspectionNotificationId,
-                AddressId = location.Id,
+                AddressId = location.AddressId,
+                Id = Guid.NewGuid(),
                 ModifiedBy = location.ModifiedBy,
                 ModifiedDate = location.ModifiedDate
             }).ToList();

@@ -214,9 +214,9 @@ namespace Inspection.Persistence.Migrations
                 name: "FK_CirculationInspectors_Persons_InspectorId",
                 table: "CirculationInspectors");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_InspectionReports_Contacts_CreatorContactId",
-                table: "InspectionReports");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_InspectionReports_Contacts_CreatorContactId",
+            //    table: "InspectionReports");
 
 
             migrationBuilder.DropTable(

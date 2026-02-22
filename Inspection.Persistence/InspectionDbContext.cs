@@ -51,11 +51,11 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         guidValue => new AttachmentId(guidValue));
 
 
-        modelBuilder.Entity<InspectionNotification>()
-.HasOne(n => n.Revision)
-.WithMany(r => r.InspectionNotifications)
-.HasForeignKey(n => n.RevisionId)
-.OnDelete(DeleteBehavior.NoAction); // or DeleteBehavior.Restrict
+//        modelBuilder.Entity<InspectionNotification>()
+//.HasOne(n => n.Revision)
+//.WithMany(r => r.InspectionNotifications)
+//.HasForeignKey(n => n.RevisionId)
+//.OnDelete(DeleteBehavior.NoAction); // or DeleteBehavior.Restrict
 
     //    modelBuilder.Entity<InspectionReportAttachment>()
     //.HasOne(a => a.InspectionReport)
@@ -230,6 +230,9 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
            .WithMany(pq => pq.Orders)
            .HasForeignKey(pq => pq.InspectionSubjectId);
 
+        modelBuilder.Entity<InspectionNotificationRevision>()
+        .ToTable("InspectionNotificationRevisions")
+        .HasKey(insr => insr.Id);
 
         modelBuilder.Entity<InspectionNotificationSubject>()
         .ToTable("InspectionNotificationSubjects")
@@ -250,6 +253,15 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
             .WithMany(ins => ins.InspectionPersons)
             .HasForeignKey(ins => ins.InspectionReportId);
 
+        modelBuilder.Entity<InspectionNotificationRevision>()
+            .HasOne(ins => ins.InspectionNotification)
+            .WithMany(ins => ins.Revisions)
+            .HasForeignKey(ins => ins.InspectionNotificationId);
+
+        modelBuilder.Entity<InspectionNotificationRevision>()
+            .HasOne(ins => ins.Revision)
+            .WithMany(ins => ins.InspectionNotifications)
+            .HasForeignKey(ins => ins.RevisionId);
 
         modelBuilder.Entity<InspectionNotificationSubject>()
             .HasOne(ins => ins.InspectionNotification)
@@ -351,6 +363,7 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
     public DbSet<ProjectContact> ProjectContacts { get; set; }
     public DbSet<InspectionNotificationContact> InspectionNotificationsContacts { get; set;}
     public DbSet<InspectionNotificationSubject> InspectionNotificationSubjects { get; set; }
+    public DbSet<InspectionNotificationRevision> InspectionNotificationRevisions { get; set; }
     public DbSet<InspectionNotificationType> InspectionNotificationsTypes { get; set;}
     public DbSet<InspectionNotificationLocation> InspectionNotificationsLocations { get; set; }
     public DbSet<CirculationAttachments> CirculationAttachments { get; set; }

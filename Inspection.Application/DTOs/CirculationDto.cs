@@ -33,5 +33,6 @@ namespace Inspection.Application.DTOs
         public string? Description { set; get; }
         public List<AttachmentDto> Attachments { get; set; }
         public bool isCurrentCirculation { get; set; }
+        public int? PreviousActionType { get; set; }
     }
 }

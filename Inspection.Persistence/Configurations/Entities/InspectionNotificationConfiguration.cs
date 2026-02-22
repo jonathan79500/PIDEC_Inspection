@@ -128,7 +128,7 @@ public class InspectionNotificationConfiguration : IEntityTypeConfiguration<Insp
         // builder.Property(e => e.ContractShippingDueDate);
         //builder.ComplexProperty(i => i.NotificationNumber).IsRequired();        
         builder.HasOne(i => i.Order);//.WithMany().HasForeignKey("OrderId");
-        builder.HasOne(i => i.Revision);//.WithMany().OnDelete(DeleteBehavior.NoAction);
+       // builder.HasOne(i => i.Revision);//.WithMany().OnDelete(DeleteBehavior.NoAction);
 
     }
 }

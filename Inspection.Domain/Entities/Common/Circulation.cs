@@ -10,11 +10,13 @@ using Inspection.Domain.Entities.Contacts;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.Enums;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+using Inspection.Domain.Entities.ValueObjects;
 
 namespace Inspection.Domain.Entities.Common
 {
     public class Circulation : BaseDomainEntity<Guid>
     {
+        
         public Circulation() : base()
         {
 
@@ -31,9 +33,10 @@ namespace Inspection.Domain.Entities.Common
         public string? PerformedActionDate { get; set; }
         public int? SequenceNo { get; set; }
         public DateTime? PerformedActionDateGregorian { get; set; }
-        public Contact? PerformerContactPerson { get; set; }
+        public Contact? PerformerContactPerson { get; set; }        
         public int? PerformerContactType { get; set; }
         public int? QCActionType { get; set; }
+        public int? PreviousActionType { get; set; }
 
         public string Comment { get; set; }
 
@@ -65,8 +68,8 @@ namespace Inspection.Domain.Entities.Common
             return new Circulation()
             {
                 Id = Guid.NewGuid(),
-                Revision = inspectionNotification.Revision!,
-                RevisionId = inspectionNotification.RevisionId!.Value,
+                Revision = inspectionNotification.Revisions[0].Revision!,
+                RevisionId = inspectionNotification.Revisions[0]!.RevisionId,
                 ActionType = null,
                 PerformerContactPerson = contactPerson,
                 SequenceNo = 1,

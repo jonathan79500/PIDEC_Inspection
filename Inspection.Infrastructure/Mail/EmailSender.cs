@@ -23,7 +23,9 @@ public class EmailSender : IEmailSender
     public async Task<bool> SendEmail(Email email)
     {
         var client = new SendGridClient(_emailSettings.ApiKey);
-        var to = new EmailAddress(email.To);
+        //var to = new EmailAddress(email.To);
+        //------Temporarily Emails will send to akbari.elahe--------------
+        var to = new EmailAddress("akbari.elahe@pidec.com");
         var from = new EmailAddress
         {
             Email = _emailSettings.FromAddress,

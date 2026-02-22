@@ -11,11 +11,15 @@ namespace Inspection.Application.DTOs.Common
     
         public class RevisionDto
         {
-            public Guid? RevisionId { get; set; }
-            public Guid? RequestId { get; set; }
-            public int? VersionNumber { get; set; }
-            public int? RevisionNumber { get; set; }
-            public DateTime? SubmittedDate { get; set; }
+        public RevisionDto()
+        {
+            
+        }
+        public Guid? RevisionId { get; set; } = Guid.Empty;
+        public Guid? RequestId { get; set; } = Guid.Empty;
+        public int? VersionNumber { get; set; }
+        public int? RevisionNumber { get; set; } = 0;
+        public DateTime? SubmittedDate { get; set; } = DateTime.Now;
 
             // Instead of full Contact entity, expose minimal info
             public Guid SubmittedById { get; set; }
@@ -23,13 +27,13 @@ namespace Inspection.Application.DTOs.Common
 
             public string? Comment { get; set; } = string.Empty;
             public string? Status { get; set; } = "Pending";
-            public bool? IsFinal { get; set; }
+            public bool? IsFinal { get; set; } = false;
 
             // Circulations summarized
             public List<CirculationDto>? Circulations { get; set; } = new List<CirculationDto>();
 
             // Subtype references (IDs or summaries)
-            public List<InspectionNotificationDto>? InspectionNotifications { get; set; }
+            //public List<InspectionNotificationDto>? InspectionNotifications { get; set; }
             public List<InspectionReportDto>? InspectionReports { get; set; }
         
 

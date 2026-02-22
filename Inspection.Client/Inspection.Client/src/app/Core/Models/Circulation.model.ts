@@ -19,6 +19,8 @@ export interface Circulation
      description:string,
      createdDate:Date,
      modifiedDate : Date,
-     comment :string
-     attachments: Attachment[]
+     comment :string,
+     attachments: Attachment[],
+     previousActionType:number,
+     isHidden : boolean
 }

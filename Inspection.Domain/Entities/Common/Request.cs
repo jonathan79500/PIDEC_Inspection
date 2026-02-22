@@ -3,6 +3,7 @@ using Inspection.Domain.Entities.Enums;
 using Inspection.Domain.Entities.InspectionNotification.Enums;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.User.Entities;
+using Inspection.Domain.Entities.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Inspection.Domain.Entities.Common
     {
         public Request() { }
 
-        public Contact? CreatorContactPerson { get; set; }
+        public Contact? CreatorContactPerson { get; set; }        
         public Guid CurrentRevisionId { get; set; }
 
         public List<Revision> Revisions { get; set; } = new List<Revision>();

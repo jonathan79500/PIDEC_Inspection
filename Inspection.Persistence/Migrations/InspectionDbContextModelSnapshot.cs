@@ -80,6 +80,9 @@ namespace Inspection.Persistence.Migrations
                     b.Property<string>("PerformerPN")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PreviousActionType")
+                        .HasColumnType("int");
+
                     b.Property<int?>("QCActionType")
                         .HasColumnType("int");
 
@@ -282,6 +285,9 @@ namespace Inspection.Persistence.Migrations
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedByCirculationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsFinal")
                         .HasColumnType("bit");
@@ -575,14 +581,9 @@ namespace Inspection.Persistence.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("RequestInspectionPersianDateStart");
 
-                    b.Property<Guid?>("RevisionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("InspectionNotificationId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("RevisionId");
 
                     b.ToTable("InspectionNotifications", (string)null);
                 });
@@ -651,6 +652,39 @@ namespace Inspection.Persistence.Migrations
                     b.HasIndex("InspectionNotificationId");
 
                     b.ToTable("InspectionNotificationLocations", (string)null);
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationRevision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("InspectionNotificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectionNotificationId");
+
+                    b.HasIndex("RevisionId");
+
+                    b.ToTable("InspectionNotificationRevisions", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationSubject", b =>
@@ -802,13 +836,17 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CreatorContactId")
+                    b.Property<Guid?>("CreatorContactId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CurrentStatus")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("InspectionReportNumberId")
+                    b.Property<string>("InspectionReportNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InspectionReportNumberPartsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("IssueDate")
@@ -834,7 +872,7 @@ namespace Inspection.Persistence.Migrations
                     b.Property<int>("ReportType")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("RequestedInspectionNotificationId")
+                    b.Property<Guid>("RequestIdOfRelatedInspectionNotification")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RevisionId")
@@ -844,7 +882,7 @@ namespace Inspection.Persistence.Migrations
 
                     b.HasIndex("CreatorContactId");
 
-                    b.HasIndex("InspectionReportNumberId");
+                    b.HasIndex("InspectionReportNumberPartsId");
 
                     b.HasIndex("RelatedInspectionNotificationId");
 
@@ -1634,14 +1672,7 @@ namespace Inspection.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("OrderId");
 
-                    b.HasOne("Inspection.Domain.Entities.Common.Revision", "Revision")
-                        .WithMany("InspectionNotifications")
-                        .HasForeignKey("RevisionId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("Order");
-
-                    b.Navigation("Revision");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationContact", b =>
@@ -1676,6 +1707,25 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("InspectionNotification");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationRevision", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification", "InspectionNotification")
+                        .WithMany("Revisions")
+                        .HasForeignKey("InspectionNotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inspection.Domain.Entities.Common.Revision", "Revision")
+                        .WithMany("InspectionNotifications")
+                        .HasForeignKey("RevisionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InspectionNotification");
+
+                    b.Navigation("Revision");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationSubject", b =>
@@ -1718,13 +1768,11 @@ namespace Inspection.Persistence.Migrations
                 {
                     b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorContactId");
 
-                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReportNumber", "InspectionReportNumber")
+                    b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReportNumber", "InspectionReportNumberParts")
                         .WithMany()
-                        .HasForeignKey("InspectionReportNumberId")
+                        .HasForeignKey("InspectionReportNumberPartsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1742,7 +1790,7 @@ namespace Inspection.Persistence.Migrations
 
                     b.Navigation("Creator");
 
-                    b.Navigation("InspectionReportNumber");
+                    b.Navigation("InspectionReportNumberParts");
 
                     b.Navigation("RelatedInspectionNotification");
 
@@ -2058,6 +2106,8 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("Contacts");
 
                     b.Navigation("Locations");
+
+                    b.Navigation("Revisions");
 
                     b.Navigation("Subjects");
 

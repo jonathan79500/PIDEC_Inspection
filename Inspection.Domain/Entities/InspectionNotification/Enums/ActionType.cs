@@ -11,11 +11,11 @@ namespace Inspection.Domain.Entities.InspectionNotification.Enums
         {
             CreateInspection = 0,
             SendInspectionToPIDEC = 1,
-            CreateNewVersionForInspection = 2,
-            PropagateInspectionToPIDECOrganizations = 3,
-            ConfirmInspectionNotification = 4,
-            RejectInspectionNotification = 5,
-            BackwardInspectionNotification = 6,
+            CreateNewVersionForInspection = 4,
+            PropagateInspectionToPIDECOrganizations = 6,
+            ConfirmInspectionNotification = 1,
+            RejectInspectionNotification = 2,
+            BackwardInspectionNotification = 3,
             CompleteInspectionNotification = 7,
             NoAction = -1
         }

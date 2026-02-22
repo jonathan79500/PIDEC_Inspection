@@ -28,7 +28,8 @@ namespace Inspection.Domain.Entities.InspectionReport
         public DateTime IssueDate { get; set; }
         public string PersianIssueDate { get; set; }
         public List<InspectionReportPerson> InspectionPersons { get; set; }
-        public Contact Creator { get; set; }
+        public Contact? Creator { get; set; }
+        public Guid? CreatorContactId { get; set; }
         public Guid CreatedBy { get; set; } // Creator User ID (Creator Is Inspector SecondPart/ThirdPart)
         
         [ForeignKey(nameof(RelatedInspectionNotificationId))]

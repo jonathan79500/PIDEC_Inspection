@@ -12,67 +12,6 @@ import { User } from '../../../Core/Models/User.model';
 import { Router } from '@angular/router';
 
 
-
-function fillLarge() {
-  setWidthAndHeight("100%");
-}
-
-function fillMedium() {
-  setWidthAndHeight("60%");
-}
-
-function fillExact(grid) {
-  setSize("50%","850px",grid)
-  //setWidthAndHeight("800px");
-}
-
-function setWidthAndHeight(size: string) {
-  var eGridDiv = document.querySelector<HTMLElement>("#myGrid")! as any;
-  eGridDiv.style.setProperty("width", size);
-  eGridDiv.style.setProperty("height", size);
-}
-function setSize(width: string,height:string,eGridDiv:any) {
-  //var eGridDiv = document.querySelector<HTMLElement>("#myGrid")! as any;
-  eGridDiv.style.setProperty("width", width);
-  eGridDiv.style.setProperty("height", height);
-}
-let gridApi: GridApi<Inspection> ;
-const gridOptions: GridOptions<Inspection> = {
-  columnDefs: [
-    { field: "name", width: 150 },
-    { field: "notificationNumber", width: 90 },
-    { field: "requestInspectionDateStart", width: 150 },
-    { field: "requestInspectionPersianDateStart", width: 150 },
-    { field: "requestInspectionDateEnd", width: 150 },
-    { field: "requestInspectionPersianDateEnd", width: 150 },
-    { field: "requestInspectionDueDate", width: 150 },
-    { field: "inspectionTimeComment", width: 150 },
-    { field: "order.equipmentTagNo", width: 90 },
-    { field: "contractShippingDueDate", width: 150 },
-    { field: "actualShippingDueDate", width: 150 },
-    // { field: "location.country", width: 100 },
-    // { field: "location.city", width: 100 },
-    { field:"issueDate",width:100},
-    { field:"persianIssueDate",width:100},
-    { field: "order.itP_NO", width: 100 }
-  ],
-  domLayout:'normal'
-};
-
-type InspectionGridData =
-{
-  name :string,
-  //orderName:string,
-  notificationNumber :string,
- // inspectionType :string,
-  inspectionSubject :string,
-  // contractShippingDueDate:string,
-  // actualShippingDueDate:string,
- // country:string,
-  //city:string
-}
-
-
 @Component({
     selector: 'app-inspection-management',
     imports: [MatTableModule],
@@ -100,7 +39,6 @@ public mainGrid:GridApi<Inspection>;
 
   public themeClass: string = "ag-theme-quartz";
   public inspections:Inspection[];
-  public reorgData :InspectionGridData[]=[];
 public agInspection :GridApi;
 currentAppState = inject(currentstateStore);
 currentProject : Project;
@@ -150,23 +88,10 @@ currentUser :User;
     this.inspectionService.getInspectionListByProjectIdUserId(currentProjectId,this.currentUser.id).subscribe((result)=>
     {
       this.inspections = result;
-      let data: InspectionGridData ={
-        inspectionSubject:'',
-        name:'',
-        notificationNumber:''
-      };
-
       this.dataSource.data = result;
       this.inspectionTable.dataSource = this.dataSource;
     }
     )
-
-    if (typeof window !== "undefined") {
-      // Attach external event handlers to window so they can be called from index.html
-      (<any>window).fillLarge = fillLarge;
-      (<any>window).fillMedium = fillMedium;
-      (<any>window).fillExact = fillExact;
-    }
 
 
  runInInjectionContext(this.injector,()=>{
@@ -176,11 +101,6 @@ currentUser :User;
     this.inspectionService.getInspectionListByProjectIdUserId(currentProjectId,this.currentUser.id).subscribe((result)=>
     {
       this.inspections = result;
-      let data: InspectionGridData ={
-        inspectionSubject:'',
-        name:'',
-        notificationNumber:''
-      };
       this.dataSource.data = result;
       this.inspectionTable.dataSource = this.dataSource;
     })

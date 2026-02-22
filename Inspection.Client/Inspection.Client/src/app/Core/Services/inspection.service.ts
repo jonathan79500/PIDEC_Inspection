@@ -106,7 +106,7 @@ export class InspectionService {
     //console.log("in Inspection Service")
     const headers = new HttpHeaders();
     console.log('ins id',inspectionId);
-    return this.http.post<{inspection:Inspection,relatedReports :InspectionReport[]}>(this.InspectionAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
+    return this.http.post<{inspection:Inspection[],relatedReports :InspectionReport[]}>(this.InspectionAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
   }
 
 

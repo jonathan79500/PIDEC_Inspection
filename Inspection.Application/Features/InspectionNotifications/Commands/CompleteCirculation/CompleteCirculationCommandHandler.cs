@@ -27,8 +27,8 @@ namespace Inspection.Application.Features.InspectionNotifications.Commands.Compl
             circulation = request.CirculationDto.Adapt<Circulation>();
             var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
 
-            var result = _notificationRepository.CompleteCirculation(circulation, attachments);
-            Circulation resultCirc = result.Result;
+            var result = _notificationRepository.CompleteCirculation(circulation,null, attachments);
+            Circulation resultCirc = result.Result.Item2;
             return Task.FromResult(resultCirc.Adapt<CirculationDto>());// Task.FromResult(circulation);
         }
     }

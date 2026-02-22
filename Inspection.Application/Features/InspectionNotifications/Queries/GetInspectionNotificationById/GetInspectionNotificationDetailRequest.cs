@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById;
 
-public class GetInspectionNotificationByIdRequest : IRequest<(InspectionNotificationDto, List<InspectionReportDto>)> //IQuery<InspectionNotificationDto>
+public class GetInspectionNotificationByIdRequest : IRequest<(List<InspectionNotificationDto>, List<InspectionReportDto>)> //IQuery<InspectionNotificationDto>
 {
     
     public string InspectionNotificationId { get; set; }

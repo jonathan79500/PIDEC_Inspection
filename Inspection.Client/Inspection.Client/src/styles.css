@@ -37,10 +37,10 @@ body {
    --list-background-light: #dcf5d6 !important;
    --primaryform-color:  #dcf5d6 !important;
    --secondryform-color :#d5eecf !important;
-    --row-alt-background : #e8f3e5 !important;
-     --row-background:#cbe7b6 !important;
-     --row-hover-color:#739559 !important;
-     --toolbar-text-Color : #133d15 !important;
+   --row-alt-background : #e8f3e5 !important;
+   --row-background:#cbe7b6 !important;
+   --row-hover-color:#739559 !important;
+   --toolbar-text-Color : #133d15 !important;
 }
 
 .blue-theme {

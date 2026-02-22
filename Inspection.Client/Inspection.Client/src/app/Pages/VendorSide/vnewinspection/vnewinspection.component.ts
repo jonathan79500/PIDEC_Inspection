@@ -32,28 +32,11 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 //import {GregorianDateWithMonthNamePipe} from '../../../Core/General/Pipes/gregorian-date-with-month-name.pipe';
 
-import {    ColDef,ColGroupDef,  DataChangedEvent,  FirstDataRenderedEvent,  GridApi,
-  GridOptions,
-  PaginationNumberFormatterParams,
-  _isVisible,
-  createGrid,} from "ag-grid-community";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import { IDatepickerTheme, IActiveDate, NgPersianDatepickerModule } from 'ng-persian-datepicker';
  import { darkTheme} from '../../../Themes/darkTheme';
-import { CFileUploadComponent } from "../../../Core/General/Components/cfile-upload/cfile-upload.component";
-import { ContactpersonSelectorComponent } from '../../contactperson-selector/contactperson-selector.component';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
+  MatDialog
 } from '@angular/material/dialog';
 import { UserService } from '../../../Core/Services/user.service';
 import { Vendor } from '../../../Core/Models/Vendor.model';
@@ -78,39 +61,8 @@ import { InspectionreportComponent } from '../../InspectorSide/inspectionreport/
 import { InspectionReportService } from '../../../Core/Services/inspectionReport.service';
 import { InspectionReport } from '../../../Core/Models/InspectionReport.model';
 import { User } from '../../../Core/Models/User.model';
+import { Revision } from '../../../Core/Models/Revision.model';
 
-
-function fillLarge() {
-  setWidthAndHeight("100%");
-}
-
-function fillMedium() {
-  setWidthAndHeight("60%");
-}
-
-function fillExact() {
-  setSize("100%","850px")
-  //setWidthAndHeight("800px");
-}
-
-function setWidthAndHeight(size: string) {
-  var eGridDiv = document.querySelector<HTMLElement>("#myGrid")! as any;
-  eGridDiv.style.setProperty("width", size);
-  eGridDiv.style.setProperty("height", size);
-}
-function setSize(width: string,height:string) {
-  var eGridDiv = document.querySelector<HTMLElement>("#myGrid")! as any;
-  eGridDiv.style.setProperty("width", width);
-  eGridDiv.style.setProperty("height", height);
-}
-let gridApi: GridApi<Inspection> ;
-const gridOptions: GridOptions<Inspection> = {
-  columnDefs: [
-    { field: "name", width: 150 },
-    // { field: "inspectionSubject", width: 90 }
-  ],
-  domLayout:'normal'
-};
 
 
 
@@ -146,6 +98,7 @@ export class VnewinspectionComponent implements OnInit,AfterViewInit{
   circulationData: FormData;
   requestCirculations: Circulation[];
   vendorCirculation : Circulation;
+  QC_Circulations : Circulation[];
   readonly dialog = inject(MatDialog);
   injector = inject(Injector);
   Project:Project;
@@ -161,7 +114,10 @@ export class VnewinspectionComponent implements OnInit,AfterViewInit{
   inspectionReports : InspectionReport[];
   currentUserId : string = '';
   currentUser : User;
-
+  QC_AlreadyHasAction : boolean= false;
+  IsNewRequest :boolean = true;
+  currentRevision : Revision;
+  ShowQCComment :boolean=false;
  // dateFormat: string = 'YYYY MMMM DD';
 uiIsVisible: boolean = true;
 
@@ -189,11 +145,13 @@ newInspectionSubject:string ='';
 currentCirculation : Circulation;
 orderSettingsExceptions:OrderSettingsException[];
 currentOrderExceptionContacts: ProjectContact[];
+currentUserRole: UserTypes = UserTypes.UndefinedUser;
 // control for combo box input
   subjectCtrl = new FormControl('');
   itpRowNoCtrl = new FormControl('');
 allSubjects: string[] = [];
 disableAddButton :boolean=false;
+inspectionActions: string[] = [];
 
 // Add this to your component
 private gregorianMonthNames = [
@@ -231,12 +189,15 @@ private gregorianMonthNames = [
     this.currentProject = this.currentAppState.currentproject();
     this.currentUser = this.currentAppState.currentuser();
 
+    this.currentUserRole = this.currentUser.userType;
+
     if(this.currentAppState.currentuser().userType == UserTypes.Vendor)
     {
        this.currentVendorData = this.currentAppState.vendorData();
        this.orderSettingsExceptions = this.currentAppState.vendorBasicInfo().orderSettingsExceptions;
        let vendorBasicInfo = this.currentAppState.vendorBasicInfo();
        this.currentInspectionTypes = vendorBasicInfo.inspectionTypes;
+       //this.currentInspectionSubjects = vendorBasicInfo.inspectionSubjects;
       this.Project = this.currentAppState.vendorBasicInfo().projects[0];
       this.Orders = this.currentAppState.vendorBasicInfo().orders;//this.currentVendorData['orders'];
 
@@ -246,6 +207,7 @@ private gregorianMonthNames = [
       let qCUserBasicInfo = this.currentAppState.qCMemberBasicInfo();
 
       this.currentInspectionTypes = qCUserBasicInfo.inspectionTypes;
+
     }
     else if(this.currentAppState.currentuser().userType == UserTypes.PIDEC_Inspector)
     {
@@ -254,9 +216,23 @@ private gregorianMonthNames = [
 
   }
 
+SetCirculationVisibility(circulation: Circulation){
+  if(this.currentUserRole== UserTypes.PIDEC_CC || this.currentUserRole== UserTypes.PIDEC_TO)
+    circulation.isHidden = false;
+
+  else if(this.currentUserRole == UserTypes.Vendor && (circulation.performerContactType == ContactTypes.QC_Lead || circulation.performerContactType == ContactTypes.QC_Manager) )
+    circulation.isHidden = false;
+
+  else if(this.isActiveForCurrentUser(circulation) )
+    circulation.isHidden = false;
+
+circulation.isHidden = true;
+}
+
 
    isActiveForCurrentUser(circulation: Circulation) : boolean{
-  if(circulation.performerContactPerson.id == this.currentCirculation.performerContactPerson.id && circulation.performedActionDateGregorian.toString().trim() == '0001-01-01T00:00:00')
+  if(circulation.performerContactPerson.id == this.currentCirculation.performerContactPerson.id
+     && (circulation.performedActionDateGregorian == null || circulation.performedActionDateGregorian!.toString().trim() == '0001-01-01T00:00:00') && !this.QC_AlreadyHasAction)
     return true;
   return false;
 }
@@ -289,23 +265,34 @@ private gregorianMonthNames = [
     console.log('report data is sent to QC');
   }
 
+
+  onInspectionActionChange(event: any) {
+     const value = event.target.value;
+     if (event.target.checked)
+      {
+         this.inspectionActions.push(value);
+      }
+      else
+      {
+        this.inspectionActions = this.inspectionActions.filter( x => x !== value );
+      }
+      const commaSeparated = this.inspectionActions.join(',');
+      this.inspectionForm.get('inspectionAction')?.setValue(commaSeparated);
+  }
+
 //---------------------Comment Section Actions---------------------------
 
 onAction(circulation: Circulation,actionType: number) {
 
-  if(actionType == 1)
-    {
-
-     circulation.actionType = 1;
+     circulation.actionType = actionType;
     circulation.comment =  circulation.comment;
-    }
-
 
      this.circulationData.delete('Attachments');
      this.circulationData.delete('AttachmentIds');
      this.circulationData.delete('AttachmentNames');
      this.circulationData.delete('AttachmentVersions');
      this.circulationData.delete('AttachmentDescriptions');
+      this.circulationData.delete('HasContent');
      if(circulation.attachments !=null)
      {
    circulation.attachments.forEach((attachment)=>{
@@ -313,16 +300,33 @@ onAction(circulation: Circulation,actionType: number) {
     if(attachment != null)
       name = attachment.name;
  if (name && name.trim() !== '') {
-    this.circulationData.append('Attachments', attachment.content); // File object
+
+
     this.circulationData.append('AttachmentIds', attachment.id);
     this.circulationData.append('AttachmentNames', attachment.name);
     this.circulationData.append('AttachmentVersions', attachment.version);
     this.circulationData.append('AttachmentDescriptions', attachment.description);
+    this.circulationData.append('AttachmentDocNos',attachment.docNo);
+    this.circulationData.append('AttachmentStatuses',attachment.status);
+
+    if (attachment.content) {
+    this.circulationData.append('Attachments', attachment.content);
+    this.circulationData.append('HasContent', 'true');
+  } else {
+    // 🔥 placeholder to keep index alignment
+    this.circulationData.append(
+      'Attachments',
+      new Blob(['fakeContent'], { type: 'application/octet-stream' }),
+      attachment.name
+    );
+    this.circulationData.append('HasContent', 'false');
+  }
+
   }
   });
 }
 this.circulationData.delete("circulation");
-  circulation.attachments = null;
+   circulation.attachments = null;
    this.circulationData.append('circulation',JSON.stringify(circulation));
 
 
@@ -361,11 +365,13 @@ onCommentFilesPicked(event: Event,circulation: any): void {
   input.value = '';
 }
 
- shouldShowButton(circulation: Circulation, action: 'approve' | 'reject' | 'upload'): boolean {
+ shouldShowButton(circulation: Circulation, action: 'approve' | 'backward' | 'reject' | 'upload'): boolean {
   if (!this.editMode || this.inspectionForm.get('id').value == '00000000-0000-0000-0000-000000000000') return false;
   if (!this.isActiveForCurrentUser(circulation)) return false;
 
-  return action === 'approve' || action === 'reject' || action === 'upload';
+  if(!(circulation.performerContactType == ContactTypes.QC_Lead || circulation.performerContactType == ContactTypes.QC_Manager)
+    && action=='backward') return false;
+  return action === 'approve' || action === 'backward' || action === 'reject' || action === 'upload';
  }
 
   showAll = true;
@@ -395,7 +401,7 @@ toggleEditMode(on: boolean) {
 
   RequisitionTitle?.disable();
 
-  if (on && this.currentCirculation.sequenceNo==0) {
+  if ((on && this.currentCirculation?.sequenceNo==0) || this.currentCirculation == null || this.currentCirculation == undefined) {
 
 
     notificationNumberCtrl?.enable();
@@ -411,36 +417,6 @@ toggleEditMode(on: boolean) {
     equipmentTagNo?.enable();
 
    }
-  //  else if(on && this.currentCirculation.sequenceNo==1)
-  //  {
-  //   notificationNumberCtrl?.disable();
-  //   CtrlRequestInspectionPersianDateStartCtrl?.disable();
-  //   CtrlRequestInspectionPersianDateEndCtrl?.disable();
-  //   CtrlpersianIssueDateCtrl?.disable();
-  //   CtrlInspectionTimeComment?.disable();
-  //   inspectionTypes?.disable();
-  //   inspectionSubjects?.disable();
-  //   locations?.disable();
-  //   contacts?.disable();
-  //   orderName?.disable();
-  //   equipmentTagNo?.disable();
-  //   const indexSubj0 = this.inspectionSubjectsFormArray.controls.findIndex((insSubj)=>(insSubj.get("id").value === "00000000-0000-0000-0000-000000000000"));
-  //   if(indexSubj0>-1)
-  //     this.inspectionSubjectsFormArray.removeAt(indexSubj0);
-
-  //   const indexType0 = this.inspectionTypesFormArray.controls.findIndex((insType)=>(insType.get("id").value === "00000000-0000-0000-0000-000000000000"));
-  //   if(indexType0>-1)
-  //     this.inspectionTypesFormArray.removeAt(indexType0);
-
-  //   const indexLoc0 = this.inspectionLocationFormArray.controls.findIndex((insLoc)=>(insLoc.get("id").value === "00000000-0000-0000-0000-000000000000"));
-  //   if(indexLoc0>-1)
-  //     this.inspectionLocationFormArray.removeAt(indexLoc0);
-
-  //    const indexCntc = this.contactsFormArray.controls.findIndex((cnt)=>(cnt.get("id").value === "00000000-0000-0000-0000-000000000000"));
-  //   if(indexCntc>-1)
-  //     this.contactsFormArray.removeAt(indexCntc);
-
-  //  }
    else {
     notificationNumberCtrl?.disable();
     CtrlRequestInspectionPersianDateStartCtrl?.disable();
@@ -474,6 +450,16 @@ toggleEditMode(on: boolean) {
 
     ngAfterViewInit() {  }
 
+  sortInspections(inspections: Inspection[]):Inspection[]{
+      // return latest revision of Inspection
+      let sorted = inspections.sort((a,b)=>{
+      const revisionNumA = Number(a.revision.revisionNumber);
+      const revisionNumB = Number(b.revision.revisionNumber);
+      return revisionNumB - revisionNumA;
+      });
+      return sorted;
+    }
+
   ngOnInit(): void {
 
     this.initialInspectionInfo = this.activatedRoute.snapshot.data['inspectionInfo'];
@@ -484,12 +470,14 @@ toggleEditMode(on: boolean) {
       effect(()=>{
          this.activatedRoute.paramMap.subscribe(params=>{
 
+            if(params.keys.length>0)
+              this.IsNewRequest = false;
 
              if(params.keys[0]=='id')
               {
               var inspectionNotificationId = params.get('id').toString();
                let strReadInspection = this.formData.get("readInspection");
-               let readInspectionObj:Inspection;
+               let readInspectionObj:Inspection[];
                if(strReadInspection != null)
                {
                   readInspectionObj = JSON.parse(strReadInspection.toString());
@@ -498,6 +486,8 @@ toggleEditMode(on: boolean) {
                else
                {
                  this.inspectionService.getInspectionById(inspectionNotificationId).subscribe((inspectioncmplx)=>{
+
+
                     this.generateInspectionFromValue(inspectioncmplx.inspection);
                     this.inspectionReports = inspectioncmplx.relatedReports;
                    });
@@ -505,11 +495,12 @@ toggleEditMode(on: boolean) {
               }
               else // When we are creating new Inspection and select an order
               {
-
+                this.IsNewRequest = true;
                 let currentOrder:Order = this.currentAppState.currentorder();
                 this.currentOrderExceptionContacts = this.orderSettingsExceptions.filter((ose)=>ose.orderId== currentOrder.id).map((ose)=>ose.projectContact);
 
-                this.initializeInspectionForm(currentOrder)
+                this.initializeFormData(currentOrder)
+
 
                   this.inspectionForm.patchValue({
                     notificationNumber: this.initialInspectionInfo.newNotificationNumber,
@@ -632,16 +623,6 @@ toggleEditMode(on: boolean) {
 
       });
 
-      //  this.inspectionForm.valueChanges.subscribe(() => {
-      //  let HasEmptyField = this.inspectionSubjectsFormArray.controls.some(group => {
-      //    const fg = group as FormGroup;
-      //     return ( fg.get('name')?.value == undefined || fg.get('itpRowNo')?.value == undefined || fg.get('name')?.value.trim() === '' || fg.get('itpRowNo')?.value === '' );
-      //    });
-
-      //    if(!this.editMode || HasEmptyField)
-      //     this.inspectionForm.controls
-      // this.disableAddButton = !this.editMode || HasEmptyField ;});//
-
        })
 
   })
@@ -660,53 +641,21 @@ LocalFormatDate(date:Date)
       return  formattedGregorianDate;
 }
 
+trackByIndex(index: number, item: any): number {
+  return index;
+}
+trackById(index: number, group: FormGroup): string {
+  return group.get('id')?.value;
+}
 addInspectionSubject() {
-  // const name = this.subjectCtrl.value?.trim();
-  // const itpRowNo = this.itpRowNoCtrl.value?.trim();
-
-  // if (!name && !itpRowNo) return;
-
-  // check if already exists in FormArray
-  // const exists = this.inspectionSubjectsFormArray.controls.some(
-  //   ctrl => (ctrl.get('name')?.value === name &&  ctrl.get('itpRowNo')?.value === itpRowNo)
-  // );
-
-
-  // const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === '00000000-0000-0000-0000-000000000000'));
-  // if(indexOfNullId>=0)
-  //   this.inspectionSubjectsFormArray.removeAt(indexOfNullId);
-  // else
     this.inspectionSubjectsFormArray.push(
       this.formBuilder.group({
-        id: ['00000000-0000-0000-0000-000000000000'],
+        id: [crypto.randomUUID()],
         name: [''],
         itpRowNo:[''],
         selected: [false]
       })
     );
-
-  // if (!exists) {
-  //   const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === '00000000-0000-0000-0000-000000000000' && ctrl.get('name')?.value===name && ctrl.get('itpRowNo')?.value ===itpRowNo) );
-  //   if(indexOfNullId>=0)
-  //     this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({id: crypto.randomUUID(), selected:true});
-
-  //   this.inspectionSubjectsFormArray.push(
-  //     this.formBuilder.group({
-  //       id: [crypto.randomUUID()],
-  //       name: [name],
-  //       itpRowNo:[itpRowNo],
-  //       selected: [true]
-  //     })
-  //   );
-  // }
-
-  // add to allSubjects if new
-  // if (!this.allSubjects.includes(name)) {
-  //   this.allSubjects.push(name);
-  // }
-
-  //  this.subjectCtrl.setValue('');
-  //  this.itpRowNoCtrl.setValue('');
 }
 
 changeITPRow(newValue : string ,id:string){
@@ -714,73 +663,16 @@ changeITPRow(newValue : string ,id:string){
  const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === id));
     if(indexOfNullId>=0)
       this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({
-        id: (id==='00000000-0000-0000-0000-000000000000' ? crypto.randomUUID(): id),
+        //id: (id==='00000000-0000-0000-0000-000000000000' ? crypto.randomUUID(): id),
         itpRowNo:newValue,
-        name : this.subjectCtrl.value?.trim()
+        // name : this.subjectCtrl.value?.trim()
       })
-}
-
-changeSubj(newValue : string ,id:string){
-  const indexOfNullId = this.inspectionSubjectsFormArray.controls.findIndex(ctrl => (ctrl.get('id')?.value === id) );
-    if(indexOfNullId>=0)
-       this.inspectionSubjectsFormArray.at(indexOfNullId).patchValue({
-        id: (id==='00000000-0000-0000-0000-000000000000' ? crypto.randomUUID(): id),
-        itpRowNo: this.itpRowNoCtrl.value?.trim(),
-        name:newValue
-      })
-}
-removeInspectionSubject(index: number) {
-  this.inspectionSubjectsFormArray.removeAt(index);
 }
 
 removeInsSubject(insSubject: FormTypes.FormInspectionSubject): void {
   const idx = this.inspectionSubjectsFormArray.controls.indexOf(insSubject);
   if (idx >= 0) {
     this.inspectionSubjectsFormArray.removeAt(idx);
-  }
-}
-
-
-// 🔑 Check if all groups have the specified value
- allInspectionSubjectsHaveValue(): boolean {
-  return this.inspectionSubjectsFormArray.controls.every
-  (group => {
-    const fg = group as FormGroup;
-    return (fg.get('name')?.value.trim() != '' && fg.get('itpRowNo')?.value.trim() !=''); });
-   }
-
-  addNewInsSubject():void{
-  const name = this.subjectCtrl.value?.trim();
-  const itpRowNo = this.itpRowNoCtrl.value?.trim();
-  if (!name || !itpRowNo) return;
-
-  // check if already exists in FormArray
-  const exists = this.inspectionSubjectsFormArray.controls.some(
-    ctrl => ctrl.get('name')?.value === name
-  );
-
-  if (!exists) {
-    this.inspectionSubjectsFormArray.push(
-      this.formBuilder.group({
-        id: [crypto.randomUUID()],
-        name: [name],
-        itpRowNo:[itpRowNo],
-        selected: [true]
-      })
-    );
-  }
-
-  // add to allSubjects if new
-  if (!this.allSubjects.includes(name)) {
-    this.allSubjects.push(name);
-  }
-
-  }
-
-toggleSubject(index: number) {
-  const ctrl = this.inspectionSubjectsFormArray.at(index);
-  if (ctrl.get('selected')?.value === false) {
-    this.inspectionSubjectsFormArray.removeAt(index);
   }
 }
 
@@ -1193,7 +1085,7 @@ console.log('current vendor:',this.currentVendorData);
     })
   }
 
-  initializeInspectionForm(order:Order):void{
+  initializeFormData(order:Order):void{
      let currentOrder:Order = order;
     //const currentOrderContacts;
     let currentProjectContacts =null;
@@ -1218,13 +1110,9 @@ console.log('current vendor:',this.currentVendorData);
 
          this.currentInspectionTypes = this.currentVendorStore.inspectionTypes();
 
-
           this.inspectionForm = this.generateInspectionForm();
 
-
   }
-
-
 
 
   VisibleCirculations(circulations:Circulation[]): Circulation[]
@@ -1256,7 +1144,7 @@ console.log('current vendor:',this.currentVendorData);
     return result;
   }
 
-  CheckIfInspectionIsActiveForCurrentUser(circulations: Circulation[]): boolean{
+  CheckIfInspectionIsActiveForCurrentUser(circulations: Circulation[],vendorCirculation:Circulation): boolean{
 
     this.currentUserId = this.currentAppState.currentuser().id;
     for(let i=0; i<circulations.length;i++)
@@ -1265,26 +1153,87 @@ console.log('current vendor:',this.currentVendorData);
       if( circulations[i].performerContactPerson.userId ==this.currentUserId && (circulations[i].performedActionDateGregorian== undefined || circulations[i].performedActionDateGregorian == null || circulations[i].performedActionDateGregorian.toString().trim()=== '0001-01-01T00:00:00') || circulations[i].actionType == null)
       {
         this.currentCirculation = circulations[i];
+        if(this.currentCirculation.performerContactType == ContactTypes.QC_Lead || this.currentCirculation.performerContactType == ContactTypes.QC_Manager)
+        {
+
+          this.currentCirculation.attachments =structuredClone(vendorCirculation.attachments);
+        }
         return true;
       }
     }
     return false;
 
   }
- generateInspectionFromValue(inspection :Inspection):void
+
+  findLastVendorCirculationWithAction(inspections :Inspection[]):Circulation
+  {
+    let foundCirculation:Circulation = null;
+    for(let i=0; i<inspections.length; i++)
+    {
+      foundCirculation= inspections[i].revision.circulations!.filter((cr)=>cr.performerContactType == ContactTypes.Vendor && cr.performedActionDateGregorian != null && cr.performedActionDateGregorian.toString().trim()!='0001-01-01T00:00:00')![0];
+      if(foundCirculation != null)
+        break;
+    }
+    return foundCirculation;
+  }
+
+ generateInspectionFromValue(inspections :Inspection[]):void
 {
 
 
+let inspection = inspections[0];
+let withoutChangeInspection = structuredClone(inspection);
   //first should initialize form based on inspection order
 
 
 const [mainNo, rev] = inspection.notificationNumber.split('.');
 
-this.requestCirculations = this.VisibleCirculations(inspection.revision.circulations);
-this.requestCirculations = this.requestCirculations.filter((circ)=> circ.performerContactType != ContactTypes.Vendor);
-this.vendorCirculation =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Vendor)[0];
+this.currentRevision = inspection.revision;
+ //this.vendorCirculation =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Vendor)![0];
+ let lastVendorWithActionCirculation = this.findLastVendorCirculationWithAction(inspections);
+ if(lastVendorWithActionCirculation != null)
+    this.attachments = structuredClone(lastVendorWithActionCirculation.attachments);
 
-this.attachments = this.vendorCirculation.attachments;
+if(inspections.length>1)//I mean this Inspection has different revisions
+{
+  if(this.CheckIfInspectionIsActiveForCurrentUser(inspection.revision.circulations,lastVendorWithActionCirculation))
+  {
+    this.requestCirculations = this.VisibleCirculations(inspection.revision.circulations);
+    this.QC_Circulations =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.QC_Lead || cr.performerContactType == ContactTypes.QC_Manager);
+  }
+  else
+  {
+    //If current User is a user that do not have permission to edit this form, so they should see last inspectionNotification
+    //properties that vendor has signed, to inform about last changes
+    inspection = inspections[1];
+    this.requestCirculations = this.VisibleCirculations(inspection.revision.circulations);
+   // this.vendorCirculation =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.Vendor)[0];
+    this.QC_Circulations =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.QC_Lead || cr.performerContactType == ContactTypes.QC_Manager);
+  }
+}//----yet there is only one revision
+else
+{
+  this.requestCirculations = this.VisibleCirculations(inspection.revision.circulations);
+  this.QC_Circulations =inspection.revision.circulations.filter((cr)=>  cr.performerContactType == ContactTypes.QC_Lead || cr.performerContactType == ContactTypes.QC_Manager);
+}
+
+this.requestCirculations = this.requestCirculations.filter((circ)=> circ.performerContactType != ContactTypes.Vendor);
+
+for(let i=0; i<this.QC_Circulations.length; i++)
+{
+  if(this.QC_Circulations[i].performedActionDateGregorian!=null && this.QC_Circulations[i].performedActionDateGregorian!=undefined && this.QC_Circulations[i].performedActionDateGregorian.toString().trim()!='0001-01-01T00:00:00')
+    this.QC_AlreadyHasAction = true;
+}
+
+if(this.currentRevision.status == 'Backwarded' && this.QC_AlreadyHasAction)
+{
+  this.ShowQCComment = true;
+}
+
+
+if(this.currentCirculation != null)
+    this.currentCirculation.attachments =[...lastVendorWithActionCirculation.attachments.slice()];
+
   //this.vendorAttachments =  this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]);
   this.inspectionForm =  this.formBuilder.group({
 
@@ -1339,6 +1288,12 @@ this.attachments = this.vendorCirculation.attachments;
 
   });
 
+    if (inspection.inspectionAction)
+    {
+      this.inspectionActions = inspection.inspectionAction.split(',');
+      this.inspectionForm.get('inspectionAction')?.setValue(inspection.inspectionAction);
+    }
+
   //  this.formattedPersianReqStartDate = inspection.requestInspectionPersianDateStart; //1404/09/29
   // this.formattedPersianReqEndDate = inspection.requestInspectionPersianDateEnd;
   this.formattedPersianReqStartDate = this.ConvertGregorianDateToPersianDate(inspection.requestInspectionDateStart);
@@ -1371,23 +1326,26 @@ this.attachments = this.vendorCirculation.attachments;
         }
 
 
-      this.generateInspectionSubjectsFormArrayFromValue(inspection.inspectionSubjects);
-      this.generateInspectionTypesFormArrayFromValue(inspection.inspectionTypes);
-      this.generateContactsFormArrayFromValue(inspection.contacts);
-      this.generateInspectionLocationsFormArrayFromValue(inspection.locations);
+      this.generateInspectionSubjectsFormArrayFromValue(withoutChangeInspection.inspectionSubjects);
+      this.generateInspectionTypesFormArrayFromValue(withoutChangeInspection.inspectionTypes);
+      this.generateContactsFormArrayFromValue(withoutChangeInspection.contacts);
+      this.generateInspectionLocationsFormArrayFromValue(withoutChangeInspection.locations);
 
-       if(this.CheckIfInspectionIsActiveForCurrentUser(inspection.revision.circulations) == true)
- {
+  if(this.CheckIfInspectionIsActiveForCurrentUser(inspection.revision.circulations,lastVendorWithActionCirculation) == true)
+  {
     this.editMode = true;
     this.toggleEditMode(true);
-  //   this.inspectionForm.patchValue({
+  }
+  else{
+      this.editMode = false;
+      this.toggleEditMode(false);
+    }
 
-  // })
- }
- else{
-  this.editMode = false;
-   this.toggleEditMode(false);
- }
+  for(let i=0; i< inspection.revision.circulations.length ;i++)
+  {
+    this.SetCirculationVisibility(inspection.revision.circulations[i]);
+  }
+
  }
 
  get revNumber(): string
@@ -2069,6 +2027,9 @@ CalculateInspectionDuration():void{
       status:''
     });
   }
+ removeCirculationFile(activeCirculation : Circulation ,index: number) {
+    activeCirculation.attachments.splice(index, 1);
+  }
 
  removeFile(index: number) {
     this.attachments.splice(index, 1);
@@ -2136,10 +2097,14 @@ CalculateInspectionDuration():void{
      this.formData.delete('AttachmentDescriptions');
      this.formData.delete('AttachmentDocNos');
      this.formData.delete('AttachmentStatuses');
+      this.formData.delete('HasContent');
 
     // this.formData.append('attachments',JSON.stringify(this.Attachments));
    this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
    this.formData.append('project',JSON.stringify(this.Project ))
+
+   if(this.currentCirculation != null && this.currentCirculation != undefined)
+      this.currentCirculation.attachments = null;
    this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
 
      // Append attachments
@@ -2155,15 +2120,32 @@ CalculateInspectionDuration():void{
   this.attachments.forEach((attachment)=>{
      const name = attachment.name;
  if (name && name.trim() !== '') {
-    this.formData.append('Attachments', attachment.content); // File object
+
     this.formData.append('AttachmentIds', attachment.id);
     this.formData.append('AttachmentNames', attachment.name);
     this.formData.append('AttachmentVersions', attachment.version);
     this.formData.append('AttachmentDescriptions', attachment.description);
     this.formData.append('AttachmentDocNos',attachment.docNo);
     this.formData.append('AttachmentStatuses',attachment.status);
+
+    if (attachment.content) {
+    this.formData.append('Attachments', attachment.content);
+    this.formData.append('HasContent', 'true');
+  } else {
+    // 🔥 placeholder to keep index alignment
+    this.formData.append(
+      'Attachments',
+     new File(['fakeContent'], 'placeholder.txt', {
+    type: 'application/octet-stream'
+  }));
+    this.formData.append('HasContent', 'false');
   }
-  });
+
+  }
+  }
+);
+
+
 //   this.Attachments.controls.forEach((ctrl, index) => {
 //  const name = ctrl.get('name')?.value;
 //   const description = ctrl.get('description')?.value;
@@ -2247,6 +2229,7 @@ CalculateInspectionDuration():void{
      this.formData.delete('AttachmentDescriptions');
      this.formData.delete('AttachmentDocNos');
      this.formData.delete('AttachmentStatuses');
+     this.formData.delete('HasContent');
 
    this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
    this.formData.append('project',JSON.stringify(this.Project ))
@@ -2255,13 +2238,27 @@ CalculateInspectionDuration():void{
   this.attachments.forEach((attachment)=>{
      const name = attachment.name;
  if (name && name.trim() !== '') {
-    this.formData.append('Attachments', attachment.content); // File object
+
     this.formData.append('AttachmentIds', attachment.id);
     this.formData.append('AttachmentNames', attachment.name);
     this.formData.append('AttachmentVersions', attachment.version);
     this.formData.append('AttachmentDescriptions', attachment.description);
      this.formData.append('AttachmentDocNos',attachment.docNo);
     this.formData.append('AttachmentStatuses',attachment.status);
+
+    if (attachment.content) {
+    this.circulationData.append('Attachments', attachment.content);
+    this.circulationData.append('HasContent', 'true');
+  } else {
+    // 🔥 placeholder to keep index alignment
+    this.circulationData.append(
+      'Attachments',
+      new Blob(['fakeContent'], { type: 'application/octet-stream' }),
+      'fakeContent'
+    );
+    this.circulationData.append('HasContent', 'false');
+  }
+
   }
   });
 
@@ -2291,8 +2288,14 @@ CalculateInspectionDuration():void{
 
 printForm() {
   let inspection = this.inspectionForm.getRawValue();
+  if(this.activatedRoute.snapshot.paramMap.keys.length>0)
   this.router.navigate(
     ['../../inspection-print'],
+    { state: {  inspection} ,relativeTo:this.activatedRoute}
+  );
+  else
+    this.router.navigate(
+    ['../inspection-print'],
     { state: {  inspection} ,relativeTo:this.activatedRoute}
   );
 }

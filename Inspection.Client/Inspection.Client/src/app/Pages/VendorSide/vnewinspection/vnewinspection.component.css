@@ -309,6 +309,7 @@ mat-form-field input {
   border-collapse: collapse;
   margin-top: 0.5rem;
   font-size: 0.85rem;
+  overflow-x: auto;
 }
 
 .upload-table th,
@@ -494,6 +495,10 @@ cdk-overlay-container
   color: var(--toolbar-text-Color);
   font-size: 1rem !important;
   font-weight: bold;
+}
+
+.last-Circulation-card {
+  order: 999;
 }
 
 @media print {

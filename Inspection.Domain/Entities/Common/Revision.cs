@@ -22,11 +22,13 @@ namespace Inspection.Domain.Entities.Common
         public string? Status { get; set; } = "Pending";
         public bool? IsFinal { get; set; }
         public Request? Request { get; set; }
+        public Guid? CreatedByCirculationId { get; set; }
+             
 
         public List<Circulation>? Circulations { get; set; } = new List<Circulation>();       
         
         //Navigate SubTypes like InspectionNotifiction or InspectionReport.....
-        public List<InspectionNotification.Entities.InspectionNotification>? InspectionNotifications { get; set; }
+        public List<InspectionNotificationRevision>? InspectionNotifications { get; set; }
         public List<InspectionReport.InspectionReport>? InspectionReports { get; set; }
 
     }

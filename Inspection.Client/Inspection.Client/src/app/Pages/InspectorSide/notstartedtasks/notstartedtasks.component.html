@@ -6,11 +6,23 @@
       class="mat-elevation-z8 demo-table"
       #inspectionTable
     >
+      <ng-container matColumnDef="no" style="width: 2rem !important">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          style="text-align: right; width: 2rem !important"
+        >
+          No.
+        </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+          {{ i + 1 }}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="relatedProjectName" style="width: 5rem">
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -33,7 +45,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.relatedProjectName }}
         </td>
@@ -44,7 +56,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 7rem; background-color: #123c69"
+          style="text-align: right; width: 7rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -62,20 +74,17 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.notificationNumber! }}
         </td>
       </ng-container>
 
-      <ng-container
-        matColumnDef="relatedOrderName"
-        style="width: 5rem; color: #123c69"
-      >
+      <ng-container matColumnDef="relatedOrderName" style="width: 5rem">
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -93,7 +102,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.relatedOrderName }}
         </td>
@@ -104,7 +113,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -122,7 +131,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.notificationTypes! }}
         </td>
@@ -131,7 +140,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -149,7 +158,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.notificationSubjects }}
         </td>
@@ -158,7 +167,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -176,7 +185,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.issueDate }}
         </td>
@@ -185,7 +194,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          style="text-align: right; width: 5rem; background-color: #123c69"
+          style="text-align: right; width: 5rem"
         >
           <div class="row">
             <div class="col-md-12">
@@ -203,7 +212,7 @@
         <td
           mat-cell
           *matCellDef="let element"
-          style="width: 5rem; color: #123c69; text-align: center !important"
+          style="width: 5rem; text-align: center !important"
         >
           {{ element.persianIssueDate }}
         </td>

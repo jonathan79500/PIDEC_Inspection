@@ -19,7 +19,7 @@ namespace Inspection.Application.DTOs.InspectionRequest
         public string? OrderName { get; set; }
         public string? EquipmentTagNo { get; set; }
         public Guid RevisionId { get; set; }
-        public RevisionDto Revision { get; set; } = null!;
+        public List<RevisionDto> Revisions { get; set; } = null!;
         public string? NotificationNumber { get; set; }
         public DateTime? ProposedDate { get; set; }
         public List<AddressDto>? Locations { get; set; }

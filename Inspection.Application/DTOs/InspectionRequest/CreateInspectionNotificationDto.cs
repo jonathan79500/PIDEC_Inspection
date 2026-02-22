@@ -17,7 +17,7 @@ public class CreateInspectionNotificationDto //:BaseDto
     public string? OrderName { get; set; }
     public string? EquipmentTagNo { get; set; }
     public Guid RevisionId { get; set; }
-    public RevisionDto Revision { get; set; } = null;
+    public List<RevisionDto> Revisions { get; set; } 
     public string? NotificationNumber { get; set; } = string.Empty;       
     public List<AddressDto>? Locations { get; set; }
 

@@ -2032,6 +2032,12 @@
                       "type": "string",
                       "format": "binary"
                     }
+                  },
+                  "HasContent": {
+                    "type": "array",
+                    "items": {
+                      "type": "boolean"
+                    }
                   }
                 }
               },
@@ -2064,6 +2070,9 @@
                   "style": "form"
                 },
                 "Attachments": {
+                  "style": "form"
+                },
+                "HasContent": {
                   "style": "form"
                 }
               }
@@ -2115,6 +2124,24 @@
                       "type": "string"
                     }
                   },
+                  "AttachmentDocNos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "AttachmentStatuses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "HasContent": {
+                    "type": "array",
+                    "items": {
+                      "type": "boolean"
+                    }
+                  },
                   "Attachments": {
                     "type": "array",
                     "items": {
@@ -2138,6 +2165,15 @@
                   "style": "form"
                 },
                 "AttachmentDescriptions": {
+                  "style": "form"
+                },
+                "AttachmentDocNos": {
+                  "style": "form"
+                },
+                "AttachmentStatuses": {
+                  "style": "form"
+                },
+                "HasContent": {
                   "style": "form"
                 },
                 "Attachments": {
@@ -2216,6 +2252,12 @@
                       "type": "string",
                       "format": "binary"
                     }
+                  },
+                  "HasContent": {
+                    "type": "array",
+                    "items": {
+                      "type": "boolean"
+                    }
                   }
                 }
               },
@@ -2248,6 +2290,9 @@
                   "style": "form"
                 },
                 "Attachments": {
+                  "style": "form"
+                },
+                "HasContent": {
                   "style": "form"
                 }
               }
@@ -3030,6 +3075,11 @@
           },
           "isCurrentCirculation": {
             "type": "boolean"
+          },
+          "previousActionType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4124,13 +4174,6 @@
             },
             "nullable": true
           },
-          "inspectionNotifications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Inspection.Application.DTOs.InspectionRequest.InspectionNotificationDto"
-            },
-            "nullable": true
-          },
           "inspectionReports": {
             "type": "array",
             "items": {
@@ -4285,8 +4328,12 @@
             "type": "string",
             "format": "uuid"
           },
-          "revision": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
+            },
+            "nullable": true
           },
           "notificationNumber": {
             "type": "string",
@@ -4418,8 +4465,12 @@
             "type": "string",
             "format": "uuid"
           },
-          "revision": {
-            "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.RevisionDto"
+            },
+            "nullable": true
           },
           "notificationNumber": {
             "type": "string",
@@ -5156,6 +5207,11 @@
             "format": "int32",
             "nullable": true
           },
+          "previousActionType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "comment": {
             "type": "string",
             "nullable": true
@@ -5458,6 +5514,11 @@
           "request": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Request"
           },
+          "createdByCirculationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "circulations": {
             "type": "array",
             "items": {
@@ -5468,7 +5529,7 @@
           "inspectionNotifications": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationRevision"
             },
             "nullable": true
           },
@@ -5785,14 +5846,6 @@
           "inspectionNotificationId": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
           },
-          "revisionId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "revision": {
-            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
-          },
           "name": {
             "type": "string",
             "nullable": true
@@ -5890,6 +5943,13 @@
               "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationType"
             },
             "nullable": true
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationRevision"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5973,6 +6033,47 @@
           },
           "location": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.ValueObjects.Address"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotificationRevision": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectionNotificationId": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.ValueObjects.InspectionNotificationId"
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionNotification": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Common.Revision"
           }
         },
         "additionalProperties": false
@@ -6294,6 +6395,11 @@
           },
           "creator": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.Contacts.Contact"
+          },
+          "creatorContactId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "relatedInspectionNotification": {
             "$ref": "#/components/schemas/Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification"

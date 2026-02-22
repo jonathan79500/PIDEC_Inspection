@@ -17,7 +17,7 @@ namespace Inspection.Application.Contracts.Persistence;
 
 public interface IInspectionNotificationRepository : IGenericRepository<InspectionNotification, InspectionNotificationId>
 {
-    Task<(InspectionNotification,List<InspectionReport>)> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
+    Task<(List<InspectionNotification>,List<InspectionReport>)> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
 
     Task<(InspectionNotification, Circulation)> CreateNewInspectionNotification(InspectionNotification inspectionNotification, NotificationNumber newNotificationNumber, List<Attachment> attachments);
 
@@ -29,7 +29,7 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<InspectionNotificationFlow> GetInspectionNotificationFlow(string notificationNumber);
 
-    Task<InspectionNotification> UpdateInspectionNotification(InspectionNotification inspectionNotification);
+   // Task<InspectionNotification> UpdateInspectionNotification(InspectionNotification inspectionNotification);
 
     Task<List<InspectionNotificationDataSummaryDto>> GetInspectionNotificationsByProjUsrIds(string ProjectId, string UserId);
 
@@ -53,5 +53,5 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations);
 
-    Task<Circulation> CompleteCirculation(Circulation circulation, List<Attachment> attachments);
+    Task<(InspectionNotification, Circulation)> CompleteCirculation(Circulation circulation,InspectionNotification inspectionNotification, List<Attachment> attachments);
 }

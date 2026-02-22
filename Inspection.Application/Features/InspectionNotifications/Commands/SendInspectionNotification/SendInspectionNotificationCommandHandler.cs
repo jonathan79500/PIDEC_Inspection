@@ -61,52 +61,50 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 throw new Exception();
             }
 
-            var InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
+            InspectionNotification InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
 
-            var currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
+            Circulation returnedcirculation= new Circulation();
+            Circulation currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
             var project = request.ProjectDto.Adapt<Project>();
             var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
 
-            //var newinspectionNotification = await _inspectionNotificationRepository.SendNewInspectionNotification(InspectionNotification,project);
-            //-------------------------------------------------------------------------------------------------
-
             InspectionNotification notificationForSend = null;
-            NotificationNumber newNotificationNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result;
-            string newRevisedNumber = newNotificationNumber.ToString();
-
-            InspectionNotification.NotificationNumber = newRevisedNumber;
-
-            //InspectionNotification.Attachments = attachments;
-
             try
             {
 
-                if (InspectionNotification.InspectionNotificationId != null && !InspectionNotification.InspectionNotificationId.Value.Equals(Guid.Empty))
+                NotificationNumber currentInspectionNumber = NotificationNumber.CreateFromString(InspectionNotification.NotificationNumber);
+
+                //-------------This InspectionNotification is generated before this time and is sent to client because it needed an edit or a new Revision--------------------
+                if (InspectionNotification.InspectionNotificationId.Value != null && InspectionNotification.InspectionNotificationId.Value != Guid.Empty && currentInspectionNumber.Revision > 0)
                 {
-                    notificationForSend = await _inspectionNotificationRepository.UpdateInspectionNotification(InspectionNotification);
+                    (notificationForSend, returnedcirculation) = await _inspectionNotificationRepository.CompleteCirculation(returnedcirculation, InspectionNotification, attachments);
                 }
                 else
+                {
+
+                    NotificationNumber newNotificationNumber = _inspectionNotificationRepository.GenerateNewNotificationNumber(project.Number, InspectionNotification.Order.Name).Result;
+                    string newRevisedNumber = newNotificationNumber.ToString();
+
+                    InspectionNotification.NotificationNumber = newRevisedNumber;
                     (notificationForSend, currentCirculation) = await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification, newNotificationNumber, attachments);
-
-                //var simulatedVersion = SimulateInpectionDataForNextUsers(notificationForSend, project);
+                   
+                }
+                var finalInspectionNotification1 = notificationForSend.Adapt<InspectionNotificationDto>();
                 var result = CreateNextUsersCirculations(notificationForSend, project);
-
-                // notificationForSend.Circulations.AddRange(result.Result);
-
                 await _inspectionNotificationRepository.UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
             }
             catch (Exception exp)
             {
 
-            }
-
-            //return await Task.FromResult(InspectionNotification);
+            }          
 
             var finalInspectionNotification = notificationForSend.Adapt<InspectionNotificationDto>();
             CirculationDto currentCirculationDto = currentCirculation.Adapt<CirculationDto>();
             return await Task.FromResult((finalInspectionNotification, currentCirculationDto));
+
         }
-        catch (Exception exp) {
+        catch (Exception exp)
+        {
             throw;
         }
 
@@ -221,7 +219,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
             var departmentLeads = _edmsService.GetOrderDepartmentLeads(orderDotId, projectId);
             Dictionary<Contact, string> departmentLeadsContacts = await GetDepartmentLeadContacts(departmentLeads);
 
-            if (departmentLeadsContacts.Count > 0)
+            if (departmentLeadsContacts != null && departmentLeadsContacts.Count > 0)
             {
 
                 for (int i = 0; i < departmentLeadsContacts.Count; i++)

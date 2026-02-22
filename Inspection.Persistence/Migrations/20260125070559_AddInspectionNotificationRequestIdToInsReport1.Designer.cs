@@ -805,8 +805,8 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CreatorContactId")
-                        .HasColumnType("uniqueidentifier");
+                    //b.Property<Guid>("CreatorContactId")
+                    //    .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CurrentStatus")
                         .HasColumnType("int");
@@ -845,7 +845,7 @@ namespace Inspection.Persistence.Migrations
 
                     b.HasKey("InspectionReportId");
 
-                    b.HasIndex("CreatorContactId");
+                    //b.HasIndex("CreatorContactId");
 
                     b.HasIndex("InspectionReportNumberId");
 
@@ -1719,11 +1719,11 @@ namespace Inspection.Persistence.Migrations
 
             modelBuilder.Entity("Inspection.Domain.Entities.InspectionReport.InspectionReport", b =>
                 {
-                    b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    //b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "Creator")
+                    //    .WithMany()
+                    //    .HasForeignKey("CreatorContactId")
+                    //    .OnDelete(DeleteBehavior.Cascade)
+                    //    .IsRequired();
 
                     b.HasOne("Inspection.Domain.Entities.InspectionReport.InspectionReportNumber", "InspectionReportNumber")
                         .WithMany()

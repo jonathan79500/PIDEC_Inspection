@@ -58,13 +58,16 @@
           name="RequestInspectionDateStartDatePicker"
           class="theInputs"
           placeholder="MM/DD/YYYY"
-          [value]="inspectionForm?.controls?.['requestInspectionDateStart']
-                        .value
-                    "
+          [value]="
+            inspectionForm?.controls?.['requestInspectionDateStart'].value
+          "
           (dateChange)="setRequestInspectionPersianDateStart($event)"
           style="width: 6rem !important; direction: ltr"
           [disabled]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           [matTooltip]="formattedGregorianReqStartDate"
           matTooltipPosition="above"
@@ -73,7 +76,10 @@
           matSuffix
           class="date-toggle"
           [disabled]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           [for]="RequestInspectionDateStartDatePicker"
           (select)="setRequestInspectionPersianDateStart($event)"
@@ -98,7 +104,10 @@
           (dateChange)="setRequestInspectionPersianDateEnd($event)"
           style="width: 6rem !important; direction: ltr"
           [disabled]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           [matTooltip]="formattedGregorianReqEndDate"
           matTooltipPosition="above"
@@ -107,7 +116,10 @@
           matSuffix
           [for]="RequestInspectionDateEndDatePicker"
           [disabled]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           class="date-toggle"
           (select)="setRequestInspectionPersianDateEnd($event)"
@@ -186,7 +198,8 @@
             <input
               type="checkbox"
               value="InsAction_Witness"
-              formControlName="inspectionAction"
+              [checked]="inspectionActions.includes('InsAction_Witness')"
+              (change)="onInspectionActionChange($event)"
             />
             Witness
           </label>
@@ -194,7 +207,8 @@
             <input
               type="checkbox"
               value="InsAction_Hold"
-              formControlName="inspectionAction"
+              [checked]="inspectionActions.includes('InsAction_Hold')"
+              (change)="onInspectionActionChange($event)"
             />
             Hold
           </label>
@@ -202,7 +216,8 @@
             <input
               type="checkbox"
               value="InsAction_Review"
-              formControlName="inspectionAction"
+              [checked]="inspectionActions.includes('InsAction_Review')"
+              (change)="onInspectionActionChange($event)"
             />
             Review
           </label>
@@ -233,7 +248,10 @@
             placeholder="New Inspection Type"
             [ngModelOptions]="{ standalone: true }"
             [hidden]="
-              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
             "
           />
           <button
@@ -241,7 +259,10 @@
             class="btn-primary"
             (click)="addInspectionType()"
             [hidden]="
-              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
             "
           >
             +
@@ -249,61 +270,6 @@
         </div>
       </div>
     </fieldset>
-
-    <!-- <fieldset class="section" formArrayName="inspectionSubjects">
-      <legend>Inspection Subjects</legend>
-
-      <div class="subjects-row">
-
-        <mat-form-field class="combo">
-          <input
-            type="text"
-            matInput
-            placeholder="Select or type subject"
-            [formControl]="subjectCtrl"
-            [matAutocomplete]="auto"
-            [disabled]="!editMode"
-          />
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option
-              [disabled]="!editMode"
-              *ngFor="let subj of allSubjects"
-              [value]="subj"
-            >
-              {{ subj }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="addInspectionSubject()"
-          [disabled]="!editMode"
-        >
-          +
-        </button>
-
-
-        <div class="checkbox-list">
-          <div
-            *ngFor="
-              let subject of inspectionSubjectsFormArray.controls;
-              let i = index
-            "
-            [formGroup]="subject"
-            class="checkbox-item"
-          >
-            <mat-checkbox
-              formControlName="selected"
-              (change)="toggleSubject(i)"
-            >
-              {{ subject.get("name")?.value }}
-            </mat-checkbox>
-          </div>
-        </div>
-      </div>
-    </fieldset> -->
 
     <fieldset class="section" formArrayName="inspectionSubjects">
       <legend>Inspection Notification Subjects</legend>
@@ -328,11 +294,15 @@
       <div style="max-height: 10rem !important; overflow-y: scroll">
         <div
           [hidden]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           *ngFor="
             let insSubject of inspectionSubjectsFormArray.controls;
-            let i = index
+            let i = index;
+            trackBy: trackById
           "
           [formGroup]="insSubject"
           class="contact-row"
@@ -347,24 +317,22 @@
               type="text"
               matInput
               placeholder="Select or type subject"
-              [formControl]="subjectCtrl"
+              formControlName="name"
               [matAutocomplete]="auto"
               [disabled]="
                 !editMode ||
-                (editMode && this.currentCirculation.sequenceNo != 0)
-              "
-              (change)="
-                changeSubj(
-                  subjectCtrl.value?.trim(),
-                  insSubject.get('id').value
-                )
+                (editMode &&
+                  this.currentCirculation != null &&
+                  this.currentCirculation?.performerContactType != 2)
               "
             />
-            <mat-autocomplete #auto="matAutocomplete" formControlName="subject">
+            <mat-autocomplete #auto="matAutocomplete">
               <mat-option
                 [disabled]="
                   !editMode ||
-                  (editMode && this.currentCirculation.sequenceNo != 0)
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
                 "
                 *ngFor="let subj of allSubjects"
                 [value]="subj"
@@ -373,8 +341,14 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
-
           <input
+            type="text"
+            matInput
+            formControlName="itpRowNo"
+            placeholder="ITP Row Number"
+            class="input middle"
+          />
+          <!-- <input
             type="text"
             matInput
             [formControl]="itpRowNoCtrl"
@@ -386,16 +360,22 @@
                 insSubject.get('id')?.value
               )
             "
-          />
+          /> -->
 
           <button
             type="button"
             class="btn-danger"
             [disabled]="
-              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
             "
             [hidden]="
-              !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
             "
             (click)="removeInsSubject(insSubject)"
           >
@@ -408,7 +388,10 @@
         class="btn-secondary"
         (click)="addInspectionSubject()"
         [hidden]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
       >
         Add New Subject
@@ -435,7 +418,10 @@
 
       <div
         [hidden]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
         *ngFor="let contact of contactsControls; let i = index"
         [formGroup]="contact"
@@ -479,10 +465,16 @@
           type="button"
           class="btn-danger"
           [disabled]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           [hidden]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
           (click)="removeToContact(contact)"
         >
@@ -494,10 +486,16 @@
         class="btn-secondary"
         (click)="addNewToContact()"
         [disabled]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
         [hidden]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
       >
         Add Contact
@@ -527,7 +525,10 @@
 
       <div
         [hidden]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
         *ngFor="let location of inspectionLocations; let i = index"
         [formGroup]="location"
@@ -577,252 +578,22 @@
         class="btn-secondary"
         (click)="addNewAddress()"
         [disabled]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
         [hidden]="
-          !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
         "
       >
         Add New Location
       </button>
     </fieldset>
 
-    <!-- Location -->
-    <!-- <fieldset class="section" [formGroup]="inspectionForm.controls.location">
-      <legend>Location Of Inspection</legend>
-
-      <div class="location-grid">
-        <div class="form-group-inline">
-          <label>Country:</label>
-          <input formControlName="country" class="input middle" />
-          <label>State:</label>
-          <input formControlName="state" class="input middle" />
-        </div>
-
-        <div class="form-group-inline">
-          <label>City:</label>
-          <input formControlName="city" class="input middle" />
-          <label>Zip Code:</label>
-          <input formControlName="zipCode" class="input middle" />
-        </div>
-
-        <div class="form-group address-row">
-          <label>Address:</label>
-          <input formControlName="address" class="input wide" />
-        </div>
-      </div>
-    </fieldset> -->
-
-    <!-- <div class="subSection">
-      <fieldset
-        style="flex: 1; white-space: nowrap"
-        [formGroup]="inspectionForm.controls.ownerContactPerson"
-      >
-        <legend>OWNER CONTACT PERSON</legend>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerName" class="theLabels">Name:</label>
-            <input name="OwnerName" class="theInputs" formControlName="name" />
-          </div>
-        </div>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerTelNO" class="theLabels">Phone:</label>
-            <input
-              name="OwnerTelNO"
-              class="theInputs"
-              formControlName="phone"
-            />
-          </div>
-        </div>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerFaxNO" class="theLabels">Fax No: </label>
-            <input name="OwnerFaxNO" class="theInputs" formControlName="fax" />
-          </div>
-        </div>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerMobile" class="theLabels">Mobile: </label>
-            <input
-              name="OwnerMobile"
-              class="theInputs"
-              formControlName="mobile"
-            />
-          </div>
-        </div>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerEmail" class="theLabels">E-Mail:</label>
-            <input
-              name="OwnerEmail"
-              class="theInputs"
-              formControlName="email"
-            />
-          </div>
-        </div>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="OwnerEmailCC" class="theLabels">CC:</label>
-            <input name="OwnerEmailCC" class="theInputs" />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset
-        [formGroup]="inspectionForm.controls.supplierContactPerson"
-        style="flex: 1; white-space: nowrap"
-      >
-        <legend>SUPPLIER CONTACT PERSON</legend>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="SUPName" class="theLabels">Name:</label>
-            <input name="SUPName" class="theInputs" formControlName="name" />
-          </div>
-
-          <div class="control">
-            <label for="SUPTelNO" class="theLabels">Tel No:</label>
-            <input name="SUPTelNO" class="theInputs" formControlName="phone" />
-          </div>
-
-          <div class="control">
-            <label for="SUPFaxNO" class="theLabels">Fax: </label>
-            <input name="SUPFaxNO" class="theInputs" formControlName="fax" />
-          </div>
-
-          <div class="control">
-            <label for="SUPMobile" class="theLabels">Mobile: </label>
-            <input
-              name="SUPMobile"
-              class="theInputs"
-              formControlName="mobile"
-            />
-          </div>
-
-          <div class="control">
-            <label for="SUPEmail" class="theLabels">E-Mail:</label>
-            <input name="SUPEmail" class="theInputs" formControlName="email" />
-          </div>
-
-          <div class="control">
-            <label for="ToEmailCC" class="theLabels">CC:</label>
-            <input name="ToEmailCC" class="theInputs" formControlName="cc" />
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset
-        style="flex: 1; white-space: nowrap"
-        [formGroup]="inspectionForm.controls.subSupplierContactPerson"
-      >
-        <legend>SUB-SUPPLIER CONTACT PERSON</legend>
-        <div class="Contact-container">
-          <div class="control">
-            <label for="SubSUPName" class="theLabels">Name:</label>
-            <input name="SubSUPName" class="theInputs" formControlName="name" />
-          </div>
-
-          <div class="control">
-            <label for="SubSUPTelNO" class="theLabels">Tel No:</label>
-            <input
-              name="SubSUPTelNO"
-              class="theInputs"
-              formControlName="phone"
-            />
-          </div>
-
-          <div class="control">
-            <label for="SubSUPFaxNO" class="theLabels">Fax No: </label>
-            <input name="SubSUPFaxNO" class="theInputs" formControlName="fax" />
-          </div>
-
-          <div class="control">
-            <label for="SubSUPMobile" class="theLabels">Mobile: </label>
-            <input
-              name="SubSUPMobile"
-              class="theInputs"
-              formControlName="mobile"
-            />
-          </div>
-
-          <div class="control">
-            <label for="SubSUPEmail" class="theLabels">E-Mail:</label>
-            <input
-              name="SubSUPEmail"
-              class="theInputs"
-              formControlName="email"
-            />
-          </div>
-          <div class="control">
-            <label for="SubSUPEmailCC" class="theLabels">CC:</label>
-            <input
-              name="SubSUPEmailCC"
-              class="theInputs"
-              formControlName="cc"
-            />
-          </div>
-        </div>
-      </fieldset>
-    </div> -->
-    <!-- Upload input -->
-    <!-- <div class="subSection">
-      <div class="upload-card">
-
-        <div class="upload-body">
-          <input
-            type="file"
-            multiple
-            (change)="onFilesPicked($event)"
-            class="upload-input"
-          />
-        </div>
-
-
-        <div formArrayName="attachments">
-          <table class="upload-table" *ngIf="Attachments.controls.length > 0">
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th>Description</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="let fileCtrl of Attachments.controls; let i = index"
-                [formGroupName]="i"
-              >
-                <td>
-                  <a
-                    [href]="fileCtrl.get('downloadUrl')?.value"
-                    (click)="fetchFile(fileCtrl.get('id')?.value)"
-                    target="_blank"
-                    >{{ fileCtrl.get("name")?.value }}</a
-                  >
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    formControlName="description"
-                    placeholder="Enter description"
-                    [disabled]="!editMode"
-                  />
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    class="delete-btn"
-                    (click)="removeFile(i)"
-                    [hidden]="!editMode"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div> -->
     <div class="upload-card">
       <legend>Vendor DOC. For Execution Of Applied Inspection</legend>
 
@@ -833,7 +604,10 @@
           (change)="onFilesPicked($event)"
           class="upload-input"
           [hidden]="
-            !editMode || (editMode && this.currentCirculation.sequenceNo != 0)
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
           "
         />
       </div>
@@ -865,7 +639,9 @@
                 placeholder="Enter description"
                 [disabled]="
                   !editMode ||
-                  (editMode && this.currentCirculation.sequenceNo != 0)
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
                 "
                 [ngModelOptions]="{ standalone: true }"
               />
@@ -877,7 +653,9 @@
                 placeholder="Enter Document Number"
                 [disabled]="
                   !editMode ||
-                  (editMode && this.currentCirculation.sequenceNo != 0)
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
                 "
                 [ngModelOptions]="{ standalone: true }"
               />
@@ -888,7 +666,9 @@
                 placeholder="Enter Status"
                 [disabled]="
                   !editMode ||
-                  (editMode && this.currentCirculation.sequenceNo != 0)
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
                 "
                 [ngModelOptions]="{ standalone: true }"
               >
@@ -908,14 +688,16 @@
             <td>
               <button
                 type="button"
-                class="delete-btn"
+                class="btn-danger"
                 (click)="removeFile(i)"
                 [hidden]="
                   !editMode ||
-                  (editMode && this.currentCirculation.sequenceNo != 0)
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
                 "
               >
-                Delete
+                ✖
               </button>
             </td>
           </tr>
@@ -925,14 +707,17 @@
     <!-- Signature area (shown after submit) -->
     <div
       class="submit-wrapper"
-      *ngIf="!editMode || (editMode && this.currentCirculation.sequenceNo != 0)"
+      *ngIf="
+        !editMode ||
+        (editMode &&
+          currentCirculation != null &&
+          currentCirculation.sequenceNo > 0)
+      "
     >
       <div class="submit-card">
         <div class="submit-info">
           <span class="submit-date">
-            {{
-              inspectionForm.get("modifiedDate")?.value | date : "yyyy-MM-dd"
-            }}
+            {{ inspectionForm.get("modifiedDate")?.value | date: "yyyy-MM-dd" }}
           </span>
           <span class="submit-user">
             {{ inspectionForm.get("modifiedBy")?.value }}
@@ -945,7 +730,11 @@
     <!-- Button area (shown in edit mode) -->
     <div
       class="submit-wrapper"
-      *ngIf="editMode && this.currentCirculation!.sequenceNo == 0"
+      *ngIf="
+        editMode &&
+        (this.currentCirculation == null ||
+          this.currentCirculation?.performerContactType == 2)
+      "
     >
       <div class="submit-card">
         <button
@@ -988,14 +777,16 @@
     </div> -->
 </form>
 <div class="comment-section">
-  <!--*ngIf="currentCirculation">-->
-  <!-- Toggle to show/hide all comments -->
-  <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle>
+  <!-- <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle> -->
 
   <!-- Responsive grid of comment cards -->
   <div class="comment-grid">
     <mat-card
       *ngFor="let circulation of requestCirculations"
+      [class.last-Circulation-card]="
+        circulation?.performerContactType == 4 ||
+        circulation?.performerContactType == 7
+      "
       class="comment-card"
     >
       <!-- Card header -->
@@ -1006,11 +797,12 @@
       </mat-card-header>
 
       <!-- Card content -->
-      <mat-card-content>
+      <mat-card-content style="overflow: hidden">
         <textarea
           [(ngModel)]="circulation.comment"
+          [hidden]="circulation.isHidden && !editMode"
           [disabled]="
-            !(circulation | isActiveForUser : currentCirculation) && editMode
+            !(circulation | isActiveForUser: currentCirculation) && editMode
           "
           class="comment-body"
           placeholder="please insert your comment before be late"
@@ -1023,32 +815,91 @@
           (change)="onCommentFilesPicked($event, circulation)"
           class="upload-input"
           [hidden]="
-            !(circulation | isActiveForUser : currentCirculation) || !editMode
+            !(circulation | isActiveForUser: currentCirculation) ||
+            !editMode ||
+            QC_AlreadyHasAction
           "
         />
 
         <!-- Optional: show filenames as chips -->
-        <mat-chip-listbox
-          *ngIf="
-            circulation.performerContactPerson != undefined &&
-            circulation.performerContactPerson != null &&
-            (this.currentUser.id == circulation.performerContactPerson?.id ||
-              this.currentUser.userType == 4 ||
-              this.currentUser.userType == 7)
-          "
-        >
-          <ng-container *ngFor="let file of circulation.attachments">
-            <mat-chip *ngIf="file">
-              <!-- {{ file?.name }} -->
-              <a
-                [href]="file?.downloadUrl"
-                (click)="fetchFile(file.id)"
-                target="_blank"
-                >{{ file?.name }}</a
-              >
-            </mat-chip>
-          </ng-container>
-        </mat-chip-listbox>
+        <div style="max-width: 100%; overflow-x: auto">
+          <table
+            class="upload-table"
+            style="width: max-content; min-width: 100%"
+            *ngIf="
+              ((circulation.performerContactPerson != undefined &&
+                circulation.performerContactPerson != null &&
+                this.currentUser.id ==
+                  circulation.performerContactPerson?.id) ||
+                (circulation | isActiveForUser: currentCirculation) ||
+                this.currentUser.userType == 4 ||
+                ShowQCComment == true ||
+                this.currentUser.userType == 6) &&
+              circulation.attachments != null &&
+              circulation.attachments.length > 0
+            "
+          >
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Description</th>
+                <th>DOC. NO.</th>
+                <th>STATUS</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of circulation.attachments; let i = index">
+                <td>
+                  <!-- {{ file?.name }} -->
+                  <a
+                    [href]="file?.downloadUrl"
+                    (click)="fetchFile(file.id)"
+                    target="_blank"
+                    >{{ file?.name }}</a
+                  >
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="file.description"
+                    placeholder="Enter description"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="file.docNo"
+                    placeholder="Enter Document Number"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  <select
+                    [(ngModel)]="file.status"
+                    placeholder="Enter Status"
+                    [ngModelOptions]="{ standalone: true }"
+                  >
+                    <option value="">--</option>
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="NOT_KNOWN">NOT_KNOWN</option>
+                    <option value="REJECTED">REJECTED</option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-danger"
+                    (click)="removeCirculationFile(circulation, i)"
+                  >
+                    ✖
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </mat-card-content>
 
       <!-- Action buttons -->
@@ -1057,16 +908,34 @@
           mat-raised-button
           color="primary"
           (click)="onAction(circulation, 1)"
-          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          [disabled]="
+            !(circulation | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
           *ngIf="shouldShowButton(circulation, 'approve')"
         >
           Approve
         </button>
         <button
           mat-raised-button
+          color="primary"
+          (click)="onAction(circulation, 3)"
+          [disabled]="
+            !(circulation | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
+          *ngIf="shouldShowButton(circulation, 'backward')"
+        >
+          Backward
+        </button>
+        <button
+          mat-raised-button
           color="warn"
-          (click)="onAction(circulation, 0)"
-          [disabled]="!(circulation | isActiveForUser : currentCirculation)"
+          (click)="onAction(circulation, 2)"
+          [disabled]="
+            !(circulation | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
           *ngIf="shouldShowButton(circulation, 'reject')"
         >
           Reject
@@ -1089,9 +958,9 @@
                 circulation.actionType == undefined ||
                 circulation.actionType == -1
                   ? "✖ Rejected "
-                  : circulation.actionType == 6
-                  ? "↩ Backwarded"
-                  : "✔ Approved"
+                  : circulation.actionType == 3
+                    ? "↩ Backwarded"
+                    : "✔ Approved"
               }}
             </span>
             <span class="submit-user">
@@ -1100,7 +969,7 @@
             <br />
             <span class="submit-date">
               {{
-                circulation.performedActionDateGregorian | date : "yyyy-MM-dd"
+                circulation.performedActionDateGregorian | date: "yyyy-MM-dd"
               }}
             </span>
           </div>

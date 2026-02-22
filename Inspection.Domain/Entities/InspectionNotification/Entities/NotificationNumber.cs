@@ -25,12 +25,16 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
 
             NotificationNumber newNotificationNumber = new NotificationNumber()
             {
+                ProjectNumber = this.ProjectNumber,
+                InfoPart = this.InfoPart,
+                OrderNumber = this.OrderNumber,
                 Version = Version + 1,
                 Revision = 0
             };
 
             return newNotificationNumber;
         }
+
 
         public static NotificationNumber CreateFromString(string strNotificationNumber)
         {
@@ -104,6 +108,12 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
         public NotificationNumber IncreaseVersion()
         {
             this.Version++;
+            return this;
+        }
+
+        public NotificationNumber IncreaseRevision()
+        {
+            this.Revision++;
             return this;
         }
 
