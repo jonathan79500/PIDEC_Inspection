@@ -53,7 +53,8 @@ namespace Inspection.Domain.Entities.Common
             {
                 Id = Guid.NewGuid(),
                 Revision = revision,
-                ActionType =(int) ActionTypes.CreateInspection,
+                RevisionId = revision.RevisionId,
+                ActionType = (int)ActionTypes.CreateInspection,
                 PerformerContactPerson = creatorContactPerson,
                 SequenceNo = 0,
                 Comment = ""
