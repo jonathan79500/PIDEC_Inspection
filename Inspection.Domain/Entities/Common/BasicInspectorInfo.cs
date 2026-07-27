@@ -27,13 +27,14 @@ namespace Inspection.Domain.Entities.Common
         public List<OrderInspectionSubject>? OrderInspectionSubjects { get; set; } = [];
         public List<Circulation>? Participated_Circulations { get; set; } = [];
         public List<OrderContact>? OrderContacts { get; set; } = [];
-    
+        public List<DocumentType> DocumentTypes { get; set; }
+        public List<DocumentTypeVisibility> DocumentTypesVisibilities { get; set; }
 
 
         //All Contacts with them ,vendor works (Supplier Contacts, Sub Supplier Contacts, Pidec Contacts,Owner Contacts)
         //public List<Contact> contacts { get; set; }
         //public List<Order> Orders { get; set; }
-    
+
 
         private List<InspectionNotification.Entities.InspectionNotification> receivedInspectionNotifications = [];
         public IReadOnlyList<InspectionNotification.Entities.InspectionNotification>? ReceivedInspectionNotifications => receivedInspectionNotifications;

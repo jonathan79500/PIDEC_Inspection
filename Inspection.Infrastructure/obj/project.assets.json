@@ -1925,7 +1925,6 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Inspection.Application >= 1.0.0",
-      "MediatR >= 12.5.0",
       "Microsoft.Extensions.Options.ConfigurationExtensions >= 8.0.0",
       "SendGrid >= 9.29.3",
       "System.IdentityModel.Tokens.Jwt >= 8.1.2"
@@ -1957,7 +1956,9 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://www.nuget.org/api/v2": {},
+        "C:\\Users\\akbari.elahe\\.nuget\\packages": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://packagesource": {},
         "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
@@ -1986,10 +1987,6 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
-          "MediatR": {
-            "target": "Package",
-            "version": "[12.5.0, )"
-          },
           "Microsoft.Extensions.Options.ConfigurationExtensions": {
             "target": "Package",
             "version": "[8.0.0, )"

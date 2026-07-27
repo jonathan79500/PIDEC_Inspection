@@ -73,7 +73,7 @@ legend {
 .checkbox-item {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   font-size: 0.8rem;
@@ -82,12 +82,13 @@ legend {
 .form-group-inline {
   margin-bottom: 0.5rem;          /* tighter spacing */
   font-size: 0.8rem;
+  margin: 2px 0 !important;
 }
 
 .form-group-inline {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.2rem; margin: 2px 0 !important;
 }
 
 .special-label {
@@ -300,19 +301,51 @@ legend {
 .info-container {
   display: flex;
   width: 100%;
-  border: 3px solid #000;
+  border-radius: 7px;
+  border: 1px solid #6d6c6c;
+  font-size: 0.8rem !important;
 }
 
 .info-box {
   flex: 1;
   padding: 12px;
-  min-height: 120px;
+  min-height: 50px;
 }
 
 .info-box:not(:last-child) {
-  border-right: 3px solid #000;
+  border-right: 1px solid #6d6b6b;
 }
 /*------------------End Of Sender-Receiver Section--------------*/
+
+.upload-layout {
+  display: flex;
+  align-items: flex-start; /* makes children equal height */
+  gap: 0; /* space between title and table */
+  border: 1px solid #161515;
+}
+
+.upload-title {
+  display: flex;
+  align-items: flex-start; /* center text vertically (optional) */
+  padding: 12px;
+  min-width: 100px; /* width of the left title block */
+  border: 1px solid #161515;
+  text-align: center;
+
+}
+
+.upload-table {
+  width: 100%;
+margin-top: 0;
+border-collapse: collapse;
+}
+
+.upload-table th,
+.upload-table td {
+  padding: 8px;
+  border: 1px solid #141111;
+  color: black;
+}
 
 @media print {
 

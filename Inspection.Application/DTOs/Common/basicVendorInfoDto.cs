@@ -28,7 +28,9 @@ namespace Inspection.Application.DTOs.Common
         public List<OrderContactDto>? OrderContacts { get; set; } = [];
         public List<InspectionNotificationDto>? ReceivedInspectionNotifications { get; set; } = [];
         public List<OrderSettingExceptionDto>? OrderSettingsExceptions { get; set; } = [];
-        public List<ContactDto> exceptedContacts { get; set; } = [];
+        public List<ContactDto> exceptedContacts { get; set; } = [];   
+        public List<DocumentTypeDto> DocumentTypes { get; set; }
+        public List<DocumentTypeVisibilityDto> DocumentTypeVisibilities { get; set; }
         public List<ProjectContactDto>? ProjectContacts { get; set; } = [];
 
     }

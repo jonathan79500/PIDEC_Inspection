@@ -29,10 +29,12 @@ namespace Inspection.Application.DTOs
         public int? PerformerContactType { get; set; }
         public DateTime? CreatedDate { set; get; } = DateTime.MinValue;
         public DateTime? ModifiedDate { set; get; } = DateTime.MinValue;
-        public string? Comment { set; get; }
+        public string? Comment { set; get; } = string.Empty;
         public string? Description { set; get; }
         public List<AttachmentDto> Attachments { get; set; }
         public bool isCurrentCirculation { get; set; }
         public int? PreviousActionType { get; set; }
+        public string? CreatorComment { get; set; } = string.Empty;
+        public Guid? ParentId { get; set; }
     }
 }

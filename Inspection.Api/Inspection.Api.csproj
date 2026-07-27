@@ -8,11 +8,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TokenService.cs" />
+    <Compile Remove="FakesAssemblies\**" />
+    <Content Remove="FakesAssemblies\**" />
+    <EmbeddedResource Remove="FakesAssemblies\**" />
+    <None Remove="FakesAssemblies\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="dapper" Version="2.1.66" />
+    <Compile Remove="TokenService.cs" />
+  </ItemGroup> 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Inspection.Application\Inspection.Application.csproj" />
+    <ProjectReference Include="..\Inspection.Infrastructure\Inspection.Infrastructure.csproj" />
+    <ProjectReference Include="..\Inspection.Persistence\Inspection.Persistence.csproj" />
+  </ItemGroup> 
+
+  <ItemGroup>
+    <Folder Include="Attachments\" />
+    <Folder Include="Connected Services\" />
+  </ItemGroup> 
+
+  <ItemGroup>
+    <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
+  </ItemGroup> 
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
@@ -20,22 +42,17 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.8.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.*" />
-    <PackageReference Include="System.ServiceModel.Federation" Version="6.0.*" />
-    <PackageReference Include="System.ServiceModel.Http" Version="6.0.*" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="6.0.*" />
-    <PackageReference Include="System.ServiceModel.Security" Version="6.0.*" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
   </ItemGroup> 
 
   <ItemGroup>
-    <ProjectReference Include="..\Inspection.Application\Inspection.Application.csproj" />
-    <ProjectReference Include="..\Inspection.Contracts\Inspection.Contracts.csproj" />
-    <ProjectReference Include="..\Inspection.Infrastructure\Inspection.Infrastructure.csproj" />
-    <ProjectReference Include="..\Inspection.Persistence\Inspection.Persistence.csproj" />
-  </ItemGroup> 
-
-  <ItemGroup>
-    <Folder Include="Attachments\" />
+    <Reference Include="PersianCalendar">
+      <HintPath>..\..\PCMS2022_Roghayeh\PCMS\PCMS\bin\PersianCalendar.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

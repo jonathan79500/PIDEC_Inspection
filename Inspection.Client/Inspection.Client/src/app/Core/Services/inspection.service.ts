@@ -2,7 +2,7 @@ import { InspectionReport } from './../Models/InspectionReport.model';
 import { Attachment } from './../Models/Attachment.model';
 import { Circulation } from './../Models/Circulation.model';
 import { inspect } from 'util';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inspection } from '../Models/Inspection.model';
 import { lastValueFrom } from 'rxjs';
@@ -10,7 +10,9 @@ import { json } from 'stream/consumers';
 import { InspectionNotificationFlow } from '../Models/InspectionNotificationFlow.model';
 import { Project } from '../Models/Project.model';
 import { InspectionNotificationDataSummary } from '../Models/InspectionNotificationDataSummary.model';
-
+import { currentstateStore } from '../../Stores/currentstate.store';
+import { InspectionNotificationHistory } from '../Models/InspectionNotificationHistory.model';
+import { environment } from '../../../environments/environments';
 
 export interface queryNewNotificationNumberResult
 {
@@ -28,10 +30,11 @@ export interface NewNotificationNumberQueryParams
 })
 export class InspectionService {
 
-  public HostName :string = "http://localhost:5196";
-  public PortNo : string = "5196";
+  currentAppState = inject(currentstateStore);
+
+  public HostName :string  = environment.apiUrl;//=  "https://pims.pidec.com/pims";
   public APIName : string ="InspectionNotification";
-  public InspectionAPIPath :string = this.HostName+'/'+'api'+'/'+this.APIName;
+  public InspectionAPIPath :string = this.HostName+'/'+this.APIName;
   public headers = new HttpHeaders().set('Content-Type', 'application/json');
 
   public RestAPIActions : object[]=[
@@ -109,6 +112,16 @@ export class InspectionService {
     return this.http.post<{inspection:Inspection[],relatedReports :InspectionReport[]}>(this.InspectionAPIPath+'/'+"GetInspectionByInspectionNotificationId",{'inspectionNotificationId':inspectionId} );
   }
 
+    getInspectionByRequestId(requestId:string)
+  {
+    //console.log("in Inspection Service")
+    const headers = new HttpHeaders();
+    console.log('ins id',requestId);
+    let userId = this.currentAppState.currentuser().id;
+     const body = { requestId, userId };
+
+    return this.http.post<{inspection:Inspection[],relatedReports :InspectionReport[]}>(this.InspectionAPIPath+'/'+"GetInspectionByRequestId",body );
+  }
 
   getDraftedInspectionsByUserName(userName:string)
   {
@@ -126,12 +139,41 @@ export class InspectionService {
     return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionAPIPath+'/'+"GetSentInspectionsByUserName", body);
   }
 
+    getInspectionNotificationHistoryByRequestId(requestId:string)
+  {
+    //console.log("in Inspection Service")
+    const body={ requestId}
+    const headers = new HttpHeaders();
+    return this.http.post<InspectionNotificationHistory[]>(this.InspectionAPIPath+'/'+"GetInspectionNotificationHistoryByRequestId", body);
+  }
+
+
   getNotStartedInspectionsByUserName(userName:string)
   {
     //console.log("in Inspection Service")
     const body={ userName}
     const headers = new HttpHeaders();
     return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionAPIPath+'/'+"GetNotStartedInspectionsByUserName", body);
+  }
+
+  getCompletedInspectionsByUserName(userName:string)
+  {
+    //console.log("in Inspection Service")
+    const body={ userName}
+    const headers = new HttpHeaders();
+    return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionAPIPath+'/'+"GetCompletedInspectionsByUserName", body);
+  }
+
+
+  getReadyInspectionsForReportByUserName(projectId:string)
+  {
+     if(projectId == undefined || projectId=='')
+      projectId = '00000000-0000-0000-0000-000000000000';
+    const headers = new HttpHeaders();
+    let userId = this.currentAppState.currentuser().id;
+     const body = { projectId, userId };
+
+    return this.http.post<InspectionNotificationDataSummary[]>(this.InspectionAPIPath+'/'+"GetInspectionsReadyForReportByUser_Project",body );
   }
 
 
@@ -141,6 +183,15 @@ export class InspectionService {
     const headers = new HttpHeaders();
     console.log('ins id',notificationNumber);
     return this.http.post<InspectionNotificationFlow>(this.InspectionAPIPath+'/'+"GetInspectionByNumber",{'notificationNumber':notificationNumber} );
+  }
+
+  ContributeAccessRightsToEditTask(formData: FormData)
+  {
+     const headers = new HttpHeaders();
+     return this.http.post<any>(this.InspectionAPIPath+'/'+"GiveAccessToReEditTask",formData);
+
+    //return await lastValueFrom()
+
   }
 
   saveNewInspection(newInspection: Inspection)

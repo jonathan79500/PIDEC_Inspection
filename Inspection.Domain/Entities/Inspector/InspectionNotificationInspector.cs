@@ -1,4 +1,5 @@
-﻿using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
+﻿using Inspection.Domain.Entities.InspectionNotification.Enums;
+using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,22 @@ namespace Inspection.Domain.Entities.Inspector
 {
     public class InspectionNotificationInspector
     {
-        public InspectionNotificationInspector() { }
-        public Guid IssuerUserId { get; set; }
+
+        public Guid InspectionInspectorId { get; set; }
+
         public InspectionNotificationId InspectionNotificationId { get; set; }
+        public InspectionNotification.Entities.InspectionNotification InspectionNotification { get; set; }
+
+        public Guid InspectorId { get; set; }
         public Inspector Inspector { get; set; }
-        public int ActionType { get; set; } //ConfirmedByQC = 1; RejectByQC =0
-        public DateTime issueDate { get; set; }
-        public DateTime QCActionDate { get; set; }
-        public string QCComment { get; set; }
+
+        public ApprovalStatus ApprovalStatus { get; set; }
+
+        public Guid? ApprovedBy { get; set; }
+
+        public DateTime? ApprovedDate { get; set; }
+
+        public string? Remarks { get; set; }
+
     }
 }

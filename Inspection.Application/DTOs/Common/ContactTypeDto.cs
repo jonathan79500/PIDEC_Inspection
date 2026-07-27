@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Inspection.Application.DTOs.Common
 {
-    internal class ContactTypeDto
+    public class ContactTypeDto
     {
     }
 }

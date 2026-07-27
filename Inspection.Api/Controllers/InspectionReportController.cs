@@ -8,6 +8,7 @@ using Inspection.Application.Features.InspectionNotifications.Queries.GetNewNoti
 using Inspection.Application.Features.InspectionReport.Commands.CreateInspectionReport;
 using Inspection.Application.Features.InspectionReport.Queries.GetInspectionReportById;
 using Inspection.Application.Features.InspectionReport.Queries.GetInspectionReportsByNotificationId;
+using Inspection.Application.Features.InspectionReport.Queries.GetInspectionReportsByRequestId;
 using Inspection.Application.Features.InspectionReport.Queries.GetNewInspectionReportNumber;
 using Inspection.Infrastructure.Helpers;
 using MediatR;
@@ -18,7 +19,7 @@ using Newtonsoft.Json;
 
 namespace Inspection.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class InspectionReportController : ControllerBase
     {
@@ -70,6 +71,23 @@ namespace Inspection.Api.Controllers
                 return BadRequest(exp.Message);
             }
         }
+
+        
+        [HttpPost]
+        [Route("GetInspectionReportByInspectionNotificationRequestId")]
+        public async Task<ActionResult<List<InspectionReportDto>>> GetInspectionReportByInspectionNotificationRequestId([FromBody] RequestIdQuery requestIdQuery)
+        {
+            try
+            {
+                var inspectionReports = await _mediator.Send(new GetInspectionReportsByRequestIdQuery { RequestId = requestIdQuery.RequestId ,UserId = requestIdQuery.UserId });
+                return Ok(inspectionReports);
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(exp.Message);
+            }
+        }
+
 
         [HttpPost]
         [Route("GetInspectionReportsByInspectionNotificationId")]
@@ -164,6 +182,12 @@ namespace Inspection.Api.Controllers
             {
                 return Ok(ex.Message);
             }
+        }
+
+        public class RequestIdQuery
+        {
+            public string RequestId { get; set; }
+            public string UserId { get; set; }
         }
 
         public class NotificationIdQuery

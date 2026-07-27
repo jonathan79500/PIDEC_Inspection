@@ -85,7 +85,7 @@ export class NotstartedinspectionsComponent implements OnInit{
         //let w = window.open("editInspection/" + cRow.inspectionNotificationId, "", "width:100px;height:200px;");
         //let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
        // w.opener.data = cRow;
-       this.router.navigate(["vendor/editInspection/" + cRow.inspectionNotificationId]);
+       this.router.navigate(["vendor/editInspection/"+cRow.requestId+"/" + cRow.inspectionNotificationId]);
       }
 
     }

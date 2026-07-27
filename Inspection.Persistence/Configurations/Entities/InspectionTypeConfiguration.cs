@@ -27,6 +27,15 @@ namespace Inspection.Persistence.Configurations.Entities
                 .ValueGeneratedOnAdd();
 
             builder.Property(e => e.Name).IsRequired();
+            builder.Property(e=>e.VisibleByDefault).IsRequired();
+
+
+            builder.Property(x => x.CreatedBy_ContactId)
+                   .HasConversion(
+                       x => x.Value,
+                       x => new ContactId(x));
+
+            builder.Property(e=>e.ShowOrderNo).IsRequired();
         }
     }
 }

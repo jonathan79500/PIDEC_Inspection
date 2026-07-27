@@ -1,0 +1,25 @@
+﻿If Packages installed in project have errors and you do not have access to Internet, and that packages have been 
+installed before blocking internet, you can install them from local installation repository
+1- Tools-->  Nuget Package Manager --> Package Manager Settings ---> Package Sources...Add a new source that address to a location
+that nuget packages have been installed (for example: C:\Users\akbari.elahe\.nuget\packages) 
+3- then in (Manage Nuget Packages for solution) chaneg package source to that source defined in Step 2
+you can see all packages that are installed or not.
+4- you can install them again from that source or with command prompt in Nuget package console :
+ 
+ 
+ dotnet add [<PROJECT>] package <PACKAGE_NAME> [options]
+
+Arguments:
+  <PROJECT>       The project file to operate on. If a file is not specified, the command will search the current directory for one. [default: E:\Projects\1403\Inspection\]
+  <PACKAGE_NAME>  The package reference to add.
+
+Options:
+  -v, --version <VERSION>            The version of the package to add.
+  -f, --framework <FRAMEWORK>        Add the reference only when targeting a specific framework.
+  -n, --no-restore                   Add the reference without performing restore preview and compatibility check.
+  -s, --source <SOURCE>              The NuGet package source to use during the restore.
+  --package-directory <PACKAGE_DIR>  The directory to restore packages to.
+  --interactive                      Allows the command to stop and wait for user input or action (for example to complete authentication).
+  --prerelease                       Allows prerelease packages to be installed.
+  --project <project>
+  -?, -h, --help                     Show command line help.

@@ -1,0 +1,12 @@
+E:\Projects\1403\Inspection\Inspection.Contracts\bin\Release\net8.0\Inspection.Contracts.deps.json
+E:\Projects\1403\Inspection\Inspection.Contracts\bin\Release\net8.0\Inspection.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Contracts\bin\Release\net8.0\Inspection.Contracts.pdb
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.sourcelink.json
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\refint\Inspection.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\Inspection.Contracts.pdb
+E:\Projects\1403\Inspection\Inspection.Contracts\obj\Release\net8.0\ref\Inspection.Contracts.dll

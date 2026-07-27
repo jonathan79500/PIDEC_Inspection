@@ -1,0 +1,1258 @@
+<form
+  id="newInspection"
+  *ngIf="inspectionForm"
+  [formGroup]="inspectionForm"
+  class="inspection-form"
+>
+  <button
+    mat-raised-button
+    style="
+      width: 5.5rem !important;
+      font-size: 14px !important;
+      font-weight: 700;
+      margin-right: 0.2rem !important;
+    "
+    color="accent"
+    (click)="printForm()"
+  >
+    Print
+  </button>
+  <button
+    mat-raised-button
+    style="
+      width: 5.5rem !important;
+      font-size: 14px !important;
+      font-weight: 700;
+      margin-right: 0.2rem !important;
+    "
+    color="accent"
+    (click)="showHistoryForm()"
+  >
+    History
+  </button>
+  <button
+    mat-raised-button
+    style="
+      width: 8.5rem !important;
+      font-size: 14px !important;
+      font-weight: 700;
+    "
+    color="primary"
+    *ngIf="isConfirmedByQC"
+    (click)="openReportDialog()"
+  >
+    Write Report
+  </button>
+  <fieldset class="section">
+    <legend style="text-align: center !important">
+      Inspection Notification
+    </legend>
+    <div class="form-group">
+      <label for="notificationNumber">Inspection Notification No:</label>
+      <label class="special-label">{{
+        inspectionForm.get("notificationNumber")?.value
+      }}</label>
+      <Label style="padding: 1.2rem !important"> Rev: </Label>
+      <label class="special-label">{{
+        inspectionForm.get("revNumber")?.value
+      }}</label>
+      <!-- <input
+        id="mainNumber"
+        type="text"
+        formControlName="mainNumber"
+        class="input XXlarge"
+      />
+      <Label style="padding: 1.2rem !important"> Rev: </Label>
+      <input
+        id="revisionNumber"
+        type="text"
+        formControlName="revNumber"
+        class="input small"
+      /> -->
+    </div>
+
+    <div class="form-group-inline">
+      <label for="issueDate">Issue Date:</label>
+      <label class="special-rolabel">{{ formattedPersianIssueDate }}</label>
+      <label class="special-rolabel">{{ formattedGregorianIssueDate }}</label>
+    </div>
+
+    <div class="form-group-inline">
+      <label
+        class="theLabels"
+        style="padding-right: 0.5rem; vertical-align: sub"
+        >Inspection Period:</label
+      >
+      <div>
+        <label
+          class="theLabels"
+          style="padding-right: 0.5rem; vertical-align: sub"
+          >From:</label
+        >
+        <input
+          matInput
+          [matDatepicker]="RequestInspectionDateStartDatePicker"
+          formControlName="requestInspectionDateStart"
+          name="RequestInspectionDateStartDatePicker"
+          class="theInputs"
+          placeholder="MM/DD/YYYY"
+          [value]="
+            inspectionForm?.controls?.['requestInspectionDateStart'].value
+          "
+          (dateChange)="setRequestInspectionPersianDateStart($event)"
+          style="
+            width: 6rem !important;
+            direction: ltr;
+            vertical-align: sub !important;
+          "
+          [disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          [matTooltip]="formattedGregorianReqStartDate"
+          matTooltipPosition="above"
+          (click)="RequestInspectionDateStartDatePicker.open()"
+        />
+
+        <mat-datepicker
+          #RequestInspectionDateStartDatePicker
+          panelClass="custom-datepicker"
+        ></mat-datepicker>
+        <label
+          class="special-rolabel"
+          style="
+            text-align: center;
+            vertical-align: sub;
+            background-color: transparent !important;
+            border-style: none !important;
+            padding-right: 1.2rem !important;
+          "
+          >{{ formattedPersianReqStartDate }}</label
+        >
+
+        <label
+          class="theLabels"
+          style="padding-right: 0.5rem; vertical-align: sub"
+          >To:</label
+        >
+        <input
+          matInput
+          [matDatepicker]="RequestInspectionDateEndDatePicker"
+          formControlName="requestInspectionDateEnd"
+          name="RequestInspectionDateEndDatePicker"
+          class="theInputs"
+          placeholder="MM/DD/YYYY"
+          [value]="inspectionForm.controls['requestInspectionDateEnd'].value"
+          (dateChange)="setRequestInspectionPersianDateEnd($event)"
+          style="
+            width: 6rem !important;
+            direction: ltr;
+            vertical-align: sub !important;
+          "
+          [disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          [matTooltip]="formattedGregorianReqEndDate"
+          matTooltipPosition="above"
+          (click)="RequestInspectionDateEndDatePicker.open()"
+        />
+
+        <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
+        <!-- </div> -->
+        <label
+          class="special-rolabel"
+          style="
+            text-align: center;
+            vertical-align: sub;
+            background-color: transparent !important;
+            border-style: none !important;
+          "
+          >{{ formattedPersianReqEndDate }}</label
+        >
+
+        <label
+          class="special-rolabel"
+          style="
+            text-align: center;
+            vertical-align: sub;
+            background-color: transparent !important;
+            border-style: none !important;
+            width: 1rem !important;
+          "
+          >=</label
+        >
+        <input
+          class="theInputs"
+          formControlName="requestInspectionDueDate"
+          style="
+            width: 3.5rem !important;
+            direction: ltr;
+            vertical-align: sub !important;
+          "
+        />
+        <label
+          class="special-rolabel"
+          style="
+            width: 3.5rem !important;
+            text-align: center;
+            vertical-align: sub;
+            background-color: transparent !important;
+            border-style: none !important;
+          "
+          >Days</label
+        >
+      </div>
+
+      <!-- </div> -->
+    </div>
+    <div class="form-group-inline">
+      <label>Inspection Date and Time Comments:</label>
+      <input
+        class="input wide"
+        style="width: 31.5rem !important"
+        formControlName="inspectionTimeComment"
+      />
+    </div>
+    <div class="subSection">
+      <fieldset class="section">
+        <legend>Order</legend>
+        <div class="form-group-inline">
+          <div class="columns" formGroupName="order">
+            <label for="RequisitionNO" class="theLabels"
+              >Order NO &nbsp;:&nbsp;&nbsp;&nbsp;</label
+            >
+            <input type="hidden" formControlName="id" />
+            <input
+              id="RequisitionTitle"
+              class="theInputs Xlarge"
+              formControlName="title"
+            />
+          </div>
+        </div>
+        <div class="form-group-inline">
+          <label for="Order Title" class="theLabels"
+            >Order Title&nbsp;:&nbsp;</label
+          >
+          <input
+            id="RequisitionNO"
+            class="theInputs"
+            formControlName="orderName"
+          />
+          <label for="EQUNO" class="theLabels"
+            >EQUIPMENT/ITEM/TAG NO.&nbsp;:&nbsp;</label
+          >
+          <input
+            id="EQUNO"
+            class="theInputs"
+            formControlName="equipmentTagNo"
+          />
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="section">
+      <legend>Inspection Actions/Types</legend>
+      <div class="checkbox-list">
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Witness"
+              [checked]="inspectionActions.includes('InsAction_Witness')"
+              (change)="onInspectionActionChange($event)"
+            />
+            Witness
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Hold"
+              [checked]="inspectionActions.includes('InsAction_Hold')"
+              (change)="onInspectionActionChange($event)"
+            />
+            Hold
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              value="InsAction_Review"
+              [checked]="inspectionActions.includes('InsAction_Review')"
+              (change)="onInspectionActionChange($event)"
+            />
+            Review
+          </label>
+        </div>
+      </div>
+      <div formArrayName="inspectionTypes">
+        <div class="checkbox-list">
+          <div
+            *ngFor="
+              let type of inspectionTypesFormArray.controls;
+              let i = index
+            "
+            [formGroup]="type"
+            class="checkbox-item"
+          >
+            <input
+              type="checkbox"
+              formControlName="selected"
+              (change)="onInspectionTypeChange(i)"
+            />
+            {{ type.get("name")?.value }}
+          </div>
+        </div>
+        <div class="add-item">
+          <input
+            type="text"
+            [(ngModel)]="newInspectionType"
+            placeholder="New Inspection Type"
+            [ngModelOptions]="{ standalone: true }"
+            [hidden]="
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
+            "
+          />
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="addInspectionType()"
+            [hidden]="
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
+            "
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section" formArrayName="inspectionSubjects">
+      <legend>Inspection Notification Subjects</legend>
+      <div style="max-height: 10rem !important; overflow-y: scroll">
+        <div
+          [hidden]="
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType == 2) ||
+            this.currentCirculation == null
+          "
+          *ngFor="
+            let insSubject of inspectionSubjectsFormArray.controls;
+            let i = index
+          "
+          [formGroup]="insSubject"
+          class="contact-row"
+        >
+          <label
+            class="special-rolabel"
+            style="width: 25vw !important; border-radius: 0 !important"
+            >{{ insSubject.get("name")?.value }}</label
+          >
+          <label
+            class="special-rolabel"
+            style="width: 6vw !important; border-radius: 0 !important"
+            >{{ insSubject.get("itpRowNo")?.value }}</label
+          >
+        </div>
+      </div>
+      <div style="max-height: 10rem !important; overflow-y: scroll">
+        <div
+          [hidden]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          *ngFor="
+            let insSubject of inspectionSubjectsFormArray.controls;
+            let i = index;
+            trackBy: trackById
+          "
+          [formGroup]="insSubject"
+          class="subject-row"
+        >
+          <img
+            src="assets/pluss011.png"
+            style="width: 20px; height: 20px"
+            (click)="addInspectionSubject()"
+            [hidden]="
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
+            "
+          />
+          <mat-form-field class="combo">
+            <input
+              type="text"
+              matInput
+              placeholder="Select or type subject"
+              formControlName="name"
+              [matAutocomplete]="auto"
+              [disabled]="
+                !editMode ||
+                (editMode &&
+                  this.currentCirculation != null &&
+                  this.currentCirculation?.performerContactType != 2)
+              "
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                [disabled]="
+                  !editMode ||
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
+                "
+                *ngFor="let subj of allSubjects"
+                [value]="subj"
+              >
+                {{ subj }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <input
+            type="text"
+            matInput
+            formControlName="itpRowNo"
+            placeholder="ITP Row Number"
+            class="input middle"
+          />
+          <img
+            src="assets/delete-red.png"
+            style="width: 18px; height: 18px"
+            disabled="
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
+            "
+            [hidden]="
+              !editMode ||
+              (editMode &&
+                this.currentCirculation != null &&
+                this.currentCirculation?.performerContactType != 2)
+            "
+            (click)="removeInsSubject(insSubject)"
+          />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Contacts -->
+    <fieldset class="section" formArrayName="contacts">
+      <legend>Contact Persons</legend>
+      <div
+        [hidden]="
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType == 2) ||
+          this.currentCirculation == null
+        "
+        *ngFor="let contact of contactsControls; let i = index"
+        [formGroup]="contact"
+        class="contact-row"
+      >
+        <label class="special-rolabel" style="border-radius: 0 !important">{{
+          contact.get("contactType").value == 5
+            ? "supplier"
+            : contact.get("contactType").value == 6
+              ? "SubSupplier"
+              : "__"
+        }}</label>
+        <label
+          class="special-rolabel"
+          style="width: 6vw !important; border-radius: 0 !important"
+          >{{
+            contact.get("name")?.value == "" ? "__" : contact.get("name")?.value
+          }}</label
+        >
+
+        <label
+          class="special-rolabel"
+          style="width: 6vw !important; border-radius: 0 !important"
+          >{{
+            contact.get("phone")?.value == ""
+              ? "__"
+              : contact.get("phone")?.value
+          }}
+        </label>
+
+        <label
+          class="special-rolabel"
+          style="width: 6vw !important; border-radius: 0 !important"
+          >{{
+            contact.get("mobile")?.value == ""
+              ? "__"
+              : contact.get("mobile")?.value
+          }}</label
+        >
+        <label
+          class="special-rolabel"
+          style="width: 8vw !important; border-radius: 0 !important"
+          >{{
+            contact.get("email")?.value == ""
+              ? "__"
+              : contact.get("email")?.value
+          }}</label
+        >
+        <label
+          class="special-rolabel"
+          style="width: 8vw !important; border-radius: 0 !important"
+          >{{
+            contact.get("cc")?.value == "" ? "__" : contact.get("cc")?.value
+          }}
+        </label>
+      </div>
+
+      <div
+        [hidden]="
+          !editMode ||
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType != 2)
+        "
+        *ngFor="let contact of contactsControls; let i = index"
+        [formGroup]="contact"
+        class="contact0-row"
+      >
+        <img
+          src="assets/pluss011.png"
+          style="width: 20px; height: 20px"
+          (click)="addNewToContact()"
+          [class.disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          [hidden]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+        />
+
+        <select
+          (change)="ContactTypeSelect(contact)"
+          style="
+            font-family: &quot;Times New Roman&quot;, Times, serif;
+            font-size: 16px;
+          "
+        >
+          <option value="none">------</option>
+          <option value="5">Vendor</option>
+          <option value="6">sub_Vendor</option>
+        </select>
+        <input formControlName="name" placeholder="Name" class="input middle" />
+
+        <input
+          formControlName="phone"
+          placeholder="Phone"
+          class="input middle"
+        />
+        <input
+          formControlName="mobile"
+          placeholder="Mobile"
+          class="input middle"
+        />
+        <input
+          formControlName="email"
+          placeholder="Email"
+          class="input large"
+        />
+        <input
+          formControlName="cc"
+          placeholder="Description"
+          class="input middle"
+        />
+
+        <img
+          src="assets/delete-red.png"
+          style="width: 18px; height: 18px"
+          [class.disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          [hidden]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2) ||
+            (editMode &&
+              contact.get('id')?.value !=
+                '00000000-0000-0000-0000-000000000000')
+          "
+          (click)="removeToContact(contact)"
+        />
+      </div>
+    </fieldset>
+
+    <!-- Contacts -->
+    <fieldset class="section" formArrayName="locations">
+      <legend>Location/Locations Of Inspection</legend>
+
+      <div
+        [hidden]="
+          (editMode &&
+            this.currentCirculation != null &&
+            this.currentCirculation?.performerContactType == 2) ||
+          this.currentCirculation == null
+        "
+        *ngFor="let loc of inspectionLocations.controls; let i = index"
+        [formGroup]="loc"
+        class="contact-row"
+      >
+        <label
+          class="special-rolabel"
+          style="width: 4vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("country")?.value == "" ? "__" : loc.get("country")?.value
+          }}</label
+        >
+        <label
+          class="special-rolabel"
+          style="width: 5vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("state")?.value == "" ? "__" : loc.get("state")?.value
+          }}</label
+        >
+
+        <label
+          class="special-rolabel"
+          style="width: 7vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("city")?.value == "" ? "__" : loc.get("city")?.value
+          }}</label
+        >
+        <label
+          class="special-rolabel"
+          style="width: 8vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("streetLine1")?.value == ""
+              ? "__"
+              : loc.get("streetLine1")?.value
+          }}</label
+        >
+
+        <label
+          class="special-rolabel"
+          style="width: 8vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("streetLine2")?.value == ""
+              ? "__"
+              : loc.get("streetLine2")?.value
+          }}</label
+        >
+
+        <label
+          class="special-rolabel"
+          style="width: 6vw !important; border-radius: 0 !important"
+          >{{
+            loc.get("zipCode")?.value == "" ? "__" : loc.get("zipCode")?.value
+          }}</label
+        >
+      </div>
+
+      <div
+        *ngFor="let loc of inspectionLocationFormArray.controls; let i = index"
+        [formGroup]="loc"
+        class="location0-row"
+        [hidden]="!canEditLocations"
+      >
+        <img
+          src="assets/pluss011.png"
+          style="width: 20px; height: 20px"
+          (click)="addNewAddress()"
+          [class.disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+        />
+        <input
+          formControlName="country"
+          placeholder="Country"
+          class="input middle"
+        />
+
+        <input
+          formControlName="state"
+          placeholder="State"
+          class="input middle"
+        />
+        <input formControlName="city" placeholder="City" class="input middle" />
+        <input
+          formControlName="streetLine1"
+          placeholder="Street Line 1"
+          class="input large"
+        />
+        <input
+          formControlName="streetLine2"
+          placeholder="street Line 2"
+          class="input middle"
+        />
+        <input
+          formControlName="zipCode"
+          placeholder="zipCode"
+          class="input middle"
+        />
+        <img
+          src="assets/delete-red.png"
+          style="width: 18px; height: 18px"
+          [class.disabled]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+          [hidden]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2) ||
+            (editMode &&
+              loc.get('id')?.value != '00000000-0000-0000-0000-000000000000')
+          "
+          (click)="removeAddress(loc)"
+        />
+      </div>
+    </fieldset>
+
+    <div class="upload-card">
+      <legend>Vendor DOC. For Execution Of Applied Inspection</legend>
+
+      <div class="upload-body">
+        <input
+          type="file"
+          multiple
+          (change)="onFilesPicked($event)"
+          class="upload-input"
+          [hidden]="
+            !editMode ||
+            (editMode &&
+              this.currentCirculation != null &&
+              this.currentCirculation?.performerContactType != 2)
+          "
+        />
+      </div>
+      <table class="upload-table" *ngIf="attachments.length > 0">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Description</th>
+            <th>DOC. NO.</th>
+            <th>STATUS</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let file of attachments; let i = index">
+            <td>
+              <a
+                [href]="file.downloadUrl"
+                (click)="fetchFile(file.id)"
+                target="_blank"
+              >
+                {{ file.name }}
+              </a>
+            </td>
+            <td>
+              <input
+                type="text"
+                [(ngModel)]="file.description"
+                placeholder="Enter description"
+                [disabled]="
+                  !editMode ||
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
+                "
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                [(ngModel)]="file.docNo"
+                placeholder="Enter Document Number"
+                [disabled]="
+                  !editMode ||
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
+                "
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </td>
+            <td>
+              <select
+                [(ngModel)]="file.status"
+                placeholder="Enter Status"
+                [disabled]="
+                  !editMode ||
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
+                "
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <option value="">--</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="NOT_KNOWN">NOT_KNOWN</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn-danger"
+                (click)="removeFile(i)"
+                [hidden]="
+                  !editMode ||
+                  (editMode &&
+                    this.currentCirculation != null &&
+                    this.currentCirculation?.performerContactType != 2)
+                "
+              >
+                ✖
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Signature area (shown after submit) -->
+    <div
+      class="submit-wrapper"
+      *ngIf="
+        !editMode ||
+        (editMode &&
+          currentCirculation != null &&
+          currentCirculation.sequenceNo > 0)
+      "
+    >
+      <div class="submit-card">
+        <div class="submit-info">
+          <span class="submit-date">
+            {{ inspectionForm.get("modifiedDate")?.value | date: "yyyy-MM-dd" }}
+          </span>
+          <span class="submit-user">
+            {{ inspectionForm.get("modifiedBy")?.value }}
+          </span>
+          <span class="submit-status">Submitted ✔</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button area (shown in edit mode) -->
+    <div
+      class="submit-wrapper"
+      *ngIf="
+        editMode &&
+        (this.currentCirculation == null ||
+          this.currentCirculation?.performerContactType == 2)
+      "
+    >
+      <div class="submit-card">
+        <button
+          type="submit"
+          (click)="SaveNewInspection()"
+          class="submit-btn primary"
+        >
+          Submit
+        </button>
+
+        <button
+          type="submit"
+          (click)="DraftNewInspection()"
+          class="submit-btn secondary"
+        >
+          Save & Draft
+        </button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+<div class="comment-section">
+  <!-- <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle> -->
+
+  <!-- Responsive grid of comment cards -->
+  <div class="comment-grid">
+    <mat-card
+      *ngFor="let circulation of workflow.requestCirculationsVM"
+      [class.last-Circulation-card]="
+        (circulation.current?.performerContactType == 4 ||
+          circulation.current?.performerContactType == 7) &&
+        circulation.current.performerContactPerson.userId == currentUser.id
+      "
+      class="comment-card"
+    >
+      <!-- Card header -->
+      <mat-card-header>
+        <mat-card-title class="Comment-Title">
+          {{ circulation.current?.performerContactPerson?.name }}
+          <button
+            (click)="openCirculationModal(circulation.original)"
+            [hidden]="
+              circulation.current.childCirculations != null &&
+              circulation.current.childCirculations.length > 0 &&
+              allInternalCorrespondences != null &&
+              allInternalCorrespondences.length <= 1
+            "
+          >
+            +
+          </button>
+        </mat-card-title>
+      </mat-card-header>
+
+      <!-- Card content -->
+      <mat-card-content style="overflow: hidden">
+        <textarea
+          [(ngModel)]="circulation.current.comment"
+          [hidden]="circulation.current.isHidden && !editMode"
+          [disabled]="
+            !(circulation.current | isActiveForUser: currentCirculation) &&
+            editMode
+          "
+          class="comment-body"
+          placeholder="please insert your comment before be late"
+          rows="3"
+        ></textarea>
+        <!-- Upload button -->
+        <input
+          type="file"
+          multiple
+          (change)="onCommentFilesPicked($event, circulation.current)"
+          class="upload-input"
+          [hidden]="
+            !(circulation.current | isActiveForUser: currentCirculation) ||
+            !editMode ||
+            QC_AlreadyHasAction
+          "
+        />
+
+        <!-- Optional: show filenames as chips -->
+        <div style="max-width: 100%; overflow-x: auto">
+          <table
+            class="commentupload-table"
+            style="width: max-content; min-width: 100%"
+            *ngIf="
+              circulation.current.attachments != null &&
+              circulation.current.attachments.length > 0
+            "
+          >
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Description</th>
+                <th>DOC. NO.</th>
+                <th>STATUS</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let file of circulation.current.attachments;
+                  let i = index
+                "
+              >
+                <td>
+                  <!-- {{ file?.name }} -->
+                  <a
+                    [href]="file?.downloadUrl"
+                    (click)="fetchFile(file.id)"
+                    target="_blank"
+                    >{{ file?.name }}</a
+                  >
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="file.description"
+                    placeholder="Enter description"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="file.docNo"
+                    placeholder="Enter Document Number"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  <select
+                    [(ngModel)]="file.status"
+                    placeholder="Enter Status"
+                    [ngModelOptions]="{ standalone: true }"
+                  >
+                    <option value="">--</option>
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="NOT_KNOWN">NOT_KNOWN</option>
+                    <option value="REJECTED">REJECTED</option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-danger"
+                    (click)="removeCirculationFile(circulation.current, i)"
+                  >
+                    ✖
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          *ngIf="
+            (circulation.current?.performerContactType == 4 ||
+              circulation.current?.performerContactType == 7) &&
+            circulation.current.performerContactPerson.userId ==
+              currentUser.id &&
+            circulation.current.qCActionType == null
+          "
+        >
+          <div style="max-width: 100%; overflow-x: auto">
+            <table
+              class="commentupload-table"
+              style="width: max-content; min-width: 100%"
+            >
+              <thead>
+                <tr>
+                  <th>Internal Correspondences</th>
+                  <th>User Role</th>
+                  <th>Comment</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let internaclCirculation of circulation.original
+                      .childCirculations
+                  "
+                >
+                  <td>
+                    <img
+                      src="assets/pluss011.png"
+                      style="width: 20px; height: 20px"
+                      (click)="
+                        AddInternalCorrespondenceRow(circulation.current)
+                      "
+                    />
+                  </td>
+                  <td style="width: 20% !important">
+                    <!-- <select
+                      [(ngModel)]="internaclCirculation.performerContactType"
+                      style="
+                        font-family: &quot;Times New Roman&quot;, Times, serif;
+                        font-size: 16px;
+                      "
+                    >
+                      <option value="none">------</option>
+                      <option value="8">SecondParty Inspector</option>
+                      <option value="9">ThirdParty Inspector</option>
+                    </select> -->
+                    <label
+                      [hidden]="
+                        internaclCirculation.id == '' ||
+                        internaclCirculation.id ==
+                          '00000000-0000-0000-0000-000000000000'
+                      "
+                      >{{
+                        internaclCirculation.performerContactPerson
+                          .contactType == 8
+                          ? "PidecInspector"
+                          : internaclCirculation.performerContactPerson
+                                .contactType == 9
+                            ? "ThirdParty Inspector"
+                            : internaclCirculation.performerContactPerson
+                                  .contactType == 10
+                              ? "Department Lead"
+                              : internaclCirculation.performerContactPerson
+                                    .contactType == 11
+                                ? "Department originator"
+                                : ""
+                      }}
+                      {{
+                        internaclCirculation.performerContactPerson.name
+                      }}</label
+                    >
+                    <select
+                      [hidden]="
+                        internaclCirculation.id != '' &&
+                        internaclCirculation.id !=
+                          '00000000-0000-0000-0000-000000000000'
+                      "
+                      [(ngModel)]="internaclCirculation.performerContactPerson"
+                      style="
+                        font-family: &quot;Times New Roman&quot;, Times, serif;
+                        font-size: 16px;
+                      "
+                    >
+                      <option [ngValue]="null">------</option>
+
+                      <option
+                        *ngFor="let contact of InternalReceiversContacts"
+                        [ngValue]="contact"
+                      >
+                        {{
+                          contact.contactType == 8
+                            ? "PidecInspector"
+                            : contact.contactType == 9
+                              ? "ThirdParty Inspector"
+                              : contact.contactType == 10
+                                ? "Department Lead"
+                                : contact.contactType == 11
+                                  ? "Department originator"
+                                  : ""
+                        }}
+                        {{ contact.name }}
+                      </option>
+                    </select>
+                  </td>
+                  <td style="width: 60% !important">
+                    <textarea
+                      [(ngModel)]="internaclCirculation.creatorComment"
+                      type="text"
+                      style="width: 100% !important"
+                    ></textarea>
+                  </td>
+                  <td style="width: 20% !important">
+                    <button
+                      mat-raised-button
+                      [hidden]="
+                        internaclCirculation.id != '' &&
+                        internaclCirculation.id !=
+                          '00000000-0000-0000-0000-000000000000'
+                      "
+                      (click)="
+                        StartInternalCorrespondence(
+                          internaclCirculation,
+                          circulation.current
+                        )
+                      "
+                    >
+                      Send Note
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <!-- Action buttons -->
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          style="
+            width: 4.5 rem !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+          "
+          color="primary"
+          (click)="onAction(circulation.current, 1)"
+          [disabled]="
+            !(circulation.current | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
+          *ngIf="shouldShowButton(circulation.current, 'approve')"
+        >
+          Approve
+        </button>
+        <button
+          mat-raised-button
+          style="
+            width: 4.5 rem !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+          "
+          color="primary"
+          (click)="onAction(circulation.current, 3)"
+          [disabled]="
+            !(circulation.current | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
+          *ngIf="shouldShowButton(circulation.current, 'backward')"
+        >
+          Backward
+        </button>
+        <button
+          mat-raised-button
+          style="
+            width: 4.5 rem !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+          "
+          color="warn"
+          (click)="onAction(circulation.current, 2)"
+          [disabled]="
+            !(circulation.current | isActiveForUser: currentCirculation) ||
+            QC_AlreadyHasAction
+          "
+          *ngIf="shouldShowButton(circulation.current, 'reject')"
+        >
+          Reject
+        </button>
+      </mat-card-actions>
+
+      <div
+        class="submit-wrapper"
+        *ngIf="
+          circulation.current.performedActionDateGregorian.toString().trim() !=
+          '0001-01-01T00:00:00'
+        "
+      >
+        <div class="submit-card">
+          <div class="submit-info">
+            <span class="submit-status"
+              >{{
+                circulation.current.actionType == 0 ||
+                circulation.current.actionType == null ||
+                circulation.current.actionType == undefined ||
+                circulation.current.actionType == -1
+                  ? "✖ Rejected "
+                  : circulation.current.actionType == 3
+                    ? "↩ Backwarded"
+                    : "✔ Approved"
+              }}
+            </span>
+            <span class="submit-user">
+              {{ "By " + circulation.current.performerContactPerson.name }}
+            </span>
+            <br />
+            <span class="submit-date">
+              {{
+                circulation.current.performedActionDateGregorian
+                  | date: "yyyy-MM-dd"
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

@@ -35,9 +35,12 @@ import { InspectorMasterComponent } from './Pages/InspectorSide/inspector-master
 import { inspectorbasicinfoResolver } from './Core/Resolvers/inspectorbasicinfo.resolver';
 import { NotstartedtasksComponent } from './Pages/InspectorSide/notstartedtasks/notstartedtasks.component';
 import { InspectionPrintComponent } from './Pages/VendorSide/inspection-print/inspection-print.component';
+import { ReadyInspectionsForReportComponent } from './Pages/InspectorSide/ready-inspections-for-report/ready-inspections-for-report.component';
+import { CompletedTasksComponent } from './Pages/PidecSide/completed-tasks/completed-tasks.component';
 
 
 export const routes: Routes = [
+  
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 
   {
@@ -77,6 +80,11 @@ export const routes: Routes = [
   component:ResetPasswordComponent
  },
  {
+      path:'inspection-print',
+      component:InspectionPrintComponent,
+
+    },
+ {
   path:'vendor',
   component:VendorMasterComponent,
   canActivate:[AuthGuard],
@@ -106,15 +114,15 @@ export const routes: Routes = [
       component: NotstartedinspectionsComponent
     },
     {
-      path:'editInspection/:id',
+      path:'editInspection/:RequestId/:InspectionId',
       component:VnewinspectionComponent,
       data:{reuse:true}
     },
-    {
-      path:'inspection-print',
-      component:InspectionPrintComponent,
+    // {
+    //   path:'inspection-print',
+    //   component:InspectionPrintComponent,
 
-    }
+    // }
   ]
  },
  {
@@ -149,10 +157,10 @@ export const routes: Routes = [
   },
    {
     path:'CompletedInspections',
-   component:InspectionManagementComponent
+   component:CompletedTasksComponent
   },
    {
-      path:'editInspection/:id',
+      path:'editInspection/:RequestId/:InspectionId',
       component:VnewinspectionComponent,
       data:{reuse:true}
     }
@@ -199,7 +207,7 @@ export const routes: Routes = [
     component:InspectionManagementComponent
   },
    {
-      path:'editInspection/:id',
+      path:'editInspection/:RequestId/:InspectionId',
       component:VnewinspectionComponent,
       data:{reuse:true}
     },
@@ -235,7 +243,7 @@ export const routes: Routes = [
     component:InspectionManagementComponent
   },
    {
-      path:'editInspection/:id',
+      path:'editInspection/:RequestId/:InspectionId',
       component:VnewinspectionComponent,
       data:{reuse:true}
     },
@@ -243,7 +251,13 @@ export const routes: Routes = [
       path:'inspection-print',
       component:InspectionPrintComponent,
 
+    },
+    {
+      path:'ReadyInspectionsForReport',
+      component:ReadyInspectionsForReportComponent,
+      data:{reuse:true}
     }
+
 ]
  }
 

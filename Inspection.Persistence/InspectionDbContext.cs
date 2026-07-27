@@ -51,17 +51,21 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         guidValue => new AttachmentId(guidValue));
 
 
-//        modelBuilder.Entity<InspectionNotification>()
-//.HasOne(n => n.Revision)
-//.WithMany(r => r.InspectionNotifications)
-//.HasForeignKey(n => n.RevisionId)
-//.OnDelete(DeleteBehavior.NoAction); // or DeleteBehavior.Restrict
 
-    //    modelBuilder.Entity<InspectionReportAttachment>()
-    //.HasOne(a => a.InspectionReport)
-    //.WithMany(r => r.inspectionReportAttachments)
-    //.HasForeignKey(a => a.InspectionReportId)
-    //.IsRequired(); // or false if optional
+
+        modelBuilder.Entity<InspectionNotificationInspector>()
+            .HasKey(ini => ini.InspectionInspectorId);
+
+        modelBuilder.Entity<InspectionNotificationInspector>().HasOne(ii => ii.InspectionNotification).WithMany(ii => ii.Inspectors);
+
+        modelBuilder.Entity<InspectionNotificationInspector>().HasOne(ii => ii.Inspector).WithMany(ii => ii.InspectionNotifications);
+
+        modelBuilder.Entity<InspectionSkill>()
+          .HasKey(ins => ins.SkillId);
+
+        modelBuilder.Entity<DocumentLink>().HasNoKey();
+
+        modelBuilder.Entity<DocumentTypeVisibility>().HasNoKey();
 
         modelBuilder.Entity<IdentityUserRole<string>>()
             .HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -96,53 +100,6 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
            .HasForeignKey(ca => ca.AttachmentId)
            .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<InspectorOrder>()
-           .ToTable("InspectorOrders")
-           .HasKey(ca => ca.Id);
-
-        modelBuilder.Entity<InspectorOrder>()
-            .HasOne(ca => ca.Inspector)
-            .WithMany(ca => ca.inspectedOrders)
-            .HasForeignKey(ca => ca.InspectorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<InspectorOrder>()
-           .HasOne(ca => ca.Order)
-           .WithMany(ca => ca.Inspectors)
-           .HasForeignKey(ca => ca.OrderId)
-           .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<InspectorProject>()
-           .ToTable("InspectorProjects")
-           .HasKey(ca => ca.Id);
-
-        modelBuilder.Entity<InspectorProject>()
-            .HasOne(ca => ca.Project)
-            .WithMany(ca => ca.Inspectors)
-            .HasForeignKey(ca => ca.ProjectId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<InspectorProject>()
-           .HasOne(ca => ca.Inspector)
-           .WithMany(ca => ca.inspectedProjects)
-           .HasForeignKey(ca => ca.InspectorId)
-           .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<PersonAttachment>()
-            .ToTable("PersonAttachments")
-            .HasKey(ca => ca.Id);
-
-        modelBuilder.Entity<PersonAttachment>()
-            .HasOne(ca => ca.Person)
-            .WithMany(ca => ca.Attachments)
-            .HasForeignKey(ca => ca.PersonId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<PersonAttachment>()
-           .HasOne(ca => ca.Attachment)
-           .WithMany(ca => ca.Persons)
-           .HasForeignKey(ca => ca.AttachmentId)
-           .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<OrderContact>()
          .ToTable("OrderContacts")
@@ -300,34 +257,10 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         .HasKey(cin => cin.Id);
 
 
-        modelBuilder.Entity<Person>()
-      .ToTable("Persons")
-      .HasKey(cin => cin.Id);
-
         modelBuilder.Entity<CirculationInspector>()
             .HasOne(cin => cin.Circulation)
             .WithMany(cin => cin.Inspectors)
             .HasForeignKey(ins => ins.CirculationId);
-
-        modelBuilder.Entity<CirculationInspector>()
-            .HasOne(cin => cin.Inspector)
-            .WithMany(cin => cin.Circulations)
-            .HasForeignKey(ins => ins.InspectorId);
-        //modelBuilder.Entity<InspectionNotificationContact>()
-        //.ToTable("InspectionNotificationContacts")
-        //.HasKey(pq => pq.Id);
-
-        //modelBuilder.Entity<InspectionNotificationContact>()
-        //    .HasOne(ic => ic.InspectionNotification)
-        //    .WithMany(ic => ic.Contacts)
-        //    .HasForeignKey(ic => ic.InspectionNotificationId);
-
-        //modelBuilder.Entity<InspectionNotificationContact>()
-        //    .HasOne(ic => ic.Contact)
-        //    .WithMany(ic => ic.InspectionNotifications)
-        //    .HasForeignKey(ic => ic.ContactId);
-
-
 
         base.OnModelCreating(modelBuilder);
 
@@ -373,9 +306,14 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
     public DbSet<InspectionReportAttachment>  InspectionReportAttachments{ get; set; }
     public DbSet<Inspector> Inspectors { get; set; }  
     public DbSet<CirculationInspector> CirculationInspectors { get; set; }
-    public DbSet<Revision> Revisions { get; set; }
-    public DbSet<Person> Persons { get; set; }
+    public DbSet<Revision> Revisions { get; set; } 
     public DbSet<InspectionReportPerson> InspectionReportPersons { get; set; }
-    public DbSet<InspectorOrder> InspectorOrders { get; set; }
-    public DbSet<InspectorProject> InspectorProjects { get; set; }
+    public DbSet<InspectionSkill> InspectionSkills { get; set; }
+    public DbSet<InspectorSkill> InspectorSkills { get; set; }
+    public DbSet<InspectionNotificationInspector> InspectionNotificationInspectors { get; set; }
+    public DbSet<Document> Documents { get; set; }
+    public DbSet<DocumentLink> DocumentLinks { get; set; }
+    public DbSet<DocumentType> DocumentTypes { get; set; }
+    public DbSet<DocumentTypeVisibility> DocumentTypeVisibilities { get; set; }
+
 }

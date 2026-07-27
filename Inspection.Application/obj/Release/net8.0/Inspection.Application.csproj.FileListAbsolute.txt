@@ -1,0 +1,16 @@
+E:\Projects\1403\Inspection\Inspection.Application\bin\Release\net8.0\Inspection.Application.deps.json
+E:\Projects\1403\Inspection\Inspection.Application\bin\Release\net8.0\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\bin\Release\net8.0\Inspection.Application.pdb
+E:\Projects\1403\Inspection\Inspection.Application\bin\Release\net8.0\Inspection.Domain.dll
+E:\Projects\1403\Inspection\Inspection.Application\bin\Release\net8.0\Inspection.Domain.pdb
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.csproj.AssemblyReference.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.AssemblyInfoInputs.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.AssemblyInfo.cs
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.csproj.CoreCompileInputs.cache
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.sourcelink.json
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspecti.A73FEAAA.Up2Date
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\refint\Inspection.Application.dll
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\Inspection.Application.pdb
+E:\Projects\1403\Inspection\Inspection.Application\obj\Release\net8.0\ref\Inspection.Application.dll

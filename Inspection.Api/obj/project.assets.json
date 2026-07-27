@@ -1225,6 +1225,67 @@
           }
         }
       },
+      "Microsoft.QualityTools.Testing.Fakes/17.5.0-beta.23060.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Reflection.Emit": "4.7.0",
+          "System.Security.Permissions": "6.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.QualityTools.Testing.Fakes.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.QualityTools.Testing.Fakes.dll": {
+            "related": ".xml"
+          }
+        },
+        "resource": {
+          "lib/netstandard2.0/cs/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard2.0/de/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard2.0/es/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard2.0/fr/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard2.0/it/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard2.0/ja/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard2.0/ko/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard2.0/pl/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard2.0/pt-BR/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard2.0/ru/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard2.0/tr/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard2.0/zh-Hans/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard2.0/zh-Hant/Microsoft.QualityTools.Testing.Fakes.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
       "Microsoft.SqlServer.Server/1.0.0": {
         "type": "package",
         "compile": {
@@ -1241,7 +1302,7 @@
       "Microsoft.Win32.SystemEvents/6.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
             "related": ".xml"
           }
         },
@@ -1442,7 +1503,7 @@
           "Microsoft.Win32.SystemEvents": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Drawing.Common.dll": {
             "related": ".xml"
           }
         },
@@ -1642,6 +1703,15 @@
           "lib/netcoreapp2.0/System.Reflection.DispatchProxy.dll": {
             "related": ".xml"
           }
+        }
+      },
+      "System.Reflection.Emit/4.7.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
         }
       },
       "System.Reflection.Primitives/4.3.0": {
@@ -1883,7 +1953,7 @@
           "System.Windows.Extensions": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Security.Permissions.dll": {
             "related": ".xml"
           }
         },
@@ -2384,7 +2454,7 @@
           "System.Drawing.Common": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Windows.Extensions.dll": {
             "related": ".xml"
           }
         },
@@ -2470,16 +2540,6 @@
           "bin/placeholder/Inspection.Application.dll": {}
         }
       },
-      "Inspection.Contracts/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v8.0",
-        "compile": {
-          "bin/placeholder/Inspection.Contracts.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Inspection.Contracts.dll": {}
-        }
-      },
       "Inspection.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -2500,7 +2560,6 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "Inspection.Application": "1.0.0",
-          "MediatR": "12.5.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
           "SendGrid": "9.29.3",
           "System.IdentityModel.Tokens.Jwt": "8.1.2"
@@ -2517,7 +2576,6 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "Inspection.Application": "1.0.0",
-          "MediatR": "12.5.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.10",
           "Microsoft.AspNetCore.Identity.UI": "8.0.10",
           "Microsoft.EntityFrameworkCore.InMemory": "8.0.10",
@@ -2527,6 +2585,7 @@
           "Microsoft.Extensions.Configuration.FileExtensions": "8.0.0",
           "Microsoft.Extensions.Configuration.Json": "8.0.0",
           "Microsoft.Extensions.Identity.Core": "8.0.10",
+          "Microsoft.QualityTools.Testing.Fakes": "17.5.0-beta.23060.1",
           "dapper": "2.1.66"
         },
         "compile": {
@@ -4435,6 +4494,50 @@
         "microsoft.openapi.nuspec"
       ]
     },
+    "Microsoft.QualityTools.Testing.Fakes/17.5.0-beta.23060.1": {
+      "sha512": "z3wkf7mOjkebatkNg8j9zl/JQvOzxoKGutecHFMflkXtD2EeENxXrrbhcuGHGBupTEL6LuOeY+Jvm1Ey6ZVTLQ==",
+      "type": "package",
+      "path": "microsoft.qualitytools.testing.fakes/17.5.0-beta.23060.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "License.txt",
+        "build/Microsoft.Qualitytools.Testing.Fakes.targets",
+        "lib/net35/Microsoft.QualityTools.Testing.Fakes.dll",
+        "lib/net35/Microsoft.QualityTools.Testing.Fakes.xml",
+        "lib/net35/cs/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/de/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/es/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/fr/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/it/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/ja/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/ko/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/pl/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/pt-BR/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/ru/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/tr/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/zh-Hans/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/net35/zh-Hant/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/Microsoft.QualityTools.Testing.Fakes.dll",
+        "lib/netstandard2.0/Microsoft.QualityTools.Testing.Fakes.xml",
+        "lib/netstandard2.0/cs/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/de/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/es/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/fr/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/it/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/ja/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/ko/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/pl/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/pt-BR/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/ru/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/tr/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/zh-Hans/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "lib/netstandard2.0/zh-Hant/Microsoft.QualityTools.Testing.Fakes.resources.dll",
+        "microsoft.qualitytools.testing.fakes.17.5.0-beta.23060.1.nupkg.sha512",
+        "microsoft.qualitytools.testing.fakes.nuspec"
+      ]
+    },
     "Microsoft.SqlServer.Server/1.0.0": {
       "sha512": "N4KeF3cpcm1PUHym1RmakkzfkEv3GRMyofVv40uXsQhCQeglr2OHNcUk2WOG51AKpGO8ynGpo9M/kFXSzghwug==",
       "type": "package",
@@ -5444,6 +5547,60 @@
         "runtimes/win/lib/uap10.0.16299/System.Reflection.DispatchProxy.dll",
         "system.reflection.dispatchproxy.4.7.1.nupkg.sha512",
         "system.reflection.dispatchproxy.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Reflection.Emit/4.7.0": {
+      "sha512": "VR4kk8XLKebQ4MZuKuIni/7oh+QGFmZW3qORd1GvBq/8026OpW501SzT/oypwiQl4TvT8ErnReh/NzY9u+C6wQ==",
+      "type": "package",
+      "path": "system.reflection.emit/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/netcore50/System.Reflection.Emit.dll",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.1/System.Reflection.Emit.dll",
+        "lib/netstandard1.1/System.Reflection.Emit.xml",
+        "lib/netstandard1.3/System.Reflection.Emit.dll",
+        "lib/netstandard2.0/System.Reflection.Emit.dll",
+        "lib/netstandard2.0/System.Reflection.Emit.xml",
+        "lib/netstandard2.1/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.1/System.Reflection.Emit.dll",
+        "ref/netstandard1.1/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/de/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/es/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/fr/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/it/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/ja/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/ko/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/ru/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/zh-hans/System.Reflection.Emit.xml",
+        "ref/netstandard1.1/zh-hant/System.Reflection.Emit.xml",
+        "ref/netstandard2.0/System.Reflection.Emit.dll",
+        "ref/netstandard2.0/System.Reflection.Emit.xml",
+        "ref/netstandard2.1/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/aot/lib/netcore50/System.Reflection.Emit.dll",
+        "runtimes/aot/lib/netcore50/System.Reflection.Emit.xml",
+        "system.reflection.emit.4.7.0.nupkg.sha512",
+        "system.reflection.emit.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
@@ -7078,11 +7235,6 @@
       "path": "../Inspection.Application/Inspection.Application.csproj",
       "msbuildProject": "../Inspection.Application/Inspection.Application.csproj"
     },
-    "Inspection.Contracts/1.0.0": {
-      "type": "project",
-      "path": "../Inspection.Contracts/Inspection.Contracts.csproj",
-      "msbuildProject": "../Inspection.Contracts/Inspection.Contracts.csproj"
-    },
     "Inspection.Domain/1.0.0": {
       "type": "project",
       "path": "../Inspection.Domain/Inspection.Domain.csproj",
@@ -7101,8 +7253,8 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Dapper >= 2.1.66",
       "Inspection.Application >= 1.0.0",
-      "Inspection.Contracts >= 1.0.0",
       "Inspection.Infrastructure >= 1.0.0",
       "Inspection.Persistence >= 1.0.0",
       "Mapster >= 7.4.0",
@@ -7112,12 +7264,11 @@
       "Swashbuckle.AspNetCore >= 6.8.1",
       "Swashbuckle.AspNetCore.SwaggerUI >= 6.8.1",
       "System.IdentityModel.Tokens.Jwt >= 8.1.2",
-      "System.ServiceModel.Duplex >= 6.0.*",
-      "System.ServiceModel.Federation >= 6.0.*",
-      "System.ServiceModel.Http >= 6.0.*",
-      "System.ServiceModel.NetTcp >= 6.0.*",
-      "System.ServiceModel.Security >= 6.0.*",
-      "dapper >= 2.1.66"
+      "System.ServiceModel.Duplex >= 6.0.0",
+      "System.ServiceModel.Federation >= 6.0.0",
+      "System.ServiceModel.Http >= 6.0.0",
+      "System.ServiceModel.NetTcp >= 6.0.0",
+      "System.ServiceModel.Security >= 6.0.0"
     ]
   },
   "packageFolders": {
@@ -7146,7 +7297,9 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://www.nuget.org/api/v2": {},
+        "C:\\Users\\akbari.elahe\\.nuget\\packages": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://packagesource": {},
         "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
@@ -7155,9 +7308,6 @@
           "projectReferences": {
             "E:\\Projects\\1403\\Inspection\\Inspection.Application\\Inspection.Application.csproj": {
               "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Application\\Inspection.Application.csproj"
-            },
-            "E:\\Projects\\1403\\Inspection\\Inspection.Contracts\\Inspection.Contracts.csproj": {
-              "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Contracts\\Inspection.Contracts.csproj"
             },
             "E:\\Projects\\1403\\Inspection\\Inspection.Infrastructure\\Inspection.Infrastructure.csproj": {
               "projectPath": "E:\\Projects\\1403\\Inspection\\Inspection.Infrastructure\\Inspection.Infrastructure.csproj"
@@ -7184,6 +7334,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Dapper": {
+            "target": "Package",
+            "version": "[2.1.66, )"
+          },
           "Mapster": {
             "target": "Package",
             "version": "[7.4.0, )"
@@ -7214,27 +7368,23 @@
           },
           "System.ServiceModel.Duplex": {
             "target": "Package",
-            "version": "[6.0.*, )"
+            "version": "[6.0.0, )"
           },
           "System.ServiceModel.Federation": {
             "target": "Package",
-            "version": "[6.0.*, )"
+            "version": "[6.0.0, )"
           },
           "System.ServiceModel.Http": {
             "target": "Package",
-            "version": "[6.0.*, )"
+            "version": "[6.0.0, )"
           },
           "System.ServiceModel.NetTcp": {
             "target": "Package",
-            "version": "[6.0.*, )"
+            "version": "[6.0.0, )"
           },
           "System.ServiceModel.Security": {
             "target": "Package",
-            "version": "[6.0.*, )"
-          },
-          "dapper": {
-            "target": "Package",
-            "version": "[2.1.66, )"
+            "version": "[6.0.0, )"
           }
         },
         "imports": [

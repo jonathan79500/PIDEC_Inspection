@@ -12,6 +12,7 @@ using Inspection.Domain.Entities.ValueObjects;
 using System.Text.Json;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using Inspection.Domain.Entities.Inspector;
 //using Pidec.Utils;
 
 namespace Inspection.Domain.Entities.InspectionNotification.Entities;
@@ -82,12 +83,14 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
     private List<InspectionNotificationSubject> _subjects = new List<InspectionNotificationSubject>();  
     private List<InspectionNotificationContact>? _contacts = new List<InspectionNotificationContact>();
     private List<InspectionNotificationRevision>? _revisions = new List<InspectionNotificationRevision>();
+    private List<InspectionNotificationInspector>? _inspectors = new List<InspectionNotificationInspector>();
 
     public List<InspectionNotificationLocation>? Locations { get => _locations; set => _locations = value; }
     public List<InspectionNotificationContact>? Contacts { get => _contacts; set => _contacts = value; }
     public List<InspectionNotificationSubject>? Subjects { get => _subjects; set => _subjects = value; }
     public List<InspectionNotificationType>? Types { get => _types; set => _types = value; }
     public List<InspectionNotificationRevision>? Revisions { get => _revisions; set => _revisions = value; }
+    public List<InspectionNotificationInspector>? Inspectors { get => _inspectors; set => _inspectors = value; }
 
     public static InspectionNotification Create(string ?name,NotificationNumber ?notificationNumberParts,string? notificationNumber
        , DateTime? IssueDate,string? PersianIssueDate,DateTime? RequestInspectionDateStart,DateTime? RequestInspectionDateEnd,string? RequestInspectionPersianDateStart,
@@ -116,9 +119,9 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
           ,ins.RequestInspectionDateEnd!,ins.RequestInspectionPersianDateStart,ins.RequestInspectionPersianDateEnd!,
           ins.Order!,ins.Description!,ins.InspectionTimeComment!,ins.EquipmentTagNo,ins.RequestInspectionDueDate,ins.OrderName,ins.InspectionAction);
 
-        if(inspectionNotification.InspectionNotificationId != null && inspectionNotification.InspectionNotificationId.Value !=Guid.Empty)
-            newinspectionNotification.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
-        else
+        //if(inspectionNotification.InspectionNotificationId != null && inspectionNotification.InspectionNotificationId.Value !=Guid.Empty)
+        //    newinspectionNotification.InspectionNotificationId = inspectionNotification.InspectionNotificationId;
+        //else
             newinspectionNotification.InspectionNotificationId = InspectionNotificationId.CreateUnique();
 
         InspectionNotificationContact newInspectionNotificationContact;
@@ -132,7 +135,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                     newInspectionNotificationContact = new InspectionNotificationContact();
                     newInspectionNotificationContact.InspectionNotificationId = newinspectionNotification.InspectionNotificationId;
                     newInspectionNotificationContact.ContactId = inspectionNotification.Contacts[i].ContactId;
-                  //  newInspectionNotificationContact.Contact = inspectionNotification.Contacts![i].Contact;
+                    //newInspectionNotificationContact.Contact = inspectionNotification.Contacts![i].Contact;
                     newinspectionNotification.Contacts!.Add(newInspectionNotificationContact);
                 }
             }
@@ -251,8 +254,9 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
             clonedInspectionNotification.Name = this.Name;     
             clonedInspectionNotification.Description = this.Description;
             clonedInspectionNotification.CreatedBy = this.CreatedBy;
-            clonedInspectionNotification.CreatedDate = currentDate;        
-            clonedInspectionNotification.IssueDate = this.IssueDate;
+            clonedInspectionNotification.CreatedDate = currentDate;
+            clonedInspectionNotification.IssueDate = currentDate;//this.IssueDate;
+            clonedInspectionNotification.ModifiedDate = currentDate;
             clonedInspectionNotification.PersianIssueDate = this.PersianIssueDate;
             clonedInspectionNotification.NotificationNumber = this.NotificationNumber;
             clonedInspectionNotification.NotificationNumberParts = this.NotificationNumberParts;
@@ -279,6 +283,7 @@ public sealed class InspectionNotification:AggregateRoot<InspectionNotificationI
                 //InspectionNotification = clonedInspectionNotification,
                 InspectionNotificationId = clonedInspectionNotificationId,
                 InspectionSubjectId = subject.InspectionSubjectId,
+                ITP_Row_No = subject.ITP_Row_No,
                 ModifiedBy = subject.ModifiedBy,
                 ModifiedDate = subject.ModifiedDate
             }).ToList();

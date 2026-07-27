@@ -1,4 +1,5 @@
-﻿using Inspection.Application.DTOs.Common;
+﻿using Inspection.Application.DTOs;
+using Inspection.Application.DTOs.Common;
 using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Contacts;
@@ -18,6 +19,10 @@ namespace Inspection.Application.Contracts.Persistence;
 public interface IInspectionNotificationRepository : IGenericRepository<InspectionNotification, InspectionNotificationId>
 {
     Task<(List<InspectionNotification>,List<InspectionReport>)> GetInspectionNotificationById(InspectionNotificationId inspectionNotificationId);
+
+    Task<(List<InspectionNotification>, List<InspectionReport>)> GetInspectionNotificationByRequestId(Guid requestId,string userId);
+
+    Task<(InspectionNotification, Circulation)> ModifyInspectionNotification(Circulation currentCirculation,InspectionNotification inspectionNotification, List<Attachment> attachments);
 
     Task<(InspectionNotification, Circulation)> CreateNewInspectionNotification(InspectionNotification inspectionNotification, NotificationNumber newNotificationNumber, List<Attachment> attachments);
 
@@ -39,11 +44,17 @@ public interface IInspectionNotificationRepository : IGenericRepository<Inspecti
 
     Task<List<InspectionNotificationDataSummaryDto>> GetNotStartedInspectionNotificationsByUserName(string userName);
 
+    Task<List<InspectionNotificationDataSummaryDto>> GetCompletedInspectionNotificationsByUserName(string userName);
+
+    Task<List<InspectionNotificationHistoryDto>> GetInspectionNotificationHistory(Guid requestId);
+
     //Generally For Inspectors to attach their InspectionReport
     Task<List<InspectionNotificationDataSummaryDto>> GetReadyNotificationsToAttachInspectionReportByProjIdUserId(string ProjectId, string UserId);
 
 
     // InspectionNotification SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project);
+
+    Task<List<Circulation>> GiveEditRightToSpecificRole(Circulation contributor, Circulation[] assignees);
 
     Task<Contact> AddNewContact(Contact contact);
 

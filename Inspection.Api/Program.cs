@@ -1,6 +1,7 @@
 using Dapper;
 using Inspection;
 using Inspection.Api;
+using Inspection.Api.Middlewares;
 using Inspection.Application;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
@@ -72,6 +73,10 @@ builder.Services.Configure<JsonOptions>(options =>
 
 
 //------------------------------------------------------------------------------------------------------
+
+// Get the server URL from configuration
+var serverUrl = builder.Configuration["BaseUrl"] ?? "https://localhost:5000";
+
 builder.Services.AddAuthentication(options =>
 {
 
@@ -81,9 +86,9 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(jwt =>
      {
 
-         var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection(key: "Jwt:Key").Value);
+         var key = Encoding.ASCII.GetBytes("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e");
          jwt.SaveToken = false;
-         jwt.Authority = "http://QCMI.PIDEC.COM";
+         jwt.Authority = serverUrl; //"http://QCMI.PIDEC.COM";
          jwt.RequireHttpsMetadata = false;
          
          jwt.TokenValidationParameters = new TokenValidationParameters()
@@ -96,8 +101,10 @@ builder.Services.AddAuthentication(options =>
              //    return jwt;
              //},
              IssuerSigningKey = new SymmetricSecurityKey(key),
-             ValidateIssuer = false,
-             ValidateAudience = false,
+             ValidateIssuer = true,
+             ValidIssuer=serverUrl,
+             ValidateAudience = true,
+             ValidAudience = serverUrl,
              RequireExpirationTime = false,
              ValidateLifetime = false
          };
@@ -153,6 +160,8 @@ builder.Services.AddSwaggerGen(c =>
             },[]
         }
     });
+    // ** ADD THIS: Helps Swagger find all controllers **
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 });
 //    .AddAuthorization(options => options.FallbackPolicy = new AuthorizationPolicyBuilder()
 //.AddAuthenticationSchemes("Bearer")
@@ -166,6 +175,14 @@ builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddCors(o =>
     o.AddPolicy("CorsPolicy",
     builder => builder
+     //.WithOrigins(
+     //       "https://pims.pidec.com",      // Your server domain
+     //       "https://pims.pidec.com/pims",      // Your server domain
+     //       "https://pims.pidec.com/pims/*",      // Your server domain
+     //       "https://localhost:4200",      // Local development
+     //       "http://localhost:4200",
+     //       "*"
+     //   )
     .AllowAnyOrigin()
     .AllowAnyMethod()    
     .AllowAnyHeader()));
@@ -175,7 +192,7 @@ var app = builder.Build();
     app.UseDeveloperExceptionPage();
 app.UseCors("CorsPolicy");
 
-
+//app.UseExceptionHandlingMiddleware();
 app.UseRouting();
 
 app.UseAuthentication();
@@ -187,7 +204,7 @@ app.UseEndpoints(endpoints => {
     endpoints.MapControllers();
 });
 
-app.MapGroup("api/Identity").MapIdentityApi<SystematicUser>();
+app.MapGroup("Identity").MapIdentityApi<SystematicUser>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -197,12 +214,60 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();  
 
-    //Add when i wanted to upload Files
-    app.UseStaticFiles();
+   
 
 
   
 
     app.MapControllers();
 
-    app.Run();
+//app.Use(async (context, next) =>
+//{
+//    // Get the request path
+//    var path = context.Request.Path.Value ?? "/";
+
+//    // List of your API controller base paths (without 'api/' prefix)
+//    // Add all your controller names here
+//    var apiPaths = new[]
+//    {
+//        "BasicInfo",
+//        "/Identity",     // Identity routes
+//        "/Users",        // Your Users controller       
+//        "/InspectionNotification",
+//        "/InspectionReport",
+//        "/Attachments",
+//        // Add all your controller names here
+//        "/swagger",      // Swagger
+//        "/_framework",   // .NET framework
+//        "/manifest"      // Web manifest
+//    };
+
+//    // Check if the request is for an API endpoint
+//    var isApiRequest = apiPaths.Any(apiPath =>
+//        path.StartsWith(apiPath, StringComparison.OrdinalIgnoreCase)) ||
+//        path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase);
+
+//    // Check if it's a static file (has extension)
+//    var hasExtension = Path.HasExtension(path);
+
+//    // Check if the file exists in wwwroot
+//    var filePath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", path.TrimStart('/'));
+//    var isStaticFile = File.Exists(filePath);
+
+//    // If it's not an API request, not a static file, and not a file with extension
+//    if (!isApiRequest && !isStaticFile && !hasExtension)
+//    {
+//        // Serve Angular's index.html
+//        context.Request.Path = "/index.html";
+//    }
+
+//    await next();
+//});
+
+//Add when i wanted to upload Files
+app.UseStaticFiles();
+
+app.MapFallbackToFile("index.html");
+
+
+app.Run();

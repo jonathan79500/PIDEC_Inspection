@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PersianCalendar.1.0.0.0.Fakes</name>
+    </assembly>
+    <members>
+        <member name="T:Pidec.Utils.Fakes.ShimPersianCelendar">
+            <summary>Shim type of Pidec.Utils.PersianCelendar</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianCelendar.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianCelendar.#ctor(Pidec.Utils.PersianCelendar)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="T:Pidec.Utils.Fakes.ShimPersianCelendar.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianCelendar.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianCelendar.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.Constructor">
+            <summary>Sets the Shim of PersianCelendar.PersianCelendar(PersianCelendar this)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.GregorianToJalaliDateTime">
+            <summary>Sets the Shim of PersianCelendar.GregorianToJalali(DateTime gregorian)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.JalaliToGregorianPersianDate">
+            <summary>Sets the Shim of PersianCelendar.JalaliToGregorian(PersianDate persian)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.StaticConstructor">
+            <summary>Sets the Shim of PersianCelendar.PersianCelendar()</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianCelendar.divInt32Int32">
+            <summary>Sets the Shim of PersianCelendar.div(Int32 a, Int32 b)</summary>
+        </member>
+        <member name="T:Pidec.Utils.Fakes.ShimPersianDate">
+            <summary>Shim type of Pidec.Utils.PersianDate</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianDate.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianDate.#ctor(Pidec.Utils.PersianDate)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="T:Pidec.Utils.Fakes.ShimPersianDate.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.AllInstances.IsValidDateGet">
+            <summary>Sets the Shim of PersianDate.get_IsValidDate(PersianDate this)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.AllInstances.ToString01">
+            <summary>Sets the Shim of PersianDate.ToString(PersianDate this)</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianDate.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.ShimPersianDate.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.ConstructorInt32Int32Int32">
+            <summary>Sets the Shim of PersianDate.PersianDate(PersianDate this, Int32 year, Int32 month, Int32 day)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.IsValidDateGet">
+            <summary>Sets the Shim of PersianDate.get_IsValidDate(PersianDate this)</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.ShimPersianDate.ToString">
+            <summary>Sets the Shim of PersianDate.ToString(PersianDate this)</summary>
+        </member>
+        <member name="T:Pidec.Utils.Fakes.StubPersianCelendar">
+            <summary>Stub type of Pidec.Utils.PersianCelendar</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.StubPersianCelendar.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianCelendar.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.StubPersianCelendar.InitializeStub">
+            <summary>Initializes a new instance of type StubPersianCelendar</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianCelendar.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianCelendar.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:Pidec.Utils.Fakes.StubPersianDate">
+            <summary>Stub type of Pidec.Utils.PersianDate</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.StubPersianDate.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianDate.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.StubPersianDate.InitializeStub">
+            <summary>Initializes a new instance of type StubPersianDate</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianDate.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Pidec.Utils.Fakes.StubPersianDate.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="M:Pidec.Utils.Fakes.StubPersianDate.ToString">
+            <summary>Sets the Stub of PersianDate.ToString(PersianDate this)</summary>
+        </member>
+        <member name="F:Pidec.Utils.Fakes.StubPersianDate.ToString01">
+            <summary>Sets the stub of PersianDate.ToString(PersianDate this)</summary>
+        </member>
+    </members>
+</doc>

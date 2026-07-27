@@ -1519,7 +1519,9 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://www.nuget.org/api/v2": {},
+        "C:\\Users\\akbari.elahe\\.nuget\\packages": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://packagesource": {},
         "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {

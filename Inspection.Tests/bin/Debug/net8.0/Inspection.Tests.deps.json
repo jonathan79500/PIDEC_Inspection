@@ -943,7 +943,6 @@
       "Inspection.Infrastructure/1.0.0": {
         "dependencies": {
           "Inspection.Application": "1.0.0",
-          "MediatR": "12.5.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
           "SendGrid": "9.29.3",
           "System.IdentityModel.Tokens.Jwt": "8.1.2"

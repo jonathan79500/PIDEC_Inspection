@@ -28,13 +28,6 @@ public sealed class Project : AggregateRoot<ProjectId>
     [NotMapped]
     public List<ProjectContact> TPInspectors { get; set; }//Third Part Inspectors
 
-    [NotMapped]
-    public List<InspectorProject> Inspectors { get; set; }
-    //public List<ProjectContact> OwnerContacts { get; set; }
-    //public List<ProjectContact> MCContacts { get; set; }
-    //public List<ProjectContact> PidecInspectors { get; set; } //Second Part Inspectors
-    //public List<ProjectContact> TPInspectors { get; set; }//Third Part Inspectors
-
     private readonly List<ProjectContact> PIDEC_TO = new();
     private readonly List<ProjectContact> PIDEC_CC = new();
     private readonly List<InspectionSubject> inspectionSubjects = new();

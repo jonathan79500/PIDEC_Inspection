@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Documents</h2>
+
+<mat-dialog-content>
+  <app-document-manager
+    [ownerType]="data.ownerType"
+    [ownerId]="data.ownerId"
+    [readOnly]="data.readOnly"
+  >
+  </app-document-manager>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

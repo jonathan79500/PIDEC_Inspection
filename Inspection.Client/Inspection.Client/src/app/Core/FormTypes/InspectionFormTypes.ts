@@ -29,7 +29,9 @@ export type FormAttachment = FormGroup<{
   description:FormControl<string>,
   downloadUrl:FormControl<string>,
   docNo:FormControl<string>,
-  status:FormControl<string>
+  status:FormControl<string>,
+  pdfSize:FormControl<string>,
+  edmsId:FormControl<string>
 }>
 
 export type FormInspectionType = FormGroup<{

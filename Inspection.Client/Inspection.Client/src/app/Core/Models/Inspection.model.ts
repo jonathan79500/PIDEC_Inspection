@@ -15,7 +15,7 @@ export interface Inspection{
    order:Order | undefined,
    orderName: string,
    equipmentTagNo:string,
-  revision:Revision,
+  revisions:Revision[],
   createdDate:Date |undefined,
   modifiedDate:Date |undefined,
   createdBy: string,

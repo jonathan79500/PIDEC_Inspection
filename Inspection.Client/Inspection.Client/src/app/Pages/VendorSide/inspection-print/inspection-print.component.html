@@ -1,306 +1,340 @@
-<div *ngIf="inspectionMainNumber.trim() != ''">
-  <fieldset>
-    <div class="print-header">
-      <!-- LEFT -->
-      <div class="left">
-        <div class="circle">
-          <img src="" />
-        </div>
-
-        <div class="left-text">
-          <p>Petrochemical</p>
-          <p>Industries Design &</p>
-          <p>Engineering Company</p>
-          <p>(PIDEC)</p>
-        </div>
-        <br />
-        <div>
-          <p>Project No: {{ inspectionData.order.project.number }}</p>
-        </div>
+<div
+  style="
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    margin: 2rem 2rem 2rem 2rem !important;
+    text-indent: 0.2rem !important;
+  "
+  *ngIf="inspectionMainNumber.trim() != ''"
+>
+  <div class="print-header">
+    <!-- LEFT -->
+    <div class="left">
+      <div class="circle">
+        <img src="assets/PidecArm.jpg" />
       </div>
 
-      <!-- CENTER -->
-      <div class="center">
-        <div class="doc-code">{{ inspectionData.order.project.title }}</div>
-
-        <div class="title">Shop Inspection Procedure</div>
-
-        <div class="row">
-          <span>Owner Doc No.: 1723979</span>
-          <span class="rev">Rev: 00</span>
-        </div>
-
-        <div class="row">
-          <span>PIDEC Doc. No.: 868128128</span>
-          <span class="class">class</span>
-        </div>
+      <div class="left-text">
+        <p>Petrochemical</p>
+        <p>Industries Design &</p>
+        <p>Engineering Company</p>
+        <p>(PIDEC)</p>
       </div>
-
-      <!-- RIGHT -->
-      <div class="right">
-        <div class="owner">Owner / MC</div>
-
-        <div class="arms">
-          <img src="" />
-          <img src="" />
-          <img src="" />
-        </div>
-
-        <div class="project">Project No: 162363778</div>
+      <br />
+      <div>
+        <p>Project No: {{ currentProject.number }}</p>
       </div>
     </div>
-  </fieldset>
-  <fieldset class="section">
-    <fieldset class="section">
-      <legend style="text-align: left !important">
-        Inspection Notification
-      </legend>
-      <div class="form-group">
-        <label for="notificationNumber" class="common-title"
-          >Inspection Notification No:
-        </label>
-        <label class="common-label">{{ inspectionMainNumber }}</label>
-        <Label class="common-title"> Rev: </Label>
-        <label class="common-label">{{ inspectionRevNumber }}</label>
+
+    <!-- CENTER -->
+    <div class="center">
+      <div class="doc-code">{{ currentProject.description }}</div>
+
+      <div class="title">Shop Inspection Procedure</div>
+
+      <div class="row">
+        <span>Owner Doc No.: 1723979</span>
+      </div>
+      <div class="row">
+        <span>PIDEC Doc. No.: 868128128</span>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <!-- <div class="right">
+      <div class="owner">Owner / MC</div>
+
+      <div class="arms">
+        <img src="" />
+        <img src="" />
+        <img src="" />
       </div>
 
-      <div class="form-group-inline">
-        <label for="issueDate" class="common-title">Issue Date:</label>
-        <label class="common-label">{{ formattedPersianIssueDate }}</label>
-        <label class="common-label">{{ formattedGregorianIssueDate }}</label>
-      </div>
+      <div class="project">Project No: 162363778</div>
+    </div> -->
+    <div class="right">
+      <div class="owner">Applicant/Submitter</div>
 
-      <div class="form-group-inline">
-        <label class="common-title">Inspection Period:</label>
-        <div class="form-group">
-          <label class="common-title">From:</label>
-          <label class="common-label">{{
-            requestInspectionDateStart +
-              "(" +
-              formatedRequestInspectionPersianDateStart +
-              ")"
-          }}</label>
-        </div>
-        <div class="form-group">
-          <label class="common-title">To:</label>
-          <label class="common-label">{{
-            requestInspectionDateEnd +
-              "(" +
-              formatedRequestInspectionPersianDateEnd +
-              ")"
-          }}</label>
-        </div>
-        <div class="form-group">
-          <div class="columns date-picker-wrapper">
-            <div class="date-picker-container">
-              <label
-                class="theLabels inline-label"
-                style="
-                  padding-top: 0.5rem !important;
-                  padding-right: 0.5rem !important;
-                "
-                >=</label
-              >
-              <label style="width: 5rem !important; direction: ltr">
-                {{ requestInspectionDueDate }}
-              </label>
-              <label class="common-title">Days</label>
-            </div>
+      <div class="arms">
+        <div class="info-container" style="border-style: none !important">
+          <div class="info-box" style="border-style: none !important">
+            <p style="margin: 2px 0">
+              <strong>Name: </strong><strong>{{ vendorContact.name }}</strong>
+            </p>
+            <p style="margin: 2px 0">
+              <strong>Mobile:</strong>
+              <strong>{{ vendorContact.mobile }}</strong>
+            </p>
+            <p style="margin: 2px 0">
+              <strong>Phone:</strong> <strong>{{ vendorContact.phone }}</strong>
+            </p>
+            <p style="margin: 2px 0">
+              <strong>Email:</strong> {{ vendorContact.email }}
+            </p>
           </div>
         </div>
-
-        <!-- </div> -->
-      </div>
-      <div class="form-group-inline">
-        <label class="common-title">Inspection Date and Time Comments:</label>
-        <label> {{ inspectionTimeComment }}</label>
-      </div>
-    </fieldset>
-    <!--*-----------------------* -->
-
-    <div class="info-container">
-      <div class="info-box" *ngFor="let contact of toContacts">
-        <p>
-          <strong>To: </strong><strong>{{ contact.name }}</strong>
-        </p>
-        <p>
-          <strong>Mobile:</strong> <strong>{{ contact.mobile }}</strong>
-        </p>
-        <p>
-          <strong>Phone:</strong> <strong>{{ contact.phone }}</strong>
-        </p>
-        <p><strong>Email:</strong> {{ contact.email }}</p>
       </div>
     </div>
-    <!--*-----------------------* -->
-    <!--*-----------------------* -->
+  </div>
 
-    <div class="info-container">
-      <div class="info-box">
-        <p>
-          <strong>To: </strong><strong>{{ vendorContact.name }}</strong>
-        </p>
-        <p>
-          <strong>Mobile:</strong> <strong>{{ vendorContact.mobile }}</strong>
-        </p>
-        <p>
-          <strong>Phone:</strong> <strong>{{ vendorContact.phone }}</strong>
-        </p>
-        <p><strong>Email:</strong> {{ vendorContact.email }}</p>
-      </div>
-    </div>
-    <!--*-----------------------* -->
-    <div class="subSection">
-      <fieldset class="section">
-        <legend>Order</legend>
-        <div class="form-group-inline">
-          <div class="columns">
-            <label for="RequisitionNO" class="common-title">Order NO :</label>
-            <label id="RequisitionTitle" class="common-label">{{
-              orderTitle
-            }}</label>
-          </div>
-        </div>
-        <div class="form-group-inline">
-          <label for="Order Title" class="common-title">Order Title :</label>
-          <label id="RequisitionNO" class="common-label">{{ orderName }}</label>
-          <label for="EQUNO" class="common-title"
-            >EQUIPMENT/ITEM/TAG NO. :</label
-          >
-          <label id="EQUNO" class="common-label">{{ equipmentTagNo }}</label>
-        </div>
-      </fieldset>
-    </div>
+  <div class="info-container">
+    <div class="info-box">
+      <p style="margin: 2px 0">
+        <strong> Inspection Notification No: </strong>
+        {{ inspectionMainNumber }}
+        <strong> Rev: </strong>
+        {{ inspectionRevNumber }}
+      </p>
 
-    <fieldset class="section">
-      <legend>Inspection Actions/Types</legend>
+      <p style="margin: 2px 0">
+        <strong>Issue Date: </strong
+        >{{ formattedPersianIssueDate + " " + formattedGregorianIssueDate }}
+      </p>
+
+      <p style="margin: 2px 0">
+        <strong> Inspection Period From: </strong
+        >{{
+          requestInspectionDateStart +
+            "(" +
+            formatedRequestInspectionPersianDateStart +
+            ")"
+        }}
+        <strong>To: </strong
+        >{{
+          requestInspectionDateEnd +
+            "(" +
+            formatedRequestInspectionPersianDateEnd +
+            ")"
+        }}
+
+        <strong> = </strong>
+
+        {{ requestInspectionDueDate }}
+
+        <strong class="common-title">Days</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Inspection Date and Time Comments:</strong>
+        {{ inspectionTimeComment }}
+      </p>
+    </div>
+  </div>
+  <!--*-----------------------* -->
+  <div class="info-container">
+    <div class="info-box" *ngFor="let tcnt of toContacts">
+      <p style="margin: 2px 0">
+        <strong>To: </strong><strong>{{ tcnt.name }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Mobile:</strong> <strong>{{ log(tcnt.mobile) }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Phone:</strong> <strong>{{ tcnt.phone }}</strong>
+      </p>
+      <p style="margin: 2px 0"><strong>Email:</strong> {{ tcnt.email }}</p>
+    </div>
+  </div>
+  <!--*-----------------------* -->
+  <!--*-----------------------* -->
+
+  <!-- <div class="info-container">
+    <div class="info-box">
+      <p style="margin: 2px 0">
+        <strong>Vendor: </strong><strong>{{ vendorContact.name }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Mobile:</strong> <strong>{{ vendorContact.mobile }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Phone:</strong> <strong>{{ vendorContact.phone }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Email:</strong> {{ vendorContact.email }}
+      </p>
+    </div>
+  </div> -->
+  <!--*-----------------------* -->
+  <div class="info-container">
+    <div class="info-box">
+      <p style="margin: 2px 0">
+        <strong>Order NO : </strong><strong>{{ orderTitle }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Order Title : </strong><strong>{{ orderName }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>EQUIPMENT/ITEM/TAG NO. : </strong
+        ><strong>{{ equipmentTagNo }}</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="info-container">
+    <div class="info-box">
       <div class="checkbox-list">
         <div>
+          <strong>Inspection Types/Action : </strong>
+
           <label>
-            <input type="checkbox" value="InsAction_Witness" />
+            <input
+              type="checkbox"
+              value="InsAction_Witness"
+              [checked]="inspectionActions.includes('InsAction_Witness')"
+            />
             Witness
           </label>
           <label>
-            <input type="checkbox" value="InsAction_Hold" />
+            <input
+              type="checkbox"
+              value="InsAction_Hold"
+              [checked]="inspectionActions.includes('InsAction_Hold')"
+            />
             Hold
           </label>
           <label>
-            <input type="checkbox" value="InsAction_Review" />
+            <input
+              type="checkbox"
+              value="InsAction_Review"
+              [checked]="inspectionActions.includes('InsAction_Review')"
+            />
             Review
           </label>
         </div>
       </div>
       <!-- inspectionTypes -->
-      <div>
-        <div
-          *ngFor="let type of inspectionData.inspectionTypes; let i = index"
-          class="checkbox-item"
-        >
-          {{ type.name }}
-        </div>
-      </div>
-    </fieldset>
 
-    <fieldset class="section" formArrayName="inspectionSubjects">
-      <legend>Inspection Notification Subjects</legend>
-      <div style="max-height: 10rem !important; overflow-y: scroll">
-        <div
-          *ngFor="
-            let insSubject of inspectionData.inspectionSubjects;
-            let i = index
-          "
-          class="contact-row"
-        >
-          <label class="special-label" style="width: 10vw !important">{{
-            insSubject.name
-          }}</label>
-          <label class="special-label" style="width: 6vw !important">{{
-            insSubject.itpRowNo
-          }}</label>
-        </div>
-      </div>
-    </fieldset>
-
-    <!-- Contacts -->
-    <fieldset class="section" formArrayName="contacts">
-      <legend>Contact Persons</legend>
       <div
-        *ngFor="let contact of inspectionData.contacts; let i = index"
-        class="contact-row"
+        *ngFor="let type of inspectionData.inspectionTypes; let i = index"
+        class="checkbox-item"
+        [hidden]="
+          type.name == '' || type.id == '00000000-0000-0000-0000-000000000000'
+        "
       >
-        <input class="theInputs large" formControlName="name" />
-
-        <input class="theInputs large" formControlName="phone" />
-
-        <input class="theInputs large" formControlName="mobile" />
-        <input class="theInputs xlarge" formControlName="email" />
-        <input class="theInputs large" formControlName="cc" />
+        <label>
+          <input type="checkbox" [checked]="type.selected == true" />
+          {{ type.name.trim() }}
+        </label>
       </div>
-    </fieldset>
+    </div>
+  </div>
+  <div class="info-container">
+    <div class="info-box">
+      <strong>Inspection Notification Subject : </strong>
+      <div
+        *ngFor="
+          let insSubject of inspectionData.inspectionSubjects;
+          let i = index
+        "
+        [hidden]="insSubject.name.trim() == ''"
+        class="checkbox-item"
+      >
+        <label>{{
+          insSubject.name.trim() + "(" + insSubject.itpRowNo + ")"
+        }}</label>
+        <label
+          [hidden]="i == inspectionData.inspectionSubjects.length - 1"
+          style="font-weight: bold"
+        >
+          &
+        </label>
+      </div>
+    </div>
+  </div>
+  <!-- Contacts -->
+  <div class="info-container">
+    <div
+      *ngFor="let contact of receiverContacts; let i = index"
+      class="info-box"
+    >
+      <p style="margin: 2px 0">
+        <strong>To: </strong><strong>{{ contact.name }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Mobile:</strong> <strong>{{ contact.mobile }}</strong>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Phone:</strong> <strong>{{ contact.phone }}</strong>
+      </p>
+      <p style="margin: 2px 0"><strong>Email:</strong> {{ contact.email }}</p>
+    </div>
+  </div>
 
-    <!-- Contacts -->
-    <fieldset class="section" formArrayName="locations">
-      <legend>Location/Locations Of Inspection</legend>
+  <!-- Contacts -->
 
+  <div class="info-container">
+    <div class="info-box">
+      <strong>Location Of Inspection</strong>
+      <br />
       <div
         *ngFor="let location of inspectionData.locations; let i = index"
-        class="contact-row"
+        class="info-box"
+        [hidden]="location.country == ''"
       >
-        <input class="theInputs large" formControlName="country" />
-        <input class="theInputs large" formControlName="state" />
-
-        <input class="theInputs large" formControlName="city" />
-        <input class="theInputs large" formControlName="streetLine1" />
-
-        <input class="theInputs large" formControlName="streetLine2" />
-
-        <input class="theInputs large" formControlName="zipCode" />
-      </div>
-    </fieldset>
-
-    <div class="upload-card">
-      <legend>Vendor DOC. For Execution Of Applied Inspection</legend>
-      <table class="upload-table">
-        <thead>
-          <tr>
-            <th>File Name</th>
-            <th>Description</th>
-            <th>DOC. NO.</th>
-            <th>STATUS</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let file of attachments; let i = index">
-            <td>
-              {{ file.name }}
-            </td>
-            <td>
-              {{ file.description }}
-            </td>
-            <td>
-              {{ file.docNo }}
-            </td>
-            <td>
-              {{ file.status }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!-- Signature area (shown after submit) -->
-    <div class="submit-wrapper">
-      <div class="submit-card">
-        <div class="submit-info">
-          <span class="submit-date">
-            {{ inspectionData.modifiedDate }}
-          </span>
-          <span class="submit-user">
-            {{ inspectionData.modifiedBy }}
-          </span>
-          <span class="submit-status">Submitted ✔</span>
-        </div>
+        <p style="margin: 2px 0 !important">
+          <strong>Country:</strong>
+          <strong>{{ location.country }}</strong>
+        </p>
+        <p style="margin: 2px 0">
+          <strong>State:</strong>
+          <strong>{{ location.state }}</strong>
+        </p>
+        <p style="margin: 2px 0">
+          <strong>City:</strong>
+          <strong>{{ location.city }}</strong>
+        </p>
+        <p style="margin: 2px 0">
+          <strong>Address:</strong>
+          <strong>{{
+            location.streetLine1 +
+              "," +
+              location.streetLine2 +
+              "," +
+              location.zipCode
+          }}</strong>
+        </p>
       </div>
     </div>
-  </fieldset>
+  </div>
+
+  <div class="upload-layout">
+    <strong class="upload-title">
+      Vendor DOC. For Execution Of Applied Inspection
+    </strong>
+
+    <table class="upload-table">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Description</th>
+          <th>DOC. NO.</th>
+          <th>STATUS</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let file of attachments; let i = index">
+          <td>{{ file.name }}</td>
+          <td>{{ file.description }}</td>
+          <td>{{ file.docNo }}</td>
+          <td>{{ file.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Signature area (shown after submit) -->
+  <div class="submit-wrapper">
+    <div class="submit-card">
+      <div class="submit-info">
+        <span class="submit-date">
+          {{ inspectionData.modifiedDate }}
+        </span>
+        <span class="submit-user">
+          {{ inspectionData.modifiedBy }}
+        </span>
+        <span class="submit-status">Submitted ✔</span>
+      </div>
+    </div>
+  </div>
 </div>

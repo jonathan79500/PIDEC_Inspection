@@ -21,8 +21,9 @@ namespace Inspection.Domain.Entities.Common
         public List<InspectionSubject> InspectionSubjects { get; set; }
         public List<OrderInspectionSubject> OrderInspectionSubjects { get; set; }
         public List<Circulation> Participated_Circulations { get; set; }
-        public List<OrderContact> OrderContacts { get; set; }   
-        
+        public List<OrderContact> OrderContacts { get; set; }
+        public List<DocumentType> DocumentTypes { get; set; }
+        public List<DocumentTypeVisibility> DocumentTypesVisibilities { get; set; }
         public List<Contact> UsefulContacts { get; set; }
 
         //All Contacts with them ,vendor works (Supplier Contacts, Sub Supplier Contacts, Pidec Contacts,Owner Contacts)

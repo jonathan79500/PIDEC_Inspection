@@ -141,7 +141,7 @@ export class NotStartedtasksComponent {
         //let w = window.open("editInspection/" + cRow.inspectionNotificationId, "", "width:100px;height:200px;");
         //let w = window.open("newInspection/" + cRow.id, "", "width:100px;height:200px;");
        // w.opener.data = cRow;
-       this.router.navigate(["pidec/editInspection/" + cRow.inspectionNotificationId]);
+       this.router.navigate(["pidec/editInspection/"+cRow.requestId+"/" + cRow.inspectionNotificationId]);
       }
 
     }

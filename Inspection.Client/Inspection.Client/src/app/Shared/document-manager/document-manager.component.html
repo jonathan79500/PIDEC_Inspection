@@ -1,0 +1,230 @@
+<mat-card class="document-manager">
+  <mat-card-header>
+    <mat-card-title> Documents </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- ========================================= -->
+    <!-- Upload Area                               -->
+    <!-- ========================================= -->
+
+    <div class="upload-toolbar" *ngIf="!readOnly">
+      <mat-form-field appearance="outline">
+        <mat-label>Document Type</mat-label>
+
+        <mat-select [(ngModel)]="selectedDocumentType">
+          <mat-option
+            *ngFor="let type of allowedDocumentTypes"
+            [value]="type.code"
+          >
+            {{ type.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="fileInput.click()">
+        Choose File
+      </button>
+
+      <input
+        hidden
+        multiple
+        #fileInput
+        type="file"
+        (change)="onFilesSelected($event)"
+      />
+
+      <button
+        mat-flat-button
+        color="accent"
+        [disabled]="selectedFiles.length == 0"
+        (click)="uploadNewDocument()"
+      >
+        Upload
+      </button>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- Search                                    -->
+    <!-- ========================================= -->
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Search Documents</mat-label>
+
+      <input matInput [(ngModel)]="searchText" />
+    </mat-form-field>
+
+    <!-- ========================================= -->
+    <!-- Documents                                 -->
+    <!-- ========================================= -->
+
+    <mat-accordion multi="true">
+      <mat-expansion-panel *ngFor="let document of documents">
+        <!-- ================= HEADER ================= -->
+
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ document.documentTypeName }}
+          </mat-panel-title>
+
+          <mat-panel-description>
+            Version {{ document.currentVersion.versionNo }}
+
+            &nbsp;
+
+            <span
+              class="status-badge"
+              [ngClass]="document.currentVersion.status.toString()"
+            >
+              {{ document.currentVersion.status }}
+            </span>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- ================= SUMMARY ================= -->
+
+        <div class="document-summary">
+          <div>
+            <strong>Current File</strong>
+
+            <br />
+
+            {{ document.currentVersion.fileName }}
+          </div>
+
+          <div>
+            <strong>Uploaded By</strong>
+
+            <br />
+
+            {{ document.currentVersion.createdBy }}
+          </div>
+
+          <div>
+            <strong>Date</strong>
+
+            <br />
+
+            {{ document.currentVersion.createdDate | date }}
+          </div>
+
+          <div>
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="preview(document.currentVersion)"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+
+            <button mat-icon-button (click)="download(document.currentVersion)">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= VERSION HISTORY ================= -->
+
+        <table
+          mat-table
+          [dataSource]="document.versions"
+          class="full-width mat-elevation-z1"
+        >
+          <!-- Version -->
+
+          <ng-container matColumnDef="version">
+            <th mat-header-cell *matHeaderCellDef>Version</th>
+
+            <td mat-cell *matCellDef="let version">v{{ version.versionNo }}</td>
+          </ng-container>
+
+          <!-- Status -->
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+
+            <td mat-cell *matCellDef="let version">
+              <span class="status-badge" [ngClass]="version.status">
+                {{ version.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Uploaded -->
+
+          <ng-container matColumnDef="uploaded">
+            <th mat-header-cell *matHeaderCellDef>Uploaded</th>
+
+            <td mat-cell *matCellDef="let version">
+              {{ version.createdDate | date }}
+            </td>
+          </ng-container>
+
+          <!-- Uploaded By -->
+
+          <ng-container matColumnDef="uploadedBy">
+            <th mat-header-cell *matHeaderCellDef>Uploaded By</th>
+
+            <td mat-cell *matCellDef="let version">
+              {{ version.createdBy }}
+            </td>
+          </ng-container>
+
+          <!-- Remarks -->
+
+          <ng-container matColumnDef="remarks">
+            <th mat-header-cell *matHeaderCellDef>Remarks</th>
+
+            <td mat-cell *matCellDef="let version">
+              {{ version.remarks }}
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+            <td mat-cell *matCellDef="let version">
+              <button mat-icon-button (click)="preview(version)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+
+              <button mat-icon-button (click)="download(version)">
+                <mat-icon>download</mat-icon>
+              </button>
+
+              <button
+                *ngIf="!readOnly"
+                mat-icon-button
+                color="warn"
+                (click)="deleteVersion(version)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedVersionColumns"></tr>
+
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedVersionColumns"
+          ></tr>
+        </table>
+
+        <!-- ================= Upload New Version ================= -->
+
+        <div class="new-version-toolbar" *ngIf="!readOnly">
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="uploadNewVersion(document)"
+          >
+            Upload New Version
+          </button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>
+</mat-card>

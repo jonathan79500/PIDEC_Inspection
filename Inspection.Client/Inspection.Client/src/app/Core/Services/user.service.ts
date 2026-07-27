@@ -8,6 +8,7 @@ import { UserTypes } from '../Models/UserTypes.enum';
 import { sign } from 'crypto';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { currentstateStore } from '../../Stores/currentstate.store';
+import { environment } from '../../../environments/environments';
 
 
 @Injectable({
@@ -16,10 +17,9 @@ import { currentstateStore } from '../../Stores/currentstate.store';
 export class UserService {
 
   public
-  public HostName :string = "http://localhost:5196";
-  public PortNo : string = "5196";
+  public HostName :string  = environment.apiUrl; //=  "https://pims.pidec.com/pims";
   public APIName : string ="Authentication";
-  public LoginAPIPath :string = this.HostName+'/'+'api'+'/'+this.APIName;
+  public LoginAPIPath :string = this.HostName+'/'+this.APIName;
   public headers = new HttpHeaders().set('Content-Type', 'application/json');
 
   //public vendorData : Signal<{}>;

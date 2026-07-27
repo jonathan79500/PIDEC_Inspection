@@ -687,34 +687,30 @@ namespace Inspection.Persistence.Repositories
                     createdUser.DomainId = 1;
                     createdUser.EmailConfirmed = true;
                     createdUser.IsActive = true;
-                    createdUser.IsAuthenticated = true;
-                    createdUser.LockoutEnabled = true;
+                    createdUser.IsAuthenticated = true;               
                     createdUser.LockoutEnd = DateTime.Now.AddSeconds(600);
                     createdUser.NormalizedEmail = contactData.Email;
                     createdUser.NormalizedUserName = contactData.UserName;
                     createdUser.PhoneNumber = contactData.Phone;
-                    createdUser.PhoneNumberConfirmed = true;
-                   // createdUser.Token = "1";
+                    createdUser.PhoneNumberConfirmed = true;              
                     createdUser.TwoFactorEnabled = true;
                     createdUser.UserType = GetRoleCode_RoleName(RoleNames.First());
                     createdUser.Use_Id = 3;
-                    createdUser.UserName = contactData.UserName;//prjContact.Name,
-                    createdUser.Email = contactData.Email;
-                    createdUser.IsAuthenticated = true;
-                    createdUser.IsActive = true;
+                    createdUser.UserName = contactData.UserName;
+                    createdUser.Email = contactData.Email;                    
                     createdUser.Use_Id = 0;
                     createdUser.activationStartDate = DateTime.Now;
                     createdUser.activationEndDate = DateTime.Now.AddYears(2);
-                    createdUser.TwoFactorEnabled = false;
-                    createdUser.PhoneNumberConfirmed = true;
+                    createdUser.TwoFactorEnabled = false;                  
                     createdUser.AccessFailedCount = 5;
-                    createdUser.EmailConfirmed = true;
+                    createdUser.PasswordHash = null;
                     createdUser.LockoutEnabled = true;
                     if (createdUser.Token == null)
                         createdUser.Token = _jwtTokenGenerator.GenerateToken(createdUser, RoleNames).ToString();
 
-                    string randomPassword = _randomPasswordGenerator.GenerateSecurePassword();
+                    string randomPassword = _randomPasswordGenerator.GenerateSecurePassword();                    
                     var result = await _userManager.CreateAsync(createdUser, randomPassword);
+
                     if (result.Succeeded)
                     {
                       var  roleresult=  await _userManager.AddToRolesAsync(createdUser, RoleNames);
@@ -789,7 +785,7 @@ namespace Inspection.Persistence.Repositories
             {
                 return false;
             }
-            var resetPasswordToken = WebUtility.UrlDecode(founduser.Token);
+            var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(founduser);//WebUtility.UrlDecode(founduser.Token);
             var result = await _userManager.ResetPasswordAsync(founduser, resetPasswordToken, newPassword);
             if (result.Succeeded)
             {

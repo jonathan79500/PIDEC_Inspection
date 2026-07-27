@@ -17,7 +17,7 @@ submittedBy :Contact,
 comment :string,
 status :string,
 isFinal :boolean,
-
+createdByCirculationId:string,
 // Circulations summarized
 circulations :Circulation[],
 

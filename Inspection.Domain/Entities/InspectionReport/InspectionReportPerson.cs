@@ -16,7 +16,6 @@ namespace Inspection.Domain.Entities.InspectionReport
         public InspectionReportId InspectionReportId { get; set; }
         public Guid PersonId { get; set; }
 
-        public InspectionReport? InspectionReport { get;set; }
-        public Person? Person { get; set; }
+        public InspectionReport? InspectionReport { get;set; }     
     }
 }

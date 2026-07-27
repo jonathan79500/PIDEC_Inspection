@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Inspection } from '../../../Core/Models/Inspection.model';
 import { toGregorian, toJalaali } from 'jalaali-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -6,6 +6,10 @@ import { CommonModule } from '@angular/common';
 import { Attachment } from '../../../Core/Models/Attachment.model';
 import { Contact } from '../../../Core/Models/Contact.model';
 import { ContactTypes } from '../../../Core/Models/ContactTypes.enum';
+import { ActivatedRoute, Router } from '@angular/router';
+import { currentstateStore } from '../../../Stores/currentstate.store';
+import { Project } from '../../../Core/Models/Project.model';
+import { json } from 'stream/consumers';
 
 @Component({
   selector: 'app-inspection-print',
@@ -32,6 +36,11 @@ export class InspectionPrintComponent implements OnInit{
     orderTitle :string ='';
     toContacts : Contact[];
     vendorContact:Contact;
+    inspectionActions: string[] = [];
+    receiverContacts :Contact[];
+    private dataKey: string | null = null;
+    currentAppState = inject(currentstateStore);
+    currentProject:Project;
     // Add this to your component
 private gregorianMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -50,19 +59,42 @@ private gregorianMonthNames = [
 
 
 
-  constructor() {
-    const state = history.state;
+  constructor(private route: ActivatedRoute, private router: Router)  {
+    // const state = history.state;
 
-    if (state && state.inspection) {
-      this.inspectionData = state.inspection;
-    } else {
-      // fallback (e.g. redirect or load from service)
-      console.error('No state data found');
-    }
+    // if (state && state.inspection) {
+    //   this.inspectionData = state.inspection;
+    // } else {
+    //   // fallback (e.g. redirect or load from service)
+    //   console.error('No state data found');
+    // }
+   // this.inspectionData = JSON.parse(sessionStorage.getItem('inspectionData') || '{}');
   }
 
   ngOnInit(): void {
-     const [mainNo, rev] = this.inspectionData.notificationNumber.split('.');
+  //   const data = sessionStorage.getItem('inspectionData');
+  // if (data) {
+  //   this.inspectionData = JSON.parse(data);
+  // }
+   this.route.queryParams.subscribe(params => {
+      //const encodedData = params['data'];
+      const key = params['dataKey'];
+      const projKey = params['projKey'];
+      if (key) {
+        this.dataKey = key; // Store the key
+        const data = sessionStorage.getItem(key);
+        const projectData = sessionStorage.getItem(projKey);
+       if (data) {
+          try {
+            this.inspectionData = JSON.parse(data);
+            this.currentProject = JSON.parse(projectData);
+            // Optional: Immediately remove from session storage once read
+            // to prevent it from lingering if the window stays open
+            // sessionStorage.removeItem(key);
+        //  this.inspectionData = JSON.parse(decodeURIComponent(encodedData));
+
+      //  this.currentProject = this.currentAppState.currentproject();
+          const [mainNo, rev] = this.inspectionData.notificationNumber.split('.');
     this.inspectionMainNumber = mainNo;
     this.inspectionRevNumber = rev;
     this.formattedPersianIssueDate = this.getFormattedPersianDate(this.inspectionData.issueDate);
@@ -77,9 +109,38 @@ private gregorianMonthNames = [
     this.orderName = this.inspectionData.orderName;
     this.orderTitle = this.inspectionData.order.name;
 
-    this.toContacts = this.inspectionData.contacts.filter((cnt)=>{ cnt.contactType == ContactTypes.QC_Manager || cnt.contactType == ContactTypes.QC_Lead}) as Contact[];
-    this.vendorContact = this.inspectionData.contacts.filter((cnt)=>{ cnt.contactType == ContactTypes.Vendor})[0] as Contact;
+     if (this.inspectionData.inspectionAction)
+    {
+      this.inspectionActions = this.inspectionData.inspectionAction.split(',');
+    }
+    this.receiverContacts = this.inspectionData.contacts.filter((cnt)=>cnt.contactType != ContactTypes.QC_Lead && cnt.contactType != ContactTypes.QC_Manager && cnt.contactType != ContactTypes.Vendor && cnt.email.trim() !='');
+    this.toContacts = this.inspectionData.contacts.filter((cnt)=> cnt.contactType == ContactTypes.QC_Manager || cnt.contactType == ContactTypes.QC_Lead) ;
+    this.vendorContact = this.inspectionData.contacts.filter((cnt)=> cnt.contactType == ContactTypes.Vendor)[0] as Contact;
+
+          console.log('Inspection data loaded:', this.inspectionData); // For debugging
+
+        } catch (e) {
+          console.error('Error parsing inspection data:', e);
+        }
+      }
+     } else {
+        console.warn('No inspection data found in query params.');
+        // Handle cases where data might be missing (e.g., direct URL access)
+        // You might want to navigate away or show an error message.
+      }
+    });
+
+
   }
+
+  /*Helper methods*/
+
+   log(tcnt)
+    {
+      console.log("In Template contact have value",tcnt,"for name");
+    }
+  /*End of Helper methods*/
+
 
  /**
    * Get Persian month name by month number (1-12)

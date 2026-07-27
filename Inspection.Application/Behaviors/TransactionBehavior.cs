@@ -37,7 +37,7 @@ namespace Inspection.Application.Behaviors
             //}
             catch(Exception exp) {
                 await _unitOfWork.RollBackAsync();
-                throw;
+                throw new Exception(exp.Message+' '+exp.InnerException?.Message);
             }
         }
 

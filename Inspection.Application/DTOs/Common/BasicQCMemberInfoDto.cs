@@ -29,8 +29,9 @@ namespace Inspection.Application.DTOs.Common
         public List<OrderInspectionSubjectDto>? OrderInspectionSubjects { get; set; }
         public List<CirculationDto>? Participated_Circulations { get; set; }
         public List<OrderContactDto>? OrderContacts { get; set; }     
-        public List<InspectionNotificationDto>? ReceivedInspectionNotifications { get; set; }
-
+        public List<InspectionNotificationDto>? ReceivedInspectionNotifications { get; set; }        
+        public List<DocumentTypeDto> DocumentTypes { get; set; }
+        public List<DocumentTypeVisibilityDto> DocumentTypeVisibilities { get; set; }
         public List<ContactDto> UsefulContacts { get; set; }
     }     
 

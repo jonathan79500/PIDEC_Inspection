@@ -56,7 +56,7 @@ public sealed class Attachment:BaseDomainEntity<AttachmentId>
 
     public List<CirculationAttachments>? Circulations { get; set; } 
     public List<InspectionReportAttachment>? InspectionReports { get; set; }
-    public List<PersonAttachment>? Persons { get; set; }
+
 
     public static Attachment Create(string name, string description, byte[] content, int version, string edmsId, string pdfSize,string contentType,string docNo,string status)
     {

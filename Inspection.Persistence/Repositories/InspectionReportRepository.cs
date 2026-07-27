@@ -26,6 +26,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
@@ -67,46 +68,7 @@ public class InspectionReportRepository : IGenericRepository<InspectionReport, I
 
         try
         {
-
-            foreach (InspectionReportPerson insrPerson in rawinspectionReport.InspectionPersons!.ToList())
-            {                
-                var existingPerson = await _dbContext.Persons.FirstOrDefaultAsync(c => c.Id == insrPerson.PersonId);
-
-                Person personEntity;
-
-                if (existingPerson != null)
-                {
-                    // If Table3 exists, use it
-                    personEntity = existingPerson;
-                    // Make sure EF Core treats it as an existing record:
-                    _dbContext.Entry(personEntity).State = EntityState.Unchanged;
-
-                    var existingInsContact = await _dbContext.InspectionReportPersons.FirstOrDefaultAsync(c => c.PersonId == insrPerson.PersonId && c.InspectionReportId == insrPerson.InspectionReportId);
-                    if (existingInsContact != null)
-                        _dbContext.Entry(insrPerson).State = EntityState.Unchanged;
-                    else
-                        _dbContext.Entry(insrPerson).State = EntityState.Added;
-                }
-                else if (insrPerson.Person != null)
-                {
-                    // inscontact.InspectionNotificationId = inspectionNotification.Id;
-                    InspectionReportPerson findedInsrPerson = rawinspectionReport.InspectionPersons.Find((psn) => psn.PersonId == insrPerson.PersonId);
-
-                    if (findedInsrPerson != null)
-                    {
-                        //_dbContext.InspectionSubjects.Add(findedSubject.InspectionSubject);
-                        insrPerson.Person = findedInsrPerson.Person;
-                    }
-
-                    _dbContext.Entry(insrPerson.Person).State = EntityState.Added;
-                    _dbContext.Entry(insrPerson).State = EntityState.Added;
-                }
-                else
-                {
-                    personEntity = null;
-                    inspectionReport.InspectionPersons!.Remove(insrPerson);
-                }
-            }
+                  
 
 
 
@@ -224,6 +186,107 @@ public class InspectionReportRepository : IGenericRepository<InspectionReport, I
     public Task<IReadOnlyList<InspectionReport>> GetAll()
     {
         throw new NotImplementedException();
+    }
+
+    public Task<List<InspectionReport>> GetInspectionReportsByRequestId(Guid requestId, string usrId)
+    {
+        try
+        {
+
+            var connection = _dbContext.Database.GetDbConnection();
+            // ensure the connection is open
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
+
+            var adoTransaction =
+                _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+
+            List<InspectionReport> inspectionReports;
+            List<Circulation> participatedCirculations;            
+            
+
+            var circulationDict = new Dictionary<Guid, Circulation>();
+
+            using (var multi = connection.QueryMultiple(
+            "GetInspectionReport_requestId_userId",
+            new { RequestId = requestId, userId = usrId },
+            commandType: CommandType.StoredProcedure,
+            transaction: adoTransaction))
+            {
+                
+
+                // Read first result set (main data)
+                var reportLookup = new Dictionary<Guid, InspectionReport>();
+                var revisionLookup = new Dictionary<Guid, Revision>();
+                var circulationLookup = new Dictionary<Guid, Circulation>();
+
+                inspectionReports = multi.Read<Circulation, Contact, Domain.Entities.Common.Request, Revision, InspectionReport, InspectionReport>(
+                    (cr, ct, rq, rvs, insRe) =>
+                    {
+                        // 1. Get or create InspectionNotification
+                        if (!reportLookup.TryGetValue(insRe.InspectionReportId, out var report))
+                        {
+                            report = insRe;
+                            report.Revision = rvs;
+                            reportLookup.Add(report.InspectionReportId, report);
+                        }
+
+                        // 2. Get or create Revision (attach Request)
+                        if (!revisionLookup.TryGetValue(rvs.RevisionId, out var revision))
+                        {
+                            revision = rvs;
+                            revision.Request = rq;
+                            revision.InspectionReports = new List<InspectionReport>();
+                            revision.Circulations = new List<Circulation>();
+                            revisionLookup.Add(revision.RevisionId, revision);
+                        }
+
+                        
+
+                        // 4. Get or create Circulation (attach Contact)
+                        if (!circulationLookup.TryGetValue(cr.Id, out var circulation))
+                        {
+                            circulation = cr;
+                            circulation.PerformerContactPerson = ct;
+                            circulation.Attachments = new List<CirculationAttachments>(); // will be filled later
+                            circulationLookup.Add(cr.Id, circulation);
+                            revision.Circulations.Add(circulation);
+                        }
+                        return report;
+                    },
+                    splitOn: "ContactId,RequestId,RevisionId,InspectionReportId").Distinct().ToList();
+
+                // Read second result set (attachments)
+                List<CirculationAttachments> crattachments = multi.Read<CirculationAttachments, Attachment, CirculationAttachments>(
+                    (cra, atc) =>
+                    {
+                        cra.Attachment = atc;
+                        return cra;
+                    },
+                    splitOn: "AttachmentId")
+                    .ToList();
+
+                // Now attach attachments to circulations
+                foreach (var cra in crattachments)
+                {
+                    if (circulationLookup.TryGetValue(cra.CirculationId.Value, out var circ))
+                    {
+                        circ.Attachments.Add(cra);
+                    }
+                }
+
+
+                // Result is notificationLookup.Values
+                inspectionReports = reportLookup.Values.ToList();                
+            }
+           
+            List<InspectionReport> result = inspectionReports.Count > 0 ? inspectionReports : null;
+            return Task.FromResult((result));
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
     }
 
     public Task<List<InspectionReport>> GetDraftInspectionReportsByUserName(string userName)

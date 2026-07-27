@@ -44,6 +44,8 @@ export class InspectionreportComponent implements OnInit{
   actionTypes = ['مشروط', 'نتایج بر اساس جدول 1 می باشد', 'تایید', 'مردود','موارد در انتظار تعیین تکلیف(مطابق جدول 9)','عدم انطباث مشاهده شد(مطابق جدول 8)'];
   circulationData: FormData;
   requestCirculations: Circulation[];
+  relatedNotificationNumber : string;
+  lastReportVersion :string = "001";
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +55,7 @@ export class InspectionreportComponent implements OnInit{
   ) {
 
       this.formData = new FormData();
-
+      this.relatedNotificationNumber = data.notificationNumber;
   }
 
   ngOnInit() {
@@ -217,12 +219,14 @@ toggleEditMode(on: boolean) {
           description:[''],
           downloadUrl:[''],
           docNo:[''],
-          status:['']
+          status:[''],
+          pdfSize:[''],
+          edmsId:['']
         });
     }
 
     generateReportNumber(): string {
-    return 'RPT-' + Date.now();
+    return  this.relatedNotificationNumber+"IVR-"+this.lastReportVersion;
     }
 
     fetchFile(id){
@@ -244,7 +248,9 @@ toggleEditMode(on: boolean) {
       version: '0',
       content: file,
       docNo:'',
-      status:''
+      status:'',
+       pdfSize:'',
+      edmsId:''
     });
   });
 

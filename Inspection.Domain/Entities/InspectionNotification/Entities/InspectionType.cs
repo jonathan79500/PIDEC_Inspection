@@ -22,6 +22,8 @@ namespace Inspection.Domain.Entities.InspectionNotification.Entities
         public ContactId? CreatedBy_ContactId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool? VisibleByDefault { get; set; }
+        public int ShowOrderNo { get; set; }
+
 
 
         public InspectionType()

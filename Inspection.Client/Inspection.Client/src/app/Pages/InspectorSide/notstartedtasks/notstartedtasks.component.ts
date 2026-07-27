@@ -45,7 +45,8 @@ export class NotstartedtasksComponent {
 
    clickInspectionRow(cRow: InspectionNotificationDataSummary): void {
       if (Request != null) {
-       this.router.navigate(["inspector/editInspection/" + cRow.inspectionNotificationId]);
+       //this.router.navigate(["inspector/editInspection/" + cRow.inspectionNotificationId]);
+        this.router.navigate(["inspector/editInspection/"+cRow.requestId+"/" + cRow.inspectionNotificationId]);
       }
 
     }

@@ -11,16 +11,17 @@ import { BasicQCMemberInfo } from '../Models/BasicQCMemberInfo.model';
 import { currentstateStore } from '../../Stores/currentstate.store';
 import { UserTypes } from '../Models/UserTypes.enum';
 import { ProjectContact } from '../Models/ProjectContact.model';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BasicInfoService {
 
-  public HostName :string = "http://localhost:5196";
-  public PortNo : string = "5196";
+  public HostName :string = environment.apiUrl; //= "https://pims.pidec.com/pims";
+
   public APIName : string ="BasicInfo";
-  public BasicAPIPath :string = this.HostName+'/'+'api'+'/'+this.APIName;
+  public BasicAPIPath :string = this.HostName+'/'+this.APIName;
   public headers = new HttpHeaders().set('Content-Type', 'application/json');
  private currentAppState = inject(currentstateStore);
 

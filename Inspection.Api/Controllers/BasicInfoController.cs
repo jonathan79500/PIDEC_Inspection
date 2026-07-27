@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 
 namespace Inspection.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [AllowAnonymous]
     [ApiController]
     public class BasicInfoController : ControllerBase

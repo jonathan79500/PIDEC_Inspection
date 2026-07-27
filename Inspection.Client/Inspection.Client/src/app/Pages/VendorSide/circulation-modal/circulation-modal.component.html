@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Circulations</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="table-container">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Sequence</th>
+          <th>Performer</th>
+          <th>Creator Comment</th>
+          <th>Comment</th>
+          <th>Created Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+          *ngFor="let c of circulations"
+          (click)="select(c)"
+          style="cursor: pointer"
+        >
+          <td>{{ c.sequenceNo }}</td>
+
+          <td>{{ c.performerContactPerson?.name }}</td>
+
+          <td>{{ c.creatorComment }}</td>
+          <td>{{ c.comment }}</td>
+          <td>{{ c.createdDate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+</mat-dialog-actions>

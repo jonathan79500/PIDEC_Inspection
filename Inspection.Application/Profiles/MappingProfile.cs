@@ -67,6 +67,8 @@ public class MappingProfile : IRegister
             .Map(dest => dest.Version, src => src.Version == null ? 0 : src.Version)            
             .Map(dest => dest.DocNo, src => src.DocNo == null ? "" : src.DocNo)
             .Map(dest => dest.Status, src => src.Status == null ? "": src.Status)
+            .Map(dest => dest.PdfSize, src => src.PDFSize == null ? "" : src.PDFSize)
+            .Map(dest => dest.EdmsId, src => src.edmsId == null ? "" : src.edmsId)
             .Map(dest => dest.Base64Content, src => src.Base64Content)          
             .IgnoreNonMapped(true);
 
@@ -74,11 +76,15 @@ public class MappingProfile : IRegister
         TypeAdapterConfig<AttachmentDto, Attachment>.NewConfig()
             .Map(dest => dest.AttachmentId, src => (src.Id == Guid.Empty || src.Id == null) ? new AttachmentId(Guid.NewGuid()) : new AttachmentId(src.Id)) // Map Id to AttachmentId
 
-             .Map(dest => dest.Name, src => src.Name)
+             .Map(dest => dest.Name, src => src.Name==null ? "":src.Name)
              .Map(dest => dest.Version, src => src.Version == null ? "0" : src.Version)
-            .Map(dest => dest.Description, src => src.Description)
-             .Map(dest => dest.ContentType, src => src.ContentType)
-            .Map(dest => dest.DownloadUrl, src => src.DownloadUrl)
+            .Map(dest => dest.Description, src => src.Description == null ? "":src.Description)
+             .Map(dest => dest.ContentType, src => src.ContentType == null ? "": src.ContentType)
+            .Map(dest => dest.DownloadUrl, src => src.DownloadUrl == null ? "":src.DownloadUrl)
+            .Map(dest => dest.DocNo, src => src.DocNo==null ? "":src.DocNo)
+            .Map(dest => dest.Status, src => src.Status == null ? "" : src.Status)
+            .Map(dest => dest.edmsId, src => src.EdmsId == null ? "" : src.EdmsId)
+            .Map(dest => dest.PDFSize, src => src.PdfSize == null ? "" : src.PdfSize)
             .Map(dest => dest.Base64Content, src => src.Base64Content)
            .Map(dest => dest.Content, src => src.Content != null
                 ? ReadFileBytes(src.Content)
@@ -89,25 +95,114 @@ public class MappingProfile : IRegister
                  dest.Id = dest.AttachmentId;
              });
 
+        TypeAdapterConfig<DocumentType, DocumentTypeDto>.NewConfig()
+            .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+            .Map(dest => dest.DocumentTypeCode, src => src.DocumentTypeCode)
+            .Map(dest => dest.DocumentTypeName, src => src.DocumentTypeName)
+            .Map(dest => dest.RequiresName, src => src.RequiresName)
+            .Map(dest => dest.RequiresNumber, src => src.RequiresNumber)
+            .Map(dest => dest.RequiresReview, src => src.RequiresReview)
+            .Map(dest => dest.RequiresApproval, src => src.RequiresApproval)
+            .Map(dest => dest.AllowedExtensions, src => src.AllowedExtensions)
+            .Map(dest => dest.IsActive, src => src.IsActive)
+            .Map(dest => dest.MaxSizeMB, src => src.MaxSizeMB)
+            .Map(dest => dest.MultipleAllowed, src => src.MultipleAllowed)
+            .IgnoreNonMapped(true);
 
+
+        TypeAdapterConfig<DocumentTypeDto, DocumentType>.NewConfig()
+            .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+            .Map(dest => dest.DocumentTypeCode, src => src.DocumentTypeCode)
+            .Map(dest => dest.DocumentTypeName, src => src.DocumentTypeName)
+            .Map(dest => dest.RequiresName, src => src.RequiresName)
+            .Map(dest => dest.RequiresNumber, src => src.RequiresNumber)
+            .Map(dest => dest.RequiresReview, src => src.RequiresReview)
+            .Map(dest => dest.RequiresApproval, src => src.RequiresApproval)
+            .Map(dest => dest.AllowedExtensions, src => src.AllowedExtensions)
+            .Map(dest => dest.IsActive, src => src.IsActive)
+            .Map(dest => dest.MaxSizeMB, src => src.MaxSizeMB)
+            .Map(dest => dest.MultipleAllowed, src => src.MultipleAllowed)
+            .IgnoreNonMapped(true);
+
+
+        TypeAdapterConfig<DocumentDto, Document>.NewConfig()
+            .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+            .Map(dest => dest.OwnerType, src => src.OwnerType)
+            .Map(dest => dest.ApprovedBy, src => src.ApprovedBy)
+            .Map(dest => dest.ApprovedDate, src => src.ApprovedDate)
+            .Map(dest => dest.ExpireDate, src => src.ExpireDate)
+            .Map(dest => dest.AttachmentId, src => (src.AttachmentId == Guid.Empty || src.AttachmentId == null) ? new AttachmentId(Guid.NewGuid()) : new AttachmentId(src.AttachmentId.Value))
+            .Map(dest => dest.IssueDate, src => src.IssueDate)
+            .Map(dest => dest.ExpireDate, src => src.ExpireDate)
+            .Map(dest => dest.DocumentId, src => src.DocumentId)
+            .Map(dest => dest.OwnerId, src => src.OwnerId)
+            .Map(dest => dest.Status, src => src.Status)
+            .Map(dest => dest.Version, src => src.Version)
+            .IgnoreNonMapped(true);
+
+        TypeAdapterConfig<Document, DocumentDto>.NewConfig()
+        .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+        .Map(dest => dest.OwnerType, src => src.OwnerType)
+        .Map(dest => dest.ApprovedBy, src => src.ApprovedBy)
+        .Map(dest => dest.ApprovedDate, src => src.ApprovedDate)
+        .Map(dest => dest.ExpireDate, src => src.ExpireDate)
+        .Map(dest => dest.AttachmentId, src => src.AttachmentId == null ? Guid.NewGuid() : (src.AttachmentId.Value != Guid.Empty ? src.AttachmentId.Value : Guid.NewGuid()))
+        .Map(dest => dest.IssueDate, src => src.IssueDate)
+        .Map(dest => dest.ExpireDate, src => src.ExpireDate)
+        .Map(dest => dest.DocumentId, src => src.DocumentId)
+        .Map(dest => dest.OwnerId, src => src.OwnerId)
+        .Map(dest => dest.Status, src => src.Status)
+        .Map(dest => dest.Version, src => src.Version)
+        .IgnoreNonMapped(true);
+
+        TypeAdapterConfig<DocumentTypeVisibility, DocumentTypeVisibilityDto>.NewConfig()
+        .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+        .Map(dest => dest.ContactTypeCode, src => src.ContactTypeCode)
+        .IgnoreNonMapped(true);
+
+        TypeAdapterConfig<DocumentTypeVisibilityDto, DocumentTypeVisibility>.NewConfig()
+      .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
+      .Map(dest => dest.ContactTypeCode, src => src.ContactTypeCode)
+      .IgnoreNonMapped(true);
+
+        TypeAdapterConfig<DocumentLink, DocumentLinkDto>.NewConfig()
+     .Map(dest => dest.OwnerType, src => src.OwnerType)
+     .Map(dest => dest.OwnerId, src => src.OwnerId)
+     .Map(dest => dest.DocumentId, src => src.DocumentId)     
+     .IgnoreNonMapped(true);
+
+        TypeAdapterConfig<DocumentLinkDto, DocumentLink>.NewConfig()
+    .Map(dest => dest.OwnerType, src => src.OwnerType)
+    .Map(dest => dest.OwnerId, src => src.OwnerId)
+    .Map(dest => dest.DocumentId, src => src.DocumentId)
+    .IgnoreNonMapped(true);
 
         // Map Circulation to CirculationDto
         TypeAdapterConfig<Circulation, CirculationDto>.NewConfig()
                 .Map(dest => dest.Id, src => src.Id)
                 //.Map(dest => dest.ActionType, src => src.ActionType == null ? new ActionTypeDto() : src.ActionType.Adapt<ActionTypeDto>()) // Map complex type
                 .Map(dest => dest.ActionType, src => src.ActionType==null ? 0: src.ActionType)
-                .Map(dest => dest.Attachments, src => src.Attachments == null ? new List<AttachmentDto>() : src.Attachments.Select(x=>x.Attachment).Adapt<List<AttachmentDto>>())
+                //.Map(dest => dest.Attachments, src => src.Attachments == null ? new List<AttachmentDto>() : src.Attachments.Select(x=>x.Attachment).Adapt<List<AttachmentDto>>())
+                .Map(dest => dest.Attachments,
+    src => (src.Attachments ?? new List<CirculationAttachments>())
+            .Where(x => x.Attachment != null)
+            .Select(x => x.Attachment!)
+            .Adapt<List<AttachmentDto>>())
                 .Map(dest => dest.PerformerContactPerson,
                 src => src.PerformerContactPerson == null ? null : src.PerformerContactPerson.Adapt<ContactDto>())
                 .Map(dest => dest.SequenceNo, src => src.SequenceNo)
                 .Map(dest => dest.PerformerPN, src => src.PerformerPN==null ? "": src.PerformerPN)
                 .Map(dest => dest.PerformerContactType, src => src.PerformerContactType)
                 .Map(dest => dest.PerformedActionDate, src => src.PerformedActionDate)
-                .Map(dest => dest.PerformedActionDateGregorian, src => src.PerformedActionDateGregorian)              
+                .Map(dest => dest.PerformedActionDateGregorian, src => src.PerformedActionDateGregorian)  
+                .Map(dest => dest.PreviousActionType , src=>src.PreviousActionType)
                 .Map(dest => dest.CreatedDate, src => src.CreatedDate)
                 .Map(dest => dest.ModifiedDate, src => src.ModifiedDate)
                 .Map(dest => dest.Comment, src => src.Comment)
-               // .IgnoreNullValues(true)
+                .Map(dest => dest.CreatorComment, src => src.CreatorComment)
+                .Map(dest => dest.ParentId, src => src.ParentId)
+                .Map(dest => dest.RevisionId, src => src.RevisionId)
+                .IgnoreNullValues(true)
                 .IgnoreNonMapped(true);
 
         // Map Revision to RevisionDto
@@ -143,8 +238,8 @@ public class MappingProfile : IRegister
           .Map(dest => dest.Email, src => src.Email)
           .Map(dest => dest.Phone, src => src.Phone)
           .Map(dest => dest.Position, src => src.Position)
-          .Map(dest => dest.ContactId, src => src.ContactId)
-          .Map(dest => dest.Id, src => src.Id)
+          //.Map(dest => dest.ContactId, src => src.ContactId)
+          .Map(dest => dest.Id, src => src.InspectorId)
           .IgnoreNonMapped(true);
 
         TypeAdapterConfig<InspectionReport, InspectionReportDto>.NewConfig()
@@ -161,7 +256,7 @@ public class MappingProfile : IRegister
           .Map(dest => dest.RequestIdOfRelatedInspectionNotification, src => src.RequestIdOfRelatedInspectionNotification)
           .Map(dest => dest.RevisionId, src => src.RevisionId)
           .Map(dest => dest.Inspectors, src => src.Inspectors.Adapt<List<InspectorDto>>())
-          .Map(dest => dest.InspectionPersons, src => src.InspectionPersons == null ? new List<PersonDto>() : src.InspectionPersons.Select(x => x.Person).Adapt<List<PersonDto>>())
+         // .Map(dest => dest.InspectionPersons, src => src.InspectionPersons == null ? new List<PersonDto>() : src.InspectionPersons.Select(x => x.Person).Adapt<List<PersonDto>>())
           .IgnoreNonMapped(true);
 
         TypeAdapterConfig<InspectionReportDto, InspectionReport>.NewConfig()
@@ -178,38 +273,9 @@ public class MappingProfile : IRegister
         .Map(dest => dest.RelatedInspectionNotificationId, src => src.RelatedInspectionNotificationId)
         .Map(dest => dest.RequestIdOfRelatedInspectionNotification, src => src.RequestIdOfRelatedInspectionNotification)
         .Map(dest => dest.RevisionId, src => src.RevisionId)
-        .Map(dest => dest.Inspectors, src => src.Inspectors.Adapt<List<Inspector>>())
-        //.Map(dest => dest.InspectionPersons, src => src.InspectionPersons == null ? new List<PersonDto>() : src.InspectionPersons.Select(x => x.Person).Adapt<List<PersonDto>>())
-        .Map(dest => dest.InspectionPersons, src => src.Inspectors!.Select(x => new InspectionReportPerson
-        {
-            PersonId = Guid.NewGuid(),
-            Person = new Person
-            {
-                LastName= x.LastName,
-                FirstName = x.FirstName,
-                Description= x.Description,
-                Position = x.Position,
-                Email = x.Email,
-                Name = x.Name,
-                Phone = x.Phone                
-            },           
-            Id = Guid.NewGuid(),
-            InspectionReportId = src.InspectionReportId!.Value,
-            InspectionReport = null
-        }).ToList())
+        .Map(dest => dest.Inspectors, src => src.Inspectors.Adapt<List<Inspector>>())       
         .IgnoreNonMapped(true);
         
-
-        TypeAdapterConfig<Person, PersonDto>.NewConfig()
-          .Map(dest => dest.Description, src => src.Description)
-          .Map(dest => dest.Name, src => src.Name)
-          .Map(dest => dest.LastName, src => src.LastName)
-          .Map(dest => dest.FirstName, src => src.FirstName)
-          .Map(dest => dest.Email, src => src.Email)
-          .Map(dest => dest.Phone, src => src.Phone)
-          .Map(dest => dest.Position, src => src.Position)          
-          .IgnoreNonMapped(true);
-
         // Map Circulation to CirculationDto
         TypeAdapterConfig<CirculationDto, Circulation>.NewConfig()
                     .Map(dest => dest.Id, src => src.Id)
@@ -227,7 +293,11 @@ public class MappingProfile : IRegister
                     .Map(dest => dest.CreatedDate, src => src.CreatedDate)
                     .Map(dest => dest.ModifiedDate, src => src.ModifiedDate)
                     .Map(dest => dest.Comment, src => src.Comment)
-                    //.IgnoreNullValues(true)
+                    .Map(dest=>dest.PreviousActionType , src=>src.PreviousActionType)
+                    .Map(dest => dest.CreatorComment, src => src.CreatorComment)
+                    .Map(dest => dest.ParentId, src => src.ParentId)
+                    .Map(dest => dest.RevisionId, src => src.RevisionId)
+                    .IgnoreNullValues(true)
                     .IgnoreNonMapped(true);
 
 
@@ -242,6 +312,9 @@ public class MappingProfile : IRegister
                   .Map(dest => dest.OrderContacts, src => src.OrderContacts.Adapt<List<OrderContact>>())
                   .Map(dest => dest.InspectionTypes, src => src.InspectionTypes.Adapt<List<InspectionTypeDto>>())
                   .Map(dest => dest.InspectionSubjects, src => src.InspectionSubjects.Adapt<List<InspectionSubjectDto>>())
+                  .Map(dest => dest.OrderInspectionSubjects, src => src.OrderInspectionSubjects.Adapt<List<OrderInspectionSubjectDto>>())
+                  .Map(dest => dest.DocumentTypes, src => src.OrderInspectionSubjects.Adapt<List<OrderInspectionSubjectDto>>())
+                  .Map(dest => dest.DocumentTypeVisibilities, src => src.DocumentTypesVisibilities.Adapt<List<DocumentTypeVisibilityDto>>())
                   .Map(dest => dest.OrderInspectionSubjects, src => src.OrderInspectionSubjects.Adapt<List<OrderInspectionSubjectDto>>())
                   .Map(dest => dest.ReceivedInspectionNotifications, src => src.ReceivedInspectionNotifications.Adapt<List<InspectionNotificationDto>>())
                 .IgnoreNonMapped(true);
@@ -338,7 +411,7 @@ public class MappingProfile : IRegister
                 .ToList())
           .AfterMapping((src, dest) =>
           {
-              dest.Id = src.Id == null ? src.ProjectId.Value : src.Id;
+              dest.Id = src.Id == null ? src.ProjectId?.Value : src.Id;
           })
          .IgnoreNullValues(true)
          .IgnoreNonMapped(true);
@@ -484,6 +557,34 @@ public class MappingProfile : IRegister
          })        
          .IgnoreNonMapped(true);
 
+
+        TypeAdapterConfig<InspectionNotificationRevision, RevisionDto>.NewConfig()
+         .Map(dest => dest.RevisionId, src => src.RevisionId != Guid.Empty ? src.RevisionId : src.Revision.RevisionId)
+         .Map(dest => dest.RequestId , src => src.Revision.RequestId)
+         .Map(dest => dest.Comment, src => src.Revision.Comment)
+         .Map(dest => dest.IsFinal, src => src.Revision.IsFinal)
+         .Map(dest => dest.Status, src => src.Revision.Status)
+         .Map(dest => dest.RevisionNumber, src => src.Revision.RevisionNumber)
+         .Map(dest => dest.VersionNumber, src => src.Revision.VersionNumber)
+         .Map(dest => dest.SubmittedDate, src => src.Revision.SubmittedDate)
+         .Map(dest => dest.CreatedByCirculationId, src => src.Revision.CreatedByCirculationId)
+          .AfterMapping((src, dest) => {
+              if (src.Revision.Circulations == null)
+                  dest.Circulations = new List<CirculationDto>();
+              else
+              {
+                  
+                  dest.Circulations = src.Revision.Circulations.Adapt<List<CirculationDto>>();
+                  foreach (var circ in dest.Circulations)
+                  {
+                      circ.RevisionId = src.RevisionId != Guid.Empty ? src.RevisionId : src.Revision.RevisionId;
+                  }
+              }
+          })
+         .Map(dest => dest.Circulations, src => src.Revision.Circulations == null ? new List<CirculationDto>() : src.Revision.Circulations.Adapt<List<CirculationDto>>())
+         .IgnoreNonMapped(true);
+
+
         TypeAdapterConfig<InspectionNotificationType, InspectionNotificationTypeDto>.NewConfig()
             .Map(dest => dest.InspectionNotificationId, src => src.InspectionNotificationId.Value.ToString())
             .Map(dest => dest.Name, src => src.InspectionType.Name)
@@ -592,10 +693,11 @@ public class MappingProfile : IRegister
           .IgnoreNonMapped(true);
 
         TypeAdapterConfig<InspectionNotificationSubject, InspectionSubjectDto>.NewConfig()
-             //.Map(dest => dest.Id, src =>src.InspectionSubject!.InspectionSubjectId!.Value != null ? src.InspectionSubject!.InspectionSubjectId!.Value : src.InspectionSubjectId!.Value)
-             .Map(dest => dest.Id, src => src.InspectionSubjectId!.Value)
+             .Map(dest => dest.Id, src => src.InspectionSubject!=null ? (src.InspectionSubject.InspectionSubjectId != null ? src.InspectionSubject.InspectionSubjectId.Value : src.InspectionSubjectId!.Value) : src.InspectionSubjectId!.Value)
+             //.Map(dest => dest.Id, src => src.InspectionSubjectId!.Value)
             .Map(dest => dest.Name, src => src.InspectionSubject!.Name)
             .Map(dest=>dest.ItpRowNo,src => src.ITP_Row_No)
+            //.Map(dest=>dest.Id,src=>src.InspectionSubject!.InspectionSubjectId!.Value)
             .IgnoreNonMapped(true);
 
 
@@ -651,31 +753,34 @@ public class MappingProfile : IRegister
 
         TypeAdapterConfig<ContactDto, InspectionNotificationContact>.NewConfig()
 
-          .Map(dest => dest.ContactId, src => src.Id)
+         
          // .Map(dest => dest.Contact, src => src.Adapt<Contact>())
          //.IgnoreNonMapped(true);
-         .Map(dest => dest.Contact, src =>
-         new Contact
-         {
-             Cc = src.Cc,
-             UserName = src.UserName != "" ? src.UserName : src.Name,
-             Note = src.Note,
-             ContactType = src.ContactType,
-             CreatedBy = "Admin",
-             CreatedDate = DateTime.Now,
-             DomainId = src.DomainId,
-             Email = src.Email,
-             Fax = src.Fax,
-             HomePage = src.HomePage,
-             Mobile = src.Mobile,
-             Name = src.Name,
-             ContactId = src.Id == Guid.Empty ? Guid.NewGuid() : src.Id.Value,
-             //  Id = src.Id == Guid.Empty ? ContactId.CreateUnique() : src.Id,
-             Phone = src.Phone,
-             UserId = src.UserId
-         })
+         //.Map(dest => dest.Contact, src =>
+         //)
         .AfterMapping((src, dest) => {
+
+            dest.Contact = new Contact
+            {
+                Cc = src.Cc,
+                UserName = src.UserName != "" ? src.UserName : src.Name,
+                Note = src.Note,
+                ContactType = src.ContactType,
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                DomainId = src.DomainId,
+                Email = src.Email,
+                Fax = src.Fax,
+                HomePage = src.HomePage,
+                Mobile = src.Mobile,
+                Name = src.Name,
+                ContactId = src.Id == Guid.Empty ? Guid.NewGuid() : src.Id.Value,
+                //  Id = src.Id == Guid.Empty ? ContactId.CreateUnique() : src.Id,
+                Phone = src.Phone,
+                UserId = src.UserId
+            };
             dest.ContactId = dest.Contact.ContactId;//ContactId.Create(dest.Contact.ContactId);
+            
             dest.Id = Guid.NewGuid();//dest.Contact.ContactId;
         })
         .IgnoreNonMapped(true);
@@ -792,37 +897,38 @@ public class MappingProfile : IRegister
 
         TypeAdapterConfig<InspectionNotification, CreateInspectionNotificationDto>.NewConfig()
           .Map(dest => dest.Id, src => src.InspectionNotificationId.Value) // Map InspectionNotificationId.Value to Id
-          .Map(dest => dest.Name, src => src.Name)
-          .Map(dest => dest.NotificationNumber, src => src.NotificationNumber)
+          .Map(dest => dest.Name, src => src.Name == null ? "" : src.Name)
+          .Map(dest => dest.NotificationNumber, src => src.NotificationNumber == null ? "" : src.NotificationNumber)
           .Map(dest => dest.Order, src => src.Order.Adapt<OrderDto>()) // Map nested Order to OrderDto
           .Map(dest => dest.Contacts, src => src.Contacts == null ? new List<ContactDto>() : src.Contacts.Adapt<List<ContactDto>>())
           .Map(dest => dest.OrderName, src => src.OrderName == null ? "" : src.OrderName)
           .Map(dest => dest.EquipmentTagNo, src => src.EquipmentTagNo == null ? "" : src.EquipmentTagNo)
-          .Map(dest => dest.RequestInspectionDateEnd, src => src.RequestInspectionDateEnd)
-          .Map(dest => dest.RequestInspectionDateStart, src => src.RequestInspectionDateStart)
-          .Map(dest => dest.RequestInspectionPersianDateEnd, src => src.RequestInspectionPersianDateEnd)
-          .Map(dest => dest.RequestInspectionPersianDateStart, src => src.RequestInspectionPersianDateStart)
-          .Map(dest => dest.RequestInspectionDueDate, src => src.RequestInspectionDueDate)
-          .Map(dest => dest.InspectionTimeComment, src => src.InspectionTimeComment)
-          .Map(dest => dest.InspectionAction, src => src.InspectionAction)
-          .Map(dest => dest.InspectionActionComment, src => src.InspectionActionComment)
-          .Map(dest => dest.Description, src => src.Description)
-          .Map(dest => dest.IssueDate, src => src.IssueDate)
-          .Map(dest => dest.CreatedDate, src => src.CreatedDate)
-          .Map(dest => dest.ModifiedDate, src => src.ModifiedDate)
-          .Map(dest => dest.CreatedBy, src => src.CreatedBy)
-          .Map(dest => dest.ModifiedBy, src => src.ModifiedBy)
-          .Map(dest => dest.PersianIssueDate, src => src.PersianIssueDate)
+          .Map(dest => dest.RequestInspectionDateEnd, src => src.RequestInspectionDateEnd == null ? DateTime.Now : src.RequestInspectionDateEnd)
+          .Map(dest => dest.RequestInspectionDateStart, src => src.RequestInspectionDateStart == null ? DateTime.Now : src.RequestInspectionDateStart)
+          .Map(dest => dest.RequestInspectionPersianDateEnd, src => src.RequestInspectionPersianDateEnd == null ? "" : src.RequestInspectionPersianDateEnd)
+          .Map(dest => dest.RequestInspectionPersianDateStart, src => src.RequestInspectionPersianDateStart == null ? "" : src.RequestInspectionPersianDateStart)
+          .Map(dest => dest.RequestInspectionDueDate, src => src.RequestInspectionDueDate == null ? 0 : src.RequestInspectionDueDate)
+          .Map(dest => dest.InspectionTimeComment, src => src.InspectionTimeComment == null ? "" : src.InspectionTimeComment)
+          .Map(dest => dest.InspectionAction, src => src.InspectionAction == null ? "" : src.InspectionAction)
+          .Map(dest => dest.InspectionActionComment, src => src.InspectionActionComment == null ? "" : src.InspectionActionComment)
+          .Map(dest => dest.Description, src => src.Description == null ? "" : src.Description)
+          .Map(dest => dest.IssueDate, src => src.IssueDate == null ? DateTime.Now : src.IssueDate)
+          .Map(dest => dest.CreatedDate, src => src.CreatedDate == null ? DateTime.Now : src.IssueDate)
+          .Map(dest => dest.ModifiedDate, src => src.ModifiedDate == null ? DateTime.Now : src.IssueDate)
+          .Map(dest => dest.CreatedBy, src => src.CreatedBy == null ? "":src.CreatedBy)
+          .Map(dest => dest.ModifiedBy, src => src.ModifiedBy==null ? "":src.ModifiedBy)
+          .Map(dest => dest.PersianIssueDate, src => src.PersianIssueDate==null ? "":src.PersianIssueDate)
           // .Map(dest => dest.Attachments, src => src.Attachments.Adapt<List<AttachmentDto>>()) // Map Attachments to AttachmentDto list
           .Map(dest => dest.InspectionSubjects, src => src.Subjects == null ? new List<InspectionSubjectDto>() : src.Subjects.Adapt<List<InspectionSubjectDto>>()) // Map Subjects
           .Map(dest => dest.InspectionTypes, src => src.Types == null ? new List<InspectionTypeDto>() : src.Types.Adapt<List<InspectionTypeDto>>()) // Map Types          
           .Map(dest => dest.Locations, src => src.Locations == null ? new List<AddressDto>() : src.Locations.Adapt<List<AddressDto>>()) // Map Locations          
+          .IgnoreNullValues(true)
           .IgnoreNonMapped(true); // Ignore any unmapped properti
 
 
         TypeAdapterConfig<CreateInspectionNotificationDto, InspectionNotification>.NewConfig()
        .Map(dest => dest.InspectionNotificationId,
-            src => src.Id.HasValue ? new InspectionNotificationId(src.Id.Value)
+            src => (src.Id.HasValue && src.Id.Value != Guid.Empty) ? new InspectionNotificationId(src.Id.Value)
                                    : InspectionNotificationId.CreateUnique())
        .Map(dest => dest.Name, src => src.Name != null ? src.Name : "")
        .Map(dest => dest.NotificationNumber, src => src.NotificationNumber)
@@ -852,22 +958,32 @@ public class MappingProfile : IRegister
        .IgnoreNonMapped(true)
        .AfterMapping((src, dest) =>
        {
-           dest.Contacts = new List<InspectionNotificationContact>();
-           InspectionNotificationContact inscontact;//= new InspectionNotificationContact();
-           if (src.Contacts != null)
+           if (dest.Contacts == null || dest.Contacts.Count == 0)
            {
-               foreach (var contact in src.Contacts)
+               dest.Contacts = new List<InspectionNotificationContact>();
+               InspectionNotificationContact inscontact;//= new InspectionNotificationContact();
+               if (src.Contacts != null)
                {
-                   inscontact = new InspectionNotificationContact();
-                   inscontact.Contact = contact.Adapt<Contact>();
-                   inscontact.ContactId = contact.Id;
-                   inscontact.InspectionNotificationId = dest.InspectionNotificationId;
-                   // assign the parent InspectionNotificationId
-                   //contact.InspectionNotificationId = src.InspectionNotificationId;
+                   foreach (var contact in src.Contacts)
+                   {
+                       inscontact = new InspectionNotificationContact();
+                       inscontact.Contact = contact.Adapt<Contact>();
+                       inscontact.ContactId = contact.Id;
+                       inscontact.InspectionNotificationId = dest.InspectionNotificationId;
+                       // assign the parent InspectionNotificationId
+                       //contact.InspectionNotificationId = src.InspectionNotificationId;
 
-                   // optionally also set navigation property
-                   // contact.InspectionNotification = dest;
-                   dest.Contacts.Add(inscontact);
+                       // optionally also set navigation property
+                       // contact.InspectionNotification = dest;
+                       dest.Contacts.Add(inscontact);
+                   }
+               }
+           }
+           else {
+               foreach (var contact in dest.Contacts)
+               {
+                   
+                   contact.InspectionNotificationId = dest.InspectionNotificationId;                  
                }
            }
        });

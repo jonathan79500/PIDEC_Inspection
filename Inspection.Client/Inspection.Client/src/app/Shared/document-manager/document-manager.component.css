@@ -1,0 +1,129 @@
+.document-manager {
+  width: 100%;
+  margin: 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.upload-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.upload-toolbar mat-form-field {
+  min-width: 260px;
+}
+
+.document-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.document-summary div {
+  word-break: break-word;
+}
+
+.new-version-toolbar {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-expansion-panel {
+  margin-bottom: 12px;
+}
+
+mat-expansion-panel-header {
+  height: 64px;
+}
+
+table {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+}
+
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 10px 14px;
+}
+
+.status-badge {
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.status-badge.Approved {
+  background: #2e7d32;
+}
+
+.status-badge.Pending {
+  background: #f9a825;
+}
+
+.status-badge.Rejected {
+  background: #c62828;
+}
+
+.status-badge.Archived {
+  background: #757575;
+}
+
+button[mat-icon-button] {
+  margin-right: 4px;
+}
+
+button[mat-icon-button]:last-child {
+  margin-right: 0;
+}
+
+mat-card-content {
+  padding-top: 12px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+
+  .document-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .upload-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .document-summary {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+}

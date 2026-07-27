@@ -31,7 +31,7 @@ namespace Inspection.Application.DTOs.InspectionReport
         public string? ReportNotes { get; set; }
         public DateTime? IssueDate { get; set; }
         public string? PersianIssueDate { get; set; }
-        public List<PersonDto>? InspectionPersons { get; set; }
+        //public List<PersonDto>? InspectionPersons { get; set; }
         public ContactDto? Creator { get; set; }
         public DateTime? InspectionDate { get; set; }
         public Guid? CreatedBy { get; set; } // Creator User ID (Creator Is Inspector SecondPart/ThirdPart)                

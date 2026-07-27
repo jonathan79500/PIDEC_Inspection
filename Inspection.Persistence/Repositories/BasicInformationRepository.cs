@@ -27,6 +27,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 
 using System.Diagnostics.Eventing.Reader;
+using System.Xml.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
@@ -137,6 +138,8 @@ public class BasicInformationRepository : IBasicInformationRepository
             List<ProjectContact> projectContacts;
             List<Circulation> participatedCirculations;
             List<OrdersettingException> ordersettingExceptions;
+            List<DocumentType> documentTypes;
+            List<DocumentTypeVisibility> documentTypeVisibilities;
 
             using (var multi = connection.QueryMultiple(
             "GetBesicInfo_VendorContact",
@@ -318,6 +321,32 @@ public class BasicInformationRepository : IBasicInformationRepository
                 splitOn: "ContactId,RequestId"   // tells Dapper where each new object starts
 ).ToList();
 
+                //---------------DocumentTypes-----------------------------------------
+                documentTypes = multi.Read().Select(dt => new DocumentType()
+                {
+                    DocumentTypeId = dt.DocumentTypeId,
+                    AllowedExtensions = dt.AllowedExtensions,
+                    DocumentTypeCode= dt.DocumentTypeCode,
+                    DocumentTypeName = dt.DocumentTypeName,
+                    IsActive = dt.IsActive,
+                    MaxSizeMB = dt.MaxSizeMB,
+                    MultipleAllowed= dt.MultipleAllowed,
+                    RequiresApproval= dt.RequiresApproval,
+                    RequiresName= dt.RequiresName,
+                    RequiresNumber = dt.RequiresNumber,
+                    RequiresReview = dt.RequiresReview
+
+                }).ToList();
+
+                //---------------DocumentTypeVisibility-----------------------------------------
+                documentTypeVisibilities = multi.Read().Select(dtv => new DocumentTypeVisibility()
+                {
+                    ContactTypeCode = dtv.ContactTypeCode,
+                     DocumentTypeId = dtv.DocumentTypeId
+
+                }).ToList();
+
+
             }
 
             //  connection.Close();
@@ -384,6 +413,8 @@ public class BasicInformationRepository : IBasicInformationRepository
             List<InspectionNotification> inspectionNotifications;
             List<Circulation> participatedCirculations;
             List<OrdersettingException> ordersettingExceptions;
+            List<DocumentType> documentTypes;
+            List<DocumentTypeVisibility> documentTypeVisibilities;
 
             using (var multi = connection.QueryMultiple(
             "GetBesicInfo_InspectorContact",
@@ -500,15 +531,30 @@ public class BasicInformationRepository : IBasicInformationRepository
             splitOn: "ContactId,RequestId"   // tells Dapper where each new object starts
 ).ToList();
 
-                //participatedCirculations = multi.Read().Select(cr => new Circulation()
-                //{
+                //---------------DocumentTypes-----------------------------------------
+                documentTypes = multi.Read().Select(dt => new DocumentType()
+                {
+                    DocumentTypeId = dt.DocumentTypeId,
+                    AllowedExtensions = dt.AllowedExtensions,
+                    DocumentTypeCode = dt.DocumentTypeCode,
+                    DocumentTypeName = dt.DocumentTypeName,
+                    IsActive = dt.IsActive,
+                    MaxSizeMB = dt.MaxSizeMB,
+                    MultipleAllowed = dt.MultipleAllowed,
+                    RequiresApproval = dt.RequiresApproval,
+                    RequiresName = dt.RequiresName,
+                    RequiresNumber = dt.RequiresNumber,
+                    RequiresReview = dt.RequiresReview
 
-                //    ActionType = GetActionType_ById(cr.ActionType.ToString()),
-                //    CreatedBy = cr.CreatedBy,
-                //    CreatedDate = cr.CreatedDate,
-                //    ModifiedDate = cr.ModifiedDate,
-                //    ModifiedBy = cr.ModifiedBy
-                //}).ToList();
+                }).ToList();
+
+                //---------------DocumentTypeVisibility-----------------------------------------
+                documentTypeVisibilities = multi.Read().Select(dtv => new DocumentTypeVisibility()
+                {
+                    ContactTypeCode = dtv.ContactTypeCode,
+                    DocumentTypeId = dtv.DocumentTypeId
+
+                }).ToList();
 
             }
 
@@ -782,6 +828,8 @@ public class BasicInformationRepository : IBasicInformationRepository
             List<OrderContact> orderContacts;
             List<Circulation> participatedCirculations;
             List<Contact> usefulContacts;
+            List<DocumentType> documentTypes;
+            List<DocumentTypeVisibility> documentTypeVisibilities;
 
             using (var multi = connection.QueryMultiple(
             "GetBesicInfo_QCMembersContact",
@@ -914,6 +962,31 @@ public class BasicInformationRepository : IBasicInformationRepository
                 }
                 ).ToList();
 
+                //---------------DocumentTypes-----------------------------------------
+                documentTypes = multi.Read().Select(dt => new DocumentType()
+                {
+                    DocumentTypeId = dt.DocumentTypeId,
+                    AllowedExtensions = dt.AllowedExtensions,
+                    DocumentTypeCode = dt.DocumentTypeCode,
+                    DocumentTypeName = dt.DocumentTypeName,
+                    IsActive = dt.IsActive,
+                    MaxSizeMB = dt.MaxSizeMB,
+                    MultipleAllowed = dt.MultipleAllowed,
+                    RequiresApproval = dt.RequiresApproval,
+                    RequiresName = dt.RequiresName,
+                    RequiresNumber = dt.RequiresNumber,
+                    RequiresReview = dt.RequiresReview
+
+                }).ToList();
+
+                //---------------DocumentTypeVisibility-----------------------------------------
+                documentTypeVisibilities = multi.Read().Select(dtv => new DocumentTypeVisibility()
+                {
+                    ContactTypeCode = dtv.ContactTypeCode,
+                    DocumentTypeId = dtv.DocumentTypeId
+
+                }).ToList();
+
             }
 
           //  connection.Close();
@@ -973,6 +1046,8 @@ public class BasicInformationRepository : IBasicInformationRepository
             List<OrderInspectionSubject> orderInspectionSubjects;
             List<OrderContact> orderContacts;
             List<Circulation> participatedCirculations;
+            List<DocumentType> documentTypes;
+            List<DocumentTypeVisibility> documentTypeVisibilities;
 
             using (var multi = connection.QueryMultiple(
             "GetBesicInfo_PIDECLeadContact",
@@ -1069,6 +1144,31 @@ public class BasicInformationRepository : IBasicInformationRepository
                     CreatedDate = cr.CreatedDate,
                     ModifiedDate = cr.ModifiedDate,
                     ModifiedBy = cr.ModifiedBy
+                }).ToList();
+
+                //---------------DocumentTypes-----------------------------------------
+                documentTypes = multi.Read().Select(dt => new DocumentType()
+                {
+                    DocumentTypeId = dt.DocumentTypeId,
+                    AllowedExtensions = dt.AllowedExtensions,
+                    DocumentTypeCode = dt.DocumentTypeCode,
+                    DocumentTypeName = dt.DocumentTypeName,
+                    IsActive = dt.IsActive,
+                    MaxSizeMB = dt.MaxSizeMB,
+                    MultipleAllowed = dt.MultipleAllowed,
+                    RequiresApproval = dt.RequiresApproval,
+                    RequiresName = dt.RequiresName,
+                    RequiresNumber = dt.RequiresNumber,
+                    RequiresReview = dt.RequiresReview
+
+                }).ToList();
+
+                //---------------DocumentTypeVisibility-----------------------------------------
+                documentTypeVisibilities = multi.Read().Select(dtv => new DocumentTypeVisibility()
+                {
+                    ContactTypeCode = dtv.ContactTypeCode,
+                    DocumentTypeId = dtv.DocumentTypeId
+
                 }).ToList();
 
             }

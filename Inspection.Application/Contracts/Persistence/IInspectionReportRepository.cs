@@ -22,6 +22,8 @@ public interface IInspectionReportRepository : IGenericRepository<InspectionRepo
 
     Task<List<InspectionReport>> GetInspectionReportsByNotificationId(InspectionNotificationId inspectionNotificationId);
 
+    Task<List<InspectionReport>> GetInspectionReportsByRequestId(Guid requestId,string userId);
+
     Task<(InspectionReport,Circulation)> CreateNewInspectionReport(InspectionReport inspectionReport,InspectionReportNumber newInspectionReportNumber, List<Attachment> attachments);   
 
     Task<InspectionReportNumber> GenerateNewInspectionReportNumber(string NotificationNumber, int ReportType/*pcking List, General Report*/);

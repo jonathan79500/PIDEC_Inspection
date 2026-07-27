@@ -33,12 +33,12 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using TestMissionService;
+
 
 namespace Inspection.Api.Controllers;
 
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 [AllowAnonymous]
 //[Authorize]

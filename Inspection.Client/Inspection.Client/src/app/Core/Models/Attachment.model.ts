@@ -6,5 +6,7 @@ id:string,
   description:string,
   docNo:string,
   status:string,
-   downloadUrl:string
+   downloadUrl:string,
+   edmsId:string,
+   pdfSize:string
 }

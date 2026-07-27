@@ -26,8 +26,7 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public List<OrderContact>? Contacts { get;  set; }
 
-    [NotMapped]
-    public List<InspectorOrder>? Inspectors { get; set; }
+   
 
     public List<OrdersettingException>? ExceptionContacts { get; set; } = new();
 

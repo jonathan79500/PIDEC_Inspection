@@ -1,7 +1,7 @@
 import { Attachment } from './../Models/Attachment.model';
 import { Circulation } from './../Models/Circulation.model';
 import { inspect } from 'util';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inspection } from '../Models/Inspection.model';
 import { lastValueFrom } from 'rxjs';
@@ -10,7 +10,8 @@ import { InspectionNotificationFlow } from '../Models/InspectionNotificationFlow
 import { Project } from '../Models/Project.model';
 import { InspectionNotificationDataSummary } from '../Models/InspectionNotificationDataSummary.model';
 import { InspectionReport } from '../Models/InspectionReport.model';
-
+import { currentstateStore } from '../../Stores/currentstate.store';
+import { environment } from '../../../environments/environments';
 
 export interface queryNewInspectionReportNumberResult
 {
@@ -27,10 +28,11 @@ export interface NewInspectionReportNumberQueryParams
 })
 export class InspectionReportService {
 
-  public HostName :string = "http://localhost:5196";
+   currentAppState = inject(currentstateStore);
+  public HostName :string  = environment.apiUrl; //=  "https://pims.pidec.com/pims";
   public PortNo : string = "5196";
   public APIName : string ="InspectionReport";
-  public InspectionReportAPIPath :string = this.HostName+'/'+'api'+'/'+this.APIName;
+  public InspectionReportAPIPath :string = this.HostName+'/'+this.APIName;
   public headers = new HttpHeaders().set('Content-Type', 'application/json');
 
   public RestAPIActions : object[]=[
@@ -88,11 +90,13 @@ export class InspectionReportService {
     return this.http.get<Inspection[]>(this.InspectionReportAPIPath+'/'+"GetAll");
   }
 
-   getInspectionReportsByInspectionId(InspectionNotificationId:string)
+   getInspectionReportsByInspectionRequestId(RequestId:string)
   {
-      const body = { InspectionNotificationId };
-    //console.log("in Inspection Service")
-    return this.http.post<Inspection[]>(this.InspectionReportAPIPath+'/'+"GetInspectionReportByInspectionNotificationId",body);
+     const headers = new HttpHeaders();
+    let userId = this.currentAppState.currentuser().id;
+     const body = { RequestId, userId };
+
+    return this.http.post<InspectionReport[]>(this.InspectionReportAPIPath+'/'+"GetInspectionReportByInspectionNotificationRequestId",body);
   }
 
   getInspectionReportById(inspectionId:string)

@@ -28,9 +28,9 @@ namespace Inspection.Application.DTOs.Common
             public string? Comment { get; set; } = string.Empty;
             public string? Status { get; set; } = "Pending";
             public bool? IsFinal { get; set; } = false;
-
-            // Circulations summarized
-            public List<CirculationDto>? Circulations { get; set; } = new List<CirculationDto>();
+        public Guid? CreatedByCirculationId { get; set; } = Guid.Empty;
+        // Circulations summarized
+        public List<CirculationDto>? Circulations { get; set; } = new List<CirculationDto>();
 
             // Subtype references (IDs or summaries)
             //public List<InspectionNotificationDto>? InspectionNotifications { get; set; }

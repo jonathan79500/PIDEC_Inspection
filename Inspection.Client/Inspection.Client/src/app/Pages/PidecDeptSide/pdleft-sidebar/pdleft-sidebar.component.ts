@@ -30,37 +30,37 @@ effect(()=>{
     //   routeLink: 'projectSettings',
     //   icon: 'fal fa-home',
     //   label: 'Project Settings',
-    //   imageName:'../../../../assets/list02.png'
+    //   imageName:'assets/list02.png'
     // },
     // {
     //   routeLink: 'users',
     //   icon: 'fal fa-home',
     //   label: 'User Management',
-    //   imageName:'../../../../assets/list02.png'
+    //   imageName:'assets/list02.png'
     // },
     // {
     //   routeLink: 'DefaultSettings',
     //   icon: 'fal fa-home',
     //   label: 'Default Settings',
-    //   imageName:'../../../../assets/list02.png'
+    //   imageName:'assets/list02.png'
     // },
     {
       routeLink: 'ResetPassword',
       icon: 'fal fa-box-open',
       label: 'Reset Password',
-      imageName:'../../../../assets/list01.png'
+      imageName:'assets/list01.png'
     },
     {
       routeLink: 'NotStartedTasks',
       icon: 'fal fa-file',
       label: 'Received Inspections',
-      imageName:'../../../../assets/green-add-button-12023.png'
+      imageName:'assets/green-add-button-12023.png'
     } ,
     {
       routeLink: 'CompletedInspections',
       icon: 'fal fa-file',
       label: 'Completed Inspections',
-      imageName:'../../../../assets/green-add-button-12023.png'
+      imageName:'assets/green-add-button-12023.png'
     }
   ];
 

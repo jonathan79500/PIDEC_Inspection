@@ -45,4 +45,7 @@
     <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\public-api.d.ts" />
     <None Include="node_modules\ng-persian-datepicker\ng-persian-datepicker\README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dist\" />
+  </ItemGroup>
 </Project>

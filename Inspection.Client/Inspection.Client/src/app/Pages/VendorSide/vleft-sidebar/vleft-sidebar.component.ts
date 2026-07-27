@@ -36,31 +36,31 @@ effect(()=>{
       routeLink: 'sentinspections',
       icon: 'fal fa-home',
       label: 'Sent Inspections',
-      imageName:'../../../../assets/list02.png'
+      imageName:'assets/list02.png'
     },
     {
       routeLink: 'notstartedinspections',
       icon: 'fal fa-box-open',
       label: 'Received Inspections',
-      imageName:'../../../../assets/list01.png'
+      imageName:'assets/list01.png'
     },
     {
       routeLink: 'draftedNotifications',
       icon: 'fal fa-box-open',
       label: 'Drafted Inspections',
-      imageName:'../../../../assets/list01.png'
+      imageName:'assets/list01.png'
     },
     {
       routeLink: 'pages',
       icon: 'fal fa-file',
       label: 'Pages',
-      imageName:'../../../../assets/green-add-button-12023.png'
+      imageName:'assets/green-add-button-12023.png'
     },
     {
       routeLink: 'newInspection',
       icon: 'fal fa-cog',
       label: 'Create NewInspection',
-      imageName:'../../../../assets/orange-plus-11974.svg'
+      imageName:'assets/orange-plus-11974.svg'
     },
   ];
 

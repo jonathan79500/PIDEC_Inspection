@@ -22,5 +22,9 @@ export interface Circulation
      comment :string,
      attachments: Attachment[],
      previousActionType:number,
-     isHidden : boolean
+     isHidden : boolean,
+     createdBy:string,
+     childCirculations: Circulation[],
+     creatorComment :string,
+     parentId:string
 }

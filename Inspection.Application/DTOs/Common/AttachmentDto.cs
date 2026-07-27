@@ -22,5 +22,7 @@ namespace Inspection.Application.DTOs.Common
         public string? DownloadUrl { get; set; } = string.Empty;
         // OR
         public string? Base64Content { get; set; } = string.Empty;
+        public string? EdmsId { get; set; } = string.Empty;
+        public string? PdfSize { get; set; } = string.Empty;
     }
 }

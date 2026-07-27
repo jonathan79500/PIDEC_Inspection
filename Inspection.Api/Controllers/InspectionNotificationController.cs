@@ -7,17 +7,22 @@ using Inspection.Application.DTOs.InspectionRequest;
 using Inspection.Application.DTOs.User;
 using Inspection.Application.Features.InspectionNotifications.Commands.CompleteCirculation;
 using Inspection.Application.Features.InspectionNotifications.Commands.CreateInspectionNotification;
+using Inspection.Application.Features.InspectionNotifications.Commands.GiveAccessToReEditTask;
 using Inspection.Application.Features.InspectionNotifications.Commands.SendInspectionNotification;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetApprovedInspectionNotificationsByProjIdUserId;
+using Inspection.Application.Features.InspectionNotifications.Queries.GetCompletedNotificationsByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetDraftedNotificationsByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationById;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationFlow;
+using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationHistoryByRequestId;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotifications;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionNotificationsByProjUsrIds;
+using Inspection.Application.Features.InspectionNotifications.Queries.GetInspectionsReadyForReportByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetNewNotificationNumber;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetNotStartedNotificationsByUserName;
 using Inspection.Application.Features.InspectionNotifications.Queries.GetSentNotificationsByUserName;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
+using Inspection.Domain.Entities.InspectionNotification.Enums;
 using Inspection.Domain.Entities.Inspector;
 using Inspection.Infrastructure.Helpers;
 using Mapster;
@@ -33,7 +38,7 @@ using System.Diagnostics;
 
 namespace Inspection.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 //[Authorize]
 public class InspectionNotificationController : ControllerBase
@@ -139,6 +144,42 @@ public class InspectionNotificationController : ControllerBase
     }
 
     [HttpPost]
+    [Route("GetInspectionNotificationHistoryByRequestId")]
+    public async Task<ActionResult<List<InspectionNotificationHistoryDto>>> GetInspectionNotificationHistoryByRequestId([FromBody] RequestIdQuery requestQuery)
+    {
+        try
+        {
+            var inspectionNotificationHistory = await _mediator.Send(new GetInspectionNotificationHistoryByRequestIdRequest { RequestId = new Guid(requestQuery.RequestId) });
+            return Ok(inspectionNotificationHistory);
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
+
+    [HttpPost]
+    [Route("GetInspectionByRequestId")]
+    public async Task<ActionResult<(InspectionNotificationDto, List<InspectionReportDto>)>> GetInspectionByRequestId([FromBody] RequestIdQuery requestQuery)
+    {
+        try
+        {
+            var inspectionNotificationComplex = await _mediator.Send(new GetInspectionNotificationByRequestIdRequest { RequestId = requestQuery.RequestId , UserId = requestQuery.UserId});
+            return Ok(new
+            {
+                Inspection = inspectionNotificationComplex.Item1,
+                RelatedReports = inspectionNotificationComplex.Item2
+            });
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
+
+    [HttpPost]
     [Route("GetInspectionByInspectionNotificationId")]
     public async Task<ActionResult<(InspectionNotificationDto,List<InspectionReportDto>)>> GetInspectionByInspectionNotificationId([FromBody] InspectionNotificationIdQuery inspectionNotificationId)
     {
@@ -156,6 +197,29 @@ public class InspectionNotificationController : ControllerBase
             return BadRequest(exp.Message);
         }
     }
+ 
+    [Consumes("multipart/form-data")]
+    [HttpPost("GiveAccessToReEditTask")]
+    public async Task<ActionResult> GiveAccessToReEditTask([FromForm] ContributePermissionQuery contributePermissionQuery)
+    {
+        try
+        {
+            CirculationDto contributor = JsonConvert.DeserializeObject<CirculationDto>(contributePermissionQuery.Contributor);
+            CirculationDto[] Assignees = JsonConvert.DeserializeObject<CirculationDto[]>(contributePermissionQuery.AssigneeCirculations);
+            var createdCirculations = await _mediator.Send(new GiveAccessToReEditTaskCommand { Contributor = contributor ,AssigneeCirculations= Assignees});
+
+         
+            return Ok(new
+            {
+                InternalCirculations = createdCirculations
+            } );
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
 
     [HttpPost]
     [Route("GetInspectionByNumber")]
@@ -240,6 +304,36 @@ public class InspectionNotificationController : ControllerBase
         try
         {
             var notStartedInspectionNotifications = await _mediator.Send(new GetNotStartedNotificationsByUserNameRequest { userName = request.userName });
+            return Ok(notStartedInspectionNotifications);
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("GetCompletedInspectionsByUserName")]
+    public async Task<ActionResult<List<InspectionNotificationDataSummaryDto>>> GetCompletedInspectionsByUserName([FromBody] InspectionsQuery request)
+    {
+        try
+        {
+            var completedInspectionNotifications = await _mediator.Send(new GetCompletedNotificationsByUserNameRequest { userName = request.userName });
+            return Ok(completedInspectionNotifications);
+        }
+        catch (Exception exp)
+        {
+            return BadRequest(exp.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("GetInspectionsReadyForReportByUser_Project")]
+    public async Task<ActionResult<List<InspectionNotificationDataSummaryDto>>> GetInspectionsReadyForReportByUser_Project([FromBody] InspectionListRequestDto requestList)
+    {
+        try
+        {
+            var notStartedInspectionNotifications = await _mediator.Send(new GetInspectionsReadyForReportByUserNameQuery { userId = requestList.UserId, projectId=requestList.ProjectId});
             return Ok(notStartedInspectionNotifications);
         }
         catch (Exception exp)
@@ -487,14 +581,7 @@ public class InspectionNotificationController : ControllerBase
                 ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
                 CurrentCirculationDto = JsonConvert.DeserializeObject<CirculationDto>(inspectionUpload.currentCirculation),
                 AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
-            };
-            //var command = new SendInspectionNotificationCommand
-            //{
-            //    CreateInspectionNotificationDto = null,
-            //    ProjectDto = null,
-            //    CurrentCirculationDto = null,
-            //    AttachmentDtos = null
-            //};
+            };      
 
             var response = await _mediator.Send(command);
             return Ok(new
@@ -618,11 +705,27 @@ public class InspectionNotificationIdQuery
     public string InspectionNotificationId { get; set; }
 }
 
+public class ContributePermissionQuery
+{
+
+    public string Contributor { get; set; }
+    public string AssigneeCirculations { get; set; }    
+}
+
+
+public class RequestIdQuery
+{
+    public string RequestId { get; set; }
+    public string UserId { get; set; }
+}
+
 public class InspectionListRequestDto
 {
     public string ProjectId { get; set; }
     public string UserId { get; set; }
 }
+
+
 
 public class InspectionsQuery { 
     public string userName {  get; set; }

@@ -75,9 +75,9 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 NotificationNumber currentInspectionNumber = NotificationNumber.CreateFromString(InspectionNotification.NotificationNumber);
 
                 //-------------This InspectionNotification is generated before this time and is sent to client because it needed an edit or a new Revision--------------------
-                if (InspectionNotification.InspectionNotificationId.Value != null && InspectionNotification.InspectionNotificationId.Value != Guid.Empty && currentInspectionNumber.Revision > 0)
+                if (InspectionNotification.InspectionNotificationId.Value != null && InspectionNotification.InspectionNotificationId.Value != Guid.Empty && currentCirculation !=null)
                 {
-                    (notificationForSend, returnedcirculation) = await _inspectionNotificationRepository.CompleteCirculation(returnedcirculation, InspectionNotification, attachments);
+                    (notificationForSend, returnedcirculation) = await _inspectionNotificationRepository.ModifyInspectionNotification(currentCirculation, InspectionNotification, attachments);
                 }
                 else
                 {
@@ -89,7 +89,8 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                     (notificationForSend, currentCirculation) = await _inspectionNotificationRepository.CreateNewInspectionNotification(InspectionNotification, newNotificationNumber, attachments);
                    
                 }
-                var finalInspectionNotification1 = notificationForSend.Adapt<InspectionNotificationDto>();
+                //var finalInspectionNotification1 = notificationForSend.Adapt<InspectionNotificationDto>();
+                var finalInspectionNotification1 = notificationForSend.Adapt<CreateInspectionNotificationDto>();
                 var result = CreateNextUsersCirculations(notificationForSend, project);
                 await _inspectionNotificationRepository.UpdateNotificationNumber(NotificationNumber.CreateFromString(notificationForSend!.NotificationNumber!));
             }
@@ -179,7 +180,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                     Circulation nextCirculation = Circulation.CreateForNextContact(inspectionNotification, pContact.Contact);
 
                     circulations.Add(nextCirculation);
-                    //inspectionNotification.Circulations.Add(nextCirculation);
+                 
 
                 });
 
@@ -193,8 +194,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
                 {
                     Circulation nextCirculation = Circulation.CreateForNextContact(inspectionNotification, piContact.Contact);
 
-                    circulations.Add(nextCirculation);
-                    //inspectionNotification.Circulations.Add(nextCirculation);
+                    circulations.Add(nextCirculation);                  
 
                 });
 
@@ -237,15 +237,9 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
 
                     }
                 }
-                //departmentLeadsContacts. ((dContact,link) =>
-                //{
-                //    Circulation nextCirculation = Circulation.CreateForNextContact(mainRequest, dContact);
-
-                //    newInstance.Circulations.Add(nextCirculation);
-                //});
-
+            
             }
-            //_inspectionNotificationRepository?.AddNewInspectionNotification(inspectionNotification);
+          
             _inspectionNotificationRepository?.SaveInspectionNotificationCirculations(circulations);
 
 
@@ -256,82 +250,7 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
             return null;
         }
     }
-    //public async Task<InspectionNotification> SimulateInpectionDataForNextUsers(InspectionNotification inspectionNotification, Project project)
-    //{
-    //    string projectId = project.FSId;
-    //    string orderDotId = inspectionNotification.Order.EdmsId;
-
-
-
-    //    try
-    //    {
-    //        var newInstance = inspectionNotification.DeepClone();
-
-
-    //        Inspection.Domain.Entities.Common.Request mainRequest = inspectionNotification.Request;
-
-    //        List<InspectionNotificationContact> PidecContacts = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.PIDEC_TO.GetHashCode() || contact.Contact.ContactType == ContactType.PIDEC_CC.GetHashCode()).ToList();
-
-    //        Contact creator = inspectionNotification.Contacts!.Where((contact) => contact.Contact.ContactType == ContactType.Vendor.GetHashCode()).FirstOrDefault()!.Contact;
-
-
-    //        string currentDatePersian = "";
-    //        DateTime currentTime = DateTime.Now;
-
-    //        if (PidecContacts.Count > 0)
-    //        {
-
-
-    //            PidecContacts.ForEach((pContact) =>
-    //            {
-    //                Circulation nextCirculation = Circulation.CreateForNextContact(mainRequest, pContact.Contact);
-
-    //                newInstance.Circulations.Add(nextCirculation);
-
-    //            });
-
-    //        }
-
-    //        var departmentLeads = _edmsService.GetOrderDepartmentLeads(orderDotId, projectId);
-    //        Dictionary<Contact, string> departmentLeadsContacts = await GetDepartmentLeadContacts(departmentLeads);
-
-    //        if (departmentLeadsContacts.Count > 0)
-    //        {
-
-    //            for (int i = 0; i < departmentLeadsContacts.Count; i++)
-    //            {
-    //                Circulation nextCirculation = Circulation.CreateForNextContact(mainRequest, departmentLeadsContacts.ElementAt(i).Key);
-
-    //                newInstance.Circulations.Add(nextCirculation);
-
-    //                try
-    //                {
-    //                    SendEmail(departmentLeadsContacts.ElementAt(i).Value, departmentLeadsContacts.ElementAt(i).Key.Email);
-    //                }
-    //                catch (Exception exp)
-    //                {
-
-    //                }
-    //            }
-    //            //departmentLeadsContacts. ((dContact,link) =>
-    //            //{
-    //            //    Circulation nextCirculation = Circulation.CreateForNextContact(mainRequest, dContact);
-
-    //            //    newInstance.Circulations.Add(nextCirculation);
-    //            //});
-
-    //        }
-    //        _inspectionNotificationRepository?.AddNewInspectionNotification(newInstance);
-
-
-    //        return newInstance;
-    //    }
-    //    catch (Exception exp)
-    //    {
-    //        return null;
-    //    }
-    //}
-
+ 
     private async Task<Dictionary<Contact, string>> GetDepartmentLeadContacts(Task<EDMSOrderDepartmentLeads> departmentLeads)
     {
         List<Contact> PidecDepartmentContacts = new List<Contact>();
