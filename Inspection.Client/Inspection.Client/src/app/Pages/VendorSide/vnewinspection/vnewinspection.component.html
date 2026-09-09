@@ -320,7 +320,7 @@
       <legend>Inspection Notification Subjects</legend>
       <div style="max-height: 10rem !important; overflow-y: scroll">
         <div
-          [hidden]="!IsReadOnlyInspectionNotificationMtadata"
+          [hidden]="canEditInspectionNotificationMtadata"
           *ngFor="
             let insSubject of inspectionSubjectsFormArray.controls;
             let i = index
@@ -406,7 +406,7 @@
         *ngFor="let contact of contactsControls; let i = index"
         [formGroup]="contact"
         class="contact-row"
-        [hidden]="!canEditInspectionNotificationMtadata"
+        [hidden]="canEditInspectionNotificationMtadata"
       >
         <label class="special-rolabel" style="border-radius: 0 !important">{{
           contact.get("contactType").value == 5
@@ -464,7 +464,7 @@
         *ngFor="let contact of contactsControls; let i = index"
         [formGroup]="contact"
         class="contact0-row"
-        [hidden]="ContactIsHidden(contact)"
+        [hidden]="!canEditInspectionNotificationMtadata"
       >
         <img
           src="assets/pluss011.png"
@@ -530,12 +530,12 @@
       </div>
     </fieldset>
 
-    <!-- Contacts -->
+    <!-- Locations -->
     <fieldset class="section" formArrayName="locations">
       <legend>Location/Locations Of Inspection</legend>
 
       <div
-        [hidden]="!canEditInspectionNotificationMtadata"
+        [hidden]="canEditInspectionNotificationMtadata"
         *ngFor="let loc of inspectionLocations.controls; let i = index"
         [formGroup]="loc"
         class="contact-row"
@@ -595,7 +595,7 @@
         *ngFor="let loc of inspectionLocationFormArray.controls; let i = index"
         [formGroup]="loc"
         class="location0-row"
-        [hidden]="LocationIsHidden(loc)"
+        [hidden]="!canEditInspectionNotificationMtadata"
       >
         <img
           src="assets/pluss011.png"
@@ -784,10 +784,11 @@
       <mat-card-content style="overflow: hidden">
         <textarea
           [(ngModel)]="circulation.current.comment"
-          [hidden]="circulation.current.isHidden && !editMode"
+          [hidden]="circulation.current.isHidden"
           [disabled]="
-            !(circulation.current | isActiveForUser: currentCirculation) &&
-            editMode
+            !(
+              circulation.current | isActiveForUser: workflow.currentCirculation
+            )
           "
           class="comment-body"
           placeholder="please insert your comment before be late"
@@ -801,9 +802,9 @@
           (change)="onCommentFilesPicked($event, circulation.current)"
           class="upload-input"
           [hidden]="
-            !(circulation.current | isActiveForUser: currentCirculation) ||
-            !editMode ||
-            QC_AlreadyHasAction
+            !(
+              circulation.current | isActiveForUser: workflow.currentCirculation
+            ) || QC_AlreadyHasAction
           "
         />
 
@@ -884,15 +885,7 @@
           </table>
         </div>
 
-        <div
-          *ngIf="
-            (circulation.current?.performerContactType == 4 ||
-              circulation.current?.performerContactType == 7) &&
-            circulation.current.performerContactPerson.userId ==
-              currentUser.id &&
-            circulation.current.qCActionType == null
-          "
-        >
+        <div *ngIf="currentPerformerIsQC(circulation)">
           <div style="max-width: 100%; overflow-x: auto">
             <table
               class="commentupload-table"
@@ -923,17 +916,6 @@
                     />
                   </td>
                   <td style="width: 20% !important">
-                    <!-- <select
-                      [(ngModel)]="internaclCirculation.performerContactType"
-                      style="
-                        font-family: &quot;Times New Roman&quot;, Times, serif;
-                        font-size: 16px;
-                      "
-                    >
-                      <option value="none">------</option>
-                      <option value="8">SecondParty Inspector</option>
-                      <option value="9">ThirdParty Inspector</option>
-                    </select> -->
                     <label
                       [hidden]="
                         internaclCirculation.id == '' ||
@@ -1002,6 +984,12 @@
                   <td style="width: 20% !important">
                     <button
                       mat-raised-button
+                      style="
+                        width: 3.5rem !important;
+                        font-size: 14px !important;
+                        font-weight: 700 !important;
+                      "
+                      color="primary"
                       [hidden]="
                         internaclCirculation.id != '' &&
                         internaclCirculation.id !=
@@ -1036,8 +1024,9 @@
           color="primary"
           (click)="onAction(circulation.current, 1)"
           [disabled]="
-            !(circulation.current | isActiveForUser: currentCirculation) ||
-            QC_AlreadyHasAction
+            !(
+              circulation.current | isActiveForUser: workflow.currentCirculation
+            ) || QC_AlreadyHasAction
           "
           *ngIf="shouldShowButton(circulation.current, 'approve')"
         >
@@ -1053,8 +1042,9 @@
           color="primary"
           (click)="onAction(circulation.current, 3)"
           [disabled]="
-            !(circulation.current | isActiveForUser: currentCirculation) ||
-            QC_AlreadyHasAction
+            !(
+              circulation.current | isActiveForUser: workflow.currentCirculation
+            ) || QC_AlreadyHasAction
           "
           *ngIf="shouldShowButton(circulation.current, 'backward')"
         >
@@ -1070,8 +1060,9 @@
           color="warn"
           (click)="onAction(circulation.current, 2)"
           [disabled]="
-            !(circulation.current | isActiveForUser: currentCirculation) ||
-            QC_AlreadyHasAction
+            !(
+              circulation.current | isActiveForUser: workflow.currentCirculation
+            ) || QC_AlreadyHasAction
           "
           *ngIf="shouldShowButton(circulation.current, 'reject')"
         >
@@ -1082,32 +1073,36 @@
       <div
         class="submit-wrapper"
         *ngIf="
-          circulation.current.performedActionDateGregorian.toString().trim() !=
-          '0001-01-01T00:00:00'
+          circulation.current.performedActionDateGregorian.getFullYear() != 1
         "
       >
         <div class="submit-card">
           <div class="submit-info">
             <span class="submit-status"
               >{{
-                circulation.current.actionType == 0 ||
-                circulation.current.actionType == null ||
-                circulation.current.actionType == undefined ||
-                circulation.current.actionType == -1
-                  ? "✖ Rejected "
-                  : circulation.current.actionType == 3
-                    ? "↩ Backwarded"
-                    : "✔ Approved"
+                CirculationActionType(circulation) == -1
+                  ? ""
+                  : CirculationActionType(circulation) == 2
+                    ? "✖ Rejected "
+                    : CirculationActionType(circulation) == 3
+                      ? "↩ Backwarded"
+                      : "✔ Approved"
               }}
             </span>
             <span class="submit-user">
-              {{ "By " + circulation.current.performerContactPerson.name }}
+              {{
+                CirculationActionType(circulation) == -1
+                  ? ""
+                  : "By " + circulation.current.performerContactPerson.name
+              }}
             </span>
             <br />
             <span class="submit-date">
               {{
-                circulation.current.performedActionDateGregorian
-                  | date: "yyyy-MM-dd"
+                CirculationActionType(circulation) == -1
+                  ? ""
+                  : (circulation.current.performedActionDateGregorian
+                    | date: "yyyy-MM-dd")
               }}
             </span>
           </div>

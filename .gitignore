@@ -3,4 +3,9 @@
 *.m4a
 Debug/**
 .Inspection.Api/Attachments
+.Inspection.Api/bin
+.Inspection.Application/bin
+.Inspection.Domain/bin
+.Inspection.Infrastructure/bin
+.Inspection.Persistence/bin
 

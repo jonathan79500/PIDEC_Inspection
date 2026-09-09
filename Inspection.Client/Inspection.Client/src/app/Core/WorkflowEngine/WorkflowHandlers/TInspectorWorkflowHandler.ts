@@ -15,12 +15,7 @@ export class TInspectorWorkflowHandler extends WorkflowHandlerBase {
     canHandle(context: InspectionWorkflowContext): boolean {
 
         return context.currentCirculation.performerContactType ==
-                ContactTypes.QC_Lead
-
-            ||
-
-               context.currentCirculation.performerContactType ==
-                ContactTypes.QC_Manager;
+                ContactTypes.ThirdPart_Inspector
     }
 
     build(context: InspectionWorkflowContext,vm: InspectionWorkflowViewModel): InspectionWorkflowViewModel {
@@ -30,6 +25,8 @@ export class TInspectorWorkflowHandler extends WorkflowHandlerBase {
 
         const lastVendor =
             this.helper.findLastVendorCirculation(context.inspections);
+
+         vm.inspection = lastVendor.inspection;
 
         vm.attachments = structuredClone(lastVendor?.circulation.attachments ?? []);
 
@@ -65,9 +62,13 @@ export class TInspectorWorkflowHandler extends WorkflowHandlerBase {
     public override isEditable(
         context: InspectionWorkflowContext): boolean {
 
-        return context.currentCirculation
-            .performedActionDateGregorian
-            ?.getFullYear() == 1;
+              const actionDate = context.currentCirculation.performedActionDateGregorian
+    ? new Date(context.currentCirculation.performedActionDateGregorian)
+    : null;
+
+const editable =
+    actionDate?.getFullYear() === 1;
+        return editable;
     }
 
     private buildRequestCirculations(

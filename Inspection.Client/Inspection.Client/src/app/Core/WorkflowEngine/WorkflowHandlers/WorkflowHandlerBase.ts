@@ -42,7 +42,7 @@ protected isUnperformed(c: Circulation): boolean {
 
 }
 
-    protected isEditable(
+    protected isEditable (
         context: InspectionWorkflowContext): boolean {
 
         return context.currentCirculation

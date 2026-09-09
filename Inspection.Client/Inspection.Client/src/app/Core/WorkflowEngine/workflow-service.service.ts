@@ -272,6 +272,13 @@ while(!currentUserLastCirculationFound && insNum<inspectionLength)
   insNum=insNum+1;
 }
 currentActor.currentCirculation = currentUserCirculation;
+
+if(currentUserCirculation != undefined && currentUserCirculation != null && (currentUserCirculation .performedActionDateGregorian?.getFullYear() == 1 || currentUserCirculation.actionType==-1))
+{
+  currentActor.editMode = true;
+}
+else
+  currentActor.editMode = false;
 return currentActor;
 }
 

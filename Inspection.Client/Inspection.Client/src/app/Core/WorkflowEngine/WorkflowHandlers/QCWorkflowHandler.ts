@@ -40,6 +40,8 @@ export class QCWorkflowHandler extends WorkflowHandlerBase{
         const lastVendor =
             this.helper.findLastVendorCirculation(context.inspections);
 
+        vm.inspection = lastVendor.inspection;
+
         vm.attachments = structuredClone(lastVendor?.circulation.attachments ?? []);
 
         vm.currentCirculation = context.currentCirculation;

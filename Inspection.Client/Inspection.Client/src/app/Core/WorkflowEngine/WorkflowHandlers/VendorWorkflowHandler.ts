@@ -10,6 +10,12 @@ import { WorkflowHandlerBase } from "./WorkflowHandlerBase";
 @Injectable()
 export class VendorWorkflowHandler
 extends WorkflowHandlerBase {
+  override isActive(circulation: Circulation, context: InspectionWorkflowContext): boolean {
+      if (!this.canCurrentUserAct(circulation, context))
+        return false;
+
+    return true;
+  }
 
     override build(
         context: InspectionWorkflowContext

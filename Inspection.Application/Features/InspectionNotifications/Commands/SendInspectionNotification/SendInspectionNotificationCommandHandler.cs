@@ -257,10 +257,12 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
         Dictionary<Contact, string> PidecDepartmentContacts_UserLink = new Dictionary<Contact, string>();
         SystematicUser originatorUser = new SystematicUser();
         SystematicUser DepartmentleadUser = new SystematicUser();
-        EDMSOrderDepartmentLeads eDMSOrderDepartmentLeads = departmentLeads.Result;
+        EDMSOrderDepartmentLeads eDMSOrderDepartmentLeads = new EDMSOrderDepartmentLeads();
+        if (departmentLeads != null)
+           eDMSOrderDepartmentLeads = departmentLeads.Result;
 
-        SystematicUser userLikeOriginator;
-        SystematicUser userLikeDeptLead;
+        SystematicUser userLikeOriginator = null;
+        SystematicUser userLikeDeptLead = null;
 
 
         string DeptLeadResetPasswordLink = "";
@@ -273,121 +275,130 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
         Contact OriginatorContact;
 
         List<string> RoleNames = new List<string>();
+
+        
         try
         {
-            userLikeOriginator = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.originator, 0);
-            userLikeDeptLead = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.leadEngineer, 0);
 
-
-            // LeadDepartmentRole = _userManagerRepository.AddNewRole(eDMSOrderDepartmentLeads.deptCode + "_Lead", UserType.PIDECDepartmentLead.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(LeadDepartmentRole).Entity;
-
-            //originatorRole = _userManagerRepository.AddNewRole(eDMSOrderDepartmentLeads.deptCode + "_Originator", UserType.PIDECDepartmentOriginator.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(originatorRole).Entity;
-            LeadDepartmentRole = _userManagerRepository.AddNewRole("PIDECDepartment_Lead", UserType.PIDECDepartmentLead.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(LeadDepartmentRole).Entity;
-
-            originatorRole = _userManagerRepository.AddNewRole("PIDECDepartment_Originator", UserType.PIDECDepartmentOriginator.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(originatorRole).Entity;
-
-
-            if (userLikeDeptLead == null)
+            if (eDMSOrderDepartmentLeads.leadEngineer != string.Empty)
             {
-                DepartmentleadUser.UserName = eDMSOrderDepartmentLeads.leadEngineer;
-                DepartmentleadUser.PasswordHash = "".GetHashCode().ToString();
-                DepartmentleadUser.activationStartDate = DateTime.Now;
-                DepartmentleadUser.DomainId = 0;
-                DepartmentleadUser.IsActive = true;
-                DepartmentleadUser.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
-                DepartmentleadUser.Id = Guid.NewGuid().ToString();
-                DepartmentleadUser.UserType = UserType.PIDECDepartmentLead.GetHashCode();
-                // DepartmentleadUser.Roles.Add(LeadDepartmentRole);
-
-                LeadDepartmentContact = new Contact();
-                LeadDepartmentContact.Note = "";
-                LeadDepartmentContact.Address = null;
-                LeadDepartmentContact.Phone = "";
-                LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
-                LeadDepartmentContact.ContactId = Guid.NewGuid(); //ContactId.CreateUnique();
-                LeadDepartmentContact.Cc = "";
-                LeadDepartmentContact.ContactType = ContactType.PIDEC_LeadDepartment.GetHashCode();
-                LeadDepartmentContact.UserName = eDMSOrderDepartmentLeads.leadEngineer;
-                LeadDepartmentContact.CreatedDate = DateTime.Now;
-                LeadDepartmentContact.ModifiedDate = DateTime.Now;
-                LeadDepartmentContact.CreatedBy = "SysAdmin";
-                LeadDepartmentContact.DomainId = 0;
-                LeadDepartmentContact.Mobile = "";
-                LeadDepartmentContact.Fax = "";
-                LeadDepartmentContact.HomePage = "";
-                LeadDepartmentContact.Name = eDMSOrderDepartmentLeads.leadEngineer;
+                userLikeDeptLead = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.leadEngineer, 0);
 
 
-                //DepartmentleadUser.contacts.Add(LeadDepartmentContact);
-                RoleNames.Clear();
-                RoleNames.Add("PIDECDepartment_Lead");
-                // (DepartmentleadUser, DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUser(DepartmentleadUser, RoleNames).Result;
-                (DepartmentleadUser, DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUserByRandomPass(DepartmentleadUser, RoleNames).Result;
+                // LeadDepartmentRole = _userManagerRepository.AddNewRole(eDMSOrderDepartmentLeads.deptCode + "_Lead", UserType.PIDECDepartmentLead.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(LeadDepartmentRole).Entity;
 
-                LeadDepartmentContact.UserId = DepartmentleadUser.Id;
+                //originatorRole = _userManagerRepository.AddNewRole(eDMSOrderDepartmentLeads.deptCode + "_Originator", UserType.PIDECDepartmentOriginator.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(originatorRole).Entity;
+                LeadDepartmentRole = _userManagerRepository.AddNewRole("PIDECDepartment_Lead", UserType.PIDECDepartmentLead.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(LeadDepartmentRole).Entity;
 
-                PidecDepartmentContacts.Add(LeadDepartmentContact);
-                PidecDepartmentContacts_UserLink.Add(LeadDepartmentContact, DeptLeadResetPasswordLink);
 
-                _inspectionNotificationRepository?.AddNewContact(LeadDepartmentContact);
+                if (userLikeDeptLead == null)
+                {
+                    DepartmentleadUser.UserName = eDMSOrderDepartmentLeads.leadEngineer;
+                    DepartmentleadUser.PasswordHash = "".GetHashCode().ToString();
+                    DepartmentleadUser.activationStartDate = DateTime.Now;
+                    DepartmentleadUser.DomainId = 0;
+                    DepartmentleadUser.IsActive = true;
+                    DepartmentleadUser.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
+                    DepartmentleadUser.Id = Guid.NewGuid().ToString();
+                    DepartmentleadUser.UserType = UserType.PIDECDepartmentLead.GetHashCode();
+                    // DepartmentleadUser.Roles.Add(LeadDepartmentRole);
 
-                _userManagerRepository?.AddUserToRole(DepartmentleadUser, "PIDECDepartment_Lead");
+                    LeadDepartmentContact = new Contact();
+                    LeadDepartmentContact.Note = "";
+                    LeadDepartmentContact.Address = null;
+                    LeadDepartmentContact.Phone = "";
+                    LeadDepartmentContact.Email = eDMSOrderDepartmentLeads.leadEngineer.Trim() + "@pidec.com";
+                    LeadDepartmentContact.ContactId = Guid.NewGuid(); //ContactId.CreateUnique();
+                    LeadDepartmentContact.Cc = "";
+                    LeadDepartmentContact.ContactType = ContactType.PIDEC_LeadDepartment.GetHashCode();
+                    LeadDepartmentContact.UserName = eDMSOrderDepartmentLeads.leadEngineer;
+                    LeadDepartmentContact.CreatedDate = DateTime.Now;
+                    LeadDepartmentContact.ModifiedDate = DateTime.Now;
+                    LeadDepartmentContact.CreatedBy = "SysAdmin";
+                    LeadDepartmentContact.DomainId = 0;
+                    LeadDepartmentContact.Mobile = "";
+                    LeadDepartmentContact.Fax = "";
+                    LeadDepartmentContact.HomePage = "";
+                    LeadDepartmentContact.Name = eDMSOrderDepartmentLeads.leadEngineer;
+
+
+                    //DepartmentleadUser.contacts.Add(LeadDepartmentContact);
+                    RoleNames.Clear();
+                    RoleNames.Add("PIDECDepartment_Lead");
+                    // (DepartmentleadUser, DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUser(DepartmentleadUser, RoleNames).Result;
+                    (DepartmentleadUser, DeptLeadResetPasswordLink) = _userManagerRepository.RegisterNewUserByRandomPass(DepartmentleadUser, RoleNames).Result;
+
+                    LeadDepartmentContact.UserId = DepartmentleadUser.Id;
+
+                    PidecDepartmentContacts.Add(LeadDepartmentContact);
+                    PidecDepartmentContacts_UserLink.Add(LeadDepartmentContact, DeptLeadResetPasswordLink);
+
+                    _inspectionNotificationRepository?.AddNewContact(LeadDepartmentContact);
+
+                    _userManagerRepository?.AddUserToRole(DepartmentleadUser, "PIDECDepartment_Lead");
+                }
+                else
+                {
+                    var existedPidecLead = await _inspectionNotificationRepository.GetContactByUserId(userLikeDeptLead.Id);
+                    PidecDepartmentContacts.Add(existedPidecLead);
+
+                }
             }
-            else
+            if (eDMSOrderDepartmentLeads.originator != string.Empty)
             {
-                var existedPidecLead = await _inspectionNotificationRepository.GetContactByUserId(userLikeDeptLead.Id);
-                PidecDepartmentContacts.Add(existedPidecLead);
+                userLikeOriginator = await _userManagerRepository.GetActiveUserByUserName_DomainId(eDMSOrderDepartmentLeads.originator, 0);
+                originatorRole = _userManagerRepository.AddNewRole("PIDECDepartment_Originator", UserType.PIDECDepartmentOriginator.GetHashCode().ToString()).Result;//_dbContext.Roles.Add(originatorRole).Entity;
 
-            }
 
-            if (userLikeOriginator == null)
-            {
-                originatorUser.UserName = eDMSOrderDepartmentLeads.originator;
-                originatorUser.PasswordHash = "".GetHashCode().ToString();
-                originatorUser.activationStartDate = DateTime.Now;
-                originatorUser.DomainId = 0;
-                originatorUser.IsActive = true;
-                originatorUser.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
-                originatorUser.Id = Guid.NewGuid().ToString();
-                originatorUser.UserType = UserType.PIDECDepartmentOriginator.GetHashCode();
-                //originatorUser.Roles.Add(originatorRole);
+                if (userLikeOriginator == null)
+                {
+                    originatorUser.UserName = eDMSOrderDepartmentLeads.originator;
+                    originatorUser.PasswordHash = "".GetHashCode().ToString();
+                    originatorUser.activationStartDate = DateTime.Now;
+                    originatorUser.DomainId = 0;
+                    originatorUser.IsActive = true;
+                    originatorUser.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
+                    originatorUser.Id = Guid.NewGuid().ToString();
+                    originatorUser.UserType = UserType.PIDECDepartmentOriginator.GetHashCode();
+                    //originatorUser.Roles.Add(originatorRole);
 
-                OriginatorContact = new Contact();
-                OriginatorContact.Note = "";
-                OriginatorContact.Address = null;
-                OriginatorContact.Phone = "";
-                OriginatorContact.Mobile = "";
-                OriginatorContact.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
-                OriginatorContact.ContactId = Guid.NewGuid();//ContactId.CreateUnique();
-                OriginatorContact.Cc = "";
-                OriginatorContact.ContactType = ContactType.PIDEC_Originator.GetHashCode();
-                OriginatorContact.UserName = eDMSOrderDepartmentLeads.originator;
-                OriginatorContact.CreatedDate = DateTime.Now;
-                OriginatorContact.ModifiedDate = DateTime.Now;
-                OriginatorContact.CreatedBy = "SysAdmin";
-                OriginatorContact.DomainId = 0;
-                OriginatorContact.Mobile = "";
-                OriginatorContact.Fax = "";
-                OriginatorContact.HomePage = "";
-                OriginatorContact.Name = eDMSOrderDepartmentLeads.leadEngineer;
+                    OriginatorContact = new Contact();
+                    OriginatorContact.Note = "";
+                    OriginatorContact.Address = null;
+                    OriginatorContact.Phone = "";
+                    OriginatorContact.Mobile = "";
+                    OriginatorContact.Email = eDMSOrderDepartmentLeads.originator.Trim() + "@pidec.com";
+                    OriginatorContact.ContactId = Guid.NewGuid();//ContactId.CreateUnique();
+                    OriginatorContact.Cc = "";
+                    OriginatorContact.ContactType = ContactType.PIDEC_Originator.GetHashCode();
+                    OriginatorContact.UserName = eDMSOrderDepartmentLeads.originator;
+                    OriginatorContact.CreatedDate = DateTime.Now;
+                    OriginatorContact.ModifiedDate = DateTime.Now;
+                    OriginatorContact.CreatedBy = "SysAdmin";
+                    OriginatorContact.DomainId = 0;
+                    OriginatorContact.Mobile = "";
+                    OriginatorContact.Fax = "";
+                    OriginatorContact.HomePage = "";
+                    OriginatorContact.Name = eDMSOrderDepartmentLeads.leadEngineer;
 
-                RoleNames.Clear();
-                RoleNames.Add("PIDECDepartment_Originator");
+                    RoleNames.Clear();
+                    RoleNames.Add("PIDECDepartment_Originator");
 
-                (originatorUser, DeptOriginatorResetPasswordLink) = _userManagerRepository.RegisterNewUserByRandomPass(originatorUser, RoleNames).Result;
+                    (originatorUser, DeptOriginatorResetPasswordLink) = _userManagerRepository.RegisterNewUserByRandomPass(originatorUser, RoleNames).Result;
 
-                OriginatorContact.UserId = originatorUser.Id;
+                    OriginatorContact.UserId = originatorUser.Id;
 
-                _inspectionNotificationRepository?.AddNewContact(OriginatorContact);
-                PidecDepartmentContacts.Add(OriginatorContact);
-                PidecDepartmentContacts_UserLink.Add(OriginatorContact, DeptOriginatorResetPasswordLink);
+                    _inspectionNotificationRepository?.AddNewContact(OriginatorContact);
+                    PidecDepartmentContacts.Add(OriginatorContact);
+                    PidecDepartmentContacts_UserLink.Add(OriginatorContact, DeptOriginatorResetPasswordLink);
 
-                _userManagerRepository?.AddUserToRole(originatorUser, "PIDECDepartment_Originator");
-            }
-            else
-            {
-                var existedPidecOriginator = await _inspectionNotificationRepository.GetContactByUserId(userLikeOriginator.Id);
-                PidecDepartmentContacts.Add(existedPidecOriginator);
+                    _userManagerRepository?.AddUserToRole(originatorUser, "PIDECDepartment_Originator");
+                }
+                else
+                {
+                    var existedPidecOriginator = await _inspectionNotificationRepository.GetContactByUserId(userLikeOriginator.Id);
+                    PidecDepartmentContacts.Add(existedPidecOriginator);
+                }
             }
         }
         catch (Exception exp)

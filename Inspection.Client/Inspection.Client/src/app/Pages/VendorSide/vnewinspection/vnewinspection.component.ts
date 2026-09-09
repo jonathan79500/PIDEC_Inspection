@@ -258,7 +258,7 @@ private gregorianMonthNames = [
  }
    isActiveForCurrentUser(circulation: Circulation) : boolean{
   if(circulation!.performerContactPerson!.id == this.workflow.currentCirculation!.performerContactPerson.id
-     && (circulation.performedActionDateGregorian == null || circulation.performedActionDateGregorian!.toString().trim() == '0001-01-01T00:00:00') && !this.QC_AlreadyHasAction)
+     && (circulation.performedActionDateGregorian == null || circulation.performedActionDateGregorian.getFullYear() == 1) && !this.QC_AlreadyHasAction)
      {
       if((circulation.performerContactType == ContactTypes.QC_Lead || circulation.performerContactType == ContactTypes.QC_Manager) && (circulation.childCirculations == null || circulation.childCirculations.length==0))
       {
@@ -592,27 +592,39 @@ private removePlaceholder(
     formArray: FormArray,
     id: string): void {
 
-    // const index = formArray.controls.findIndex(c =>
-    //     c.get('id')?.value === id);
+    const index = formArray.controls.findIndex(c =>
+        c.get('id')?.value === id);
 
-    // if (index >= 0) {
-    //     formArray.removeAt(index);
-    // }
+    if (index >= 0) {
+        formArray.removeAt(index);
+    }
 
 }
 toggleEditMode(editMode: boolean): void {
 
     this.editMode = editMode;
-    if(!editMode)
+    const enableInspectionFields =
+        editMode &&
+        (!this.workflow.currentCirculation || this.workflow.currentCirculation.sequenceNo === 0);
+
+    if(!enableInspectionFields)
     {
     this.inspectionForm.controls.order.controls.title.disable();
 
 
     if(this.workflow)
     {
+    this.setInspectionControlsEnabled(enableInspectionFields);
+
+    if (!enableInspectionFields) {
+        this.removeTemporaryRows();
+    }
+  }
+  else if(this.currentCirculation)
+  {
     const enableInspectionFields =
         editMode &&
-        (!this.workflow.currentCirculation || this.workflow.currentCirculation.sequenceNo === 0);
+        (!this.currentCirculation || this.currentCirculation.sequenceNo === 0);
 
 
     this.setInspectionControlsEnabled(enableInspectionFields);
@@ -1983,7 +1995,7 @@ buildForm(vm: InspectionWorkflowViewModel): FormGroup {
     this.populateInspectionSubjects(form, vm.inspection);
     this.attachments = vm.attachments;
     this.configureForm(form,vm.inspection, vm);
-
+    this.BuildInternalCorrespondenceReceivers(vm.inspection.contacts);
     return form;
 }
 
@@ -2001,7 +2013,7 @@ private initializeUI(): void {
         new Date(this.workflow.inspection.issueDate);
 
     this.setIssueDate(issueDate);
-  // this.toggleEditMode(this.workflow.editMode);
+    this.toggleEditMode(this.workflow.editMode);
 }
 
 private populateContacts(
@@ -2030,11 +2042,28 @@ public CurrentCirculationHasCorrespondences(circulation :CirculationVM):boolean{
               circulation.current.childCirculations.length > 1)
 }
 
-public currentPerformerIsQC(circulationvm:CirculationVM): boolean {
+public currentUserIsQC(circulationvm:CirculationVM): boolean {
 
      return (circulationvm.current?.performerContactType == ContactTypes.QC_Manager ||
           circulationvm.current?.performerContactType == ContactTypes.QC_Lead) &&
         circulationvm.current.performerContactPerson.userId == this.currentUser.id
+
+}
+
+public currentPerformerIsQC(circulationvm:CirculationVM): boolean {
+
+     return (circulationvm.current?.performerContactType == ContactTypes.QC_Manager ||
+          circulationvm.current?.performerContactType == ContactTypes.QC_Lead) &&
+        circulationvm.current.performerContactPerson.userId == this.currentUser.id && circulationvm.current.performedActionDateGregorian.getFullYear()==1
+
+}
+
+public CirculationActionType(circulationvm:CirculationVM): number {
+
+    if(circulationvm.current.performedActionDateGregorian.getFullYear()==1)
+      return -1;//It means Non Action is done
+    return circulationvm.current.actionType;
+
 
 }
 
@@ -2056,6 +2085,9 @@ public canAddLocations(circulation:Circulation): boolean {
 
 public ContactIsHidden(contact:FormContact):boolean
 {
+  if(!this.canEditInspectionNotificationMtadata && contact.value.id !='00000000-0000-0000-0000-000000000000')
+    return false;
+
   if(!this.canEditInspectionNotificationMtadata && contact.value.id =='00000000-0000-0000-0000-000000000000')
     return true;
   return false;
@@ -2079,7 +2111,7 @@ get canEditInspectionNotificationMtadata(): boolean {
   }
 
   if (!this.workflow.currentCirculation) {
-    return true;
+    return false;
   }
 
   return this.workflow.currentCirculation.performerContactType
@@ -2093,8 +2125,7 @@ if(!this.workflow)
 
 
   if (this.workflow) {
-    if(!this.workflow.editMode)
-      return true;
+
     if(this.workflow.editMode && this.workflow.currentCirculation != null &&
                 this.workflow.currentCirculation?.performerContactType != ContactTypes.Vendor)
       return true;
@@ -2106,13 +2137,18 @@ if(!this.workflow)
 
 get canShowSubmittData():boolean{
     if(!this.workflow)
-    return false;
+    {
+      if(!this.currentCirculation)
+        return false;
+      else
+        return true;
+    }
 
  if (this.workflow && !this.workflow.editMode) {
     return true;
   }
 
-  if (this.workflow && !this.workflow.currentCirculation) {
+  if (this.workflow &&!this.workflow.currentCirculation) {
     return true;
   }
 
@@ -2237,6 +2273,10 @@ private createForm(
     vm: InspectionWorkflowViewModel
 ): FormGroup {
 
+
+
+  const [mainNo, rev] = inspection.notificationNumber.split('.');
+
     return this.formBuilder.group({
 
         id: [inspection.id],
@@ -2277,7 +2317,7 @@ private createForm(
         revNumber: [vm.shownRevisionNumber],
 
         notificationNumber:
-            [vm.shownNotificationNumber],
+            [mainNo],
 
         ownerDocNo: [''],
 
@@ -3064,7 +3104,7 @@ CalculateInspectionDuration():void{
 
   const msInDay = 1000 * 60 * 60 * 24;
 
-  this.inspectionForm.controls.requestInspectionDueDate.setValue( Math.floor((end - start) / msInDay));
+  this.inspectionForm.controls.requestInspectionDueDate.setValue(( Math.floor((end - start) / msInDay)+1));
 }
 
   formatPersianDate(year: number, month: number, day: number): string {
@@ -3251,7 +3291,7 @@ CalculateInspectionDuration():void{
      // this.Attachments.push(this.generateAttachmentFromValue(ra));
     })
  }
-  this.toggleEditMode(this.workflow.editMode);
+  this.toggleEditMode(false);
     });
   }
 
