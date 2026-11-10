@@ -56,6 +56,12 @@ effect(()=>{
       label: 'Received Inspections',
       imageName:'assets/green-add-button-12023.png'
     } ,
+       {
+      routeLink: 'InspectorManager',
+      icon: 'fal fa-file',
+      label: 'Manage Inspectors',
+      imageName:'assets/green-add-button-12023.png'
+    },
     {
       routeLink: 'ConditionalInspectionReports',
       icon: 'fal fa-file',

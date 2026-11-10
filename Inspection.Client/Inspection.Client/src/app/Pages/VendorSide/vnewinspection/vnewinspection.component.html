@@ -255,6 +255,7 @@
               value="InsAction_Witness"
               [checked]="inspectionActions.includes('InsAction_Witness')"
               (change)="onInspectionActionChange($event)"
+              [disabled]="!editMode"
             />
             Witness
           </label>
@@ -264,6 +265,7 @@
               value="InsAction_Hold"
               [checked]="inspectionActions.includes('InsAction_Hold')"
               (change)="onInspectionActionChange($event)"
+              [disabled]="!editMode"
             />
             Hold
           </label>
@@ -273,6 +275,7 @@
               value="InsAction_Review"
               [checked]="inspectionActions.includes('InsAction_Review')"
               (change)="onInspectionActionChange($event)"
+              [disabled]="!editMode"
             />
             Review
           </label>
@@ -391,7 +394,6 @@
           <img
             src="assets/delete-red.png"
             style="width: 18px; height: 18px"
-            disabled="IsReadOnlyInspectionNotificationMtadata"
             [hidden]="IsReadOnlyInspectionNotificationMtadata"
             (click)="removeInsSubject(insSubject)"
           />
@@ -486,6 +488,7 @@
           }}</label
         >
         <select
+          [disabled]="!canEditInspectionNotificationMtadata"
           [hidden]="!canEditInspectionNotificationMtadata"
           (change)="ContactTypeSelect(contact)"
           style="

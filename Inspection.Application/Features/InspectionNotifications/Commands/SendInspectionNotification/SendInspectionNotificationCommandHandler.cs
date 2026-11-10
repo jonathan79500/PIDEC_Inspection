@@ -64,7 +64,12 @@ public class SendInspectionNotificationCommandHandler : IRequestHandler<SendInsp
             InspectionNotification InspectionNotification = request.CreateInspectionNotificationDto.Adapt<InspectionNotification>();
 
             Circulation returnedcirculation= new Circulation();
-            Circulation currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
+            Circulation currentCirculation;
+            if (request.CurrentCirculationDto != null)
+                currentCirculation = request.CurrentCirculationDto.Adapt<Circulation>();
+            else
+                currentCirculation = null;
+
             var project = request.ProjectDto.Adapt<Project>();
             var attachments = request.AttachmentDtos.Adapt<List<Attachment>>();
 

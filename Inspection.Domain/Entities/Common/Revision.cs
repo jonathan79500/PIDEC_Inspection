@@ -30,6 +30,6 @@ namespace Inspection.Domain.Entities.Common
         //Navigate SubTypes like InspectionNotifiction or InspectionReport.....
         public List<InspectionNotificationRevision>? InspectionNotifications { get; set; }
         public List<InspectionReport.InspectionReport>? InspectionReports { get; set; }
-
+     
     }
 }

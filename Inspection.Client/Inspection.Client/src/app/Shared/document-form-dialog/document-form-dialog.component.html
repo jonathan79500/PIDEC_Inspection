@@ -1,0 +1,113 @@
+<dialog #dlg class="dlg" aria-labelledby="docDlgTitle">
+  <div class="dlg-body" [formGroup]="form" (keydown.enter)="onEnter($event)">
+    <h2 id="docDlgTitle">Attach document</h2>
+
+    @if (loadingTypes()) {
+      <p class="hint">Loading document types...</p>
+    } @else if (loadError()) {
+      <p class="error">
+        Could not load the document types. Close this window and try again.
+      </p>
+    } @else if (types().length === 0) {
+      <p class="hint">No document types are available here.</p>
+    }
+
+    <div class="field">
+      <label for="docType">Document type</label>
+      <select id="docType" formControlName="documentTypeId">
+        <option value="" disabled>Select a type</option>
+        @for (t of types(); track t.documentTypeId) {
+          <option [value]="t.documentTypeId" [disabled]="isTypeTaken(t)">
+            {{ t.documentTypeName
+            }}{{ isTypeTaken(t) ? " (already attached)" : "" }}
+          </option>
+        }
+      </select>
+      @if (hasError("documentTypeId", "required")) {
+        <small class="error">Choose a document type.</small>
+      }
+    </div>
+
+    @if (selectedType(); as t) {
+      <ul class="rules">
+        <li>
+          Allowed files:
+          <strong>{{
+            t.allowedExtensions.length
+              ? t.allowedExtensions.join(", ")
+              : "any type"
+          }}</strong
+          >, up to <strong>{{ formatSize(t.maxSizeMB) }}</strong>
+        </li>
+        @if (t.requiresReview) {
+          <li>This document is reviewed before it becomes active.</li>
+        } @else if (t.requiresApproval) {
+          <li>This document needs approval before it becomes active.</li>
+        }
+        @if (!t.multipleAllowed) {
+          <li>Only one document of this type is allowed.</li>
+        }
+      </ul>
+
+      @if (t.requiresName) {
+        <div class="field">
+          <label for="docName">Name</label>
+          <input id="docName" type="text" formControlName="name" />
+          @if (hasError("name", "required")) {
+            <small class="error">A name is required for this type.</small>
+          }
+        </div>
+      }
+
+      @if (t.requiresNumber) {
+        <div class="field">
+          <label for="docNumber">Number</label>
+          <input id="docNumber" type="text" formControlName="number" />
+          @if (hasError("number", "required")) {
+            <small class="error">A number is required for this type.</small>
+          }
+        </div>
+      }
+
+      <div class="row">
+        <div class="field">
+          <label for="docIssue">Issue date (optional)</label>
+          <input id="docIssue" type="date" formControlName="issueDate" />
+        </div>
+        <div class="field">
+          <label for="docExpire">Expiry date (optional)</label>
+          <input id="docExpire" type="date" formControlName="expireDate" />
+        </div>
+      </div>
+      @if (dateError(); as msg) {
+        <small class="error">{{ msg }}</small>
+      }
+
+      <div class="field">
+        <label for="docFile">File</label>
+        <input
+          #fileInput
+          id="docFile"
+          type="file"
+          [accept]="acceptAttr()"
+          (change)="onFileChange(fileInput)"
+        />
+        @if (fileError(); as msg) {
+          <small class="error">{{ msg }}</small>
+        }
+      </div>
+    }
+
+    <div class="dlg-actions">
+      <button type="button" class="btn" (click)="close()">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="submit()"
+        [disabled]="!selectedType()"
+      >
+        Attach
+      </button>
+    </div>
+  </div>
+</dialog>

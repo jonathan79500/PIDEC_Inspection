@@ -62,6 +62,8 @@ protected isUnperformed(c: Circulation): boolean {
         vm.allCirculationsInCurrentRevision =
             context.currentRevision.circulations;
 
+        vm.inspection = context.inspection;
+
         return vm;
     }
 }

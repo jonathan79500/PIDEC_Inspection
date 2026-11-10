@@ -1,0 +1,129 @@
+.history-page {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+  font-family: var(--font-family);
+  color: var(--text-color);
+}
+
+.history-title {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.history-hint {
+  color: var(--secondryform-color);
+  font-style: italic;
+}
+
+.history-error {
+  color: var(--danger-color, #b3261e);
+}
+
+.revision-card {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--primaryform-color);
+  box-shadow: 0 4px 8px var(--secondryform-color);
+}
+
+.revision-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.revision-badge {
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--list-background-light, #eee);
+  color: var(--primary-color);
+}
+
+.revision-meta {
+  font-size: 0.85rem;
+  color: var(--secondryform-color);
+}
+
+.revision-final {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e6f4ec;
+  color: #1f7a4d;
+}
+
+.revision-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--row-background);
+  color: var(--toolbar-text-Color);
+}
+
+.revision-comment {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.circulation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.circulation-table th,
+.circulation-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.circulation-table th {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.circulation-row--clickable {
+  cursor: pointer;
+}
+
+.circulation-row--clickable:hover {
+  background: var(--row-hover-color, #f4f4f4);
+}
+
+.circulation-comment {
+  max-width: 220px;
+  white-space: normal;
+}
+
+.circulation-empty {
+  text-align: center;
+  font-style: italic;
+  color: var(--secondryform-color);
+}
+
+.history-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.history-approved    { background: #e6f4ec; color: #1f7a4d; }
+.history-rejected     { background: #fdecea; color: #b3261e; }
+.history-backwarded  { background: #e8f0fb; color: #174a85; }
+.history-pending      { background: #fff3d6; color: #8a5a00; }

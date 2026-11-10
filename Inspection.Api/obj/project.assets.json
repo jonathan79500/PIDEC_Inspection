@@ -2531,7 +2531,8 @@
           "MediatR": "12.5.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
           "Microsoft.AspNetCore.Http": "2.2.2",
-          "Microsoft.EntityFrameworkCore.UnitOfWork": "3.1.0"
+          "Microsoft.EntityFrameworkCore.UnitOfWork": "3.1.0",
+          "SendGrid": "9.29.3"
         },
         "compile": {
           "bin/placeholder/Inspection.Application.dll": {}

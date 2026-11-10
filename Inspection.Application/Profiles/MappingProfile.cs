@@ -3,6 +3,9 @@ using Inspection.Application.DTOs;
 using Inspection.Application.DTOs.Common;
 using Inspection.Application.DTOs.InspectionReport;
 using Inspection.Application.DTOs.InspectionRequest;
+using Inspection.Application.DTOs.Inspector;
+using Inspection.Application.Features.BasicInfo.Documents;
+using Inspection.Application.Features.Documents;
 using Inspection.Domain.Entities.Common;
 using Inspection.Domain.Entities.Common.ValueObjects;
 using Inspection.Domain.Entities.Contacts;
@@ -20,6 +23,7 @@ using Inspection.Domain.Entities.Vendor;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,6 +99,16 @@ public class MappingProfile : IRegister
                  dest.Id = dest.AttachmentId;
              });
 
+
+
+
+        // DocumentTypeName comes from DocumentView by name; everything else from the document itself
+        TypeAdapterConfig<DocumentView, DocumentDto>.NewConfig()
+            .Map(dest => dest, src => src.Document)
+            .Map(dest => dest.FileName, src => src.Info != null ? src.Info.FileName : "(file missing)")
+            .Map(dest => dest.SizeBytes, src => src.Info != null ? src.Info.SizeBytes : 0);
+           
+
         TypeAdapterConfig<DocumentType, DocumentTypeDto>.NewConfig()
             .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
             .Map(dest => dest.DocumentTypeCode, src => src.DocumentTypeCode)
@@ -102,11 +116,10 @@ public class MappingProfile : IRegister
             .Map(dest => dest.RequiresName, src => src.RequiresName)
             .Map(dest => dest.RequiresNumber, src => src.RequiresNumber)
             .Map(dest => dest.RequiresReview, src => src.RequiresReview)
-            .Map(dest => dest.RequiresApproval, src => src.RequiresApproval)
-            .Map(dest => dest.AllowedExtensions, src => src.AllowedExtensions)
-            .Map(dest => dest.IsActive, src => src.IsActive)
+            .Map(dest => dest.RequiresApproval, src => src.RequiresApproval)                  
             .Map(dest => dest.MaxSizeMB, src => src.MaxSizeMB)
             .Map(dest => dest.MultipleAllowed, src => src.MultipleAllowed)
+             .Map(dest => dest.AllowedExtensions, src => DocumentRules.ParseExtensions(src.AllowedExtensions))
             .IgnoreNonMapped(true);
 
 
@@ -118,8 +131,8 @@ public class MappingProfile : IRegister
             .Map(dest => dest.RequiresNumber, src => src.RequiresNumber)
             .Map(dest => dest.RequiresReview, src => src.RequiresReview)
             .Map(dest => dest.RequiresApproval, src => src.RequiresApproval)
-            .Map(dest => dest.AllowedExtensions, src => src.AllowedExtensions)
-            .Map(dest => dest.IsActive, src => src.IsActive)
+            .Map(dest => dest.AllowedExtensions, src => string.Join(",", src.AllowedExtensions))
+            
             .Map(dest => dest.MaxSizeMB, src => src.MaxSizeMB)
             .Map(dest => dest.MultipleAllowed, src => src.MultipleAllowed)
             .IgnoreNonMapped(true);
@@ -127,32 +140,30 @@ public class MappingProfile : IRegister
 
         TypeAdapterConfig<DocumentDto, Document>.NewConfig()
             .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
-            .Map(dest => dest.OwnerType, src => src.OwnerType)
+          
             .Map(dest => dest.ApprovedBy, src => src.ApprovedBy)
             .Map(dest => dest.ApprovedDate, src => src.ApprovedDate)
-            .Map(dest => dest.ExpireDate, src => src.ExpireDate)
-            .Map(dest => dest.AttachmentId, src => (src.AttachmentId == Guid.Empty || src.AttachmentId == null) ? new AttachmentId(Guid.NewGuid()) : new AttachmentId(src.AttachmentId.Value))
+            .Map(dest => dest.ExpireDate, src => src.ExpireDate)           
             .Map(dest => dest.IssueDate, src => src.IssueDate)
             .Map(dest => dest.ExpireDate, src => src.ExpireDate)
             .Map(dest => dest.DocumentId, src => src.DocumentId)
-            .Map(dest => dest.OwnerId, src => src.OwnerId)
+      
             .Map(dest => dest.Status, src => src.Status)
             .Map(dest => dest.Version, src => src.Version)
             .IgnoreNonMapped(true);
 
         TypeAdapterConfig<Document, DocumentDto>.NewConfig()
-        .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)
-        .Map(dest => dest.OwnerType, src => src.OwnerType)
+        .Map(dest => dest.DocumentTypeId, src => src.DocumentTypeId)     
         .Map(dest => dest.ApprovedBy, src => src.ApprovedBy)
         .Map(dest => dest.ApprovedDate, src => src.ApprovedDate)
         .Map(dest => dest.ExpireDate, src => src.ExpireDate)
-        .Map(dest => dest.AttachmentId, src => src.AttachmentId == null ? Guid.NewGuid() : (src.AttachmentId.Value != Guid.Empty ? src.AttachmentId.Value : Guid.NewGuid()))
+        
         .Map(dest => dest.IssueDate, src => src.IssueDate)
         .Map(dest => dest.ExpireDate, src => src.ExpireDate)
-        .Map(dest => dest.DocumentId, src => src.DocumentId)
-        .Map(dest => dest.OwnerId, src => src.OwnerId)
+        .Map(dest => dest.DocumentId, src => src.DocumentId)         
         .Map(dest => dest.Status, src => src.Status)
         .Map(dest => dest.Version, src => src.Version)
+        .Ignore(d => d.DocumentTypeName, d => d.FileName, d => d.SizeBytes)
         .IgnoreNonMapped(true);
 
         TypeAdapterConfig<DocumentTypeVisibility, DocumentTypeVisibilityDto>.NewConfig()
@@ -230,17 +241,121 @@ public class MappingProfile : IRegister
             .IgnoreNonMapped(true);
 
 
-        TypeAdapterConfig<Inspector, InspectorDto>.NewConfig()
-          .Map(dest => dest.Description, src => src.Description)
-          .Map(dest => dest.Name, src => src.Name)
-          .Map(dest => dest.LastName, src => src.LastName)
-          .Map(dest => dest.FirstName, src => src.FirstName)
-          .Map(dest => dest.Email, src => src.Email)
-          .Map(dest => dest.Phone, src => src.Phone)
-          .Map(dest => dest.Position, src => src.Position)
-          //.Map(dest => dest.ContactId, src => src.ContactId)
-          .Map(dest => dest.Id, src => src.InspectorId)
-          .IgnoreNonMapped(true);
+
+        // ===== Inspector -> InspectorDto (grid + edit form) =====
+        config.NewConfig<InspectorSkill, InspectorSkillDto>()
+            .Map(d => d.Code, s => s.Skill.Code)
+            .Map(d => d.Name, s => s.Skill.Name);
+
+        config.NewConfig<Inspector, InspectorDto>()
+            .Map(d => d.InspectionCompanyContactName, s => s.InspectionCompanyContact.Name)
+            .AfterMapping((s, d) => d.Skills = d.Skills.OrderBy(x => x.Code).ToList());
+
+        // ===== InspectorSaveDto -> Inspector (used for both create and update) =====
+        config.NewConfig<InspectorSaveDto, Inspector>()
+            .Ignore(d => d.InspectorId,
+                    d => d.CreatedDate,
+                    d => d.VersionNumber,
+                    d => d.Skills,
+                    d => d.InspectionCompanyContact,
+                    d => d.InspectionNotifications)
+            .Map(d => d.ExpireDate, s => s.ExpireDate.ToUniversalTime())
+            .AfterMapping((s, d) =>
+            {
+                d.FirstName = s.FirstName?.Trim();
+                d.LastName = s.LastName?.Trim();
+                d.Name = string.IsNullOrWhiteSpace(s.Name)
+                    ? $"{d.FirstName} {d.LastName}".Trim()
+                    : s.Name.Trim();
+            });
+
+        // ===== InspectorSkillSaveDto -> InspectorSkill (new link rows) =====
+        config.NewConfig<InspectorSkillSaveDto, InspectorSkill>()
+            .Ignore(d => d.InspectorSkillId, d => d.InspectorId, d => d.Inspector, d => d.Skill)
+            .AfterMapping((s, d) => d.InspectorSkillId = Guid.NewGuid());
+
+        // ===== documents =====
+        config.NewConfig<DocumentType, DocumentTypeDto>()
+            .Map(d => d.AllowedExtensions, s => ParseExtensions(s.AllowedExtensions));
+
+        // File name, size and type name come from other sources and are set in DocumentService
+        config.NewConfig<Document, DocumentDto>()
+            .Ignore(d => d.DocumentTypeName, d => d.FileName, d => d.SizeBytes);
+
+
+
+
+        //   TypeAdapterConfig<Inspector, InspectorDto>.NewConfig()
+        //  .Map(dest => dest.Description, src => src.Description)
+        //  .Map(dest => dest.Name, src => src.Name)
+        //  .Map(dest => dest.LastName, src => src.LastName)
+        //  .Map(dest => dest.FirstName, src => src.FirstName)
+        //  .Map(dest => dest.Email, src => src.Email)
+        //  .Map(dest => dest.Phone, src => src.Phone)
+        //  .Map(dest => dest.Position, src => src.Position)
+        //  //.Map(dest => dest.ContactId, src => src.ContactId)
+        //  .Map(dest => dest.InspectorId, src => src.InspectorId)
+        //  .Map(dest => dest.CreatedDate, src => src.CreatedDate)
+        //  .Map(dest => dest.ExpireDate, src => src.ExpireDate)
+        //  .Map(dest => dest.InspectionCompanyContactId, src => src.InspectionCompanyContactId)
+        //  .Map(dest => dest.IsActive, src => src.IsActive)
+        //  .Map(dest => dest.QCApprovalState, src => src.QCApprovalState)
+        //  .IgnoreNonMapped(true);
+
+        //   TypeAdapterConfig<InspectorDto, Inspector>.NewConfig()
+        //     .Map(dest => dest.Description, src => src.Description)
+        //     .Map(dest => dest.Name, src => src.Name)
+        //     .Map(dest => dest.LastName, src => src.LastName)
+        //     .Map(dest => dest.FirstName, src => src.FirstName)
+        //     .Map(dest => dest.Email, src => src.Email)
+        //     .Map(dest => dest.Phone, src => src.Phone)
+        //     .Map(dest => dest.Position, src => src.Position)
+        //     //.Map(dest => dest.ContactId, src => src.ContactId)
+        //     .Map(dest => dest.InspectorId, src => src.InspectorId)
+        //     .Map(dest=>dest.CreatedDate, src=> src.CreatedDate)
+        //     .Map(dest=>dest.ExpireDate, src=> src.ExpireDate)
+        //     .Map(dest => dest.InspectionCompanyContactId , src => src.InspectionCompanyContactId)
+        //     .Map(dest => dest.IsActive, src => src.IsActive)
+        //     .Map(dest => dest.QCApprovalState, src => src.QCApprovalState)
+        //     .IgnoreNonMapped(true);
+
+
+        TypeAdapterConfig<InspectionSkillDto, InspectionSkill>.NewConfig()
+     .Map(dest => dest.SkillId, src => src.SkillId)
+     .Map(dest => dest.Code, src => src.Code)
+     .Map(dest => dest.Name, src => src.Name)
+     .Map(dest => dest.IsActive, src => src.IsActive);
+
+
+        TypeAdapterConfig<InspectionSkill, InspectionSkillDto>.NewConfig()
+           .Map(dest => dest.SkillId, src => src.SkillId)
+           .Map(dest => dest.Code, src => src.Code)
+           .Map(dest => dest.Name, src => src.Name)
+           .Map(dest => dest.IsActive, src => src.IsActive)
+           .Ignore(d => d.InspectorCount); 
+
+
+        //   TypeAdapterConfig<InspectorSkill, InspectorSkillDto>.NewConfig()
+        //    .Map(dest => dest.SkillId, src => src.SkillId)
+        //    .Map(dest => dest.Code, src => src.Skill.Code)
+        //    .Map(dest => dest.Name, src => src.Skill.Name)
+        //    .Map(dest => dest.Level, src => src.Level);
+
+        //   TypeAdapterConfig<InspectorSkillDto, InspectorSkill>.NewConfig()
+        //  .Map(dest => dest.SkillId, src => src.SkillId)
+        //  .Map(dest => dest.Level, src => src.Level);
+
+        TypeAdapterConfig<InspectionNotificationInspector, InspectionNotificationInspectorDto>.NewConfig()
+    .Map(dest => dest.InspectionInspectorId, src => src.InspectionInspectorId)
+    .Map(dest => dest.InspectorId, src => src.InspectorId)
+    .Map(dest => dest.Remarks, src => src.Remarks)
+    .Map(dest => dest.ApprovedDate, src => src.ApprovedDate)
+    .Map(dest => dest.ApprovalStatus, src => src.ApprovalStatus)
+    .Map(dest => dest.InspectionNotificationId, src => src.InspectionNotificationId)   
+    .Map(dest => dest.Inspector,
+                    src => src.Inspector == null ? null : src.Inspector.Adapt<Inspector>())
+    .Map(dest => dest.ApprovedBy, src => src.ApprovedBy);
+
 
         TypeAdapterConfig<InspectionReport, InspectionReportDto>.NewConfig()
           .Map(dest => dest.CurrentStatus, src => (int)src.CurrentStatus)          
@@ -273,7 +388,7 @@ public class MappingProfile : IRegister
         .Map(dest => dest.RelatedInspectionNotificationId, src => src.RelatedInspectionNotificationId)
         .Map(dest => dest.RequestIdOfRelatedInspectionNotification, src => src.RequestIdOfRelatedInspectionNotification)
         .Map(dest => dest.RevisionId, src => src.RevisionId)
-        .Map(dest => dest.Inspectors, src => src.Inspectors.Adapt<List<Inspector>>())       
+        .Map(dest => dest.Inspectors, src => src.Inspectors.Adapt<List<InspectorDto>>())       
         .IgnoreNonMapped(true);
         
         // Map Circulation to CirculationDto
@@ -539,6 +654,14 @@ public class MappingProfile : IRegister
             .Map(dest => dest.UserId, src => src.Contact.UserId)
             .IgnoreNonMapped(true);
 
+
+
+
+        // The dropdown used by the inspector form: your column is ContactType, the DTO calls it ContactTypeCode
+        TypeAdapterConfig<Contact, ContactOptionDto>.NewConfig()
+            .Map(d => d.ContactTypeCode, s => s.ContactType.Value)
+            .Map(d => d.Name, s => s.Name)
+            .Map(d => d.ContactId, s => s.ContactId);
 
         TypeAdapterConfig<RevisionDto, InspectionNotificationRevision>.NewConfig()
          .Map(dest => dest.RevisionId, src => src.RevisionId)
@@ -807,6 +930,8 @@ public class MappingProfile : IRegister
     .Map(dest => dest.Mobile, src => src.Mobile ?? string.Empty)
     .Map(dest => dest.ContactType, src => src.ContactType ?? 0)
     .Map(dest => dest.UserId, src => src.UserId ?? string.Empty)
+    .Map(d => d.ContactTypeName,
+                 s => s.ContactType == null ? null : ((ContactType)s.ContactType.Value).ToString())
     .IgnoreNonMapped(true);
 
 
@@ -1092,5 +1217,23 @@ public class MappingProfile : IRegister
                       .IgnoreNonMapped(true);
 
 
+    }
+
+    public static string[] ParseExtensions(string? allowed)
+    {
+        if (string.IsNullOrWhiteSpace(allowed)) return Array.Empty<string>();
+
+        var parts = allowed
+            .Split(new[] { ',', ';', ' ', '|' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(p => p.ToLowerInvariant())
+            .ToList();
+
+        if (parts.Contains("*") || parts.Contains("*.*")) return Array.Empty<string>();
+
+        return parts
+            .Select(p => p.TrimStart('*'))
+            .Select(p => p.StartsWith('.') ? p : "." + p)
+            .Distinct()
+            .ToArray();
     }
 }

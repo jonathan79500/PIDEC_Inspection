@@ -1,3 +1,5 @@
+
+
 import { InspectionReport } from './../Models/InspectionReport.model';
 import { Attachment } from './../Models/Attachment.model';
 import { Circulation } from './../Models/Circulation.model';
@@ -208,10 +210,7 @@ export class InspectionService {
      return this.http.post<Circulation>(this.InspectionAPIPath+'/'+"CompleteTask",formData);//,{ headers: headers });
   }
 
-  // async saveNewInspectionFull(formData: FormData)
-  // {
-  //   return await lastValueFrom(this.http.post(this.InspectionAPIPath+'/'+"SendInspectionNotification",formData))
-  // }
+
 FetchFileFromServer(id:string)
 {
   window.open(this.InspectionAPIPath + "/GetAttachmentById/" + id, "_blank");

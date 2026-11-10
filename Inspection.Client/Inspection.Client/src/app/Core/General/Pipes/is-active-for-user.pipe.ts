@@ -19,7 +19,7 @@ export class IsActiveForUserPipe implements PipeTransform {
       performer1 != null &&
       performer2 != null &&
       performer1.id === performer2.id &&
-      (circulation.performedActionDateGregorian == null || circulation.performedActionDateGregorian.toString().trim() ==='0001-01-01T00:00:00')
+      (circulation.performedActionDateGregorian == null || circulation.performedActionDateGregorian.getFullYear()==1)
     );
   }
 }

@@ -1,0 +1,222 @@
+<section class="page">
+  <header class="page-head">
+    <h1>Document types</h1>
+    <p>
+      {{
+        isEditMode()
+          ? "Editing an existing document type"
+          : "Add a new document type"
+      }}
+    </p>
+  </header>
+
+  @if (message(); as msg) {
+    <div
+      class="banner"
+      [class.banner-error]="msg.type === 'error'"
+      role="status"
+    >
+      {{ msg.text }}
+    </div>
+  }
+
+  <!-- ===================== FORM ===================== -->
+  <form class="form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="grid">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" formControlName="documentTypeName" />
+        @if (hasError("documentTypeName", "required")) {
+          <small class="error">Name is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="code">Code</label>
+        <input id="code" type="number" formControlName="documentTypeCode" />
+        @if (
+          hasError("documentTypeCode", "required") ||
+          hasError("documentTypeCode", "min")
+        ) {
+          <small class="error">Enter a code greater than 0.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="extensions">Allowed extensions</label>
+        <input
+          id="extensions"
+          type="text"
+          formControlName="allowedExtensions"
+          placeholder="* or .pdf,.docx"
+        />
+        <small class="hint"
+          >"*" allows any file type. Otherwise: ".pdf,.docx" or
+          "pdf;docx".</small
+        >
+      </div>
+
+      <div class="field">
+        <label for="maxSize">Max size (MB)</label>
+        <input id="maxSize" type="number" formControlName="maxSizeMB" />
+        @if (hasError("maxSizeMB", "min") || hasError("maxSizeMB", "max")) {
+          <small class="error">Enter a value between 1 and 10240.</small>
+        }
+      </div>
+    </div>
+
+    <fieldset class="panel">
+      <legend>Rules</legend>
+      <div class="checks">
+        <label class="check">
+          <input type="checkbox" formControlName="multipleAllowed" />
+          <span>Allow more than one document of this type per owner</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="requiresName" />
+          <span>A name must be entered</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="requiresNumber" />
+          <span>A number must be entered</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="requiresReview" />
+          <span>Needs review before it becomes active</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="requiresApproval" />
+          <span>Needs approval before it becomes active</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="isActive" />
+          <span>Active (offered when attaching a document)</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="panel">
+      <legend>Visible to contact types</legend>
+      <p class="hint">
+        Only the contact types checked here can attach this document type.
+      </p>
+      <div class="contact-type-list">
+        @for (c of contactTypes; track c.value) {
+          <label class="check">
+            <input
+              type="checkbox"
+              [checked]="isContactTypeChecked(c.value)"
+              (change)="toggleContactType(c.value, $any($event.target).checked)"
+            />
+            <span>{{ c.label }}</span>
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        {{
+          saving()
+            ? "Saving..."
+            : isEditMode()
+              ? "Save changes"
+              : "Add document type"
+        }}
+      </button>
+      @if (isEditMode()) {
+        <button type="button" class="btn" (click)="resetForm()">
+          Cancel edit
+        </button>
+      } @else {
+        <button type="button" class="btn" (click)="resetForm()">Clear</button>
+      }
+    </div>
+  </form>
+
+  <!-- ===================== GRID ===================== -->
+  <div class="table-head">
+    <h2>All document types</h2>
+    <span class="count">{{ types().length }} total</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Extensions</th>
+          <th>Max size</th>
+          <th>Rules</th>
+          <th>Visible to</th>
+          <th>Documents</th>
+          <th>Status</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="9" class="empty">Loading document types...</td>
+          </tr>
+        } @else {
+          @for (t of types(); track t.documentTypeId) {
+            <tr [class.row-editing]="t.documentTypeId === editingId()">
+              <td>{{ t.documentTypeName }}</td>
+              <td>{{ t.documentTypeCode }}</td>
+              <td>{{ t.allowedExtensions }}</td>
+              <td>{{ t.maxSizeMB }} MB</td>
+              <td class="cell-wrap">
+                @if (t.requiresName) {
+                  <span class="chip">Name</span>
+                }
+                @if (t.requiresNumber) {
+                  <span class="chip">Number</span>
+                }
+                @if (t.requiresReview) {
+                  <span class="chip chip-wait">Review</span>
+                }
+                @if (t.requiresApproval) {
+                  <span class="chip chip-wait">Approval</span>
+                }
+                @if (!t.multipleAllowed) {
+                  <span class="chip">Single only</span>
+                }
+              </td>
+              <td class="cell-wrap">{{ contactTypeNames(t) }}</td>
+              <td>{{ t.documentCount }}</td>
+              <td>
+                <span
+                  class="chip"
+                  [class.chip-ok]="t.isActive"
+                  [class.chip-bad]="!t.isActive"
+                >
+                  {{ t.isActive ? "Active" : "Inactive" }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <button type="button" class="link" (click)="edit(t)">
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="link link-danger"
+                  (click)="remove(t)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="empty">
+                No document types yet. Use the form above to add the first one.
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

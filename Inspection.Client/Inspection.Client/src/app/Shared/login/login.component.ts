@@ -54,10 +54,10 @@ export class LoginComponent  implements OnInit{
 
     // userName:'',
     //  password:'',
-    //   userName:'1235-EL-509A-1345',
-    //  password:'49gpa',
-     userName:'akbari.elahe',
-      password:'@2050926Rr',
+      userName:'1235-EL-509A-1345',
+     password:'49gpa',
+    //  userName:'akbari.elahe',
+    //   password:'@2050926Rr',
     //   userName:'monavari.ali',
 
     // password:'Z#6b^Fkd3#^g',

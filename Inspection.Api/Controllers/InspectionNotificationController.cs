@@ -575,15 +575,28 @@ public class InspectionNotificationController : ControllerBase
                     // Here you can persist metadata + file path to DB
                 }
             }
-            var command = new SendInspectionNotificationCommand
-            {
-                CreateInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
-                ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
-                CurrentCirculationDto = JsonConvert.DeserializeObject<CirculationDto>(inspectionUpload.currentCirculation),
-                AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
-            };      
 
-            var response = await _mediator.Send(command);
+            SendInspectionNotificationCommand command;
+            if (inspectionUpload.currentCirculation != null)
+                command = new SendInspectionNotificationCommand
+                {
+                    CreateInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
+                    ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
+                    CurrentCirculationDto = JsonConvert.DeserializeObject<CirculationDto>(inspectionUpload.currentCirculation),
+                    AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
+                };
+            else
+            {
+                command = new SendInspectionNotificationCommand
+                {
+                    CreateInspectionNotificationDto = JsonConvert.DeserializeObject<CreateInspectionNotificationDto>(inspectionUpload.inspection),
+                    ProjectDto = JsonConvert.DeserializeObject<ProjectDto>(inspectionUpload.project),
+                    CurrentCirculationDto =null,
+                    AttachmentDtos = attachmentDtos//inspectionUpload.Attachments
+                };
+            }
+
+                var response = await _mediator.Send(command);
             return Ok(new
             {
                 Inspection = response.Item1,

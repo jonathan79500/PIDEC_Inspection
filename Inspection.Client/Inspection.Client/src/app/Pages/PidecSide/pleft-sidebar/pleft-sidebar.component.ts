@@ -55,6 +55,18 @@ effect(()=>{
       imageName:'assets/list01.png'
     },
     {
+      routeLink: 'InspectorManager',
+      icon: 'fal fa-file',
+      label: 'Manage Inspectors',
+      imageName:'assets/green-add-button-12023.png'
+    },
+    {
+      routeLink: 'DocumentTypeManager',
+      icon: 'fal fa-file',
+      label: 'Manage Document Types',
+      imageName:'assets/green-add-button-12023.png'
+    },
+    {
       routeLink: 'NotStartedTasks',
       icon: 'fal fa-file',
       label: 'Received Inspections',

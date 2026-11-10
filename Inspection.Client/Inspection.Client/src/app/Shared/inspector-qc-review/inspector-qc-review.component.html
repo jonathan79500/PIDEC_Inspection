@@ -1,0 +1,76 @@
+<section class="page">
+  <header class="page-head">
+    <h1>Inspector QC review</h1>
+    <p>Inspectors submitted by inspection companies, awaiting a decision.</p>
+  </header>
+
+  @if (message(); as msg) {
+    <div
+      class="banner"
+      [class.banner-error]="msg.type === 'error'"
+      role="status"
+    >
+      {{ msg.text }}
+    </div>
+  }
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Contact</th>
+          <th>Skills</th>
+          <th>Submitted</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="6" class="empty">Loading...</td>
+          </tr>
+        } @else {
+          @for (i of inspectors(); track i.inspectorId) {
+            <tr>
+              <td>{{ i.name || i.firstName + " " + i.lastName }}</td>
+              <td>{{ i.position || "-" }}</td>
+              <td>{{ i.inspectionCompanyContactName || "-" }}</td>
+              <td class="cell-wrap">
+                @for (s of i.skills; track s.skillId) {
+                  <span class="chip">{{ s.code }}</span>
+                } @empty {
+                  <span class="muted">-</span>
+                }
+              </td>
+              <td>{{ i.createdDate | date: "dd.MM.yyyy" }}</td>
+              <td class="col-actions">
+                <button
+                  type="button"
+                  class="btn btn-ok"
+                  [disabled]="busyId() === i.inspectorId"
+                  (click)="approve(i)"
+                >
+                  Approve
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-bad"
+                  [disabled]="busyId() === i.inspectorId"
+                  (click)="reject(i)"
+                >
+                  Reject
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty">Nothing waiting for review.</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

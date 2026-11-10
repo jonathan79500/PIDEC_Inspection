@@ -275,7 +275,7 @@ findVendorAttachments(
 
 CalculateShownNotificationNumber( notificationNumber: string):string{
   let [mainNo, rev] = notificationNumber != null ? notificationNumber.split('.') : ["", ""];
-  return mainNo;
+  return mainNo+'.'+rev;
 }
 
 calculateShownRevisionNumber(
@@ -283,6 +283,7 @@ calculateShownRevisionNumber(
     increase: boolean
 ): string {
 
+  if (typeof revisionNumber === 'string') {
   let [mainNo, revStr] =revisionNumber!=""? revisionNumber.split('.') : ["", ""];
 
     const rev = Number(revStr);
@@ -290,6 +291,14 @@ calculateShownRevisionNumber(
     return increase
         ? (rev + 1).toString().padStart(2, '0')
         : rev.toString().padStart(2, '0');
+  }else
+  {
+
+
+    return increase
+        ? (revisionNumber + 1).toString().padStart(2, '0')
+        : (revisionNumber+0).toString().padStart(2, '0');
+  }
 }
 
 // findChildrenByParent(

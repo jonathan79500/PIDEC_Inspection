@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { IWorkflowHandler } from "../Interfaces/IWorkflowHandler";
 import { InspectionWorkflowContext } from "../InspectionWorkflowContext.model";
 import { ContactTypes } from "../../Models/ContactTypes.enum";
 import { InspectionWorkflowViewModel } from "../InspectionWorkflowViewModel.model";
@@ -8,8 +7,14 @@ import { WorkflowSearchHelper } from "../WorkflowSearchHelper";
 import { WorkflowHandlerBase } from "./WorkflowHandlerBase";
 
 @Injectable()
-export class VendorWorkflowHandler
-extends WorkflowHandlerBase {
+export class VendorWorkflowHandler extends WorkflowHandlerBase {
+
+  canHandle(context: InspectionWorkflowContext): boolean {
+
+        return context.currentCirculation.performerContactType ==
+                ContactTypes.Vendor;
+    }
+
   override isActive(circulation: Circulation, context: InspectionWorkflowContext): boolean {
       if (!this.canCurrentUserAct(circulation, context))
         return false;
@@ -17,7 +22,19 @@ extends WorkflowHandlerBase {
     return true;
   }
 
-    override build(
+     public override isEditable(
+        context: InspectionWorkflowContext): boolean {
+
+              const actionDate = context.currentCirculation.performedActionDateGregorian
+    ? new Date(context.currentCirculation.performedActionDateGregorian)
+    : null;
+
+const editable =
+    actionDate?.getFullYear() === 1;
+        return editable;
+    }
+
+     build(
         context: InspectionWorkflowContext
     ): InspectionWorkflowViewModel {
 
@@ -73,11 +90,7 @@ extends WorkflowHandlerBase {
         return vm;
     }
 
-     canHandle(context: InspectionWorkflowContext): boolean {
 
-        return context.currentCirculation.performerContactType ==
-                ContactTypes.Vendor;
-    }
 
 
 }

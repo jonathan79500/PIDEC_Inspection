@@ -1,8 +1,11 @@
 using Dapper;
 using Inspection;
 using Inspection.Api;
+using Inspection.Api.Filters;
 using Inspection.Api.Middlewares;
+using Inspection.Api.Services;
 using Inspection.Application;
+using Inspection.Application.Contracts.Infrastructure;
 using Inspection.Domain.Entities.InspectionNotification.Entities;
 using Inspection.Domain.Entities.InspectionNotification.ValueObjects;
 using Inspection.Domain.Entities.User.Entities;
@@ -23,6 +26,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json.Serialization;
 
 // Register your type handlers before building the host
 SqlMapper.AddTypeHandler(new ProjectIdTypeHandler());
@@ -73,6 +77,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 
 //------------------------------------------------------------------------------------------------------
+builder.Services.AddSingleton<IAttachmentStore, LocalDiskAttachmentStore>();
 
 // Get the server URL from configuration
 var serverUrl = builder.Configuration["BaseUrl"] ?? "https://localhost:5000";
@@ -171,8 +176,11 @@ builder.Services.AddSwaggerGen(c =>
 
 
 builder.Services.AddEndpointsApiExplorer();
-  
-    builder.Services.AddCors(o =>
+builder.Services
+    .AddControllers(o => o.Filters.Add<ApiExceptionFilter>())
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.AddCors(o =>
     o.AddPolicy("CorsPolicy",
     builder => builder
      //.WithOrigins(
@@ -189,7 +197,6 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Add services to the container.
 var app = builder.Build();
-    app.UseDeveloperExceptionPage();
 app.UseCors("CorsPolicy");
 
 //app.UseExceptionHandlingMiddleware();
@@ -208,18 +215,22 @@ app.MapGroup("Identity").MapIdentityApi<SystematicUser>();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
+
     app.UseSwagger();
     app.UseSwaggerUI();
+    Console.WriteLine(
+    $"Current Environment: {app.Environment.EnvironmentName}");
 }
 
 //app.UseHttpsRedirection();  
 
-   
 
 
-  
 
-    app.MapControllers();
+
+
+app.MapControllers();
 
 //app.Use(async (context, next) =>
 //{

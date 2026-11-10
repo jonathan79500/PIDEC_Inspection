@@ -181,22 +181,28 @@ namespace Inspection.Persistence.Migrations
                     b.Property<DateTime?>("IssueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("OwnerType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Number")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Version")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("DocumentId");
 
-                    b.ToTable("Documents");
+                    b.HasIndex("DocumentTypeId");
+
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.DocumentLink", b =>
@@ -204,13 +210,17 @@ namespace Inspection.Persistence.Migrations
                     b.Property<Guid>("DocumentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("OwnerType")
                         .HasColumnType("int");
 
-                    b.ToTable("DocumentLinks");
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("DocumentId", "OwnerType", "OwnerId");
+
+                    b.HasIndex("OwnerType", "OwnerId");
+
+                    b.ToTable("DocumentLinks", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.DocumentType", b =>
@@ -221,14 +231,16 @@ namespace Inspection.Persistence.Migrations
 
                     b.Property<string>("AllowedExtensions")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("DocumentTypeCode")
                         .HasColumnType("int");
 
                     b.Property<string>("DocumentTypeName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -253,18 +265,23 @@ namespace Inspection.Persistence.Migrations
 
                     b.HasKey("DocumentTypeId");
 
-                    b.ToTable("DocumentTypes");
+                    b.HasIndex("DocumentTypeCode")
+                        .IsUnique();
+
+                    b.ToTable("DocumentTypes", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.DocumentTypeVisibility", b =>
                 {
-                    b.Property<int>("ContactTypeCode")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("DocumentTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.ToTable("DocumentTypeVisibilities");
+                    b.Property<int>("ContactTypeCode")
+                        .HasColumnType("int");
+
+                    b.HasKey("DocumentTypeId", "ContactTypeCode");
+
+                    b.ToTable("DocumentTypeVisibilities", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Common.InspectionSubject", b =>
@@ -1076,23 +1093,57 @@ namespace Inspection.Persistence.Migrations
             modelBuilder.Entity("Inspection.Domain.Entities.Inspector.InspectionSkill", b =>
                 {
                     b.Property<Guid>("SkillId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("SkillId");
 
-                    b.ToTable("InspectionSkills");
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("InspectionSkills", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            SkillId = new Guid("22222222-2222-2222-2222-000000000001"),
+                            Code = "VT",
+                            IsActive = true,
+                            Name = "Visual Testing"
+                        },
+                        new
+                        {
+                            SkillId = new Guid("22222222-2222-2222-2222-000000000002"),
+                            Code = "RT",
+                            IsActive = true,
+                            Name = "Radiographic Testing"
+                        },
+                        new
+                        {
+                            SkillId = new Guid("22222222-2222-2222-2222-000000000003"),
+                            Code = "UT",
+                            IsActive = true,
+                            Name = "Ultrasonic Testing"
+                        },
+                        new
+                        {
+                            SkillId = new Guid("22222222-2222-2222-2222-000000000004"),
+                            Code = "MT",
+                            IsActive = true,
+                            Name = "Magnetic Particle Testing"
+                        });
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Inspector.Inspector", b =>
@@ -1100,14 +1151,22 @@ namespace Inspection.Persistence.Migrations
                     b.Property<Guid>("InspectorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("InspectionCompanyContactId")
                         .HasColumnType("uniqueidentifier");
@@ -1119,16 +1178,25 @@ namespace Inspection.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Position")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QCApprovalState")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("InspectorId");
 
@@ -1142,7 +1210,6 @@ namespace Inspection.Persistence.Migrations
             modelBuilder.Entity("Inspection.Domain.Entities.Inspector.InspectorSkill", b =>
                 {
                     b.Property<Guid>("InspectorSkillId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("InspectorId")
@@ -1150,14 +1217,20 @@ namespace Inspection.Persistence.Migrations
 
                     b.Property<string>("Level")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<Guid>("SkillId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("InspectorSkillId");
 
-                    b.ToTable("InspectorSkills");
+                    b.HasIndex("SkillId");
+
+                    b.HasIndex("InspectorId", "SkillId")
+                        .IsUnique();
+
+                    b.ToTable("InspectorSkills", (string)null);
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -1731,6 +1804,33 @@ namespace Inspection.Persistence.Migrations
                     b.Navigation("Inspector");
                 });
 
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.Document", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Common.DocumentType", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.DocumentLink", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Common.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Common.DocumentTypeVisibility", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Common.DocumentType", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Inspection.Domain.Entities.Common.Request", b =>
                 {
                     b.HasOne("Inspection.Domain.Entities.Contacts.Contact", "CreatorContactPerson")
@@ -1955,6 +2055,25 @@ namespace Inspection.Persistence.Migrations
                         .HasForeignKey("InspectionReportId");
 
                     b.Navigation("InspectionCompanyContact");
+                });
+
+            modelBuilder.Entity("Inspection.Domain.Entities.Inspector.InspectorSkill", b =>
+                {
+                    b.HasOne("Inspection.Domain.Entities.Inspector.Inspector", "Inspector")
+                        .WithMany("Skills")
+                        .HasForeignKey("InspectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inspection.Domain.Entities.Inspector.InspectionSkill", "Skill")
+                        .WithMany()
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Inspector");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>
@@ -2203,6 +2322,8 @@ namespace Inspection.Persistence.Migrations
             modelBuilder.Entity("Inspection.Domain.Entities.Inspector.Inspector", b =>
                 {
                     b.Navigation("InspectionNotifications");
+
+                    b.Navigation("Skills");
                 });
 
             modelBuilder.Entity("Inspection.Domain.Entities.Orders.Order", b =>

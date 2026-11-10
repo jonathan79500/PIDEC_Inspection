@@ -8,18 +8,27 @@ using System.Threading.Tasks;
 
 namespace Inspection.Domain.Entities.Common
 {
+
+
     public class Document
     {
         public Guid DocumentId { get; set; } = Guid.NewGuid();
         public AttachmentId? AttachmentId { get; set; }
-        public string? OwnerType { get; set; } = string.Empty;
-        public Guid? OwnerId { get; set; } 
+
+
+        // OwnerType and OwnerId removed — ownership now lives in DocumentLink
+
         public Guid DocumentTypeId { get; set; }
-        public string? Status { get; set; } = string.Empty;      
-        public string? ApprovedBy { get; set; } = string.Empty;
-        public DateTime? ApprovedDate { get; set; } = new DateTime();
-        public DateTime? IssueDate { get; set; } = new DateTime();
-        public DateTime? ExpireDate { get; set; } = new DateTime();
-        public string Version { get; set; } = "0";
+
+        // NEW: filled when the DocumentType has RequiresName / RequiresNumber
+        public string? Name { get; set; }
+        public string? Number { get; set; }
+
+        public string? Status { get; set; }          // PendingReview | PendingApproval | Active
+        public string? ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }  // null instead of new DateTime()
+        public DateTime? IssueDate { get; set; }
+        public DateTime? ExpireDate { get; set; }
+        public string Version { get; set; } = "1";
     }
 }

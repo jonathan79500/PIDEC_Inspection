@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Connected Services\DocumentService.cs" />
     <Compile Remove="TokenService.cs" />
   </ItemGroup> 
 

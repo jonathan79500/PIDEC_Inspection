@@ -9,7 +9,7 @@ namespace Inspection.Domain.Entities.Common
     public class DocumentLink
     {
         public Guid DocumentId { get; set; }
-        public int OwnerType { get; set; }
+        public int OwnerType { get; set; }     // (int)DocumentOwnerType
         public Guid OwnerId { get; set; }
     }
 }

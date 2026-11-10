@@ -20,6 +20,7 @@ public class ContactDto
     public string? Cc { get; set; } = string.Empty;
     public string? Mobile { get; set; } = string.Empty;
     public int? ContactType { get; set; }
+    public string? ContactTypeName { get; set; }      // "PidecInspector", "TPInspector" ...
     public bool? IsVisible { get; set; }
     public string? UserId {  get; set; }
     public string? Password { get; set; } = string.Empty;

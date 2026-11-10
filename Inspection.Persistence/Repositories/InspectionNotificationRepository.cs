@@ -1184,7 +1184,696 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
         return (null, null);
     }
 
-    public async Task<(InspectionNotification, Circulation)> ModifyInspectionNotification(Circulation currentCirculation,InspectionNotification rawinspectionNotification,List<Attachment> attachments)
+  
+//public async Task<(InspectionNotification, Circulation)> ModifyInspectionNotification(
+//    Circulation currentCirculation,
+//    InspectionNotification rawInspectionNotification,
+//    List<Attachment> attachments)
+//    {
+//        try
+//        {
+//            // ============================================================
+//            // 1. Load existing Circulation
+//            // ============================================================
+
+//            var dbCirculation = await _dbContext.Circulations
+//                .FirstOrDefaultAsync(x => x.Id == currentCirculation.Id);
+
+//            if (dbCirculation == null)
+//                throw new Exception(
+//                    $"Circulation {currentCirculation.Id} was not found.");
+
+
+//            // ============================================================
+//            // 2. Load existing InspectionNotification
+//            // ============================================================
+
+//            var inspectionNotification =
+//                await _dbContext.InspectionNotifications
+//                    .FirstOrDefaultAsync(x =>
+//                        x.InspectionNotificationId ==
+//                        rawInspectionNotification.InspectionNotificationId);
+
+//            if (inspectionNotification == null)
+//                throw new Exception(
+//                    $"InspectionNotification " +
+//                    $"{rawInspectionNotification.InspectionNotificationId} " +
+//                    $"was not found.");
+
+
+//            // ============================================================
+//            // 3. Update scalar properties of InspectionNotification
+//            // ============================================================
+
+//            // Do NOT replace the entity with CreateByUniqueId().
+//            // We are modifying the existing database entity.
+
+            
+//            inspectionNotification.NotificationNumber =
+//                NotificationNumber
+//                    .CreateFromString(
+//                        rawInspectionNotification.NotificationNumber)
+//                    .IncreaseRevision()
+//                    .ToString();
+            
+//            inspectionNotification.EquipmentTagNo =
+//                rawInspectionNotification.EquipmentTagNo;            
+
+//            inspectionNotification.InspectionTimeComment =
+//                rawInspectionNotification.InspectionTimeComment;
+
+//            inspectionNotification.InspectionAction =
+//                rawInspectionNotification.InspectionAction;
+
+//            inspectionNotification.RequestInspectionDueDate =
+//                rawInspectionNotification.RequestInspectionDueDate;
+
+//            inspectionNotification.RequestInspectionPersianDateStart =
+//                rawInspectionNotification.RequestInspectionPersianDateStart;
+
+//            inspectionNotification.RequestInspectionDateStart =
+//                rawInspectionNotification.RequestInspectionDateStart;
+
+//            inspectionNotification.RequestInspectionPersianDateEnd =
+//                rawInspectionNotification.RequestInspectionPersianDateEnd;
+
+//            inspectionNotification.RequestInspectionDateEnd =
+//                rawInspectionNotification.RequestInspectionDateEnd;
+
+//            inspectionNotification.IssueDate =
+//                rawInspectionNotification.IssueDate;
+
+//            inspectionNotification.PersianIssueDate =
+//                rawInspectionNotification.PersianIssueDate;
+
+
+//            // ============================================================
+//            // 4. Order
+//            // ============================================================
+
+//            if (rawInspectionNotification.Order != null)
+//            {
+//                var existingOrder = await _dbContext.Orders
+//                    .FirstOrDefaultAsync(o =>
+//                        o.EdmsId ==
+//                        rawInspectionNotification.Order.EdmsId);
+
+//                if (existingOrder != null)
+//                {
+//                    inspectionNotification.SetOrder(existingOrder);
+//                }
+//                else
+//                {
+//                    var newOrder = rawInspectionNotification.Order;
+
+//                    _dbContext.Orders.Add(newOrder);
+
+//                    inspectionNotification.SetOrder(newOrder);
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 5. Contacts
+//            // ============================================================
+
+//            if (rawInspectionNotification.Contacts != null)
+//            {
+//                foreach (var incomingContactLink
+//                         in rawInspectionNotification.Contacts.ToList())
+//                {
+//                    if (incomingContactLink.Contact == null &&
+//                        incomingContactLink.ContactId == null)
+//                    {
+//                        continue;
+//                    }
+
+//                    Contact? contact = null;
+
+//                    // ----------------------------------------------------
+//                    // Find existing Contact
+//                    // ----------------------------------------------------
+
+//                    if (incomingContactLink.ContactId != null)
+//                    {
+//                        contact = await _dbContext.Contacts
+//                            .FirstOrDefaultAsync(c =>
+//                                c.ContactId ==
+//                                incomingContactLink.ContactId);
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Contact does not exist -> INSERT
+//                    // ----------------------------------------------------
+
+//                    if (contact == null)
+//                    {
+//                        if (incomingContactLink.Contact == null)
+//                            continue;
+
+//                        contact = incomingContactLink.Contact;
+
+//                        _dbContext.Contacts.Add(contact);
+//                    }
+//                    else
+//                    {
+//                        // ------------------------------------------------
+//                        // Contact exists -> UPDATE
+//                        // ------------------------------------------------
+
+//                        if (incomingContactLink.Contact != null)
+//                        {
+//                            contact.Name =
+//                                incomingContactLink.Contact.Name;
+
+//                            contact.Mobile =
+//                                incomingContactLink.Contact.Mobile;
+
+//                            contact.Phone =
+//                                incomingContactLink.Contact.Phone;
+
+//                            contact.ContactType =
+//                                incomingContactLink.Contact.ContactType;
+//                        }
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Add relationship if it doesn't already exist
+//                    // ----------------------------------------------------
+
+//                    var relationshipExists =
+//                        await _dbContext
+//                            .InspectionNotificationsContacts
+//                            .AnyAsync(x =>
+//                                x.InspectionNotificationId ==
+//                                    inspectionNotification
+//                                        .InspectionNotificationId &&
+//                                x.ContactId ==
+//                                    contact.ContactId);
+
+//                    if (!relationshipExists)
+//                    {
+//                        _dbContext.InspectionNotificationsContacts.Add(
+//                            new InspectionNotificationContact
+//                            {
+//                                InspectionNotificationId =
+//                                    inspectionNotification
+//                                        .InspectionNotificationId,
+
+//                                ContactId =
+//                                    contact.ContactId
+//                            });
+//                    }
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 6. Subjects
+//            // ============================================================
+
+//            if (rawInspectionNotification.Subjects != null)
+//            {
+//                foreach (var incomingSubjectLink
+//                         in rawInspectionNotification.Subjects.ToList())
+//                {
+//                    if (incomingSubjectLink.InspectionSubjectId == null &&
+//                        incomingSubjectLink.InspectionSubject == null)
+//                    {
+//                        continue;
+//                    }
+
+//                    InspectionSubject? subject = null;
+
+//                    // ----------------------------------------------------
+//                    // Find existing Subject
+//                    // ----------------------------------------------------
+
+//                    if (incomingSubjectLink.InspectionSubjectId != null)
+//                    {
+//                        subject = await _dbContext.InspectionSubjects
+//                            .FirstOrDefaultAsync(x =>
+//                                x.InspectionSubjectId ==
+//                                incomingSubjectLink.InspectionSubjectId);
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Subject does not exist -> INSERT
+//                    // ----------------------------------------------------
+
+//                    if (subject == null)
+//                    {
+//                        if (incomingSubjectLink.InspectionSubject == null)
+//                            continue;
+
+//                        subject = incomingSubjectLink.InspectionSubject;
+
+//                        _dbContext.InspectionSubjects.Add(subject);
+//                    }
+//                    else
+//                    {
+//                        // ------------------------------------------------
+//                        // Subject exists -> UPDATE
+//                        // ------------------------------------------------
+
+//                        if (incomingSubjectLink.InspectionSubject != null)
+//                        {
+//                            subject.Name =
+//                                incomingSubjectLink
+//                                    .InspectionSubject.Name;
+
+//                        }
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Add relationship if missing
+//                    // ----------------------------------------------------
+
+//                    var relationshipExists =
+//                        await _dbContext
+//                            .InspectionNotificationSubjects
+//                            .AnyAsync(x =>
+//                                x.InspectionNotificationId ==
+//                                    inspectionNotification
+//                                        .InspectionNotificationId &&
+//                                x.InspectionSubjectId ==
+//                                    subject.InspectionSubjectId);
+
+//                    if (!relationshipExists)
+//                    {
+//                        _dbContext.InspectionNotificationSubjects.Add(
+//                            new InspectionNotificationSubject
+//                            {
+//                                InspectionNotificationId =
+//                                    inspectionNotification
+//                                        .InspectionNotificationId,
+
+//                                InspectionSubjectId =
+//                                    subject.InspectionSubjectId
+//                            });
+//                    }
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 7. Locations
+//            // ============================================================
+
+//            if (rawInspectionNotification.Locations != null)
+//            {
+//                foreach (var incomingLocationLink
+//                         in rawInspectionNotification.Locations.ToList())
+//                {
+//                    if (incomingLocationLink.AddressId == null &&
+//                        incomingLocationLink.Location == null)
+//                    {
+//                        continue;
+//                    }
+
+//                    Address? address = null;
+
+//                    // ----------------------------------------------------
+//                    // Find existing Address
+//                    // ----------------------------------------------------
+
+//                    if (incomingLocationLink.AddressId != null)
+//                    {
+//                        address = await _dbContext.Addresses
+//                            .FirstOrDefaultAsync(x =>
+//                                x.Id ==
+//                                incomingLocationLink.AddressId);
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Address does not exist -> INSERT
+//                    // ----------------------------------------------------
+
+//                    if (address == null)
+//                    {
+//                        if (incomingLocationLink.Location == null)
+//                            continue;
+
+//                        address = incomingLocationLink.Location;
+
+//                        _dbContext.Addresses.Add(address);
+//                    }
+//                    else
+//                    {
+//                        // ------------------------------------------------
+//                        // Address exists -> UPDATE
+//                        // ------------------------------------------------
+
+//                        if (incomingLocationLink.Location != null)
+//                        {
+//                            address.Country =
+//                                incomingLocationLink.Location.Country;
+
+//                            address.City =
+//                                incomingLocationLink.Location.City;
+
+//                            address.State =
+//                                incomingLocationLink.Location.State;
+
+//                            address.ZipCode =
+//                                incomingLocationLink.Location.ZipCode;
+
+//                            address.StreetLine1 =
+//                                incomingLocationLink.Location.StreetLine1;
+
+//                            address.StreetLine2 =
+//                                incomingLocationLink.Location.StreetLine2;
+//                        }
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Add relationship if missing
+//                    // ----------------------------------------------------
+
+//                    var relationshipExists =
+//                        await _dbContext
+//                            .InspectionNotificationsLocations
+//                            .AnyAsync(x =>
+//                                x.InspectionNotificationId ==
+//                                    inspectionNotification
+//                                        .InspectionNotificationId &&
+//                                x.AddressId ==
+//                                    address.Id);
+
+//                    if (!relationshipExists)
+//                    {
+//                        _dbContext.InspectionNotificationsLocations.Add(
+//                            new InspectionNotificationLocation
+//                            {
+//                                InspectionNotificationId =
+//                                    inspectionNotification
+//                                        .InspectionNotificationId,
+
+//                                AddressId =
+//                                    address.Id
+//                            });
+//                    }
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 8. Inspection Types
+//            // ============================================================
+
+//            if (rawInspectionNotification.Types != null)
+//            {
+//                foreach (var incomingTypeLink
+//                         in rawInspectionNotification.Types.ToList())
+//                {
+//                    if (incomingTypeLink.InspectionTypeId == null &&
+//                        incomingTypeLink.InspectionType == null)
+//                    {
+//                        continue;
+//                    }
+
+//                    InspectionType? type = null;
+
+//                    // ----------------------------------------------------
+//                    // Find existing Type
+//                    // ----------------------------------------------------
+
+//                    if (incomingTypeLink.InspectionTypeId != null)
+//                    {
+//                        type = await _dbContext.InspectionTypes
+//                            .FirstOrDefaultAsync(x =>
+//                                x.InspectionTypeId ==
+//                                incomingTypeLink.InspectionTypeId);
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Type does not exist -> INSERT
+//                    // ----------------------------------------------------
+
+//                    if (type == null)
+//                    {
+//                        if (incomingTypeLink.InspectionType == null)
+//                            continue;
+
+//                        type = incomingTypeLink.InspectionType;
+
+//                        _dbContext.InspectionTypes.Add(type);
+//                    }
+//                    else
+//                    {
+//                        // ------------------------------------------------
+//                        // Type exists -> UPDATE
+//                        // ------------------------------------------------
+
+//                        if (incomingTypeLink.InspectionType != null)
+//                        {
+//                            type.Name =
+//                                incomingTypeLink.InspectionType.Name;
+//                        }
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Add relationship if missing
+//                    // ----------------------------------------------------
+
+//                    var relationshipExists =
+//                        await _dbContext
+//                            .InspectionNotificationsTypes
+//                            .AnyAsync(x =>
+//                                x.InspectionNotificationId ==
+//                                    inspectionNotification
+//                                        .InspectionNotificationId &&
+//                                x.InspectionTypeId ==
+//                                    type.InspectionTypeId);
+
+//                    if (!relationshipExists)
+//                    {
+//                        _dbContext.InspectionNotificationsTypes.Add(
+//                            new InspectionNotificationType
+//                            {
+//                                InspectionNotificationId =
+//                                    inspectionNotification
+//                                        .InspectionNotificationId,
+
+//                                InspectionTypeId =
+//                                    type.InspectionTypeId
+//                            });
+//                    }
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 9. Save notification + side objects
+//            // ============================================================
+
+//            await _dbContext.SaveChangesAsync();
+
+
+//            // ============================================================
+//            // 10. Create Revision
+//            // ============================================================
+
+//            var currentRevision =
+//                await _dbContext.Revisions
+//                    .FirstOrDefaultAsync(x =>
+//                        x.RevisionId == dbCirculation.RevisionId);
+
+//            if (currentRevision == null)
+//                throw new Exception(
+//                    $"Revision {dbCirculation.RevisionId} was not found.");
+
+//            var newRevision = new Revision
+//            {
+//                RequestId = currentRevision.RequestId,
+
+//                VersionNumber = currentRevision.VersionNumber,
+
+//                RevisionId = Guid.NewGuid(),
+
+//                RevisionNumber =
+//                    currentRevision.RevisionNumber + 1,
+
+//                Comment =
+//                    "Created in Modify process by Vendor",
+
+//                Status =
+//                    "ModifiedByVendor",
+
+//                SubmittedDate =
+//                    DateTime.Now,
+
+//                CreatedByCirculationId =
+//                    dbCirculation.Id
+//            };
+
+//            _dbContext.Revisions.Add(newRevision);
+
+
+//            // ============================================================
+//            // 11. Connect Notification to Revision
+//            // ============================================================
+
+//            var notificationRevision =
+//                new InspectionNotificationRevision
+//                {
+//                    InspectionNotificationId =
+//                        inspectionNotification
+//                            .InspectionNotificationId,
+
+//                    RevisionId =
+//                        newRevision.RevisionId,
+
+//                    Revision =
+//                        newRevision
+//                };
+
+//            _dbContext.InspectionNotificationRevisions.Add(
+//                notificationRevision);
+
+
+//            // ============================================================
+//            // 12. Update Circulation
+//            // ============================================================
+
+//            dbCirculation.PerformedActionDateGregorian =
+//                DateTime.Now;
+
+//            dbCirculation.PerformedActionDate =
+//                GetCurrentDate();
+
+//            dbCirculation.ActionType = 1;
+
+
+//            // ============================================================
+//            // 13. Attachments
+//            // ============================================================
+
+//            if (attachments != null)
+//            {
+//                foreach (var attachment in attachments)
+//                {
+//                    if (attachment == null)
+//                        continue;
+
+//                    Attachment? existingAttachment =
+//                        null;
+
+//                    if (attachment.Id != null)
+//                    {
+//                        existingAttachment =
+//                            await _dbContext.Attachments
+//                                .FirstOrDefaultAsync(a =>
+//                                    a.AttachmentId == attachment.Id);
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Existing attachment
+//                    // ----------------------------------------------------
+
+//                    AttachmentId attachmentId;
+
+//                    if (existingAttachment != null)
+//                    {
+//                        attachmentId =
+//                            existingAttachment.AttachmentId;
+//                    }
+//                    else
+//                    {
+//                        // ------------------------------------------------
+//                        // New attachment
+//                        // ------------------------------------------------
+
+//                        var newAttachment =
+//                            Attachment.Create(
+//                                attachment.Name,
+//                                attachment.Description,
+//                                attachment.Content,
+//                                attachment.Version,
+//                                "-1",
+//                                "0",
+//                                attachment.ContentType,
+//                                attachment.DocNo,
+//                                attachment.Status);
+
+//                        newAttachment.AttachmentId =
+//                            AttachmentId.CreateUnique();
+
+//                        _dbContext.Attachments.Add(
+//                            newAttachment);
+
+//                        attachmentId =
+//                            newAttachment.AttachmentId;
+//                    }
+
+//                    // ----------------------------------------------------
+//                    // Check whether attachment is already connected
+//                    // ----------------------------------------------------
+
+//                    var relationshipExists =
+//                        await _dbContext.CirculationAttachments
+//                            .AnyAsync(x =>
+//                                x.CirculationId ==
+//                                    dbCirculation.Id &&
+//                                x.AttachmentId ==
+//                                    attachmentId);
+
+//                    if (!relationshipExists)
+//                    {
+//                        _dbContext.CirculationAttachments.Add(
+//                            new CirculationAttachments
+//                            {
+//                                Id = Guid.NewGuid(),
+
+//                                CirculationId =
+//                                    dbCirculation.Id,
+
+//                                AttachmentId =
+//                                    attachmentId
+//                            });
+//                    }
+//                }
+//            }
+
+
+//            // ============================================================
+//            // 14. Final save
+//            // ============================================================
+
+//            await _dbContext.SaveChangesAsync();
+
+
+//            return (
+//                inspectionNotification,
+//                dbCirculation
+//            );
+//        }
+//        catch (Exception ex)
+//        {
+//            // IMPORTANT:
+//            // Do not silently swallow the exception.
+//            // Log it and rethrow it so the caller gets the error.
+
+//            // _logger.LogError(
+//            //     ex,
+//            //     "Error modifying InspectionNotification {Id}",
+//            //     rawInspectionNotification.InspectionNotificationId);
+
+//            return (null, null);
+//        }
+        
+//    }
+
+  
+    public string GetCurrentDate()
+    {
+        PersianDate pDate = PersianCelendar.GregorianToJalali(DateTime.Now);
+
+        string dpCurrentDate = JsonConvert.SerializeObject(pDate.Year.ToString() + "/" + pDate.Month.ToString() + "/" + pDate.Day.ToString(), Formatting.Indented);
+        return dpCurrentDate;
+    }
+
+    public async Task<(InspectionNotification, Circulation)> ModifyInspectionNotification(Circulation currentCirculation, InspectionNotification rawinspectionNotification, List<Attachment> attachments)
     {
 
         InspectionNotification inspectionNotification = null;
@@ -1317,7 +2006,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
 
                 Address existingLocation = null;
 
-                existingLocation = await _dbContext.Addresses.FirstOrDefaultAsync(c => c.Id == insLocation.AddressId && c.Country==insLocation.Location.Country
+                existingLocation = await _dbContext.Addresses.FirstOrDefaultAsync(c => c.Id == insLocation.AddressId && c.Country == insLocation.Location.Country
                 && c.City == insLocation.Location.City && c.State == insLocation.Location.State &&
                 c.ZipCode == insLocation.Location.ZipCode && c.StreetLine1 == insLocation.Location.StreetLine1
                  && c.StreetLine2 == insLocation.Location.StreetLine2);
@@ -1408,7 +2097,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                         //insType.InspectionType = findedType.InspectionType;
                     }
 
-                   // _dbContext.Entry(insType.InspectionType).State = EntityState.Added;
+                    // _dbContext.Entry(insType.InspectionType).State = EntityState.Added;
                     _dbContext.Entry(insType).State = EntityState.Added;
                 }
                 else
@@ -1423,45 +2112,45 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             // Get int value
             int vendorTypeValue = (int)vendorType;
 
-           // Contact creator = rawinspectionNotification.Contacts?.FirstOrDefault(c => c.Contact != null && c.Contact.ContactType == vendorTypeValue)?.Contact;
+            // Contact creator = rawinspectionNotification.Contacts?.FirstOrDefault(c => c.Contact != null && c.Contact.ContactType == vendorTypeValue)?.Contact;
             string currentDatePersian = "";
             DateTime currentTime = DateTime.Now;
 
             inspectionNotification.NotificationNumber = NotificationNumber.CreateFromString(rawinspectionNotification.NotificationNumber).IncreaseRevision().ToString();
 
-            Circulation dbCirculation = _dbContext.Circulations.Where(cr=>cr.Id== currentCirculation.Id).FirstOrDefault();
-           
+            Circulation dbCirculation = _dbContext.Circulations.Where(cr => cr.Id == currentCirculation.Id).FirstOrDefault();
+
             Revision Newrevision = new Revision();
             Revision currentRevision = _dbContext.Revisions.Where(rvs => rvs.RevisionId == dbCirculation.RevisionId).FirstOrDefault();
             Newrevision.RequestId = currentRevision.RequestId;
             Newrevision.VersionNumber = currentRevision.VersionNumber;
             Newrevision.RevisionId = Guid.NewGuid();
-            Newrevision.RevisionNumber = currentRevision.RevisionNumber+1;
+            Newrevision.RevisionNumber = currentRevision.RevisionNumber + 1;
             Newrevision.Comment = "Created in Modify process by Vendor";
             Newrevision.Status = "ModifiedByVendor";
             Newrevision.SubmittedDate = DateTime.Now;
             Newrevision.CreatedByCirculationId = dbCirculation.Id;
             Newrevision = _dbContext.Revisions.Add(Newrevision).Entity;
-          
-           // _dbContext.SaveChanges();
+
+            // _dbContext.SaveChanges();
 
             InspectionNotification savedModifiedInspection = _dbContext.InspectionNotifications.Add(inspectionNotification).Entity;
 
             _dbContext.SaveChanges();
             InspectionNotificationRevision inspectionNotificationRevision = new InspectionNotificationRevision();
-     //   inspectionNotificationRevision.InspectionNotification = savedModifiedInspection;
-        inspectionNotificationRevision.InspectionNotificationId = savedModifiedInspection.InspectionNotificationId;
-        inspectionNotificationRevision.RevisionId = Newrevision.RevisionId;
-        inspectionNotificationRevision.Revision = Newrevision;
+            //   inspectionNotificationRevision.InspectionNotification = savedModifiedInspection;
+            inspectionNotificationRevision.InspectionNotificationId = savedModifiedInspection.InspectionNotificationId;
+            inspectionNotificationRevision.RevisionId = Newrevision.RevisionId;
+            inspectionNotificationRevision.Revision = Newrevision;
 
-        _dbContext.InspectionNotificationRevisions.Add(inspectionNotificationRevision);
-      
-       
-            
+            _dbContext.InspectionNotificationRevisions.Add(inspectionNotificationRevision);
+
+
+
             dbCirculation.PerformedActionDateGregorian = currentTime;
             dbCirculation.PerformedActionDate = GetCurrentDate();
-            dbCirculation.ActionType =1;
-          
+            dbCirculation.ActionType = 1;
+
 
             _dbContext.SaveChanges();
 
@@ -1506,51 +2195,10 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 _dbContext.CirculationAttachments.Add(newCirculationAttachment);
             }
 
-
-            //CirculationAttachments addedCA;
-            //if (currentCirculation.Attachments != null)
-            //    currentCirculation.Attachments.Clear();           
-
-            //foreach (Attachment attachment in attachments)//rawinspectionNotification.Attachments!.ToList())
-            //{
-
-            //    // var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(atc => atc.Id.Value == attachment.Id.Value);
-            //    //var existingAttachment = await _dbContext.Attachments.FirstOrDefaultAsync(a => a.AttachmentId == attachment.Id);
-            //    var existingAttachment = await _dbContext.Attachments
-            //           .FirstOrDefaultAsync(a => a.AttachmentId == attachment.Id && a.DocNo == attachment.DocNo 
-            //           && a.ContentType == attachment.ContentType && a.Description == attachment.Description && a.Name == attachment.Name && a.Status == attachment.Status);
-
-
-            //    CirculationAttachments newCirculationAttachment = new CirculationAttachments();
-            //    newCirculationAttachment.Id = Guid.NewGuid();
-            //    newCirculationAttachment.CirculationId = currentCirculation.Id;
-            //    _dbContext.Entry(dbCirculation).State = EntityState.Unchanged;
-
-            //    if (existingAttachment != null)
-            //    {
-            //        _dbContext.Entry(existingAttachment).State = EntityState.Unchanged;
-            //        newCirculationAttachment.AttachmentId = existingAttachment.AttachmentId;
-            //    }
-            //    else
-            //    {
-            //        Attachment newAttachment = Attachment.Create(attachment.Name, attachment.Description, attachment.Content, attachment.Version, "-1", "0", attachment.ContentType, attachment.DocNo, attachment.Status);
-            //        newAttachment.AttachmentId = attachment.Id;
-            //        _dbContext.Entry(newAttachment).State = EntityState.Added;
-            //        newCirculationAttachment.AttachmentId = newAttachment.AttachmentId;
-            //    }
-            //    _dbContext.Entry(newCirculationAttachment).State = EntityState.Added;
-            //    addedCA = _dbContext.CirculationAttachments.Add(newCirculationAttachment).Entity;
-            //    // circulation.Attachments.Add(addedCA);
-
-            //}
-
-
             _dbContext.SaveChanges();
 
-
-
             return await Task.FromResult((inspectionNotification, currentCirculation));
-            // }
+
         }
         catch (Exception ex)
         {
@@ -1563,13 +2211,6 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
     }
 
 
-    public string GetCurrentDate()
-    {
-        PersianDate pDate = PersianCelendar.GregorianToJalali(DateTime.Now);
-
-        string dpCurrentDate = JsonConvert.SerializeObject(pDate.Year.ToString() + "/" + pDate.Month.ToString() + "/" + pDate.Day.ToString(), Formatting.Indented);
-        return dpCurrentDate;
-    }
 
     public Task<bool> SaveInspectionNotificationCirculations(List<Circulation> circulations)
     {
@@ -1847,22 +2488,12 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
             commandType: CommandType.StoredProcedure,
             transaction: adoTransaction))
             {
-                // inspectionNotifications = multi.Read<InspectionNotification>().ToList();
-                //participatedCirculations = multi.Read<Circulation>().ToList();
-
-                //  participatedCirculations = multi.Read<Circulation, Contact, Inspection.Domain.Entities.InspectionNotification.Entities.InspectionNotification, Circulation>(
-                //    (cr, ct,rq) => { cr.PerformerContactPerson = ct; cr.InspectionNotification = rq; return cr; },
-                //    splitOn: "ContactId,RequestId"
-                //).ToList();
-
-
-                //var notificationlookup = new Dictionary<Guid, InspectionNotification>();
-                //var circulationLookup = new Dictionary<Guid, Circulation>();
-
+            
                 // Read first result set (main data)
                 var notificationLookup = new Dictionary<Guid, InspectionNotification>();
                 var revisionLookup = new Dictionary<Guid, Revision>();
                 var circulationLookup = new Dictionary<Guid, Circulation>();
+                var orderLookup = new Dictionary<Guid, Order>();
 
                 inspectionNotifications = multi.Read<Circulation, Contact, Request, Revision, InspectionNotification, InspectionNotificationRevision, InspectionNotification>(
                     (cr, ct, rq, rvs, ins,insRe) =>
@@ -1926,12 +2557,27 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                     }
                 }
 
-                orders = multi.Read<Order,Project,Order>(
-                     (ord, prj) =>
+                orders = multi.Read<Order,Project,OrderInspectionSubject,InspectionSubject,Order>(
+                     (ord, prj,ordIns,inss) =>
                      {
-                         ord.Project = prj; return ord;
+
+                         if (orderLookup.TryGetValue(ord.OrderId.Value, out var findedorder))
+                         {
+                             ordIns.InspectionSubject = inss;
+                             findedorder.Subjects.Add(ordIns);                             
+                             return findedorder;
+                         }
+                         else
+                         {
+                             ordIns.InspectionSubject = inss;
+                             ord.Subjects.Add(ordIns);
+                             ord.Project = prj;
+                             orderLookup.Add(ord.OrderId.Value, ord);
+                             return ord;
+                         }
+                         
                      },
-                     splitOn:"ProjectId"
+                     splitOn: "ProjectId,OrderInspectionSubjectId,InspectionSubjectId"
                     ).ToList();
 
                 contacts = multi.Read<InspectionNotificationContact, Contact, InspectionNotificationContact>(
@@ -1944,9 +2590,13 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 {
                     if (notificationLookup.TryGetValue(insc.InspectionNotificationId.Value, out var ins))
                     {
-                        ins.Contacts.Add(insc);
-                        ins.Order = orders[0];
+                        ins.Contacts.Add(insc);                    
                     }
+                }
+
+                foreach (var ins in notificationLookup)
+                {
+                    ins.Value.SetOrder(orders[0]);
                 }
 
                 subjects = multi.Read<InspectionNotificationSubject, InspectionSubject, InspectionNotificationSubject>(
@@ -1966,7 +2616,7 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 locations = multi.Read<InspectionNotificationLocation, Address, InspectionNotificationLocation>(
                   (insl, adr) => { insl.Location = adr; return insl; },
                   splitOn: "AddressId"
-              ).ToList();
+                ).ToList();
                 
 
                 foreach (var insl in locations)
@@ -1994,35 +2644,17 @@ public class InspectionNotificationRepository : IGenericRepository<InspectionNot
                 // Result is notificationLookup.Values
                 inspectionNotifications = notificationLookup.Values.ToList();
 
-              
-               // subjects = multi.Read<InspectionNotificationSubject, InspectionSubject, InspectionNotificationSubject>(
-               //    (inss, ins) => { inss.InspectionSubject = ins; return inss; },
-               //    splitOn: "InspectionSubjectId"
-               //).ToList();
-               // locations = multi.Read<InspectionNotificationLocation, Address, InspectionNotificationLocation>(
-               //    (insl, adr) => { insl.Location = adr; return insl; },
-               //    splitOn: "AddressId"
-               //).ToList();
-               // types = multi.Read<InspectionNotificationType, InspectionType, InspectionNotificationType>(
-               //     (inst, inty) => { inst.InspectionType = inty; return inst; },
-               //     splitOn: "InspectionTypeId"
-               // ).ToList();
+            
 
                 relatedInspectionReports = multi.Read<InspectionReport, Revision, InspectionReport>(
                     (insr, rvs) => { insr.Revision = rvs; return insr; },
                     splitOn: "RevisionId").ToList();
+
+
+              
             }
 
-            //if (inspectionNotifications.Count > 0 && inspectionNotifications[0] != null)
-            //{
-            //    inspectionNotifications[0].Order = orders.Count > 0 ? orders[0] : null;
-            //    inspectionNotifications[0].Contacts = contacts;
-            //    inspectionNotifications[0].Subjects = subjects;
-            //    inspectionNotifications[0].Types = types;
-            //    inspectionNotifications[0].Locations = locations;
-            //    // inspectionNotifications[0].Revisions = 
-
-            //}
+          
             List<InspectionNotification> result = inspectionNotifications.Count > 0 ? inspectionNotifications : null;
             return Task.FromResult((result, relatedInspectionReports));
         }

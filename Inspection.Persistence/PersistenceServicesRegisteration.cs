@@ -20,7 +20,7 @@ public static class PersistenceServicesRegisteration
 
         services.AddDbContext<InspectionDbContext>(options =>
      options.UseSqlServer(
-         configuration.GetConnectionString("InspectionConnectionString")));
+         configuration.GetConnectionString("InspectionConnectionString"), sql => sql.UseCompatibilityLevel(100)));
         services.AddIdentityApiEndpoints<SystematicUser>()      
             .AddRoles<SystematicRole>()
             .AddRoleManager<RoleManager<SystematicRole>>()
@@ -35,8 +35,16 @@ public static class PersistenceServicesRegisteration
         services.AddScoped(typeof(IGenericRepository<,>),typeof(GenericRepository<,>));
         services.AddScoped <IInspectionNotificationRepository,InspectionNotificationRepository>();
         services.AddScoped<IInspectionReportRepository, InspectionReportRepository>();
-        services.AddScoped<IBasicInformationRepository, BasicInformationRepository>();
+        services.AddScoped<IBasicInformationRepository, BasicInformationRepository>();        
+        services.AddScoped<IDocumentOwnerResolver, DocumentOwnerResolver>();
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<ILookupRepository, LookupRepository>();
         services.AddScoped<IFileService, FileRepository>();
+        services.AddScoped<ISkillRepository, SkillRepository>();
+        services.AddScoped<IContactRepository, ContactRepository>();
+        services.AddScoped<IInspectorRepository, InspectorRepository>();
+        services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+        services.AddScoped<IInspectionHistoryRepository, InspectionHistoryRepository>();
         services.AddScoped<IUnitOfWork,EFUnitOfWork>();
 
         return services;

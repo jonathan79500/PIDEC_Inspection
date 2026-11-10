@@ -63,9 +63,9 @@ public class InspectionDbContext : IdentityDbContext<SystematicUser, SystematicR
         modelBuilder.Entity<InspectionSkill>()
           .HasKey(ins => ins.SkillId);
 
-        modelBuilder.Entity<DocumentLink>().HasNoKey();
+     
 
-        modelBuilder.Entity<DocumentTypeVisibility>().HasNoKey();
+      //  modelBuilder.Entity<DocumentTypeVisibility>().HasNoKey();
 
         modelBuilder.Entity<IdentityUserRole<string>>()
             .HasKey(ur => new { ur.UserId, ur.RoleId });

@@ -8,9 +8,13 @@ E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Inspection.
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Inspection.Domain.Tests.runtimeconfig.json
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Inspection.Domain.Tests.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Inspection.Domain.Tests.pdb
+E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\EntityFramework.SqlServer.dll
+E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\EntityFramework.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\FluentAssertions.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\MediatR.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\MediatR.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
+E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
@@ -124,7 +128,3 @@ E:\Projects\1403\Inspection\Inspection.Domain.Tests\obj\Debug\net8.0\refint\Insp
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\obj\Debug\net8.0\Inspection.Domain.Tests.pdb
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\obj\Debug\net8.0\Inspection.Domain.Tests.genruntimeconfig.cache
 E:\Projects\1403\Inspection\Inspection.Domain.Tests\obj\Debug\net8.0\ref\Inspection.Domain.Tests.dll
-E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\EntityFramework.SqlServer.dll
-E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\EntityFramework.dll
-E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
-E:\Projects\1403\Inspection\Inspection.Domain.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll

@@ -1,0 +1,15 @@
+.quick-add-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 360px;
+}
+.error {
+  color: #b3261e;
+  font-size: 0.85rem;
+}
+.hint {
+  color: #6b7686;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}

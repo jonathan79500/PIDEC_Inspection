@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { IWorkflowHandler } from "../Interfaces/IWorkflowHandler";
 import { InspectionWorkflowContext } from "../InspectionWorkflowContext.model";
 import { ContactTypes } from "../../Models/ContactTypes.enum";
 import { InspectionWorkflowViewModel } from "../InspectionWorkflowViewModel.model";

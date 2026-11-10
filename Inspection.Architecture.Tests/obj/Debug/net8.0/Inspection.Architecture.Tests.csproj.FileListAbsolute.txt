@@ -8,8 +8,12 @@ E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Inspe
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Inspection.Architecture.Tests.runtimeconfig.json
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Inspection.Architecture.Tests.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Inspection.Architecture.Tests.pdb
+E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\EntityFramework.SqlServer.dll
+E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\EntityFramework.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\MediatR.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\MediatR.Contracts.dll
+E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
+E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
@@ -125,7 +129,3 @@ E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\refin
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\Inspection.Architecture.Tests.pdb
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\Inspection.Architecture.Tests.genruntimeconfig.cache
 E:\Projects\1403\Inspection\Inspection.Architecture.Tests\obj\Debug\net8.0\ref\Inspection.Architecture.Tests.dll
-E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\EntityFramework.SqlServer.dll
-E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\EntityFramework.dll
-E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
-E:\Projects\1403\Inspection\Inspection.Architecture.Tests\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll

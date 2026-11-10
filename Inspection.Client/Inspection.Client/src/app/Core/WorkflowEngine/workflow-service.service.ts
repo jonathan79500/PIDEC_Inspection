@@ -43,9 +43,9 @@ export class WorkflowServiceService {
             );
 
         this.currentHandler = handler;
-        handler.build(context,vm);
 
-        return vm;
+
+        return handler.build(context,vm);
 
   }
 
@@ -186,7 +186,7 @@ private buildReadOnlyRequests(
         this.helperCs.findLastVendorCirculation(context.inspections);
 
     if(lastVendor.circulation != null && lastVendor.circulation.id != '00000000-0000-0000-0000-000000000000')
-        vm.inspection = lastQC.inspection;
+        vm.inspection = lastVendor.inspection;
 
 
 
@@ -225,6 +225,7 @@ private buildReadOnlyRequests(
                 vm.allCirculationsInCurrentRevision
             )
         }));
+
 
 
          vm.shownRevisionNumber =
@@ -266,6 +267,7 @@ while(!currentUserLastCirculationFound && insNum<inspectionLength)
     {
       currentActor.inspection = inspections[insNum];
       currentActor.currentRevision = inspections[insNum].revisions[r];
+      currentUserLastCirculationFound = true;
       break;
     }
   }

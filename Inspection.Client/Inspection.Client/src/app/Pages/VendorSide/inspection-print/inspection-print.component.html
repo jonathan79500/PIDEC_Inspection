@@ -1,13 +1,9 @@
 <div
-  style="
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-    margin: 2rem 2rem 2rem 2rem !important;
-    text-indent: 0.2rem !important;
-  "
+  id="printableInspection"
+  class="print-root"
   *ngIf="inspectionMainNumber.trim() != ''"
 >
+  <!-- ===================== Letterhead ===================== -->
   <div class="print-header">
     <!-- LEFT -->
     <div class="left">
@@ -21,18 +17,16 @@
         <p>Engineering Company</p>
         <p>(PIDEC)</p>
       </div>
-      <br />
-      <div>
-        <p>Project No: {{ currentProject.number }}</p>
+
+      <div class="left-project">
+        <span>Project No: {{ currentProject.number }}</span>
       </div>
     </div>
 
     <!-- CENTER -->
     <div class="center">
       <div class="doc-code">{{ currentProject.description }}</div>
-
       <div class="title">Shop Inspection Procedure</div>
-
       <div class="row">
         <span>Owner Doc No.: 1723979</span>
       </div>
@@ -42,261 +36,264 @@
     </div>
 
     <!-- RIGHT -->
-    <!-- <div class="right">
-      <div class="owner">Owner / MC</div>
-
-      <div class="arms">
-        <img src="" />
-        <img src="" />
-        <img src="" />
-      </div>
-
-      <div class="project">Project No: 162363778</div>
-    </div> -->
     <div class="right">
       <div class="owner">Applicant/Submitter</div>
-
-      <div class="arms">
-        <div class="info-container" style="border-style: none !important">
-          <div class="info-box" style="border-style: none !important">
-            <p style="margin: 2px 0">
-              <strong>Name: </strong><strong>{{ vendorContact.name }}</strong>
-            </p>
-            <p style="margin: 2px 0">
-              <strong>Mobile:</strong>
-              <strong>{{ vendorContact.mobile }}</strong>
-            </p>
-            <p style="margin: 2px 0">
-              <strong>Phone:</strong> <strong>{{ vendorContact.phone }}</strong>
-            </p>
-            <p style="margin: 2px 0">
-              <strong>Email:</strong> {{ vendorContact.email }}
-            </p>
-          </div>
+      <div class="applicant-box">
+        <div class="field-row">
+          <span class="field-label">Name:</span>
+          <span class="field-value field-value--strong">{{
+            vendorContact.name
+          }}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Mobile:</span>
+          <span class="field-value field-value--strong">{{
+            vendorContact.mobile
+          }}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Phone:</span>
+          <span class="field-value field-value--strong">{{
+            vendorContact.phone
+          }}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Email:</span>
+          <span class="field-value">{{ vendorContact.email }}</span>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ===================== Notification summary ===================== -->
   <div class="info-container">
     <div class="info-box">
-      <p style="margin: 2px 0">
-        <strong> Inspection Notification No: </strong>
-        {{ inspectionMainNumber }}
-        <strong> Rev: </strong>
-        {{ inspectionRevNumber }}
-      </p>
+      <div class="field-row">
+        <span class="field-label">Inspection Notification No:</span>
+        <span class="field-value field-value--strong">{{
+          inspectionMainNumber
+        }}</span>
+        <span class="field-label field-label--inline">Rev:</span>
+        <span class="field-value field-value--strong">{{
+          inspectionRevNumber
+        }}</span>
+      </div>
 
-      <p style="margin: 2px 0">
-        <strong>Issue Date: </strong
-        >{{ formattedPersianIssueDate + " " + formattedGregorianIssueDate }}
-      </p>
+      <div class="field-row">
+        <span class="field-label">Issue Date:</span>
+        <span class="field-value"
+          >{{ formattedPersianIssueDate }} ({{
+            formattedGregorianIssueDate
+          }})</span
+        >
+      </div>
 
-      <p style="margin: 2px 0">
-        <strong> Inspection Period From: </strong
-        >{{
-          requestInspectionDateStart +
-            "(" +
-            formatedRequestInspectionPersianDateStart +
-            ")"
-        }}
-        <strong>To: </strong
-        >{{
-          requestInspectionDateEnd +
-            "(" +
-            formatedRequestInspectionPersianDateEnd +
-            ")"
-        }}
+      <div class="field-row">
+        <span class="field-label">Inspection Period From:</span>
+        <span class="field-value"
+          >{{ requestInspectionDateStart }} ({{
+            formatedRequestInspectionPersianDateStart
+          }})</span
+        >
+        <span class="field-label field-label--inline">To:</span>
+        <span class="field-value"
+          >{{ requestInspectionDateEnd }} ({{
+            formatedRequestInspectionPersianDateEnd
+          }})</span
+        >
+        <span class="field-label field-label--inline">=</span>
+        <span class="field-value field-value--strong"
+          >{{ requestInspectionDueDate }} Days</span
+        >
+      </div>
 
-        <strong> = </strong>
-
-        {{ requestInspectionDueDate }}
-
-        <strong class="common-title">Days</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Inspection Date and Time Comments:</strong>
-        {{ inspectionTimeComment }}
-      </p>
+      <div class="field-row">
+        <span class="field-label">Inspection Date and Time Comments:</span>
+        <span class="field-value">{{ inspectionTimeComment }}</span>
+      </div>
     </div>
   </div>
-  <!--*-----------------------* -->
+
+  <!-- ===================== QC recipients ===================== -->
   <div class="info-container">
     <div class="info-box" *ngFor="let tcnt of toContacts">
-      <p style="margin: 2px 0">
-        <strong>To: </strong><strong>{{ tcnt.name }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Mobile:</strong> <strong>{{ log(tcnt.mobile) }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Phone:</strong> <strong>{{ tcnt.phone }}</strong>
-      </p>
-      <p style="margin: 2px 0"><strong>Email:</strong> {{ tcnt.email }}</p>
-    </div>
-  </div>
-  <!--*-----------------------* -->
-  <!--*-----------------------* -->
-
-  <!-- <div class="info-container">
-    <div class="info-box">
-      <p style="margin: 2px 0">
-        <strong>Vendor: </strong><strong>{{ vendorContact.name }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Mobile:</strong> <strong>{{ vendorContact.mobile }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Phone:</strong> <strong>{{ vendorContact.phone }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Email:</strong> {{ vendorContact.email }}
-      </p>
-    </div>
-  </div> -->
-  <!--*-----------------------* -->
-  <div class="info-container">
-    <div class="info-box">
-      <p style="margin: 2px 0">
-        <strong>Order NO : </strong><strong>{{ orderTitle }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Order Title : </strong><strong>{{ orderName }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>EQUIPMENT/ITEM/TAG NO. : </strong
-        ><strong>{{ equipmentTagNo }}</strong>
-      </p>
+      <div class="field-row">
+        <span class="field-label">To:</span>
+        <span class="field-value field-value--strong">{{ tcnt.name }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Mobile:</span>
+        <span class="field-value field-value--strong">{{ tcnt.mobile }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Phone:</span>
+        <span class="field-value field-value--strong">{{ tcnt.phone }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Email:</span>
+        <span class="field-value">{{ tcnt.email }}</span>
+      </div>
     </div>
   </div>
 
+  <!-- ===================== Order ===================== -->
   <div class="info-container">
     <div class="info-box">
-      <div class="checkbox-list">
-        <div>
-          <strong>Inspection Types/Action : </strong>
+      <div class="field-row">
+        <span class="field-label">Order No:</span>
+        <span class="field-value field-value--strong">{{ orderTitle }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Order Title:</span>
+        <span class="field-value field-value--strong">{{ orderName }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Equipment / Item / Tag No:</span>
+        <span class="field-value field-value--strong">{{
+          equipmentTagNo
+        }}</span>
+      </div>
+    </div>
+  </div>
 
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Witness"
-              [checked]="inspectionActions.includes('InsAction_Witness')"
-            />
-            Witness
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Hold"
-              [checked]="inspectionActions.includes('InsAction_Hold')"
-            />
-            Hold
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Review"
-              [checked]="inspectionActions.includes('InsAction_Review')"
-            />
-            Review
+  <!-- ===================== Actions / Types ===================== -->
+  <div class="info-container">
+    <div class="info-box">
+      <div class="field-row field-row--wrap">
+        <span class="field-label">Inspection Types/Action:</span>
+
+        <label class="print-check">
+          <input
+            type="checkbox"
+            value="InsAction_Witness"
+            [checked]="inspectionActions.includes('InsAction_Witness')"
+          />
+          Witness
+        </label>
+        <label class="print-check">
+          <input
+            type="checkbox"
+            value="InsAction_Hold"
+            [checked]="inspectionActions.includes('InsAction_Hold')"
+          />
+          Hold
+        </label>
+        <label class="print-check">
+          <input
+            type="checkbox"
+            value="InsAction_Review"
+            [checked]="inspectionActions.includes('InsAction_Review')"
+          />
+          Review
+        </label>
+      </div>
+
+      <div class="field-row field-row--wrap">
+        <div
+          *ngFor="let type of inspectionData.inspectionTypes; let i = index"
+          class="print-check-item"
+          [hidden]="
+            type.name == '' || type.id == '00000000-0000-0000-0000-000000000000'
+          "
+        >
+          <label class="print-check">
+            <input type="checkbox" [checked]="type.selected == true" />
+            {{ type.name.trim() }}
           </label>
         </div>
       </div>
-      <!-- inspectionTypes -->
-
-      <div
-        *ngFor="let type of inspectionData.inspectionTypes; let i = index"
-        class="checkbox-item"
-        [hidden]="
-          type.name == '' || type.id == '00000000-0000-0000-0000-000000000000'
-        "
-      >
-        <label>
-          <input type="checkbox" [checked]="type.selected == true" />
-          {{ type.name.trim() }}
-        </label>
-      </div>
     </div>
   </div>
+
+  <!-- ===================== Subjects ===================== -->
   <div class="info-container">
     <div class="info-box">
-      <strong>Inspection Notification Subject : </strong>
-      <div
-        *ngFor="
-          let insSubject of inspectionData.inspectionSubjects;
-          let i = index
-        "
-        [hidden]="insSubject.name.trim() == ''"
-        class="checkbox-item"
-      >
-        <label>{{
-          insSubject.name.trim() + "(" + insSubject.itpRowNo + ")"
-        }}</label>
-        <label
-          [hidden]="i == inspectionData.inspectionSubjects.length - 1"
-          style="font-weight: bold"
+      <div class="field-row field-row--wrap">
+        <span class="field-label">Inspection Notification Subject:</span>
+        <ng-container
+          *ngFor="
+            let insSubject of inspectionData.inspectionSubjects;
+            let i = index
+          "
         >
-          &
-        </label>
+          <span class="field-value" [hidden]="insSubject.name.trim() == ''">
+            {{ insSubject.name.trim() }} ({{ insSubject.itpRowNo }})
+            <strong [hidden]="i == inspectionData.inspectionSubjects.length - 1"
+              >&amp;</strong
+            >
+          </span>
+        </ng-container>
       </div>
     </div>
   </div>
-  <!-- Contacts -->
+
+  <!-- ===================== Contacts ===================== -->
   <div class="info-container">
     <div
-      *ngFor="let contact of receiverContacts; let i = index"
       class="info-box"
+      *ngFor="let contact of receiverContacts; let i = index"
     >
-      <p style="margin: 2px 0">
-        <strong>To: </strong><strong>{{ contact.name }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Mobile:</strong> <strong>{{ contact.mobile }}</strong>
-      </p>
-      <p style="margin: 2px 0">
-        <strong>Phone:</strong> <strong>{{ contact.phone }}</strong>
-      </p>
-      <p style="margin: 2px 0"><strong>Email:</strong> {{ contact.email }}</p>
-    </div>
-  </div>
-
-  <!-- Contacts -->
-
-  <div class="info-container">
-    <div class="info-box">
-      <strong>Location Of Inspection</strong>
-      <br />
-      <div
-        *ngFor="let location of inspectionData.locations; let i = index"
-        class="info-box"
-        [hidden]="location.country == ''"
-      >
-        <p style="margin: 2px 0 !important">
-          <strong>Country:</strong>
-          <strong>{{ location.country }}</strong>
-        </p>
-        <p style="margin: 2px 0">
-          <strong>State:</strong>
-          <strong>{{ location.state }}</strong>
-        </p>
-        <p style="margin: 2px 0">
-          <strong>City:</strong>
-          <strong>{{ location.city }}</strong>
-        </p>
-        <p style="margin: 2px 0">
-          <strong>Address:</strong>
-          <strong>{{
-            location.streetLine1 +
-              "," +
-              location.streetLine2 +
-              "," +
-              location.zipCode
-          }}</strong>
-        </p>
+      <div class="field-row">
+        <span class="field-label">To:</span>
+        <span class="field-value field-value--strong">{{ contact.name }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Mobile:</span>
+        <span class="field-value field-value--strong">{{
+          contact.mobile
+        }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Phone:</span>
+        <span class="field-value field-value--strong">{{ contact.phone }}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Email:</span>
+        <span class="field-value">{{ contact.email }}</span>
       </div>
     </div>
   </div>
 
+  <!-- ===================== Locations ===================== -->
+  <div class="info-container">
+    <div class="info-box">
+      <span class="field-label field-label--heading"
+        >Location of Inspection</span
+      >
+
+      <div
+        class="location-entry"
+        *ngFor="let location of inspectionData.locations; let i = index"
+        [hidden]="location.country == ''"
+      >
+        <div class="field-row">
+          <span class="field-label">Country:</span>
+          <span class="field-value field-value--strong">{{
+            location.country
+          }}</span>
+          <span class="field-label field-label--inline">State:</span>
+          <span class="field-value field-value--strong">{{
+            location.state
+          }}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">City:</span>
+          <span class="field-value field-value--strong">{{
+            location.city
+          }}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Address:</span>
+          <span class="field-value field-value--strong">
+            {{ location.streetLine1 }}, {{ location.streetLine2 }},
+            {{ location.zipCode }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Attachments ===================== -->
   <div class="upload-layout">
     <strong class="upload-title">
       Vendor DOC. For Execution Of Applied Inspection
@@ -309,7 +306,6 @@
           <th>Description</th>
           <th>DOC. NO.</th>
           <th>STATUS</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -323,16 +319,12 @@
     </table>
   </div>
 
-  <!-- Signature area (shown after submit) -->
+  <!-- ===================== Signature / submission ===================== -->
   <div class="submit-wrapper">
     <div class="submit-card">
       <div class="submit-info">
-        <span class="submit-date">
-          {{ inspectionData.modifiedDate }}
-        </span>
-        <span class="submit-user">
-          {{ inspectionData.modifiedBy }}
-        </span>
+        <span class="submit-date">{{ inspectionData.modifiedDate }}</span>
+        <span class="submit-user">{{ inspectionData.modifiedBy }}</span>
         <span class="submit-status">Submitted ✔</span>
       </div>
     </div>

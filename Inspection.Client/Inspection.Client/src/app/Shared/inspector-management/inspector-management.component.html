@@ -1,0 +1,299 @@
+<section class="page">
+  <header class="page-head">
+    <h1>Inspectors</h1>
+    <p>
+      {{
+        isEditMode() ? "Editing an existing inspector" : "Add a new inspector"
+      }}
+    </p>
+  </header>
+
+  @if (message(); as msg) {
+    <div
+      class="banner"
+      [class.banner-error]="msg.type === 'error'"
+      role="status"
+    >
+      {{ msg.text }}
+    </div>
+  }
+
+  <!-- ===================== FORM ===================== -->
+  <form class="form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="grid">
+      <div class="field">
+        <label for="contact">Inspection company contact</label>
+        <select id="contact" formControlName="inspectionCompanyContactId">
+          <option value="" disabled>Select a contact</option>
+          @for (c of contacts(); track c.contactId) {
+            <option [value]="c.contactId">{{ c.name }}</option>
+          }
+        </select>
+        @if (hasError("inspectionCompanyContactId", "required")) {
+          <small class="error">Choose a contact.</small>
+        }
+      </div>
+      <div>{{ contactTypeCode() }}</div>
+      <div class="field">
+        <label for="firstName">First name</label>
+        <input id="firstName" type="text" formControlName="firstName" />
+        @if (hasError("firstName", "required")) {
+          <small class="error">First name is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="lastName">Last name</label>
+        <input id="lastName" type="text" formControlName="lastName" />
+        @if (hasError("lastName", "required")) {
+          <small class="error">Last name is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="name">Display name</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Defaults to first + last name"
+        />
+      </div>
+
+      <div class="field">
+        <label for="position">Position</label>
+        <input id="position" type="text" formControlName="position" />
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input id="phone" type="tel" formControlName="phone" />
+        @if (hasError("phone", "pattern")) {
+          <small class="error">Enter a valid phone number.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+        @if (hasError("email", "email")) {
+          <small class="error">Enter a valid email address.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="qc">QC approval</label>
+        <select id="qc" formControlName="qcApprovalState">
+          @for (s of qcStates; track s.value) {
+            <option [ngValue]="s.value">{{ s.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="expire">Expiry date</label>
+        <input id="expire" type="date" formControlName="expireDate" />
+        @if (hasError("expireDate", "required")) {
+          <small class="error">Expiry date is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="version">Version</label>
+        <input id="version" type="number" formControlName="versionNumber" />
+      </div>
+
+      <div class="field field-wide">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          rows="3"
+          formControlName="description"
+        ></textarea>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Active</span>
+      </label>
+    </div>
+
+    <!-- ===================== SKILLS ===================== -->
+    <fieldset class="panel">
+      <legend>Skills</legend>
+
+      <div formArrayName="skills" class="skill-list">
+        @for (row of skillRows.controls; track row; let i = $index) {
+          <div class="skill-row" [formGroupName]="i">
+            <div class="field">
+              <label [for]="'skill' + i">Skill</label>
+              <select [id]="'skill' + i" formControlName="skillId">
+                <option value="" disabled>Select a skill</option>
+                @for (s of skillOptions(); track s.skillId) {
+                  <option
+                    [value]="s.skillId"
+                    [disabled]="isSkillTaken(s.skillId, i)"
+                  >
+                    {{ s.code }} - {{ s.name }}
+                  </option>
+                }
+              </select>
+              @if (submitted() && row.get("skillId")?.hasError("required")) {
+                <small class="error">Choose a skill.</small>
+              }
+            </div>
+
+            <div class="field">
+              <label [for]="'level' + i">Level</label>
+              <select [id]="'level' + i" formControlName="level">
+                @for (l of skillLevels; track l.value) {
+                  <option [value]="l.value">{{ l.label }}</option>
+                }
+              </select>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-small"
+              (click)="removeSkill(i)"
+            >
+              Remove
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (submitted() && skillRows.length === 0) {
+        <small class="error">Add at least one skill.</small>
+      }
+
+      <button
+        type="button"
+        class="btn btn-small"
+        (click)="addSkill()"
+        [disabled]="!canAddSkill()"
+      >
+        + Add skill
+      </button>
+    </fieldset>
+
+    <!-- ===================== DOCUMENTS ===================== -->
+    <fieldset class="panel">
+      <legend>Documents</legend>
+      <app-document-manager
+        [ownerType]="ownerType"
+        [ownerId]="editingId()"
+        [contactTypeCode]="contactTypeCode()"
+        [disabled]="contactTypeCode() === null"
+        disabledHint="Select a contact first. The available document types depend on it."
+      />
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        {{
+          saving()
+            ? "Saving..."
+            : isEditMode()
+              ? "Save changes"
+              : "Add inspector"
+        }}
+      </button>
+      @if (isEditMode()) {
+        <button type="button" class="btn" (click)="resetForm()">
+          Cancel edit
+        </button>
+      } @else {
+        <button type="button" class="btn" (click)="resetForm()">Clear</button>
+      }
+    </div>
+  </form>
+
+  <!-- ===================== GRID ===================== -->
+  <div class="table-head">
+    <h2>All inspectors</h2>
+    <span class="count">{{ inspectors().length }} total</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Contact</th>
+          <th>Skills</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>QC</th>
+          <th>Version</th>
+          <th>Created</th>
+          <th>Expires</th>
+          <th>Status</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="12" class="empty">Loading inspectors...</td>
+          </tr>
+        } @else {
+          @for (i of inspectors(); track i.inspectorId) {
+            <tr [class.row-editing]="i.inspectorId === editingId()">
+              <td>{{ i.name || i.firstName + " " + i.lastName }}</td>
+              <td>{{ i.position || "-" }}</td>
+              <td>{{ i.inspectionCompanyContactName || "-" }}</td>
+              <td class="cell-wrap">
+                @for (s of i.skills; track s.skillId) {
+                  <span
+                    class="chip chip-skill"
+                    [attr.data-level]="s.level"
+                    [title]="s.name + ' - ' + s.level"
+                  >
+                    {{ s.code }}<small>{{ s.level }}</small>
+                  </span>
+                } @empty {
+                  <span class="muted">-</span>
+                }
+              </td>
+              <td>{{ i.phone || "-" }}</td>
+              <td>{{ i.email || "-" }}</td>
+              <td>
+                <span
+                  class="chip"
+                  [class.chip-ok]="i.qcApprovalState === 1"
+                  [class.chip-bad]="i.qcApprovalState === 0"
+                >
+                  {{ qcLabel(i.qcApprovalState) }}
+                </span>
+              </td>
+              <td>{{ i.versionNumber }}</td>
+              <td>{{ i.createdDate | date: "dd.MM.yyyy" }}</td>
+              <td>{{ i.expireDate | date: "dd.MM.yyyy" }}</td>
+              <td>{{ i.isActive ? "Active" : "Inactive" }}</td>
+              <td class="col-actions">
+                <button type="button" class="link" (click)="edit(i)">
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="link link-danger"
+                  (click)="remove(i)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="12" class="empty">
+                No inspectors yet. Use the form above to add the first one.
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

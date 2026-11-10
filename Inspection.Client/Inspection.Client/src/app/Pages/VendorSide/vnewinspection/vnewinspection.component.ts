@@ -65,13 +65,18 @@ import { InspectionReport } from '../../../Core/Models/InspectionReport.model';
 import { User } from '../../../Core/Models/User.model';
 import { environment } from '../../../../environments/environments';
 
-import { inspect } from 'node:util';
+import { inspect, isUndefined } from 'node:util';
 import { CirculationModalComponent } from "../circulation-modal/circulation-modal.component";
 import { WorkflowServiceService } from '../../../Core/WorkflowEngine/workflow-service.service';
 import { InspectionWorkflowViewModel } from '../../../Core/WorkflowEngine/InspectionWorkflowViewModel.model';
 import { CirculationVM } from '../../../Core/Models/CirculationVM.model';
 import { DocumentManagerDialogComponent } from '../../../Shared/document-manager-dialog/document-manager-dialog.component';
 import { DocumentOwnerType } from '../../../Core/Models/Document/DocumentOwnerType.model';
+import { OrderInspectionSubject } from '../../../Core/Models/OrderInspectionSubject.model';
+import { InspectorService } from '../../../Core/Services/inspector.service'; // TODO: fix path to your real file
+import { Inspector, SkillOption } from '../../../Core/Models/Inspector.model'; // TODO: fix path to your real file
+import { InspectorQuickAddData, InspectorQuickAddDialogComponent } from '../inspector-quick-add-dialog/inspector-quick-add-dialog.component';
+
 
 
 
@@ -123,7 +128,7 @@ export class VnewinspectionComponent implements OnInit,AfterViewInit{
   readonly dialog = inject(MatDialog);
   injector = inject(Injector);
   Project:Project;
-  currentProject : Project;
+  currentProject? : Project;
   Orders:Order[];
   currentVendorData:Vendor;
   inspectionForm : FormTypes.InspectionForm ;
@@ -178,6 +183,15 @@ inspectionActions: string[] = [];
 RequestId :string ="";
 InternalReceiversContacts:Contact[]= [];
 
+// --- Inspector picker state (pidecInspectors / thirdPartInspectors rows) ---
+// Approved inspectors already loaded for a given inspection-company Contact id.
+private inspectorsByCompanyContact = new Map<string, Inspector[]>();
+// The in-progress search text typed into each row's autocomplete, keyed by that row's FormGroup.
+private inspectorSearchTerms = new Map<AbstractControl, string>();
+
+
+orderInspectionSubjects : OrderInspectionSubject[];
+
 // Add this to your component
 private gregorianMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -207,7 +221,7 @@ private gregorianMonthNames = [
   isInspector:boolean = false;
   isConfirmedByQC : boolean = false;
 
-  constructor(private router: Router,private workflowService: WorkflowServiceService,private activatedRoute: ActivatedRoute,private inspectionReportService:InspectionReportService,private inspectionService:InspectionService,private formBuilder:FormBuilder,private toastr:ToastrService,private cdr: ChangeDetectorRef) {
+  constructor(private router: Router,private workflowService: WorkflowServiceService,private activatedRoute: ActivatedRoute,private inspectionReportService:InspectionReportService,private inspectionService:InspectionService,private inspectorService:InspectorService,private formBuilder:FormBuilder,private toastr:ToastrService,private cdr: ChangeDetectorRef) {
 
     this.formData = new FormData();
     this.circulationData = new FormData();
@@ -218,13 +232,19 @@ private gregorianMonthNames = [
     this.currentUserRole = this.currentUser.userType;
     this.currentUserId = this.currentUser.id;
 
+    this.currentVendorData = this.currentAppState.vendorData();
+
     if(this.currentAppState.currentuser().userType == UserTypes.Vendor)
     {
-       this.currentVendorData = this.currentAppState.vendorData();
+
        this.orderSettingsExceptions = this.currentAppState.vendorBasicInfo().orderSettingsExceptions;
        let vendorBasicInfo = this.currentAppState.vendorBasicInfo();
        this.currentInspectionTypes = vendorBasicInfo.inspectionTypes;
-       //this.currentInspectionSubjects = vendorBasicInfo.inspectionSubjects;
+       this.currentInspectionSubjects = vendorBasicInfo.inspectionSubjects;
+      // this.orderInspectionSubjects =this.currentAppState.vendorBasicInfo().orderInspectionSubjects;
+
+
+
       this.Orders = this.currentAppState.vendorBasicInfo().orders;//this.currentVendorData['orders'];
 
     }
@@ -233,10 +253,13 @@ private gregorianMonthNames = [
       let qCUserBasicInfo = this.currentAppState.qCMemberBasicInfo();
 
       this.currentInspectionTypes = qCUserBasicInfo.inspectionTypes;
+     //  this.orderInspectionSubjects =qCUserBasicInfo.orderInspectionSubjects;
 
     }
     else if(this.currentAppState.currentuser().userType == UserTypes.PIDEC_Inspector)
     {
+
+      let inspectorBasicInfo = this.currentAppState.inspectorBasicInfo();
        this.isInspector = true;
     }
 
@@ -423,6 +446,7 @@ this.circulationData.delete("circulation");
    let childCirculations =structuredClone( circulation.childCirculations);
    circulation.childCirculations = null;
 
+   circulation.performedActionDateGregorian = new Date(Date.now());
    this.circulationData.append('circulation',JSON.stringify(circulation));
 
 
@@ -430,11 +454,12 @@ this.circulationData.delete("circulation");
   this.inspectionService.saveCirculationData(this.circulationData).subscribe((savedCirculation)=>{
     if(savedCirculation)
     {
-      this.currentCirculation.actionType= savedCirculation.actionType;
-      this.currentCirculation.performedActionDate = savedCirculation.performedActionDate;
-      this.currentCirculation.performedActionDateGregorian = savedCirculation.performedActionDateGregorian;
-      this.currentCirculation.attachments = savedCirculation.attachments;
-      this.currentCirculation.childCirculations = childCirculations;
+
+      circulation.actionType= savedCirculation.actionType;
+      circulation.performedActionDate = savedCirculation.performedActionDate;
+      circulation.performedActionDateGregorian = savedCirculation.performedActionDateGregorian;
+      circulation.attachments = savedCirculation.attachments;
+      circulation.childCirculations = childCirculations;
       this.toggleEditMode(false);
     }
   });
@@ -474,85 +499,18 @@ onCommentFilesPicked(event: Event,circulation: any): void {
   showAll = true;
 //-------------------End Of Comment Section Actions-------------------------
 
-// toggleEditMode(on: boolean) {
-//   this.editMode = on;
-
-//   const inspectionTypes = this.inspectionForm.get('inspectionTypes');
-//     const inspectionSubjects = this.inspectionForm.get('inspectionSubjects');
-
-//   const notificationNumberCtrl =  this.inspectionForm.get('notificationNumber');
-//   const CtrlRequestInspectionPersianDateStartCtrl = this.inspectionForm.get('RequestInspectionPersianDateStart');
-
-//   const CtrlInspectionTimeComment = this.inspectionForm.get('InspectionTimeComment');
-
-//   const CtrlRequestInspectionPersianDateEndCtrl = this.inspectionForm.get('RequestInspectionPersianDateEnd');
-
-//   const CtrlpersianIssueDateCtrl = this.inspectionForm.get('persianIssueDate');
-//   const RequisitionTitle = this.inspectionForm.controls['order'].get('title');
-
-//   const locations = this.inspectionForm.get('locations');
-//   const contacts = this.inspectionForm.get('contacts');
-//   const orderName = this.inspectionForm.get('orderName');
-//   const equipmentTagNo = this.inspectionForm.get('equipmentTagNo');
-
-
-//   RequisitionTitle?.disable();
-
-//   if ((on && this.currentCirculation?.sequenceNo==0) || this.currentCirculation == null || this.currentCirculation == undefined) {
-
-
-//     notificationNumberCtrl?.enable();
-//     CtrlRequestInspectionPersianDateStartCtrl?.enable();
-//     CtrlRequestInspectionPersianDateEndCtrl?.enable();
-//     CtrlpersianIssueDateCtrl?.enable();
-//     CtrlInspectionTimeComment?.enable();
-//     inspectionTypes?.enable();
-//     inspectionSubjects?.enable();
-//     locations?.enable();
-//     contacts?.enable();
-//     orderName?.enable();
-//     equipmentTagNo?.enable();
-
-//    }
-//    else {
-//     notificationNumberCtrl?.disable();
-//     CtrlRequestInspectionPersianDateStartCtrl?.disable();
-//     CtrlRequestInspectionPersianDateEndCtrl?.disable();
-//     CtrlpersianIssueDateCtrl?.disable();
-//     CtrlInspectionTimeComment?.disable();
-//     inspectionTypes?.disable();
-//     inspectionSubjects?.disable();
-//     locations?.disable();
-//     contacts?.disable();
-//     orderName?.disable();
-//     equipmentTagNo?.disable();
-//     const indexSubj0 = this.inspectionSubjectsFormArray.controls.findIndex((insSubj)=>(insSubj.get("id").value === "00000000-0000-0000-0000-000000000000"));
-//     if(indexSubj0>-1)
-//       this.inspectionSubjectsFormArray.removeAt(indexSubj0);
-
-//     const indexType0 = this.inspectionTypesFormArray.controls.findIndex((insType)=>(insType.get("id").value === "00000000-0000-0000-0000-000000000000"));
-//     if(indexType0>-1)
-//       this.inspectionTypesFormArray.removeAt(indexType0);
-
-//     const indexLoc0 = this.inspectionLocationFormArray.controls.findIndex((insLoc)=>(insLoc.get("id").value === "00000000-0000-0000-0000-000000000000"));
-//     if(indexLoc0>-1)
-//       this.inspectionLocationFormArray.removeAt(indexLoc0);
-
-//      const indexCntc = this.contactsFormArray.controls.findIndex((cnt)=>(cnt.get("id").value === "00000000-0000-0000-0000-000000000000"));
-//     if(indexCntc>-1)
-//       this.contactsFormArray.removeAt(indexCntc);
-
-//   }
-// }
 private setInspectionControlsEnabled(enable: boolean): void {
 
     const controls = [
 
         'notificationNumber',
-        'RequestInspectionPersianDateStart',
-        'RequestInspectionPersianDateEnd',
+        'requestInspectionPersianDateStart',
+        'requestInspectionPersianDateEnd',
+        'requestInspectionDueDate',
+        'requestInspectionDateStart',
+        'requestInspectionDateEnd',
         'persianIssueDate',
-        'InspectionTimeComment',
+        'inspectionTimeComment',
         'inspectionTypes',
         'inspectionSubjects',
         'locations',
@@ -605,35 +563,14 @@ toggleEditMode(editMode: boolean): void {
     this.editMode = editMode;
     const enableInspectionFields =
         editMode &&
-        (!this.workflow.currentCirculation || this.workflow.currentCirculation.sequenceNo === 0);
+        (!this.workflow || (this.workflow && !this.workflow.currentCirculation) || (this.workflow && this.workflow.currentCirculation && this.workflow.currentCirculation.sequenceNo === 0));
 
     if(!enableInspectionFields)
     {
     this.inspectionForm.controls.order.controls.title.disable();
-
-
-    if(this.workflow)
-    {
     this.setInspectionControlsEnabled(enableInspectionFields);
-
-    if (!enableInspectionFields) {
-        this.removeTemporaryRows();
+    this.removeTemporaryRows();
     }
-  }
-  else if(this.currentCirculation)
-  {
-    const enableInspectionFields =
-        editMode &&
-        (!this.currentCirculation || this.currentCirculation.sequenceNo === 0);
-
-
-    this.setInspectionControlsEnabled(enableInspectionFields);
-
-    if (!enableInspectionFields) {
-        this.removeTemporaryRows();
-    }
-  }
-}
 else
 {
     const inspectionTypes = this.inspectionForm.get('inspectionTypes');
@@ -657,7 +594,7 @@ else
 
   RequisitionTitle?.disable();
 
-  if ( this.currentCirculation?.sequenceNo==0 || this.currentCirculation == null || this.currentCirculation == undefined) {
+  if (!this.workflow || (this.workflow && ( this.workflow.currentCirculation?.sequenceNo==0 || this.workflow.currentCirculation == null || this.workflow.currentCirculation == undefined))) {
 
 
     notificationNumberCtrl?.enable();
@@ -720,6 +657,12 @@ else
                       confirmedInspectionsByQC = sortedInspections[0].revisions[0].circulations.filter((circ)=>(circ.performerContactType== ContactTypes.QC_Lead || circ.performerContactType==ContactTypes.QC_Manager) && circ.performedActionDateGregorian.toString().trim()!='0001-01-01T00:00:00' && circ.actionType ==1);
                       if(confirmedInspectionsByQC != null && confirmedInspectionsByQC.length>0)
                         this.isConfirmedByQC = true;
+
+                      let currentOrderInspectionSubjects = sortedInspections[0].order.inspectionSubjects;
+                      if(currentOrderInspectionSubjects != null)
+                           this.allSubjects = currentOrderInspectionSubjects.map(s => s.name);
+
+
                     }
                     this.generateInspectionFromValue(sortedInspections);
                     this.inspectionReports = inspectioncmplx.relatedReports;
@@ -838,21 +781,26 @@ else
               )
 
             }
-          }
+
 
       if(this.currentInspectionTypes !=null && this.currentInspectionTypes !=undefined)
       {
           this.currentInspectionTypes.forEach((inspectionType)=>
 
-            this.inspectionTypesFormArray.push(this.formBuilder.group({
+            this.inspectionTypesFormArray!.push(this.formBuilder.group({
               id:[inspectionType.id],
               name:[inspectionType.name],
               selected:[false]
               }))
           );}
 
+
+          let currentOrderInspectionSubjects = this.currentAppState.vendorBasicInfo().orderInspectionSubjects?.filter((orderInspectionSubject)=>orderInspectionSubject.orderId == currentOrder.id);
+        this.currentInspectionSubjects = currentOrderInspectionSubjects
+        .map((orderInspectionSubject)=>orderInspectionSubject.inspectionSubject);
           if(this.currentInspectionSubjects != null)
               this.allSubjects = this.currentInspectionSubjects.map(s => s.name);
+        }
 
       });
 
@@ -960,8 +908,8 @@ removeToContact(contact: FormContact): void {
   let countOfVisibleContacts = this.contactsFormArray.controls.filter((cnt)=>{
     // if(cnt.get('id')?.value == this.currentCirculation.performerContactPerson.id)
     //  cnt.patchValue({isVisible: false});
-    if(this.currentCirculation !=undefined)
-      return (cnt.get('id')?.value== true && cnt.get('id')?.value != this.currentCirculation?.performerContactPerson.id)
+    if(this.workflow.currentCirculation !=undefined)
+      return (cnt.get('id')?.value== true && cnt.get('id')?.value != this.workflow.currentCirculation?.performerContactPerson.id)
     else
       return cnt.get('isVisible')?.value== true
   } ).length;
@@ -1145,8 +1093,8 @@ else
           //attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
           contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
           pidecContacts: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-          pidecInspectors : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-          thirdPartInspectors:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
+          pidecInspectors : this.formBuilder.array<FormTypes.FormContact>([this.generateInspectorContact(ContactTypes.PIDEC_Inspector)]),
+          thirdPartInspectors:this.formBuilder.array<FormTypes.FormContact>([this.generateInspectorContact(ContactTypes.ThirdPart_Inspector)]),
           locations: this.formBuilder.array<FormTypes.FormAddress>([this.generateAddress()]),
           order:this.generateOrder(),
           equipmentTagNo:[''],
@@ -1406,7 +1354,7 @@ console.log('current vendor:',this.currentVendorData);
        this.currentContacts = this.currentContacts.concat(currentProjectContacts.map((projectcontact)=>projectcontact.contact));
 
         let currentOrderInspectionSubjects = this.currentAppState.vendorBasicInfo().orderInspectionSubjects?.filter((orderInspectionSubject)=>orderInspectionSubject.orderId == currentOrder.id);
-        this.currentInspectionSubjects = currentOrderInspectionSubjects//this.currentAppState.vendorBasicInfo().orderInspectionSubjects?.filter((orderInspectionSubject)=>orderInspectionSubject.orderId == currentOrder.id)
+        this.currentInspectionSubjects = currentOrderInspectionSubjects
         .map((orderInspectionSubject)=>orderInspectionSubject.inspectionSubject);
 
          this.currentInspectionTypes = this.currentVendorStore.inspectionTypes();
@@ -1445,518 +1393,6 @@ console.log('current vendor:',this.currentVendorData);
     return result;
   }
 
-  CheckIfInspectionIsActiveForCurrentUser(circulations: Circulation[],vendorCirculation:Circulation): boolean{
-
-    this.currentUserId = this.currentAppState.currentuser().id;
-    for(let i=0; i<circulations.length;i++)
-    {
-
-      if( circulations[i].performerContactPerson.userId ==this.currentUserId && (circulations[i].performedActionDateGregorian== undefined || circulations[i].performedActionDateGregorian == null || circulations[i].performedActionDateGregorian.toString().trim()=== '0001-01-01T00:00:00') || circulations[i].actionType == null)
-      {
-        this.currentCirculation = circulations[i];
-
-        if(this.currentCirculation.performerContactType == ContactTypes.QC_Lead || this.currentCirculation.performerContactType == ContactTypes.QC_Manager)
-        {
-
-          this.currentCirculation.attachments =structuredClone(vendorCirculation.attachments);
-        }
-        return true;
-      }
-    }
-    return false;
-
-  }
-
-  // findLastVendorCirculationWithAction(inspections :Inspection[]):Circulation
-  // {
-  //   let foundCirculation:Circulation = null;
-
-
-  //   for(let i=0; i<inspections.length; i++)
-  //   {
-  //     foundCirculation= inspections[i].revisions  .circulations!.filter((cr)=>cr.performerContactType == ContactTypes.Vendor && cr.performedActionDateGregorian != null && cr.performedActionDateGregorian.toString().trim()!='0001-01-01T00:00:00')![0];
-  //     if(foundCirculation != null)
-  //       break;
-  //   }
-  //   return foundCirculation;
-  // }
-
-  // findLastCirculationWithAction(inspections :Inspection[]):Circulation
-  // {
-  //   let foundCirculation:Circulation = null;
-  //   for(let i=0; i<inspections.length; i++)
-  //   {
-  //     foundCirculation= inspections[i].revisions.circulations!.filter((cr)=>cr.performerContactType == ContactTypes.Vendor && cr.performedActionDateGregorian != null && cr.performedActionDateGregorian.toString().trim()!='0001-01-01T00:00:00')![0];
-  //     if(foundCirculation != null)
-  //       break;
-  //   }
-  //   return foundCirculation;
-  // }
-
-  //---------Return Last Vendor Circulation that exists , with action or without action
-  findVendorLastCirculation(inspections: Inspection[]):Circulation
-  {
-
-    let vendorCircInLastRevision: Circulation = null ;
-    for(let i=0; i<inspections.length;i++)
-    {
-      for(let r=0;r<inspections[i].revisions.length;r++)
-      {
-          vendorCircInLastRevision = inspections[i].revisions[r].circulations.find((crc)=>crc.performerContactType == ContactTypes.Vendor);
-          if(vendorCircInLastRevision != null)
-            return vendorCircInLastRevision;
-      }
-    }
-    return null;
-  }
-
-  LastAssignedCirculation(parentCirculation:Circulation,allCirculationsInRevision :Circulation[])
-  {
-    let sortedCurrentUserCirculations = allCirculationsInRevision.filter((circ)=>circ.performerContactPerson.userId == parentCirculation.performerContactPerson.userId).sort((a,b)=>{
-          return a.sequenceNo - a.sequenceNo;
-      });
-      return sortedCurrentUserCirculations[0];
-  }
-
-//  generateInspectionFromValue(inspections :Inspection[]):void
-// {
-
-
-//   //---get Latest revision of Inspection-------
-// let inspection = inspections[0];
-// inspection.revisions
-// let withoutChangeInspection = structuredClone(inspection);
-//   //first should initialize form based on inspection order
-// let vendorIsPerformer : boolean = false;
-
-// const [mainNo, rev] = inspection.notificationNumber.split('.');
-
-// let currentUserLastCirculationFound : boolean= false;
-// let currentUserCirculation :Circulation = null;
-// let currentUserCirculations :Circulation[] = null;
-// let currentUserInspection :Inspection=null;
-// let currentUserRevisionNumber :string='';
-// let currentUserRevision :Revision = null;
-// let insNum: number=0;
-// let inspectionLength : number=0;
-
-// let LastInspectionSentByVendor:Inspection= null;
-// let LastVendorCirculation :Circulation = null;
-// let LastVendorCirculationFound :Boolean = false;
-// let LastVendorrevisionNumber : number=0;
-
-// let LastInspectionSentByQC:Inspection= null;
-// let LastQCCirculation :Circulation = null;
-// let LastQCCirculationFound :Boolean = false;
-// let LastQCrevisionNumber : number=0;
-
-// let LastActorCirculationFound: boolean =false;
-// let LastActorCirculation:Circulation=null;
-// let LastInspectionForActor :Inspection = null;
-// let LastActorRevisionNumber :number=0;
-
-// let ShownRevNumberShouldIncrease: boolean=false;
-
-// inspectionLength = inspections.length;
-
-// while(!currentUserLastCirculationFound && insNum<inspectionLength)
-// {
-//   for(let r=0;r<inspections[insNum].revisions.length;r++)
-//   {
-//     let currentUserAllCirculations = inspections[insNum].revisions[r].circulations.filter((circ)=>circ.performerContactPerson.userId == this.currentUserId).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-//     currentUserCirculation = currentUserAllCirculations[0];
-//     if(currentUserCirculation != null)
-//     {
-//       currentUserCirculation.childCirculations = inspections[insNum].revisions[r].circulations.filter((circ)=>
-//         (circ.createdBy == this.currentUserId && circ.sequenceNo>1)
-//       ).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-
-//       this.currentCirculation = currentUserCirculation;
-//       currentUserLastCirculationFound = true;
-//       currentUserInspection = inspections[insNum];
-//       currentUserRevision = inspections[insNum].revisions[r];
-//       currentUserRevisionNumber =inspections[insNum].revisions[r].revisionNumber;
-//       break;
-//     }
-//   }
-//   insNum=insNum+1;
-// }
-
-
-
-// if(currentUserCirculation == null)//----It means this user has not any action on this Request , so it should not see the form
-// {
-//   this.editMode = false;
-
-// }
-// else if(currentUserCirculation.performedActionDateGregorian.toString().trim()=='0001-01-01T00:00:00')//----It means current User can act
-// {
-// this.editMode = true;
-//   this.currentCirculation = currentUserCirculation;
-//   if(currentUserCirculation.performerContactType == ContactTypes.QC_Lead || currentUserCirculation.performerContactType == ContactTypes.QC_Manager)
-//   {
-//   insNum=0;
-//   let vendorAllCirculations;
-//   while(!LastVendorCirculationFound && insNum<inspectionLength)
-//   {
-
-//   for(let r=0;r<inspections[insNum].revisions.length;r++)
-//     {
-//        vendorAllCirculations = inspections[insNum].revisions[r].circulations.filter((circ)=>circ.performerContactType == ContactTypes.Vendor).sort((a,b)=>{
-//           return b.performedActionDateGregorian.getTime() - a.performedActionDateGregorian.getTime();
-//       });
-//       LastVendorCirculation = vendorAllCirculations[0];
-//     //  LastVendorCirculation = inspections[insNum].revisions[r].circulations.find((circ)=>circ.performerContactType == ContactTypes.Vendor);
-//       if(LastVendorCirculation != null)
-//       {
-//         LastVendorCirculationFound = true;
-//         LastInspectionSentByVendor = inspections[insNum];
-//         this.attachments =   LastVendorCirculation.attachments ;
-//         break;
-//       }
-//     }
-//     insNum=insNum+1;
-//    }
-
-//    this.requestCirculations = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.performerContactType != ContactTypes.Vendor && circ.sequenceNo<2);
-//   // this.requestCirculations = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.performerContactType != ContactTypes.Vendor && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00');
-//    this.allCirculationsInCurrentRevision = currentUserInspection.revisions[0].circulations;
-//    this.requestCirculationsVM =
-//     this.requestCirculations.map(c => ({
-//       original : c,
-//       current: this.LastAssignedCirculation(c,this.allCirculationsInCurrentRevision)}));
-//    currentUserCirculation.childCirculations = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.parentId == currentUserCirculation.id );
-//     this.currentCirculation.attachments =structuredClone(LastVendorCirculation.attachments);
-//    this.attachments = structuredClone(LastVendorCirculation.attachments);
-
-//    this.BuildInternalCorrespondenceReceivers(currentUserInspection.contacts);
-
-//   }
-//   else if(currentUserCirculation.performerContactType == ContactTypes.Vendor)//---It means vendor should act----
-//   {
-//     ShownRevNumberShouldIncrease = true;
-//     let recentVendorcirculationWithActionFound : boolean = false;
-//     let recentVendorcirculationWithAction :Circulation = null;
-//     insNum=0;
-//     while(!recentVendorcirculationWithActionFound && insNum<inspectionLength)
-//     {
-//       for(let r=0;r<inspections[insNum].revisions.length;r++){
-//         if(inspections[insNum].revisions[r].revisionNumber <= currentUserRevisionNumber &&
-//            inspections[insNum].revisions[r].submittedDate<currentUserRevision.submittedDate){
-
-//         recentVendorcirculationWithAction = inspections[insNum].revisions[r].circulations.find((circ)=>{
-//          return circ.id == currentUserRevision.createdByCirculationId;
-//         });
-
-//         if(recentVendorcirculationWithAction != null)
-//         {
-//           this.attachments = structuredClone(recentVendorcirculationWithAction.attachments)
-//           recentVendorcirculationWithActionFound= true;
-//           break;
-//         }
-//       }
-//       }
-//       insNum = insNum+1;
-//     }
-//  insNum=0;
-//   while(!LastQCCirculationFound && insNum<inspectionLength)
-//   {
-//   for(let r=0;r<inspections[insNum].revisions.length;r++)
-//     {
-//       LastQCCirculation = inspections[insNum].revisions[r].circulations.find((circ)=>(circ.performerContactType == ContactTypes.QC_Lead && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00')
-//        || (circ.performerContactType == ContactTypes.QC_Manager && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00'));
-//       if(LastQCCirculation != null)
-//       {
-//         LastQCCirculationFound = true;
-//         LastInspectionSentByQC = inspections[insNum];
-//         break;
-//       }
-//     }
-//     insNum=insNum+1;
-//    }
-//    this.requestCirculations = [LastQCCirculation];
-//    this.allCirculationsInCurrentRevision = currentUserInspection.revisions[0].circulations;
-//    this.requestCirculationsVM =
-//     this.requestCirculations.map(c => ({
-//       original : c,
-//       current: c}));
-//   }
-//   else if(currentUserCirculation.performerContactType == ContactTypes.PIDEC_Inspector || currentUserCirculation.performerContactType == ContactTypes.ThirdPart_Inspector)//---It means Pidec or ThirdPart inspectors should act----
-//   {
-//  let vendorAllCirculations ;
-//      insNum=0;
-//   while(!LastVendorCirculationFound && insNum<inspectionLength)
-//   {
-//   for(let r=0;r<inspections[insNum].revisions.length;r++)
-//     {
-//       vendorAllCirculations = inspections[insNum].revisions[r].circulations.filter((circ)=>circ.performerContactType == ContactTypes.Vendor).sort((a,b)=>{
-//           return b.performedActionDateGregorian.getTime() - a.performedActionDateGregorian.getTime();
-//       });
-//       LastVendorCirculation = vendorAllCirculations[0];
-//       if(LastVendorCirculation != null)
-//       {
-//         LastVendorCirculationFound = true;
-//         LastInspectionSentByVendor = inspections[insNum];
-//         break;
-//       }
-//     }
-//     insNum=insNum+1;
-//    }
-
-//    this.allInternalCorrespondences = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.performerContactType == currentUserCirculation.performerContactType && circ.performerContactPerson.userId== this.currentUserId && circ.performerContactType != ContactTypes.Vendor);
-
-// let allassignedCirculations = currentUserInspection.revisions[0].circulations
-//   .filter(c =>
-//     c.performerContactType === currentUserCirculation.performerContactType &&
-//     c.performerContactPerson?.userId === this.currentUserId &&
-//     c.performerContactType !== ContactTypes.Vendor
-//   ).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-
-//    this.requestCirculations = [allassignedCirculations[0]];
-//    currentUserCirculation.childCirculations = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.performerContactType == currentUserCirculation.performerContactType && circ.performerContactPerson.userId== this.currentUserId && circ.performerContactType != ContactTypes.Vendor);
-//     this.currentCirculation.attachments =structuredClone(LastVendorCirculation.attachments);
-//    this.attachments = structuredClone(LastVendorCirculation.attachments);
-
-//    //let allCirculationsInRevision = LastInspectionSentByVendor.revisions[0].circulations;
-//    this.requestCirculationsVM =
-//     this.requestCirculations.map(c => ({
-//       original : c,
-//       current: c}));
-
-//   }
-// }
-// else{ //It means current user is not actor
-//   this.editMode = false;
-//    insNum=0;
-//   while(!(LastQCCirculationFound && LastVendorCirculationFound) && insNum<inspectionLength)
-//   {
-//   for(let r=0;r<inspections[insNum].revisions.length;r++)
-//     {
-//       LastQCCirculation = inspections[insNum].revisions[r].circulations.find((circ)=>(circ.performerContactType == ContactTypes.QC_Lead && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00')
-//        || (circ.performerContactType == ContactTypes.QC_Manager && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00'));
-//       if(LastQCCirculation != null)
-//       {
-//         LastQCCirculation.childCirculations =   inspections[insNum].revisions[r].circulations.filter((circ)=>
-//         (circ.createdBy == LastQCCirculation.performerContactPerson.userId && circ.sequenceNo>1)
-//       ).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-//         LastQCCirculationFound = true;
-//         LastQCrevisionNumber = r;
-//         LastInspectionSentByQC = inspections[insNum];
-//        // break;
-//       }
-//         LastVendorCirculation = inspections[insNum].revisions[r].circulations.find((circ)=>(circ.performerContactType == ContactTypes.Vendor && circ.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00'));
-
-//         if(LastVendorCirculation != null)
-//         {
-//         LastVendorCirculationFound = true;
-//         LastInspectionSentByVendor = inspections[insNum];
-//         LastVendorrevisionNumber = r;
-//        // break;
-//         }
-
-//       if(LastQCCirculationFound && LastVendorCirculationFound)
-//         break;
-//     }
-//     insNum=insNum+1;
-//    }
-
-//   if(currentUserCirculation.performerContactType == ContactTypes.QC_Lead || currentUserCirculation.performerContactType == ContactTypes.QC_Manager)
-//   {
-//     this.allCirculationsInCurrentRevision = currentUserInspection.revisions[0].circulations;
-
-//     this.requestCirculations = currentUserInspection.revisions[0].circulations.filter((circ)=>circ.performerContactType != ContactTypes.Vendor);
-
-//      this.requestCirculationsVM = this.requestCirculations.map(c=>({
-//     original:c,
-//     current:this.LastAssignedCirculation(c,this.allCirculationsInCurrentRevision)
-//    }));
-
-//     this.attachments = LastVendorCirculation.attachments;
-//   }
-//   else if(currentUserCirculation.performerContactType == ContactTypes.Vendor) // in this state Qc has had action (approve or reject) and vendor should see Qc action
-//   {
-//     if(LastQCCirculation != null && LastQCCirculation.performedActionDateGregorian.toString().trim() != '0001-01-01T00:00:00')
-//       {
-//         this.requestCirculations = [LastQCCirculation];
-//          this.requestCirculationsVM = this.requestCirculations.map(c=>({
-//     original:c,
-//     current:this.LastAssignedCirculation(c,this.allCirculationsInCurrentRevision)
-//    }));
-//         this.attachments = LastVendorCirculation.attachments;
-//       }
-//   }
-//   else {//If user is not QC or Vendor and can not have any action
-
-
-
-//     if(LastInspectionSentByQC != null)
-//     {
-//       this.allCirculationsInCurrentRevision = LastInspectionSentByQC.revisions[LastQCrevisionNumber].circulations;
-
-//     let currentRevisionCirculationByCurrentUser = LastInspectionSentByQC.revisions[LastQCrevisionNumber].circulations.filter((circ)=>(
-//     circ.performerContactType == currentUserCirculation.performerContactType )).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-//       if(currentRevisionCirculationByCurrentUser.length>0)
-//         this.requestCirculations = [LastQCCirculation,currentRevisionCirculationByCurrentUser[0]];
-//       else
-//       {
-//         this.requestCirculations = [LastQCCirculation];
-//       }
-
-//        this.requestCirculationsVM = this.requestCirculations.map(c=>({
-//     original:c,
-//     current:this.LastAssignedCirculation(c,this.allCirculationsInCurrentRevision)
-//    }));
-//     }
-//     else // QC in this revision have not had any action yet, but maybe some internal Correspondences have been transfered
-//     {
-
-//       let returnedCirculations :Circulation[]=[];
-//       if(LastInspectionSentByVendor != null) {
-//         this.allCirculationsInCurrentRevision = returnedCirculations = LastInspectionSentByVendor.revisions[LastVendorrevisionNumber].circulations;
-//          returnedCirculations = LastInspectionSentByVendor.revisions[LastVendorrevisionNumber].circulations.filter((circ)=>
-//         (circ.performerContactPerson.userId == currentUserCirculation.performerContactPerson.userId)// && circ.sequenceNo>1)
-//       ).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       })
-//       let currentRevisionCirculationByCurrentUser = null;
-//       if(returnedCirculations.length>0)
-//         currentRevisionCirculationByCurrentUser =   returnedCirculations[0];
-
-//      currentRevisionCirculationByCurrentUser.childCirculations =   LastInspectionSentByVendor.revisions[LastVendorrevisionNumber].circulations.filter((circ)=>
-//         (circ.performerContactPerson.userId == currentUserCirculation.performerContactPerson.userId)// && circ.sequenceNo>1)
-//       ).sort((a,b)=>{
-//           return b.sequenceNo - a.sequenceNo;
-//       });
-
-//    this.requestCirculations = [currentRevisionCirculationByCurrentUser];
-
-//       }
-//     }
-//     this.requestCirculationsVM = this.requestCirculations.map(c=>({
-//     original:c,
-//     current:this.LastAssignedCirculation(c,this.allCirculationsInCurrentRevision)
-//    }));
-//   }
-
-//      if(!LastQCCirculationFound)//It means this request only is created and there isn't any other actions on it
-//         currentUserInspection = currentUserInspection;
-//     else
-//         currentUserInspection = LastInspectionSentByQC;
-
-// }
-// let shownRevNumber:string ="";
-// if(ShownRevNumberShouldIncrease==true)
-//   shownRevNumber = (Number(rev)+1).toString().padStart(2,"0");
-// else
-//   shownRevNumber = (rev).padStart(2,"0");
-
-//   inspection = currentUserInspection;
-//   this.inspectionForm =  this.formBuilder.group({
-
-//     id:inspection.id,
-//     //attachments: this.formBuilder.array<FormTypes.FormAttachment>([this.generateAttachment()]),
-//     contacts : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-//     locations: this.formBuilder.array<FormTypes.FormAddress>([this.generateAddress()]),
-
-//     order:inspection.order !=undefined ? this.generateOrderFromValue(inspection.order) : this.generateOrder(),
-//     orderName:inspection.orderName,
-//     equipmentTagNo:inspection.equipmentTagNo,
-//     //owner:this.generateOwner(),
-//     pidecContacts:this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-//     pidecInspectors : this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-//     thirdPartInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
-//     //vendor:inspection.vendor !=undefined ? this.generateVendorFromValue(inspection.vendor): this.generateVendor(),
-//     ownerContactPerson: this.generateContact(),
-//     mcContactPerson: this.generateContact(),
-//     supplierContactPerson:this.generateContact(),
-//     subSupplierContactPerson:this.generateContact(),
-//     revNumber:[shownRevNumber],
-//     mainNumber:[mainNo],
-//     notificationNumber:inspection.notificationNumber,
-//     ownerDocNo:'',
-//     pidecDocNo:'',
-//     supplier:'',
-//     sub_supplier:'',
-//     workProgress:'',
-
-//     createdBy: inspection.createdBy,
-//     modifiedBy: inspection.modifiedBy,
-//     createdDate:inspection.createdDate,
-//     modifiedDate :inspection.modifiedDate,
-//     issueDate:inspection.issueDate,
-//     persianIssueDate: inspection.persianIssueDate,
-
-//     requestInspectionDateEnd:inspection.requestInspectionDateEnd,
-//     requestInspectionDateStart:inspection.requestInspectionDateStart,
-
-//     requestInspectionDueDate: inspection.requestInspectionDueDate,
-//     inspectionTimeComment : inspection.inspectionTimeComment,
-//     inspectionAction:inspection.inspectionAction,
-
-//     requestInspectionPersianDateEnd: inspection.requestInspectionPersianDateEnd,
-//     requestInspectionPersianDateStart: inspection.requestInspectionPersianDateStart,
-
-
-//     inspectionSubjects:this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()]),//this.generateInspectionSubjectsFormArrayFromValue(inspection.inspectionSubjects),
-//     inspectionTypes: this.formBuilder.array<FormTypes.FormInspectionType>([this.generateInspectionType()]),//this.generateInspectionTypesFormArrayFromValue(inspection.inspectionTypes)
-
-//   });
-
-
-
-//     if (inspection.inspectionAction)
-//     {
-//       this.inspectionActions = inspection.inspectionAction.split(',');
-//       this.inspectionForm.get('inspectionAction')?.setValue(inspection.inspectionAction);
-//     }
-
-
-//   this.formattedPersianReqStartDate = this.ConvertGregorianDateToPersianDate(inspection.requestInspectionDateStart);
-//   this.formattedPersianReqEndDate = this.ConvertGregorianDateToPersianDate(inspection.requestInspectionDateEnd);
-//   let retrievedIssueDate = new Date (this.inspectionForm.get('issueDate').value);
-//   this.setIssueDate(retrievedIssueDate);
-
-
-//       inspection.contacts.forEach((relContact)=>{
-//           this.contactsFormArray.push(this.generateContactFromContactValue(relContact));
-//         });
-
-//          if(this.currentInspectionTypes !=null && this.currentInspectionTypes !=undefined)
-//       {
-//           this.currentInspectionTypes.forEach((inspectionType)=>
-
-//             this.inspectionTypesFormArray.push(this.formBuilder.group({
-//               id:[inspectionType.id],
-//               name:[inspectionType.name],
-//               selected:[false]
-//               }))
-//           );}
-
-//           if(this.currentInspectionSubjects != null && this.currentInspectionSubjects != undefined)
-//         {
-//            this.allSubjects = this.currentInspectionSubjects.map(s => s.name);
-//         }
-//         else {
-//            this.allSubjects =  inspection.inspectionSubjects.map(s => s.name);
-//         }
-
-
-//       this.generateInspectionSubjectsFormArrayFromValue(inspection.inspectionSubjects);
-//       this.generateInspectionTypesFormArrayFromValue(inspection.inspectionTypes);
-//       this.generateContactsFormArrayFromValue(inspection.contacts);
-//       this.generateInspectionLocationsFormArrayFromValue(inspection.locations);
-//        this.toggleEditMode(this.editMode);
-//  }
 
 
 openDocuments(): void {
@@ -2032,6 +1468,12 @@ private populateContacts(
 
     });
 
+     this.inspectionForm.patchValue({ownerContactPerson: inspection.contacts!.filter((contact)=>contact.contactType==ContactTypes.Owner)[0]});
+              this.inspectionForm.patchValue({mcContactPerson:inspection.contacts!.filter((contact)=>contact.contactType==ContactTypes.MC)[0]});
+              this.inspectionForm.patchValue({contacts:  inspection.contacts!});
+              this.inspectionForm.patchValue({pidecContacts:inspection.contacts!.filter((contact)=>contact.contactType==ContactTypes.QC_Manager || contact.contactType==ContactTypes.QC_Lead)});
+              this.inspectionForm.patchValue({pidecInspectors:inspection.contacts!.filter((contact)=>contact.contactType==ContactTypes.PIDEC_Inspector)});
+              this.inspectionForm.patchValue({thirdPartInspectors:inspection.contacts!.filter((contact)=>contact.contactType==ContactTypes.ThirdPart_Inspector)});
 }
 
 public CurrentCirculationHasCorrespondences(circulation :CirculationVM):boolean{
@@ -2136,12 +1578,14 @@ if(!this.workflow)
 }
 
 get canShowSubmittData():boolean{
+
+  if(this.inspectionForm.get('id').value != null && this.inspectionForm.get('id').value !=undefined && this.inspectionForm.get('id').value != '00000000-0000-0000-0000-000000000000')
+  {
+    return true;
+  }
     if(!this.workflow)
     {
-      if(!this.currentCirculation)
-        return false;
-      else
-        return true;
+      return false;
     }
 
  if (this.workflow && !this.workflow.editMode) {
@@ -2157,11 +1601,16 @@ get canShowSubmittData():boolean{
 
 get canSubmitInspectionNotification():boolean{
 
-   if (!this.workflow) {
-    return true;
+   if (!this.workflow)
+    {
+      if(this.inspectionForm.get('id').value == null || this.inspectionForm.get('id').value== undefined || this.inspectionForm.get('id').value=='00000000-0000-0000-0000-000000000000')
+        return true;
+      else
+        return false;
   }
-
-  if (!this.workflow.editMode) {
+  else //if (this.workflow )
+  {
+  if(!this.workflow.editMode) {
     return false;
   }
 
@@ -2171,13 +1620,9 @@ get canSubmitInspectionNotification():boolean{
 
   return this.workflow.currentCirculation.performerContactType
       === ContactTypes.Vendor;
+}
 
 }
-// private populateLocations(
-//     form: FormGroup,
-//     inspection: Inspection
-// ): void {
-
 
   private populateLocations(vm: InspectionWorkflowViewModel): void {
 
@@ -2205,28 +1650,62 @@ get canSubmitInspectionNotification():boolean{
 
 }
 
+// private populateInspectionTypes(
+//     form: FormGroup,
+//     inspection: Inspection
+// ): void {
+
+//     const types =
+//         form.get('inspectionTypes') as FormArray;
+
+//     inspection.inspectionTypes.forEach(t => {
+
+//         types.push(
+//             this.generateInspectionTypeFromValue(t)
+//         );
+
+//     });
+
+// }
+
 private populateInspectionTypes(
-    form: FormGroup,
-    inspection: Inspection
+  form: FormGroup,
+  inspection: Inspection
 ): void {
 
-    const types =
-        form.get('inspectionTypes') as FormArray;
+  const types = form.get('inspectionTypes') as FormArray;
 
-    inspection.inspectionTypes.forEach(t => {
+  types.clear();
 
-        types.push(
-            this.generateInspectionTypeFromValue(t)
-        );
+  const savedTypeIds = new Set(
+    inspection.inspectionTypes.map(t => t.id)
+  );
 
-    });
+  this.currentInspectionTypes.forEach(type => {
 
+    const inspectionType: InspectionType = {
+      ...type,
+      selected: savedTypeIds.has(type.id)
+    };
+
+    types.push(
+      this.generateInspectionTypeFromValue(inspectionType)
+    );
+  });
 }
 
 private populateInspectionSubjects(
     form: FormGroup,
     inspection: Inspection
 ): void {
+
+
+
+   let currentOrderInspectionSubjects = inspection.order.inspectionSubjects;
+
+          if(currentOrderInspectionSubjects != null)
+              this.allSubjects = currentOrderInspectionSubjects.map(s => s.name);
+
 
     const subjects =
         form.get('inspectionSubjects') as FormArray;
@@ -2249,6 +1728,7 @@ private configureForm(
 
     if (inspection.inspectionAction) {
 
+        this.inspectionActions = inspection.inspectionAction.split(',');
         form.get('inspectionAction')
             ?.setValue(
                 inspection.inspectionAction
@@ -2287,9 +1767,9 @@ private createForm(
 
         pidecContacts: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
 
-        pidecInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
+        pidecInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateInspectorContact(ContactTypes.PIDEC_Inspector)]),
 
-        thirdPartInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateContact()]),
+        thirdPartInspectors: this.formBuilder.array<FormTypes.FormContact>([this.generateInspectorContact(ContactTypes.ThirdPart_Inspector)]),
 
         inspectionSubjects: this.formBuilder.array<FormTypes.FormInspectionSubject>([this.generateInspectionSubject()]),
 
@@ -2385,12 +1865,28 @@ build(vm: InspectionWorkflowViewModel): FormGroup {
     return form;
 }
 
+setCurrentProject(project: Project):void {
+ if((project!= null && project != undefined) && (this.currentProject==undefined || this.currentProject==null ||   Object.keys(this.currentProject).length === 0))
+      {
+        this.currentProject= {} as Project;
+        this.currentProject.fSId = project['fsId'];
+        this.currentProject.id = project.id;
+        this.currentProject.number = project.number;
+        this.currentProject.description = project.description;
+        this.currentProject.createdBy = project.createdBy;
+        this.currentProject.createdDate = project.createdDate;
+      }
+}
+
+
 generateInspectionFromValue(inspections :Inspection[]):void{
+
 
   const vm=this.workflowService.buildWorkflow(
         inspections,
         this.currentUser);
 
+     this.setCurrentProject(vm.inspection.order.project);
     this.workflow=vm;
  this.inspectionForm =this.buildForm(this.workflow);
 
@@ -2621,6 +2117,159 @@ return this.formBuilder.group({
       belongedTo:[contact.belongedTo]
   })
 }
+
+// ============================================================================
+// Inspector picker (pidecInspectors / thirdPartInspectors rows)
+//
+// Each row IS the inspecting company's own Contact (ContactType PIDEC_Inspector(8)
+// or ThirdPart_Inspector(9)). "assignedInspector*" controls are added on top of the
+// normal Contact shape so SaveNewInspection()/DraftNewInspection() - which still
+// concatenate these rows into rawFormValue.contacts - keep working unchanged.
+//
+// NOTE: when an existing inspection is loaded from the server, these extra
+// assignedInspector* fields will be empty unless your API's contact payload for
+// this inspection is extended to also return InspectorId/skills/status for these
+// two arrays. Until then, a loaded (historical) row falls back to showing just
+// name/phone/email, with no skill chips or status badge.
+// ============================================================================
+
+/** Builds one row for pidecInspectors/thirdPartInspectors: a normal contact row plus the
+ *  controls used to show which saved Inspector (resume) was assigned to it. */
+generateInspectorContact(contactType: number): FormGroup {
+  const group = this.generateContact() as unknown as FormGroup;
+  group.patchValue({ contactType });
+  group.addControl('assignedInspectorId', this.formBuilder.control<string | null>(null));
+  group.addControl('assignedInspectorPosition', this.formBuilder.control(''));
+  group.addControl('assignedInspectorSkillsLabel', this.formBuilder.control(''));
+  group.addControl('assignedInspectorStatus', this.formBuilder.control<number | null>(null));
+  return group;
+}
+
+get pidecInspectorRows(): FormArray<FormGroup> {
+  return this.inspectionForm.get('pidecInspectors') as FormArray<FormGroup>;
+}
+
+get thirdPartyInspectorRows(): FormArray<FormGroup> {
+  return this.inspectionForm.get('thirdPartInspectors') as FormArray<FormGroup>;
+}
+
+addPidecInspectorRow(): void {
+  this.pidecInspectorRows.push(this.generateInspectorContact(ContactTypes.PIDEC_Inspector));
+}
+
+addThirdPartyInspectorRow(): void {
+  this.thirdPartyInspectorRows.push(this.generateInspectorContact(ContactTypes.ThirdPart_Inspector));
+}
+
+removeInspectorRow(array: FormArray<FormGroup>, group: FormGroup): void {
+  const idx = array.controls.indexOf(group);
+  if (array.controls.length > 1) {
+    if (idx >= 0) array.removeAt(idx);
+  } else {
+    const contactType = group.get('contactType')?.value;
+    array.at(idx).reset({
+      id: '00000000-0000-0000-0000-000000000000',
+      note: '', cc: '', email: '', fax: '', name: '', phone: '', mobile: '',
+      address: this.generateAddress(), contactType, homePage: '', userId: '',
+      isVisible: [true], password: '', belongedTo: ObjectTypes.Undefined,
+      assignedInspectorId: null, assignedInspectorPosition: '',
+      assignedInspectorSkillsLabel: '', assignedInspectorStatus: null,
+    });
+  }
+}
+
+/** Loads (and caches) the approved inspectors for this inspecting company, the first time a row for it is used. */
+private ensureInspectorsLoaded(inspectionCompanyContactId: string): void {
+  if (!inspectionCompanyContactId || inspectionCompanyContactId === '00000000-0000-0000-0000-000000000000') return;
+  if (this.inspectorsByCompanyContact.has(inspectionCompanyContactId)) return;
+
+  // TODO: confirm your InspectorService.getAll() supports these two filter params
+  // (inspectionCompanyContactId, qcApprovalState). If not, add them server-side first.
+  this.inspectorsByCompanyContact.set(inspectionCompanyContactId, []); // avoid duplicate in-flight requests
+  this.inspectorService
+    .getAll({ inspectionCompanyContactId, qcApprovalState: 1 /* Approved */ })
+    .subscribe({
+      next: (list) => this.inspectorsByCompanyContact.set(inspectionCompanyContactId, list),
+      error: () => this.inspectorsByCompanyContact.delete(inspectionCompanyContactId),
+    });
+}
+
+onInspectorRowFocus(group: FormGroup): void {
+  this.ensureInspectorsLoaded(group.get('id')?.value);
+}
+
+onInspectorSearchInput(group: FormGroup, term: string): void {
+  this.inspectorSearchTerms.set(group, term);
+}
+
+/** Options shown in this row's autocomplete: that company's approved inspectors matching the typed text. */
+filteredInspectorsFor(group: FormGroup): Inspector[] {
+  const companyContactId = group.get('id')?.value;
+  const all = this.inspectorsByCompanyContact.get(companyContactId) ?? [];
+  const term = (this.inspectorSearchTerms.get(group) ?? '').trim().toLowerCase();
+  const matches = term
+    ? all.filter((i) => (i.name ?? `${i.firstName} ${i.lastName}`).toLowerCase().includes(term))
+    : all;
+  return matches.slice(0, 15);
+}
+
+pickInspector(group: FormGroup, inspector: Inspector): void {
+  group.patchValue({
+    name: inspector.name ?? `${inspector.firstName} ${inspector.lastName}`,
+    phone: inspector.phone ?? '',
+    email: inspector.email ?? '',
+    assignedInspectorId: inspector.inspectorId,
+    assignedInspectorPosition: inspector.position ?? '',
+    assignedInspectorSkillsLabel: (inspector.skills ?? []).map((s) => s.code).join(', '),
+    assignedInspectorStatus: inspector.qcApprovalState,
+  });
+  this.inspectorSearchTerms.delete(group);
+}
+
+openInspectorQuickAdd(group: FormGroup, array: FormArray<FormGroup>): void {
+  const inspectionCompanyContactId = group.get('id')?.value;
+  if (!inspectionCompanyContactId || inspectionCompanyContactId === '00000000-0000-0000-0000-000000000000') {
+    this.toastr.warning('Pick the inspecting company contact for this row first.');
+    return;
+  }
+
+  const dialogRef = this.dialog.open(InspectorQuickAddDialogComponent, {
+    width: '480px',
+    data: { inspectionCompanyContactId } as InspectorQuickAddData,
+  });
+
+  dialogRef.afterClosed().subscribe((created: Inspector | null) => {
+    if (!created) return;
+    const cache = this.inspectorsByCompanyContact.get(inspectionCompanyContactId) ?? [];
+    this.inspectorsByCompanyContact.set(inspectionCompanyContactId, [...cache, created]);
+    this.pickInspector(group, created);
+  });
+}
+
+/** 0 = Rejected, 1 = Approved, 2 = NoAction(pending) - see Inspector.QCApprovalState. */
+qcStatusLabel(status: number | null): string {
+  switch (status) {
+    case 1: return 'Approved';
+    case 0: return 'Rejected';
+    case 2: return 'Pending review';
+    default: return '';
+  }
+}
+
+qcStatusClass(status: number | null): string {
+  switch (status) {
+    case 1: return 'qc-badge qc-approved';
+    case 0: return 'qc-badge qc-rejected';
+    case 2: return 'qc-badge qc-pending';
+    default: return 'qc-badge';
+  }
+}
+
+/** Only an Inspector-role user (see isInspector, set in the constructor) may attach/register inspectors. */
+get canManageInspectors(): boolean {
+  return this.isInspector && this.editMode;
+}
+
   generateLocation():FormTypes.FormLocation{
     return this.formBuilder.group({
       address:[''],
@@ -2736,17 +2385,6 @@ get contactsControls(): FormContact[] {
   return new FormArray([this.generateContact()]).controls;
 }
 
-// get inspectionLocationFormArray() :FormArray<FormGroup> {
-
-//   let indexOfzeroId:number =-1;
-//    if(this.inspectionForm.get('locations')== null || this.inspectionForm.get('locations')==undefined ||
-//       this.inspectionForm.get('locations').value.length==0)
-//         this.inspectionForm.addControl('locations', new FormArray([this.generateAddress()]));
-
-
-//     return this.inspectionForm?.get('locations') as FormArray ?? new FormArray([this.generateAddress()]);
-
-// }
 
 get inspectionLocationFormArray(): FormArray<FormGroup> {
   return this.inspectionForm.get('locations') as FormArray;
@@ -2934,43 +2572,6 @@ getGregorianMonthName(monthIndex: number): string {
 
 //---------------End For Methods For IssueDate and PersianIssueDate-------------------
 
-//-----------------Methods For RequestInspectionPersianDateStart and RequestInspectionDateStart-------------------
-// onRequestInspectionDateStartSelect(event: any): void {
-
-//      if (this.isManualUpdateRequestInspectionDateStart) {
-//       // Prevent event handler from running if the update is manual
-//       this.isManualUpdateRequestInspectionDateStart = false;
-//       return;
-//     }
-
-//     try {
-//       // Get Gregorian date from the event
-//       const viaGregorianDate = new Date(event.gregorian);
-
-//       // Update Gregorian date in form
-//       this.isManualUpdateRequestInspectionDateStart = true;
-//        this.inspectionForm?.controls?.RequestInspectionDateStart?.patchValue(viaGregorianDate);
-
-//       // Format Gregorian date with month name
-//       const gregorianDay = viaGregorianDate.getDate();
-//       const gregorianMonth = viaGregorianDate.getMonth();
-//       const gregorianYear = viaGregorianDate.getFullYear();
-//       const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
-
-//       // Set formatted Gregorian date with month name
-//       this.formattedGregorianReqStartDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
-//       this.CalculateInspectionDuration();
-//       // Reset flag after a short delay
-//       setTimeout(() => {
-//         this.isManualUpdateRequestInspectionDateStart = false;
-//       }, 100);
-//     } catch (error) {
-//       console.error('Error in onIssueDateSelect:', error);
-//       this.toastr.error('Error updating Gregorian date');
-//     }
-
-//   }
-
   setRequestInspectionPersianDateStart(event: any) {
     this.isManualUpdateRequestInspectionDateStart = true;
 
@@ -3013,43 +2614,6 @@ getGregorianMonthName(monthIndex: number): string {
     }
   }
 //--------------------------------------------------------------------------------------------------------------------
-
-//-----------------Methods For RequestInspectionPersianDateStart and RequestInspectionDateStart-------------------
-// onRequestInspectionDateEndSelect(event: any): void {
-// if (this.isManualUpdateRequestInspectionDateEnd) {
-//       // Prevent event handler from running if the update is manual
-//       this.isManualUpdateRequestInspectionDateEnd = false;
-//       return;
-//     }
-
-//     try {
-//       // Get Gregorian date from the event
-//       const viaGregorianDate = new Date(event.gregorian);
-
-//       // Update Gregorian date in form
-//       this.isManualUpdateRequestInspectionDateEnd = true;
-//        this.inspectionForm?.controls?.RequestInspectionDateEnd?.patchValue(viaGregorianDate);
-
-//       // Format Gregorian date with month name
-//       const gregorianDay = viaGregorianDate.getDate();
-//       const gregorianMonth = viaGregorianDate.getMonth();
-//       const gregorianYear = viaGregorianDate.getFullYear();
-//       const gregorianMonthName = this.getGregorianMonthName(gregorianMonth);
-
-//       // Set formatted Gregorian date with month name
-//       this.formattedGregorianReqEndDate = `${gregorianDay} ${gregorianMonthName} ${gregorianYear}`;
-
-//       this.CalculateInspectionDuration();
-
-//       // Reset flag after a short delay
-//       setTimeout(() => {
-//         this.isManualUpdateRequestInspectionDateEnd = false;
-//       }, 100);
-//     } catch (error) {
-//       console.error('Error in onReqEndDateSelect:', error);
-//       this.toastr.error('Error updating Gregorian date');
-//     }
-// }
 
 setRequestInspectionPersianDateEnd(event: any) {
   this.isManualUpdateRequestInspectionDateEnd = true;
@@ -3168,6 +2732,27 @@ CalculateInspectionDuration():void{
   }
   //-------------------End of File Upload Section---------------------
 
+private toUtcISOString(date: Date | null): string | null {
+  if (!date) {
+    return null;
+  }
+
+  const utcDate = new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds(),
+      date.getMilliseconds()
+    )
+  );
+
+  return utcDate.toISOString();
+}
+
+
   SaveNewInspection():void
   {
     console.log("in save :", this.inspectionForm.getRawValue());
@@ -3203,12 +2788,16 @@ CalculateInspectionDuration():void{
         //this.inspectionForm.get('contacts').value
         .filter((contact) => contact.email !='' && contact.contactType !=ContactTypes.Undefined) as Contact[]
           ,
+
+        requestInspectionDateStart: this.toUtcISOString(rawFormValue.requestInspectionDateStart),
+        requestInspectionDateEnd : this.toUtcISOString(rawFormValue.requestInspectionDateEnd),
         // attachments:this.inspectionForm
         //   .get('attachments')
         //   .value.filter((attachment) => attachment.name !='' && attachment.content.size !=0) as Attachment[]
         //    ,
         //  circulations: [this.currentCirculation]
     };
+
 
    // filteredInspectionForm.attachments = null;
      this.formData.delete('inspection');
@@ -3224,24 +2813,28 @@ CalculateInspectionDuration():void{
       this.formData.delete('HasContent');
 
     // this.formData.append('attachments',JSON.stringify(this.Attachments));
+
+    if(filteredInspectionForm.notificationNumber.indexOf(".")<0)
+      filteredInspectionForm.notificationNumber = filteredInspectionForm.notificationNumber.concat(".",filteredInspectionForm.revNumber);
+
    this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
    this.formData.append('project',JSON.stringify(this.currentProject ))
 
 
-
-
-
-   if(this.currentCirculation != null && this.currentCirculation != undefined)
+    if(this.workflow && this.workflow.currentCirculation != null && this.workflow.currentCirculation != undefined)
    {
-      this.currentCirculation.attachments = null;
-      if((this.currentCirculation.previousActionType!= undefined) && (this.currentCirculation.previousActionType == 3 || this.currentCirculation.previousActionType != null || Number.parseInt(filteredInspectionForm.revNumber)>0))
+    this.workflow.currentCirculation.performedActionDateGregorian = null;
+      this.workflow.currentCirculation.attachments = null;
+      if((this.workflow.currentCirculation.previousActionType!= undefined) && (this.workflow.currentCirculation.previousActionType == 3 || this.workflow.currentCirculation.previousActionType != null || Number.parseInt(filteredInspectionForm.revNumber)>0))
       {
-        this.currentCirculation.actionType = 1;
+        this.workflow.currentCirculation.actionType = 1;
       }
-   }
-   this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
 
-  this.attachments.forEach((attachment)=>{
+      this.formData.append('currentCirculation',JSON.stringify(this.workflow.currentCirculation));
+    }
+    if(this.workflow && this.workflow.attachments)
+    {
+  this.workflow.attachments.forEach((attachment)=>{
      const name = attachment.name;
  if (name && name.trim() !== '') {
 
@@ -3268,31 +2861,78 @@ CalculateInspectionDuration():void{
   }
   }
 );
+    }
+    else ///this is new inspection request that does not have any workflow yet
+    {
+this.attachments.forEach((attachment)=>{
+     const name = attachment.name;
+ if (name && name.trim() !== '') {
 
+    this.formData.append('AttachmentIds', attachment.id);
+    this.formData.append('AttachmentNames', attachment.name);
+    this.formData.append('AttachmentVersions', attachment.version);
+    this.formData.append('AttachmentDescriptions', attachment.description);
+    this.formData.append('AttachmentDocNos',attachment.docNo);
+    this.formData.append('AttachmentStatuses',attachment.status);
 
-    this.inspectionService.saveNewInspectionFull(this.formData).subscribe((result)=>{
+    if (attachment.content) {
+    this.formData.append('Attachments', attachment.content);
+    this.formData.append('HasContent', 'true');
+  } else {
+    // 🔥 placeholder to keep index alignment
+    this.formData.append(
+      'Attachments',
+     new File(['fakeContent'], 'placeholder.txt', {
+    type: 'application/octet-stream'
+  }));
+    this.formData.append('HasContent', 'false');
+  }
 
+  }
+  }
+);
+    }
 
-      this.inspectionForm.patchValue({
-        //...this.inspectionForm.getRawValue(),
+this.inspectionService
+  .saveNewInspectionFull(this.formData)
+  .subscribe({
+    next: (result) => {
+        this.inspectionForm.patchValue({
+
         id:result.inspection.id,
         contacts:result.inspection.contacts,
         inspectionSubjects: result.inspection.inspectionSubjects,
         inspectionTypes:result.inspection.inspectionTypes,
         locations: result.inspection.locations
-        //attachments :sentInspection.attachments
+
       })
-     // this.Attachments.clear();
 
-      this.currentCirculation = result.currentCirculation;
+if(this.workflow )
+{
+      this.workflow.currentCirculation = result.currentCirculation;
 
- if(this.currentCirculation != null){
-    this.currentCirculation.attachments.forEach((ra)=>{
+  if(this.workflow.currentCirculation != null){
+    this.workflow.currentCirculation.attachments.forEach((ra)=>{
      // this.Attachments.push(this.generateAttachmentFromValue(ra));
     })
  }
+}
+else
+{
+
+}
   this.toggleEditMode(false);
-    });
+
+    },
+    error: (error) => {
+      this.toastr.success(error +" occured, please contact with Administrator","Send Error");
+    },
+    complete: () => {
+      console.log('Request completed');
+    }
+  });
+
+
   }
 
   DraftNewInspection():void
@@ -3343,7 +2983,7 @@ CalculateInspectionDuration():void{
 
    this.formData.append('inspection',JSON.stringify(filteredInspectionForm));
    this.formData.append('project',JSON.stringify(this.currentProject ))
-   this.formData.append('currentCirculation',JSON.stringify(this.currentCirculation));
+   this.formData.append('currentCirculation',JSON.stringify(this.workflow.currentCirculation));
 
   this.attachments.forEach((attachment)=>{
      const name = attachment.name;
@@ -3396,20 +3036,32 @@ CalculateInspectionDuration():void{
     });
   }
 
-  showHistoryForm(){
-const historyUrl = this.router.serializeUrl(
-      this.router.createUrlTree(['inspection-print'], {
-        queryParams: {
-          requestId: this.RequestId // Pass the key, not the data itself,
+//   showHistoryForm(){
+// const historyUrl = this.router.serializeUrl(
+//       this.router.createUrlTree(['inspection-print'], {
+//         queryParams: {
+//           requestId: this.RequestId // Pass the key, not the data itself,
 
-          // Or you could use a unique ID and fetch data on the print page itself
-          // inspectionId: inspectionData.id // If inspectionData has an ID
-        }
-      })
+//           // Or you could use a unique ID and fetch data on the print page itself
+//           // inspectionId: inspectionData.id // If inspectionData has an ID
+//         }
+//       })
+//     );
+//   // Open in a new tab/window
+//   const newWindow = window.open(historyUrl, '_blank','width=1000,height=800');
+//   }
+
+  showHistoryForm(){
+    // Previously navigated to 'inspection-print', but that component only reads
+    // dataKey/projKey query params (set by printForm()) - it never reads requestId,
+    // so this button opened a page it could never populate. Routes to the real
+    // history page instead; adjust the path/route name to match your routing module.
+    const historyUrl = this.router.serializeUrl(
+      this.router.createUrlTree(['inspection-history', this.RequestId])
     );
-  // Open in a new tab/window
-  const newWindow = window.open(historyUrl, '_blank','width=1000,height=800');
+    const newWindow = window.open(historyUrl, '_blank', 'width=1000,height=800');
   }
+
 
 printForm() {
 
@@ -3455,7 +3107,8 @@ printForm() {
     //   urlFormat= environment.apiUrl+'/'+variableSegment+'/'+'inspection-print';
 
 
-      urlFormat = '../../'+variableSegment+'/'+'inspection-print';
+      //urlFormat = '../../'+variableSegment+'/'+'inspection-print';
+      urlFormat = '../../'+'inspection-print';
 
   //  urlFormat = window.location.origin + this.router.url;
 
@@ -3493,6 +3146,7 @@ AddInternalCorrespondenceRow(parentCirculation:Circulation)
 
 StartInternalCorrespondence (internalCirculation: Circulation,parentCirculation: Circulation) {
 this.internalCorrespondenceFormData = new FormData();
+parentCirculation.performedActionDateGregorian = new Date(Date.now());
 this.internalCorrespondenceFormData.append('Contributor',JSON.stringify(parentCirculation));
 this.internalCorrespondenceFormData.append('AssigneeCirculations',JSON.stringify(parentCirculation.childCirculations));
 this.inspectionService.ContributeAccessRightsToEditTask(this.internalCorrespondenceFormData).subscribe(

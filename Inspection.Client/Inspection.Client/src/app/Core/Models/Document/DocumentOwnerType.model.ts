@@ -4,10 +4,8 @@ export enum DocumentOwnerType {
 
     Inspector = 2,
 
-    Vendor = 3,
+    Contact = 3,
 
-    Contact = 4,
-
-    InspectionNotification = 5
+    InspectionNotification = 4
 
 }

@@ -18,6 +18,7 @@ import { PInspectorWorkflowHandler } from './Core/WorkflowEngine/WorkflowHandler
 import { TInspectorWorkflowHandler } from './Core/WorkflowEngine/WorkflowHandlers/TInspectorWorkflowHandler';
 import { IWorkflowHandler } from './Core/WorkflowEngine/Interfaces/IWorkflowHandler';
 import { WORKFLOW_HANDLERS } from './Core/WorkflowEngine/WorkflowHandlers/workflow-handler.token';
+import { VendorWorkflowHandler } from './Core/WorkflowEngine/WorkflowHandlers/VendorWorkflowHandler';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),provideHttpClient(withFetch()),provideRouter(routes,withComponentInputBinding()), provideClientHydration(withEventReplay()),
@@ -31,6 +32,7 @@ QCWorkflowHandler,
     TInspectorWorkflowHandler,
     TechnicalLeadWorkflowHandler,
     PInspectorWorkflowHandler,
+    VendorWorkflowHandler,
 
     {
         provide: WORKFLOW_HANDLERS,
@@ -53,5 +55,10 @@ QCWorkflowHandler,
         provide: WORKFLOW_HANDLERS,
         multi: true,
         useExisting: PInspectorWorkflowHandler
+    },
+   {
+        provide: WORKFLOW_HANDLERS,
+        multi: true,
+        useExisting: VendorWorkflowHandler
     }]
 };

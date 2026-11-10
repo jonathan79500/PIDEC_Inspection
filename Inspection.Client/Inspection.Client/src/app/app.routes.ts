@@ -37,10 +37,13 @@ import { NotstartedtasksComponent } from './Pages/InspectorSide/notstartedtasks/
 import { InspectionPrintComponent } from './Pages/VendorSide/inspection-print/inspection-print.component';
 import { ReadyInspectionsForReportComponent } from './Pages/InspectorSide/ready-inspections-for-report/ready-inspections-for-report.component';
 import { CompletedTasksComponent } from './Pages/PidecSide/completed-tasks/completed-tasks.component';
+import { InspectorManagementComponent } from './Shared/inspector-management/inspector-management.component';
+import { DocumentTypeManagementComponent } from './Shared/document-type-management/document-type-management.component';
+import { InspectionHistoryComponent } from './Pages/VendorSide/inspection-history/inspection-history.component';
 
 
 export const routes: Routes = [
-  
+
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 
   {
@@ -117,14 +120,20 @@ export const routes: Routes = [
       path:'editInspection/:RequestId/:InspectionId',
       component:VnewinspectionComponent,
       data:{reuse:true}
-    },
-    // {
-    //   path:'inspection-print',
-    //   component:InspectionPrintComponent,
-
-    // }
+    }
   ]
  },
+ ,
+{
+  path: 'inspection-print',
+  component: InspectionPrintComponent,
+  canActivate: [AuthGuard]
+},
+    {
+      path:'inspection-history/:requestId',
+      component:InspectionHistoryComponent,
+
+    },
  {
   path :'pidec',
   component:PidecMasterComponent,
@@ -154,6 +163,14 @@ export const routes: Routes = [
   {
     path:'NotStartedTasks',
     component:NotStartedtasksComponent
+  },
+     {
+    path:'InspectorManager',
+    component:InspectorManagementComponent
+  },
+  {
+    path:'DocumentTypeManager',
+    component:DocumentTypeManagementComponent
   },
    {
     path:'CompletedInspections',
@@ -239,6 +256,10 @@ export const routes: Routes = [
     component:NotstartedtasksComponent
   },
    {
+    path:'InspectorManager',
+    component:InspectorManagementComponent
+  },
+   {
     path:'CompletedInspections',
     component:InspectionManagementComponent
   },
@@ -247,6 +268,7 @@ export const routes: Routes = [
       component:VnewinspectionComponent,
       data:{reuse:true}
     },
+
     {
       path:'inspection-print',
       component:InspectionPrintComponent,
@@ -260,13 +282,5 @@ export const routes: Routes = [
 
 ]
  }
-
-//  {
-//   path:'login',
-//   loadComponent:()=>{
-//     return import('./Pages/login/login.component').then(m=>m.LoginComponent);
-//   }
-
- //}
 
 ];

@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>Register a new inspector</h2>
+
+<mat-dialog-content [formGroup]="form" class="quick-add-body">
+  @if (error(); as msg) {
+    <p class="error">{{ msg }}</p>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>First name</mat-label>
+    <input matInput formControlName="firstName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Last name</mat-label>
+    <input matInput formControlName="lastName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Position</mat-label>
+    <input matInput formControlName="position" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Phone</mat-label>
+    <input matInput formControlName="phone" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Primary skill</mat-label>
+    <mat-select formControlName="skillId">
+      @for (s of skills(); track s.skillId) {
+        <mat-option [value]="s.skillId">{{ s.code }} - {{ s.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <p class="hint">
+    This inspector is saved as pending and will need QC approval before use
+    elsewhere.
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="save()"
+    [disabled]="saving()"
+  >
+    {{ saving() ? "Saving..." : "Save" }}
+  </button>
+</mat-dialog-actions>

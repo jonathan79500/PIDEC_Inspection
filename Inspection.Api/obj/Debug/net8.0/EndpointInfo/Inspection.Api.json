@@ -984,6 +984,737 @@
         }
       }
     },
+    "/Contacts": {
+      "get": {
+        "tags": [
+          "Contacts"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Contacts/GetByProject_Types": {
+      "post": {
+        "tags": [
+          "Contacts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.ContactOptionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Contacts/GetByProject": {
+      "post": {
+        "tags": [
+          "Contacts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryProjectParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryProjectParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryProjectParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Contacts/GetByTypes": {
+      "post": {
+        "tags": [
+          "Contacts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryContactTypesParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryContactTypesParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Api.Controllers.queryContactTypesParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Contacts/inspectors": {
+      "get": {
+        "tags": [
+          "Contacts"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.ContactDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Documents": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "ownerType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Enums.DocumentOwnerType"
+            }
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "DocumentTypeId",
+                  "File",
+                  "OwnerId",
+                  "OwnerType"
+                ],
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "OwnerType": {
+                    "$ref": "#/components/schemas/Inspection.Domain.Entities.Enums.DocumentOwnerType"
+                  },
+                  "OwnerId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "DocumentTypeId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Name": {
+                    "maxLength": 200,
+                    "minLength": 0,
+                    "type": "string"
+                  },
+                  "Number": {
+                    "maxLength": 100,
+                    "minLength": 0,
+                    "type": "string"
+                  },
+                  "IssueDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ExpireDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "File": {
+                  "style": "form"
+                },
+                "OwnerType": {
+                  "style": "form"
+                },
+                "OwnerId": {
+                  "style": "form"
+                },
+                "DocumentTypeId": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Number": {
+                  "style": "form"
+                },
+                "IssueDate": {
+                  "style": "form"
+                },
+                "ExpireDate": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Documents/{documentId}/download": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ownerType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Enums.DocumentOwnerType"
+            }
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Documents/{documentId}": {
+      "delete": {
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ownerType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Enums.DocumentOwnerType"
+            }
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/DocumentTypes": {
+      "get": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "parameters": [
+          {
+            "name": "contactTypeCode",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DocumentTypes/admin": {
+      "get": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DocumentTypes/admin/{id}": {
+      "get": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.DocumentTypeAdminDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DocumentTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/Identity/register": {
       "post": {
         "tags": [
@@ -1314,6 +2045,55 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/inspection-history/{requestId}": {
+      "get": {
+        "tags": [
+          "InspectionHistory"
+        ],
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.RevisionHistoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.RevisionHistoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.RevisionHistoryDto"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -3011,6 +3791,606 @@
         }
       }
     },
+    "/Inspectors": {
+      "get": {
+        "tags": [
+          "Inspectors"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Inspectors/{id}": {
+      "get": {
+        "tags": [
+          "Inspectors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Inspectors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Inspectors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Inspectors/Create": {
+      "post": {
+        "tags": [
+          "Inspectors"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Inspectors/pending": {
+      "get": {
+        "tags": [
+          "Inspectors"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Inspectors/{id}/approve": {
+      "post": {
+        "tags": [
+          "Inspectors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Inspectors/{id}/reject": {
+      "post": {
+        "tags": [
+          "Inspectors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Skills": {
+      "get": {
+        "tags": [
+          "Skills"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Skills"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Skills/active": {
+      "get": {
+        "tags": [
+          "Skills"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillOptionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillOptionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillOptionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Skills/{id}": {
+      "get": {
+        "tags": [
+          "Skills"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Skills"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.SkillSaveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectionSkillDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Skills"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/Test": {
       "get": {
         "tags": [
@@ -3319,6 +4699,20 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Api.Controllers.queryContactTypesParams": {
+        "type": "object",
+        "properties": {
+          "requestedContactTypes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Inspection.Api.Controllers.queryNNParams": {
         "type": "object",
         "properties": {
@@ -3327,6 +4721,34 @@
             "nullable": true
           },
           "ordernumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Api.Controllers.queryParams": {
+        "type": "object",
+        "properties": {
+          "projectNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestedContactTypes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Api.Controllers.queryProjectParams": {
+        "type": "object",
+        "properties": {
+          "projectNumber": {
             "type": "string",
             "nullable": true
           }
@@ -3429,6 +4851,74 @@
           "parentId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.CirculationHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "performerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "performerContactType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sequenceNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "actionType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "qcActionType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "previousActionType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "performedActionDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "performedActionDateGregorian": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "creatorComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "childCirculations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.CirculationHistoryDto"
+            },
             "nullable": true
           }
         },
@@ -3978,6 +5468,10 @@
             "format": "int32",
             "nullable": true
           },
+          "contactTypeName": {
+            "type": "string",
+            "nullable": true
+          },
           "isVisible": {
             "type": "boolean",
             "nullable": true
@@ -4441,65 +5935,6 @@
         },
         "additionalProperties": false
       },
-      "Inspection.Application.DTOs.Common.InspectorDto": {
-        "type": "object",
-        "properties": {
-          "contactId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "firstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastName": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "position": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "inspectedOrders": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "nullable": true
-          },
-          "inspectedProjects": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Inspection.Application.DTOs.Common.OrderSettingExceptionDto": {
         "type": "object",
         "properties": {
@@ -4719,7 +6154,68 @@
         },
         "additionalProperties": false
       },
-      "Inspection.Application.DTOs.DocumentTypeDto": {
+      "Inspection.Application.DTOs.DocumentDto": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentTypeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "approvedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.DocumentTypeAdminDto": {
         "type": "object",
         "properties": {
           "documentTypeId": {
@@ -4759,6 +6255,119 @@
           "maxSizeMB": {
             "type": "integer",
             "format": "int32"
+          },
+          "visibleToContactTypes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "documentCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.DocumentTypeDto": {
+        "type": "object",
+        "properties": {
+          "documentTypeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentTypeCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiresApproval": {
+            "type": "boolean"
+          },
+          "requiresReview": {
+            "type": "boolean"
+          },
+          "requiresName": {
+            "type": "boolean"
+          },
+          "requiresNumber": {
+            "type": "boolean"
+          },
+          "multipleAllowed": {
+            "type": "boolean"
+          },
+          "allowedExtensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "maxSizeMB": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.DocumentTypeSaveDto": {
+        "required": [
+          "allowedExtensions",
+          "documentTypeCode",
+          "documentTypeName"
+        ],
+        "type": "object",
+        "properties": {
+          "documentTypeName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "documentTypeCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiresApproval": {
+            "type": "boolean"
+          },
+          "requiresReview": {
+            "type": "boolean"
+          },
+          "requiresName": {
+            "type": "boolean"
+          },
+          "requiresNumber": {
+            "type": "boolean"
+          },
+          "multipleAllowed": {
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "allowedExtensions": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "maxSizeMB": {
+            "maximum": 10240,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "visibleToContactTypes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4814,7 +6423,7 @@
           "inspectors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.InspectorDto"
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorDto"
             },
             "nullable": true
           },
@@ -5144,6 +6753,300 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Application.DTOs.Inspector.ContactOptionDto": {
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactTypeCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectionSkillDto": {
+        "type": "object",
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "inspectorCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectorDto": {
+        "type": "object",
+        "properties": {
+          "inspectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionCompanyContactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionCompanyContactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "qcReviewedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "qcReviewedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qcComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "qcApprovalState": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSkillDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectorReviewDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "maxLength": 1000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectorSaveDto": {
+        "required": [
+          "firstName",
+          "inspectionCompanyContactId",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "inspectionCompanyContactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "lastName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "qcApprovalState": {
+            "maximum": 2,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "skills": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.Inspector.InspectorSkillSaveDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectorSkillDto": {
+        "type": "object",
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "level": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Enums.InspectorSkillLevel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.InspectorSkillSaveDto": {
+        "required": [
+          "skillId"
+        ],
+        "type": "object",
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "level": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Enums.InspectorSkillLevel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.SkillOptionDto": {
+        "type": "object",
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.Inspector.SkillSaveDto": {
+        "required": [
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "Inspection.Application.DTOs.OrderContactDto": {
         "type": "object",
         "properties": {
@@ -5274,6 +7177,54 @@
           },
           "inspectionSubject": {
             "$ref": "#/components/schemas/Inspection.Application.DTOs.Common.InspectionSubjectDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Application.DTOs.RevisionHistoryDto": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "submittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "submittedByName": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "isFinal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "circulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Application.DTOs.CirculationHistoryDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6312,6 +8263,16 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Domain.Entities.Enums.DocumentOwnerType": {
+        "enum": [
+          "Unknown",
+          "Circulation",
+          "Inspector",
+          "Contact",
+          "InspectionNotification"
+        ],
+        "type": "string"
+      },
       "Inspection.Domain.Entities.InspectionNotification.Entities.Attachment": {
         "type": "object",
         "properties": {
@@ -6845,33 +8806,31 @@
       },
       "Inspection.Domain.Entities.InspectionNotification.Enums.ApprovalStatus": {
         "enum": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "Approved",
+          "Rejected",
+          "Backwarded",
+          "ApprovedWithComment",
+          "Wave",
+          "Review"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Inspection.Domain.Entities.InspectionNotification.Enums.ContactType": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11
+          "Undefined",
+          "Owner",
+          "Vendor",
+          "MC",
+          "PIDEC_TO",
+          "Supplier",
+          "SubSupplier",
+          "PIDEC_CC",
+          "PIDEC_Inspector",
+          "ThirdPart_Inspector",
+          "PIDEC_LeadDepartment",
+          "PIDEC_Originator"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Inspection.Domain.Entities.InspectionNotification.ValueObjects.AttachmentId": {
         "type": "object",
@@ -6897,33 +8856,30 @@
       },
       "Inspection.Domain.Entities.InspectionReport.Enums.InspectionReportStates": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "None",
+          "Conditional",
+          "Confirm",
+          "Reject",
+          "Waiting",
+          "Mismatch",
+          "ResultBasedOnTable"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Inspection.Domain.Entities.InspectionReport.Enums.ReportAttachmentType": {
         "enum": [
-          0,
-          1,
-          2
+          "None",
+          "PackingList",
+          "Common"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Inspection.Domain.Entities.InspectionReport.Enums.ReportType": {
         "enum": [
-          0,
-          1
+          "None",
+          "PackingList"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Inspection.Domain.Entities.InspectionReport.InspectionReport": {
         "type": "object",
@@ -7134,6 +9090,14 @@
         },
         "additionalProperties": false
       },
+      "Inspection.Domain.Entities.Inspector.Enums.InspectorSkillLevel": {
+        "enum": [
+          "Internship",
+          "Experienced",
+          "Professional"
+        ],
+        "type": "string"
+      },
       "Inspection.Domain.Entities.Inspector.InspectionNotificationInspector": {
         "type": "object",
         "properties": {
@@ -7170,6 +9134,27 @@
           "remarks": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.Inspector.InspectionSkill": {
+        "type": "object",
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -7219,12 +9204,74 @@
             "type": "string",
             "nullable": true
           },
+          "qcReviewedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "qcReviewedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qcComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "qcApprovalState": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectorSkill"
+            },
+            "nullable": true
+          },
           "inspectionNotifications": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectionNotificationInspector"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Inspection.Domain.Entities.Inspector.InspectorSkill": {
+        "type": "object",
+        "properties": {
+          "inspectorSkillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspector": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Inspector"
+          },
+          "skillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "skill": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.InspectionSkill"
+          },
+          "level": {
+            "$ref": "#/components/schemas/Inspection.Domain.Entities.Inspector.Enums.InspectorSkillLevel"
           }
         },
         "additionalProperties": false

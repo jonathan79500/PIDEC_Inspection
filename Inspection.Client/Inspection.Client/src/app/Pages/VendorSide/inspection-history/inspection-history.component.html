@@ -1,0 +1,88 @@
+<section class="history-page">
+  <h1 class="history-title">Inspection History</h1>
+
+  @if (loading()) {
+    <p class="history-hint">Loading...</p>
+  } @else if (error()) {
+    <p class="history-error">{{ error() }}</p>
+  } @else if (revisions().length === 0) {
+    <p class="history-hint">No revisions found for this request.</p>
+  }
+
+  @for (revision of revisions(); track revision.revisionId) {
+    <div class="revision-card">
+      <div class="revision-header">
+        <span class="revision-badge">Rev {{ revision.revisionNumber }}</span>
+        <span class="revision-meta">
+          Submitted
+          {{
+            revision.submittedDate
+              ? (revision.submittedDate | date: "yyyy-MM-dd HH:mm")
+              : "—"
+          }}
+          by {{ revision.submittedByName || "—" }}
+        </span>
+        @if (revision.isFinal) {
+          <span class="revision-final">Final</span>
+        }
+        @if (revision.status) {
+          <span class="revision-status">{{ revision.status }}</span>
+        }
+      </div>
+
+      @if (revision.comment) {
+        <p class="revision-comment">{{ revision.comment }}</p>
+      }
+
+      <table class="circulation-table">
+        <thead>
+          <tr>
+            <th>Seq</th>
+            <th>Performer</th>
+            <th>Action</th>
+            <th>Date</th>
+            <th>Comment</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of revision.circulations; track c.id) {
+            <tr
+              class="circulation-row"
+              [class.circulation-row--clickable]="hasChildren(c)"
+              (click)="openChildren(c)"
+            >
+              <td>{{ c.sequenceNo }}</td>
+              <td>{{ c.performerName || "—" }}</td>
+              <td>
+                <span [class]="actionTypeClass(c)">{{
+                  actionTypeLabel(c)
+                }}</span>
+              </td>
+              <td>{{ c.performedActionDate || "—" }}</td>
+              <td class="circulation-comment">{{ c.comment || "—" }}</td>
+              <td>
+                @if (hasChildren(c)) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="openChildren(c); $event.stopPropagation()"
+                    aria-label="View related history"
+                  >
+                    +{{ c.childCirculations.length }}
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="circulation-empty">
+                No circulations recorded for this revision yet.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -11,20 +11,31 @@ namespace Inspection.Domain.Entities.Inspector
 {
     public class Inspector
     {
-        
         public Guid InspectorId { get; set; }
+
         public Guid InspectionCompanyContactId { get; set; }
         public Contact InspectionCompanyContact { get; set; } = null!;
-        public bool IsActive { get; set; }
 
-        public string? Name { get; set; } = string.Empty;
-        public string? FirstName { get; set; } = string.Empty;
-        public string? LastName { get; set; } = string.Empty;
-        public string? Description { get; set; } = string.Empty;
-        public string? Position { get; set; } = string.Empty;
-        public string? Phone { get; set; } = string.Empty;
-        public string? Email { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
 
+        public string? Name { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Description { get; set; }
+        public string? Position { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+
+        public string QCReviewedBy { get; set; }
+        public DateTime QCReviewedDate { get; set; }
+        public string QCComment { get; set; }
+        public int QCApprovalState { get; set; } = 2; // 0 = Rejected, 1 = Approved, 2 = NoAction
+        public int VersionNumber { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime ExpireDate { get; set; } = DateTime.UtcNow;
+
+        public List<InspectorSkill> Skills { get; set; } = new();
         public List<InspectionNotificationInspector>? InspectionNotifications { get; set; }
     }
 }
