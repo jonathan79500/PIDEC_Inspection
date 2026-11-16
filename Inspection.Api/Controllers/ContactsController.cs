@@ -26,13 +26,13 @@ public class ContactsController : ControllerBase
 
     [HttpPost("GetByProject_Types")]
     public async Task<ActionResult<List<ContactOptionDto>>> GetByProject_Types([FromBody] queryParams param, CancellationToken ct)
-        => Ok(await _mediator.Send(new GetContactOptionsQueryByProject_ContactTypes{ProjectId = new Guid(param.projectNumber),  ContactTypes=param.requestedContactTypes}, ct));
+        => Ok(await _mediator.Send(new GetContactOptionsQueryByProject_ContactTypes{ProjectId = new Guid(param.projectId),  ContactTypes=param.requestedContactTypes}, ct));
     
     // GET api/contacts/by-project/{projectId}
     // GET api/contacts/by-project/{projectId}?contactType=9     (only one contact type)
     [HttpPost("GetByProject")]
     public async Task<ActionResult<List<ContactDto>>> GetByProject([FromBody] queryProjectParams param, CancellationToken ct)
-        => Ok(await _mediator.Send(new GetContactsByProjectQuery(new Guid(param.projectNumber)), ct));
+        => Ok(await _mediator.Send(new GetContactsByProjectQuery(new Guid(param.projectId)), ct));
 
     [HttpPost("GetByTypes")]
     public async Task<ActionResult<List<ContactDto>>> GetByTypes([FromBody] queryContactTypesParams param, CancellationToken ct)
@@ -47,7 +47,7 @@ public class ContactsController : ControllerBase
 
 public class queryParams
 {
-    public string projectNumber { get; set; }
+    public string projectId { get; set; }
     public IReadOnlyCollection<int> requestedContactTypes { get; set; }
 }
 
@@ -58,7 +58,7 @@ public class queryContactTypesParams
 
 public class queryProjectParams
 {
-    public string projectNumber { get; set; }
+    public string projectId { get; set; }
    
 }
 

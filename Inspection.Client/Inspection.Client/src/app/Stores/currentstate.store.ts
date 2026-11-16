@@ -14,6 +14,8 @@ import { BehaviorSubject, catchError, finalize, Observable, of, shareReplay, tak
 import { UserTypes } from '../Core/Models/UserTypes.enum';
 import { Route } from '@angular/router';
 import { BasicInspectorInfo } from '../Core/Models/BasicInspectorInfo.model';
+import { InspectorService } from '../Core/Services/inspector.service';
+import { ContactService } from '../Core/Services/contact.service';
 
 
 
@@ -94,10 +96,19 @@ export const currentstateStore = signalStore(
         else if(FromRoute.toLowerCase().includes('pidec/projectsettings'))
         {
 
+        } else  if(FromRoute.toLowerCase().includes('pidec/inspectormanager')){
+          this.GetEdmsOrders_ProId(basicInfoService);
         }
+        // else if(FromRoute.toLowerCase().includes('pidec/inspectormanager')){
+        //     this.GetInspectionCompanyContacts_Project(project.id);
+        // }
 
       }
         console.log('in change prj_order',store.currentproject(),store.currentorder());
+      },
+      GetInspectionCompanyContacts_Project(projectId:string){
+        const contactService = inject(ContactService);
+          contactService.getByProject(projectId);
       },
       ChangeProject_Order(project:Project,order:Order){
         patchState(store,{

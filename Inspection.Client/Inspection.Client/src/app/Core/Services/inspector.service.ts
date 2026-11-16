@@ -13,9 +13,9 @@ export class InspectorService {
   private http = inject(HttpClient);
 
   // TODO: change to your API base url
-  private readonly baseUrl = '/api/inspectors';
-  private readonly contactsUrl = '/api/contacts';
-  private readonly skillsUrl = '/api/skills';
+  private readonly baseUrl = '/inspectors';
+  private readonly contactsUrl = '/contacts';
+  private readonly skillsUrl = '/skills';
 
   // ----- inspectors -----
   getAll(filter?: InspectorFilter): Observable<Inspector[]> {

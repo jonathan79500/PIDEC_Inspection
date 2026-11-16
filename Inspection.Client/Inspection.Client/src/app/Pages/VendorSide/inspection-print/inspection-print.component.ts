@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Inspection } from '../../../Core/Models/Inspection.model';
 import { toGregorian, toJalaali } from 'jalaali-js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,8 @@ import { json } from 'stream/consumers';
   selector: 'app-inspection-print',
   imports: [ReactiveFormsModule,FormsModule,CommonModule],
   templateUrl: './inspection-print.component.html',
-  styleUrl: './inspection-print.component.css'
+  styleUrl: './inspection-print.component.css',
+ encapsulation:ViewEncapsulation.None
 })
 export class InspectionPrintComponent implements OnInit{
 
@@ -204,4 +205,28 @@ getFormattedGregorianDate(date: any): string {
       return "error Miladi Date";
     }
   }
+
+
+
+
+  printForm(): void {
+  const root = document.getElementById('printableInspection');
+  if (!root) return;
+
+  const oldTitle = document.title;
+  document.title = `Inspection_${this.inspectionMainNumber}_Rev${this.inspectionRevNumber}`;
+
+  const imgs = Array.from(root.querySelectorAll('img'));
+  Promise.all(
+    imgs.map(i => i.complete
+      ? Promise.resolve()
+      : new Promise<void>(r => { i.onload = () => r(); i.onerror = () => r(); }))
+  ).then(() => {
+    window.addEventListener('afterprint', () => (document.title = oldTitle), { once: true });
+    setTimeout(() => window.print(), 0);
+  });
+}
+
+
+
 }

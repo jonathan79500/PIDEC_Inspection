@@ -1,1116 +1,1030 @@
-<form
-  id="newInspection"
-  *ngIf="inspectionForm"
-  [formGroup]="inspectionForm"
-  class="inspection-form"
->
-  <button
-    mat-raised-button
-    style="
-      width: 5.5rem !important;
-      font-size: 14px !important;
-      font-weight: 700;
-      margin-right: 0.2rem !important;
-    "
-    color="accent"
-    (click)="printForm()"
-  >
-    Print
-  </button>
-  <button
-    mat-raised-button
-    style="
-      width: 5.5rem !important;
-      font-size: 14px !important;
-      font-weight: 700;
-      margin-right: 0.2rem !important;
-    "
-    color="accent"
-    (click)="showHistoryForm()"
-  >
-    History
-  </button>
-  <button
-    mat-raised-button
-    style="
-      width: 8.5rem !important;
-      font-size: 14px !important;
-      font-weight: 700;
-    "
-    color="primary"
-    *ngIf="isConfirmedByQC"
-    (click)="openReportDialog()"
-  >
-    Write Report
-  </button>
-  <fieldset class="section">
-    <legend style="text-align: center !important">
-      Inspection Notification
-    </legend>
-    <div class="form-group">
-      <label for="notificationNumber">Inspection Notification No:</label>
-      <label class="special-label">{{
-        inspectionForm.get("notificationNumber")?.value
-      }}</label>
-      <Label style="padding: 1.2rem !important"> Rev: </Label>
-      <label class="special-label">{{
-        inspectionForm.get("revNumber")?.value
-      }}</label>
-      <!-- <input
-        id="mainNumber"
-        type="text"
-        formControlName="mainNumber"
-        class="input XXlarge"
-      />
-      <Label style="padding: 1.2rem !important"> Rev: </Label>
-      <input
-        id="revisionNumber"
-        type="text"
-        formControlName="revNumber"
-        class="input small"
-      /> -->
-    </div>
-
-    <div class="form-group-inline">
-      <label for="issueDate">Issue Date:</label>
-      <label class="special-rolabel">{{ formattedPersianIssueDate }}</label>
-      <label class="special-rolabel">{{ formattedGregorianIssueDate }}</label>
-    </div>
-
-    <div class="form-group-inline">
-      <label
-        class="theLabels"
-        style="padding-right: 0.5rem; vertical-align: sub"
-        >Inspection Period:</label
-      >
-      <div>
-        <label
-          class="theLabels"
-          style="padding-right: 0.5rem; vertical-align: sub"
-          >From:</label
-        >
-        <input
-          matInput
-          [matDatepicker]="RequestInspectionDateStartDatePicker"
-          formControlName="requestInspectionDateStart"
-          name="RequestInspectionDateStartDatePicker"
-          class="theInputs"
-          placeholder="MM/DD/YYYY"
-          [value]="
-            inspectionForm?.controls?.['requestInspectionDateStart'].value
-          "
-          (dateChange)="setRequestInspectionPersianDateStart($event)"
-          style="
-            width: 6rem !important;
-            direction: ltr;
-            vertical-align: sub !important;
-          "
-          [disabled]="!canEditInspectionNotificationMtadata"
-          [matTooltip]="formattedGregorianReqStartDate"
-          matTooltipPosition="above"
-          (click)="RequestInspectionDateStartDatePicker.open()"
-        />
-
-        <mat-datepicker
-          #RequestInspectionDateStartDatePicker
-          panelClass="custom-datepicker"
-        ></mat-datepicker>
-        <label
-          class="special-rolabel"
-          style="
-            text-align: center;
-            vertical-align: sub;
-            background-color: transparent !important;
-            border-style: none !important;
-            padding-right: 1.2rem !important;
-          "
-          >{{ formattedPersianReqStartDate }}</label
-        >
-
-        <label
-          class="theLabels"
-          style="padding-right: 0.5rem; vertical-align: sub"
-          >To:</label
-        >
-        <input
-          matInput
-          [matDatepicker]="RequestInspectionDateEndDatePicker"
-          formControlName="requestInspectionDateEnd"
-          name="RequestInspectionDateEndDatePicker"
-          class="theInputs"
-          placeholder="MM/DD/YYYY"
-          [value]="inspectionForm.controls['requestInspectionDateEnd'].value"
-          (dateChange)="setRequestInspectionPersianDateEnd($event)"
-          style="
-            width: 6rem !important;
-            direction: ltr;
-            vertical-align: sub !important;
-          "
-          [disabled]="!canEditInspectionNotificationMtadata"
-          [matTooltip]="formattedGregorianReqEndDate"
-          matTooltipPosition="above"
-          (click)="RequestInspectionDateEndDatePicker.open()"
-        />
-
-        <mat-datepicker #RequestInspectionDateEndDatePicker></mat-datepicker>
-        <!-- </div> -->
-        <label
-          class="special-rolabel"
-          style="
-            text-align: center;
-            vertical-align: sub;
-            background-color: transparent !important;
-            border-style: none !important;
-          "
-          >{{ formattedPersianReqEndDate }}</label
-        >
-
-        <label
-          class="special-rolabel"
-          style="
-            text-align: center;
-            vertical-align: sub;
-            background-color: transparent !important;
-            border-style: none !important;
-            width: 1rem !important;
-          "
-          >=</label
-        >
-        <input
-          class="theInputs"
-          formControlName="requestInspectionDueDate"
-          style="
-            width: 3.5rem !important;
-            direction: ltr;
-            vertical-align: sub !important;
-          "
-        />
-        <label
-          class="special-rolabel"
-          style="
-            width: 3.5rem !important;
-            text-align: center;
-            vertical-align: sub;
-            background-color: transparent !important;
-            border-style: none !important;
-          "
-          >Days</label
-        >
-      </div>
-
-      <!-- </div> -->
-    </div>
-    <div class="form-group-inline">
-      <label>Inspection Date and Time Comments:</label>
-      <input
-        class="input wide"
-        style="width: 31.5rem !important"
-        formControlName="inspectionTimeComment"
-      />
-    </div>
-    <div class="subSection">
-      <fieldset class="section">
-        <legend>Order</legend>
-        <div class="form-group-inline">
-          <div class="columns" formGroupName="order">
-            <label for="RequisitionNO" class="theLabels"
-              >Order NO &nbsp;:&nbsp;&nbsp;&nbsp;</label
+<!-- Forms & sections use the same bindings as before -->
+@if (inspectionForm) {
+  <div class="inspection-page">
+    <form
+      id="newInspection"
+      [formGroup]="inspectionForm"
+      class="inspection-form"
+      autocomplete="off"
+    >
+      <!-- ============ TOOLBAR ============ -->
+      <header class="toolbar">
+        <div class="title-block">
+          <span class="eyebrow">Inspection</span>
+          <h2>Inspection Notification</h2>
+          <div class="badge-row">
+            <span class="badge badge-primary">
+              No. {{ inspectionForm.get("notificationNumber")?.value }}
+            </span>
+            <span class="badge"
+              >Rev {{ inspectionForm.get("revNumber")?.value }}</span
             >
-            <input type="hidden" formControlName="id" />
+          </div>
+        </div>
+
+        <div class="toolbar-actions">
+          <button
+            mat-stroked-button
+            type="button"
+            class="action-btn"
+            (click)="printForm()"
+          >
+            Print
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            class="action-btn"
+            (click)="showHistoryForm()"
+          >
+            History
+          </button>
+          @if (isConfirmedByQC) {
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              class="action-btn action-btn--wide"
+              (click)="openReportDialog()"
+            >
+              Write Report
+            </button>
+          }
+        </div>
+      </header>
+
+      <!-- ============ ISSUE INFO ============ -->
+      <section class="card card--enter" style="--delay: 0ms">
+        <h3 class="card-title">Issue</h3>
+        <div class="grid grid-issue">
+          <div class="readonly">
+            <span class="field-label">Issue date (Persian)</span>
+            <span class="readonly-value">{{ formattedPersianIssueDate }}</span>
+          </div>
+          <div class="readonly">
+            <span class="field-label">Issue date (Gregorian)</span>
+            <span class="readonly-value">{{
+              formattedGregorianIssueDate
+            }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ INSPECTION PERIOD ============ -->
+      <section class="card card--enter" style="--delay: 60ms">
+        <h3 class="card-title">Inspection Period</h3>
+
+        <div class="period">
+          <!-- From -->
+          <div class="field">
+            <label class="field-label" for="reqStart">From</label>
+            <div class="date-field">
+              <input
+                id="reqStart"
+                matInput
+                [matDatepicker]="RequestInspectionDateStartDatePicker"
+                formControlName="requestInspectionDateStart"
+                name="RequestInspectionDateStartDatePicker"
+                class="field-input field-input--ltr"
+                placeholder="MM/DD/YYYY"
+                (dateChange)="setRequestInspectionPersianDateStart($event)"
+                [disabled]="!canEditInspectionNotificationMtadata"
+                [matTooltip]="formattedGregorianReqStartDate"
+                matTooltipPosition="above"
+                (click)="RequestInspectionDateStartDatePicker.open()"
+              />
+              <mat-datepicker
+                #RequestInspectionDateStartDatePicker
+                panelClass="custom-datepicker"
+              ></mat-datepicker>
+              <span class="persian-date">{{
+                formattedPersianReqStartDate
+              }}</span>
+            </div>
+          </div>
+
+          <span class="period-sep" aria-hidden="true">→</span>
+
+          <!-- To -->
+          <div class="field">
+            <label class="field-label" for="reqEnd">To</label>
+            <div class="date-field">
+              <input
+                id="reqEnd"
+                matInput
+                [matDatepicker]="RequestInspectionDateEndDatePicker"
+                formControlName="requestInspectionDateEnd"
+                name="RequestInspectionDateEndDatePicker"
+                class="field-input field-input--ltr"
+                placeholder="MM/DD/YYYY"
+                (dateChange)="setRequestInspectionPersianDateEnd($event)"
+                [disabled]="!canEditInspectionNotificationMtadata"
+                [matTooltip]="formattedGregorianReqEndDate"
+                matTooltipPosition="above"
+                (click)="RequestInspectionDateEndDatePicker.open()"
+              />
+              <mat-datepicker
+                #RequestInspectionDateEndDatePicker
+              ></mat-datepicker>
+              <span class="persian-date">{{ formattedPersianReqEndDate }}</span>
+            </div>
+          </div>
+
+          <!-- Due -->
+          <div class="field field--due">
+            <label class="field-label" for="dueDays">Due</label>
+            <div class="due-input">
+              <span class="due-eq" aria-hidden="true">=</span>
+              <input
+                id="dueDays"
+                class="field-input field-input--ltr"
+                formControlName="requestInspectionDueDate"
+              />
+              <span class="due-unit">Days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field field--full">
+          <label class="field-label" for="timeComment"
+            >Date &amp; time comments</label
+          >
+          <input
+            id="timeComment"
+            class="field-input"
+            formControlName="inspectionTimeComment"
+          />
+        </div>
+      </section>
+
+      <!-- ============ ORDER ============ -->
+      <section
+        class="card card--enter"
+        style="--delay: 120ms"
+        formGroupName="order"
+      >
+        <h3 class="card-title">Order</h3>
+        <div class="grid grid-order">
+          <div class="field">
+            <label class="field-label" for="RequisitionTitle">Order No.</label>
             <input
               id="RequisitionTitle"
-              class="theInputs Xlarge"
+              class="field-input"
               formControlName="title"
             />
+            <input type="hidden" formControlName="id" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="RequisitionNO">Order title</label>
+            <input
+              id="RequisitionNO"
+              class="field-input"
+              formControlName="orderName"
+            />
+          </div>
+          <div class="field">
+            <label class="field-label" for="EQUNO"
+              >Equipment / Item / Tag No.</label
+            >
+            <input
+              id="EQUNO"
+              class="field-input"
+              formControlName="equipmentTagNo"
+            />
           </div>
         </div>
-        <div class="form-group-inline">
-          <label for="Order Title" class="theLabels"
-            >Order Title&nbsp;:&nbsp;</label
-          >
-          <input
-            id="RequisitionNO"
-            class="theInputs"
-            formControlName="orderName"
-          />
-          <label for="EQUNO" class="theLabels"
-            >EQUIPMENT/ITEM/TAG NO.&nbsp;:&nbsp;</label
-          >
-          <input
-            id="EQUNO"
-            class="theInputs"
-            formControlName="equipmentTagNo"
-          />
-        </div>
-      </fieldset>
-    </div>
+      </section>
 
-    <fieldset class="section">
-      <legend>Inspection Actions/Types</legend>
-      <div class="checkbox-list">
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Witness"
-              [checked]="inspectionActions.includes('InsAction_Witness')"
-              (change)="onInspectionActionChange($event)"
-              [disabled]="!editMode"
-            />
-            Witness
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Hold"
-              [checked]="inspectionActions.includes('InsAction_Hold')"
-              (change)="onInspectionActionChange($event)"
-              [disabled]="!editMode"
-            />
-            Hold
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="InsAction_Review"
-              [checked]="inspectionActions.includes('InsAction_Review')"
-              (change)="onInspectionActionChange($event)"
-              [disabled]="!editMode"
-            />
-            Review
-          </label>
+      <!-- ============ ACTIONS & TYPES ============ -->
+      <section class="card card--enter" style="--delay: 180ms">
+        <h3 class="card-title">Inspection Actions</h3>
+        <div class="chip-group">
+          @for (
+            action of [
+              { value: "InsAction_Witness", label: "Witness" },
+              { value: "InsAction_Hold", label: "Hold" },
+              { value: "InsAction_Review", label: "Review" },
+            ];
+            track action.value
+          ) {
+            <label class="chip" [class.is-disabled]="!editMode">
+              <input
+                type="checkbox"
+                [value]="action.value"
+                [checked]="inspectionActions.includes(action.value)"
+                (change)="onInspectionActionChange($event)"
+                [disabled]="!editMode"
+              />
+              <span>{{ action.label }}</span>
+            </label>
+          }
         </div>
-      </div>
-      <div formArrayName="inspectionTypes">
-        <div class="checkbox-list">
-          <div
-            *ngFor="
-              let type of inspectionTypesFormArray.controls;
-              let i = index
-            "
-            [formGroup]="type"
-            class="checkbox-item"
-          >
-            <input
-              type="checkbox"
-              formControlName="selected"
-              (change)="onInspectionTypeChange(i)"
-            />
-            {{ type.get("name")?.value }}
+
+        <h3 class="card-title card-title--sub">Inspection Types</h3>
+        <div formArrayName="inspectionTypes" class="chip-group">
+          @for (
+            type of inspectionTypesFormArray.controls;
+            track type;
+            let i = $index
+          ) {
+            <label class="chip chip--option" [formGroup]="type">
+              <input
+                type="checkbox"
+                formControlName="selected"
+                (change)="onInspectionTypeChange(i)"
+              />
+              <span>{{ type.get("name")?.value }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      <!-- ============ SUBJECTS ============ -->
+      <section
+        class="card card--enter"
+        style="--delay: 240ms"
+        formArrayName="inspectionSubjects"
+      >
+        <div class="card-head">
+          <h3 class="card-title">Notification Subjects</h3>
+          @if (
+            canEditInspectionNotificationMtadata &&
+            !IsReadOnlyInspectionNotificationMtadata
+          ) {
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="addInspectionSubject()"
+              aria-label="Add subject"
+            >
+              <img src="assets/pluss011.png" alt="" />
+            </button>
+          }
+        </div>
+
+        @if (!canEditInspectionNotificationMtadata) {
+          <div class="list-scroll">
+            <div class="table-head subject-cols">
+              <span>Subject</span><span>ITP Row</span>
+            </div>
+            @for (
+              insSubject of inspectionSubjectsFormArray.controls;
+              track insSubject;
+              let i = $index
+            ) {
+              <div class="table-row subject-cols" [formGroup]="insSubject">
+                <span class="cell">{{
+                  insSubject.get("name")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  insSubject.get("itpRowNo")?.value || "—"
+                }}</span>
+              </div>
+            }
           </div>
-        </div>
-        <!-- <div class="add-item">
-          <input
-            type="text"
-            [(ngModel)]="newInspectionType"
-            placeholder="New Inspection Type"
-            [ngModelOptions]="{ standalone: true }"
-            [hidden]="!canEditInspectionNotificationMtadata"
-          />
-          <button
-            type="button"
-            class="btn-primary"
-            (click)="addInspectionType()"
-            [hidden]="!canEditInspectionNotificationMtadata"
-          >
-            +
-          </button>
-        </div> -->
-      </div>
-    </fieldset>
-
-    <fieldset class="section" formArrayName="inspectionSubjects">
-      <legend>Inspection Notification Subjects</legend>
-      <div style="max-height: 10rem !important; overflow-y: scroll">
-        <div
-          [hidden]="canEditInspectionNotificationMtadata"
-          *ngFor="
-            let insSubject of inspectionSubjectsFormArray.controls;
-            let i = index
-          "
-          [formGroup]="insSubject"
-          class="contact-row"
-        >
-          <label
-            class="special-rolabel"
-            style="width: 25vw !important; border-radius: 0 !important"
-            >{{ insSubject.get("name")?.value }}</label
-          >
-          <label
-            class="special-rolabel"
-            style="width: 6vw !important; border-radius: 0 !important"
-            >{{ insSubject.get("itpRowNo")?.value }}</label
-          >
-        </div>
-      </div>
-      <div style="max-height: 10rem !important; overflow-y: scroll">
-        <div
-          [hidden]="!canEditInspectionNotificationMtadata"
-          *ngFor="
-            let insSubject of inspectionSubjectsFormArray.controls;
-            let i = index;
-            trackBy: trackById
-          "
-          [formGroup]="insSubject"
-          class="subject-row"
-        >
-          <img
-            src="assets/pluss011.png"
-            style="width: 20px; height: 20px"
-            (click)="addInspectionSubject()"
-            [hidden]="IsReadOnlyInspectionNotificationMtadata"
-          />
-          <mat-form-field class="combo">
-            <input
-              type="text"
-              matInput
-              placeholder="Select or type subject"
-              formControlName="name"
-              [matAutocomplete]="auto"
-              [disabled]="IsReadOnlyInspectionNotificationMtadata"
-            />
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option
-                [disabled]="
-                  !editMode ||
-                  (editMode &&
-                    this.currentCirculation != null &&
-                    this.currentCirculation?.performerContactType != 2)
-                "
-                *ngFor="let subj of allSubjects"
-                [value]="subj"
-              >
-                {{ subj }}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <input
-            type="text"
-            matInput
-            formControlName="itpRowNo"
-            placeholder="ITP Row Number"
-            class="input middle"
-          />
-          <img
-            src="assets/delete-red.png"
-            style="width: 18px; height: 18px"
-            [hidden]="IsReadOnlyInspectionNotificationMtadata"
-            (click)="removeInsSubject(insSubject)"
-          />
-        </div>
-      </div>
-    </fieldset>
-
-    <!-- Contacts -->
-    <fieldset class="section" formArrayName="contacts">
-      <legend>Contact Persons</legend>
-      <div
-        *ngFor="let contact of contactsControls; let i = index"
-        [formGroup]="contact"
-        class="contact-row"
-        [hidden]="canEditInspectionNotificationMtadata"
-      >
-        <label class="special-rolabel" style="border-radius: 0 !important">{{
-          contact.get("contactType").value == 5
-            ? "supplier"
-            : contact.get("contactType").value == 6
-              ? "SubSupplier"
-              : "__"
-        }}</label>
-        <label
-          class="special-rolabel"
-          style="width: 6vw !important; border-radius: 0 !important"
-          >{{
-            contact.get("name")?.value == "" ? "__" : contact.get("name")?.value
-          }}</label
-        >
-
-        <label
-          class="special-rolabel"
-          style="width: 6vw !important; border-radius: 0 !important"
-          >{{
-            contact.get("phone")?.value == ""
-              ? "__"
-              : contact.get("phone")?.value
-          }}
-        </label>
-
-        <label
-          class="special-rolabel"
-          style="width: 6vw !important; border-radius: 0 !important"
-          >{{
-            contact.get("mobile")?.value == ""
-              ? "__"
-              : contact.get("mobile")?.value
-          }}</label
-        >
-        <label
-          class="special-rolabel"
-          style="width: 8vw !important; border-radius: 0 !important"
-          >{{
-            contact.get("email")?.value == ""
-              ? "__"
-              : contact.get("email")?.value
-          }}</label
-        >
-        <label
-          class="special-rolabel"
-          style="width: 8vw !important; border-radius: 0 !important"
-          >{{
-            contact.get("cc")?.value == "" ? "__" : contact.get("cc")?.value
-          }}
-        </label>
-      </div>
-
-      <div
-        *ngFor="let contact of contactsControls; let i = index"
-        [formGroup]="contact"
-        class="contact0-row"
-        [hidden]="!canEditInspectionNotificationMtadata"
-      >
-        <img
-          src="assets/pluss011.png"
-          style="width: 20px; height: 20px"
-          (click)="addNewToContact()"
-          [class.disabled]="!canEditInspectionNotificationMtadata"
-          [hidden]="!canEditInspectionNotificationMtadata"
-        />
-
-        <label
-          class="input middle"
-          [hidden]="canEditInspectionNotificationMtadata"
-          >{{
-            contact.get("contactType").value == 5
-              ? "supplier"
-              : contact.get("contactType").value == 6
-                ? "SubSupplier"
-                : "__"
-          }}</label
-        >
-        <select
-          [disabled]="!canEditInspectionNotificationMtadata"
-          [hidden]="!canEditInspectionNotificationMtadata"
-          (change)="ContactTypeSelect(contact)"
-          style="
-            font-family: &quot;Times New Roman&quot;, Times, serif;
-            font-size: 16px;
-          "
-        >
-          <option value="none">------</option>
-          <option value="5">Vendor</option>
-          <option value="6">sub_Vendor</option>
-        </select>
-        <input formControlName="name" placeholder="Name" class="input middle" />
-
-        <input
-          formControlName="phone"
-          placeholder="Phone"
-          class="input middle"
-        />
-        <input
-          formControlName="mobile"
-          placeholder="Mobile"
-          class="input middle"
-        />
-        <input
-          formControlName="email"
-          placeholder="Email"
-          class="input large"
-        />
-        <input
-          formControlName="cc"
-          placeholder="Description"
-          class="input middle"
-        />
-
-        <img
-          src="assets/delete-red.png"
-          style="width: 18px; height: 18px"
-          [class.disabled]="!canEditInspectionNotificationMtadata"
-          [hidden]="!canEditInspectionNotificationMtadata"
-          (click)="removeToContact(contact)"
-        />
-      </div>
-    </fieldset>
-
-    <!-- Locations -->
-    <fieldset class="section" formArrayName="locations">
-      <legend>Location/Locations Of Inspection</legend>
-
-      <div
-        [hidden]="canEditInspectionNotificationMtadata"
-        *ngFor="let loc of inspectionLocations.controls; let i = index"
-        [formGroup]="loc"
-        class="contact-row"
-      >
-        <label
-          class="special-rolabel"
-          style="width: 4vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("country")?.value == "" ? "__" : loc.get("country")?.value
-          }}</label
-        >
-        <label
-          class="special-rolabel"
-          style="width: 5vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("state")?.value == "" ? "__" : loc.get("state")?.value
-          }}</label
-        >
-
-        <label
-          class="special-rolabel"
-          style="width: 7vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("city")?.value == "" ? "__" : loc.get("city")?.value
-          }}</label
-        >
-        <label
-          class="special-rolabel"
-          style="width: 8vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("streetLine1")?.value == ""
-              ? "__"
-              : loc.get("streetLine1")?.value
-          }}</label
-        >
-
-        <label
-          class="special-rolabel"
-          style="width: 8vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("streetLine2")?.value == ""
-              ? "__"
-              : loc.get("streetLine2")?.value
-          }}</label
-        >
-
-        <label
-          class="special-rolabel"
-          style="width: 6vw !important; border-radius: 0 !important"
-          >{{
-            loc.get("zipCode")?.value == "" ? "__" : loc.get("zipCode")?.value
-          }}</label
-        >
-      </div>
-
-      <div
-        *ngFor="let loc of inspectionLocationFormArray.controls; let i = index"
-        [formGroup]="loc"
-        class="location0-row"
-        [hidden]="!canEditInspectionNotificationMtadata"
-      >
-        <img
-          src="assets/pluss011.png"
-          style="width: 20px; height: 20px"
-          (click)="addNewAddress()"
-          [class.disabled]="!canEditInspectionNotificationMtadata"
-          [hidden]="!canEditInspectionNotificationMtadata"
-        />
-        <input
-          formControlName="country"
-          placeholder="Country"
-          class="input middle"
-        />
-
-        <input
-          formControlName="state"
-          placeholder="State"
-          class="input middle"
-        />
-        <input formControlName="city" placeholder="City" class="input middle" />
-        <input
-          formControlName="streetLine1"
-          placeholder="Street Line 1"
-          class="input large"
-        />
-        <input
-          formControlName="streetLine2"
-          placeholder="street Line 2"
-          class="input middle"
-        />
-        <input
-          formControlName="zipCode"
-          placeholder="zipCode"
-          class="input middle"
-        />
-        <img
-          src="assets/delete-red.png"
-          style="width: 18px; height: 18px"
-          [class.disabled]="!canEditInspectionNotificationMtadata"
-          [hidden]="!canEditInspectionNotificationMtadata"
-          (click)="removeAddress(loc)"
-        />
-      </div>
-    </fieldset>
-
-    <div class="upload-card">
-      <legend>Vendor DOC. For Execution Of Applied Inspection</legend>
-
-      <div class="upload-body">
-        <input
-          type="file"
-          multiple
-          (change)="onFilesPicked($event)"
-          class="upload-input"
-          [hidden]="!canEditInspectionNotificationMtadata"
-        />
-      </div>
-      <table class="upload-table" *ngIf="attachments.length > 0">
-        <thead>
-          <tr>
-            <th>File Name</th>
-            <th>Description</th>
-            <th>DOC. NO.</th>
-            <th>STATUS</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let file of attachments; let i = index">
-            <td>
-              <a
-                [href]="file.downloadUrl"
-                (click)="fetchFile(file.id)"
-                target="_blank"
-              >
-                {{ file.name }}
-              </a>
-            </td>
-            <td>
-              <input
-                type="text"
-                [(ngModel)]="file.description"
-                placeholder="Enter description"
-                [disabled]="!canEditInspectionNotificationMtadata"
-                [ngModelOptions]="{ standalone: true }"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                [(ngModel)]="file.docNo"
-                placeholder="Enter Document Number"
-                [disabled]="!canEditInspectionNotificationMtadata"
-                [ngModelOptions]="{ standalone: true }"
-              />
-            </td>
-            <td>
-              <select
-                [(ngModel)]="file.status"
-                placeholder="Enter Status"
-                [disabled]="!canEditInspectionNotificationMtadata"
-                [ngModelOptions]="{ standalone: true }"
-              >
-                <option value="">--</option>
-                <option value="APPROVED">APPROVED</option>
-                <option value="NOT_KNOWN">NOT_KNOWN</option>
-                <option value="REJECTED">REJECTED</option>
-              </select>
-            </td>
-            <td>
-              <button
-                type="button"
-                class="btn-danger"
-                (click)="removeFile(i)"
-                [hidden]="!canEditInspectionNotificationMtadata"
-              >
-                ✖
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!-- Signature area (shown after submit) -->
-    <div class="submit-wrapper" *ngIf="canShowSubmittData">
-      <div class="submit-card">
-        <div class="submit-info">
-          <span class="submit-date">
-            {{ inspectionForm.get("modifiedDate")?.value | date: "yyyy-MM-dd" }}
-          </span>
-          <span class="submit-user">
-            {{ inspectionForm.get("modifiedBy")?.value }}
-          </span>
-          <span class="submit-status">Submitted ✔</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Button area (shown in edit mode) -->
-    <div class="submit-wrapper" *ngIf="canSubmitInspectionNotification">
-      <div class="submit-card">
-        <button
-          type="submit"
-          (click)="SaveNewInspection()"
-          class="submit-btn primary"
-        >
-          Submit
-        </button>
-
-        <button
-          type="submit"
-          (click)="DraftNewInspection()"
-          class="submit-btn secondary"
-        >
-          Save & Draft
-        </button>
-      </div>
-    </div>
-  </fieldset>
-</form>
-
-<div class="comment-section" *ngIf="workflow">
-  <!-- <mat-slide-toggle [(ngModel)]="showAll">Show All Comments</mat-slide-toggle> -->
-
-  <!-- Responsive grid of comment cards -->
-  <div class="comment-grid">
-    <mat-card
-      *ngFor="let circulation of workflow.requestCirculationsVM"
-      [class.last-Circulation-card]="currentPerformerIsQC(circulation)"
-      class="comment-card"
-    >
-      <!-- Card header -->
-      <mat-card-header>
-        <mat-card-title class="Comment-Title">
-          {{ circulation.current?.performerContactPerson?.name }}
-          <button
-            (click)="openCirculationModal(circulation.original)"
-            [hidden]="!CurrentCirculationHasCorrespondences(circulation)"
-          >
-            +
-          </button>
-        </mat-card-title>
-      </mat-card-header>
-
-      <!-- Card content -->
-      <mat-card-content style="overflow: hidden">
-        <textarea
-          [(ngModel)]="circulation.current.comment"
-          [hidden]="circulation.current.isHidden"
-          [disabled]="
-            !(
-              circulation.current | isActiveForUser: workflow.currentCirculation
-            )
-          "
-          class="comment-body"
-          placeholder="please insert your comment before be late"
-          rows="3"
-        ></textarea>
-        <!-- Upload button -->
-        <button (click)="openDocuments()">Upload Documents</button>
-        <input
-          type="file"
-          multiple
-          (change)="onCommentFilesPicked($event, circulation.current)"
-          class="upload-input"
-          [hidden]="
-            !(
-              circulation.current | isActiveForUser: workflow.currentCirculation
-            ) || QC_AlreadyHasAction
-          "
-        />
-
-        <!-- Optional: show filenames as chips -->
-        <div style="max-width: 100%; overflow-x: auto">
-          <table
-            class="commentupload-table"
-            style="width: max-content; min-width: 100%"
-            *ngIf="
-              circulation.current.attachments != null &&
-              circulation.current.attachments.length > 0
-            "
-          >
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th>Description</th>
-                <th>DOC. NO.</th>
-                <th>STATUS</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let file of circulation.current.attachments;
-                  let i = index
-                "
-              >
-                <td>
-                  <!-- {{ file?.name }} -->
-                  <a
-                    [href]="file?.downloadUrl"
-                    (click)="fetchFile(file.id)"
-                    target="_blank"
-                    >{{ file?.name }}</a
-                  >
-                </td>
-                <td>
+        } @else {
+          <div class="list-scroll">
+            @for (
+              insSubject of inspectionSubjectsFormArray.controls;
+              track insSubject;
+              let i = $index
+            ) {
+              <div class="edit-row subject-edit" [formGroup]="insSubject">
+                <mat-form-field appearance="outline" class="combo">
                   <input
                     type="text"
-                    [(ngModel)]="file.description"
-                    placeholder="Enter description"
-                    [ngModelOptions]="{ standalone: true }"
+                    matInput
+                    placeholder="Select or type subject"
+                    formControlName="name"
+                    [matAutocomplete]="auto"
+                    [disabled]="IsReadOnlyInspectionNotificationMtadata"
                   />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    [(ngModel)]="file.docNo"
-                    placeholder="Enter Document Number"
-                    [ngModelOptions]="{ standalone: true }"
-                  />
-                </td>
-                <td>
-                  <select
-                    [(ngModel)]="file.status"
-                    placeholder="Enter Status"
-                    [ngModelOptions]="{ standalone: true }"
-                  >
-                    <option value="">--</option>
-                    <option value="APPROVED">APPROVED</option>
-                    <option value="NOT_KNOWN">NOT_KNOWN</option>
-                    <option value="REJECTED">REJECTED</option>
-                  </select>
-                </td>
-                <td>
+                  <mat-autocomplete #auto="matAutocomplete">
+                    @for (subj of allSubjects; track subj) {
+                      <mat-option
+                        [value]="subj"
+                        [disabled]="
+                          !editMode ||
+                          (currentCirculation != null &&
+                            currentCirculation?.performerContactType != 2)
+                        "
+                      >
+                        {{ subj }}
+                      </mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+
+                <input
+                  type="text"
+                  class="field-input"
+                  formControlName="itpRowNo"
+                  placeholder="ITP row Number"
+                />
+
+                @if (!IsReadOnlyInspectionNotificationMtadata) {
                   <button
                     type="button"
-                    class="btn-danger"
-                    (click)="removeCirculationFile(circulation.current, i)"
+                    class="icon-btn icon-btn--danger"
+                    (click)="removeInsSubject(insSubject)"
+                    aria-label="Remove subject"
                   >
-                    ✖
+                    <img src="assets/delete-red.png" alt="" />
                   </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ============ CONTACTS ============ -->
+      <section
+        class="card card--enter"
+        style="--delay: 300ms"
+        formArrayName="contacts"
+      >
+        <div class="card-head">
+          <h3 class="card-title">Contact Persons</h3>
+          @if (canEditInspectionNotificationMtadata) {
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="addNewToContact()"
+              aria-label="Add contact"
+            >
+              <img src="assets/pluss011.png" alt="" />
+            </button>
+          }
         </div>
 
-        <div *ngIf="currentPerformerIsQC(circulation)">
-          <div style="max-width: 100%; overflow-x: auto">
-            <table
-              class="commentupload-table"
-              style="width: max-content; min-width: 100%"
+        @if (!canEditInspectionNotificationMtadata) {
+          <div class="list-scroll">
+            <div class="table-head contact-cols">
+              <span>Type</span><span>Name</span><span>Phone</span
+              ><span>Mobile</span><span>Email</span><span>Description</span>
+            </div>
+            @for (contact of contactsControls; track contact; let i = $index) {
+              @let ctype = contact.get("contactType")?.value;
+              <div class="table-row contact-cols" [formGroup]="contact">
+                <span class="pill">{{
+                  ctype == 5 ? "Supplier" : ctype == 6 ? "SubSupplier" : "—"
+                }}</span>
+                <span class="cell">{{
+                  contact.get("name")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  contact.get("phone")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  contact.get("mobile")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  contact.get("email")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  contact.get("cc")?.value || "—"
+                }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="list-scroll">
+            @for (contact of contactsControls; track contact; let i = $index) {
+              <div class="edit-row contact-edit" [formGroup]="contact">
+                <select
+                  class="field-input"
+                  (change)="ContactTypeSelect(contact)"
+                  aria-label="Contact type"
+                  [disabled]="!canEditInspectionNotificationMtadata"
+                >
+                  <option value="none">Select type</option>
+                  <option value="5">Vendor</option>
+                  <option value="6">Sub-vendor</option>
+                </select>
+                <input
+                  formControlName="name"
+                  placeholder="Name"
+                  class="field-input"
+                />
+                <input
+                  formControlName="phone"
+                  placeholder="Phone"
+                  class="field-input"
+                />
+                <input
+                  formControlName="mobile"
+                  placeholder="Mobile"
+                  class="field-input"
+                />
+                <input
+                  formControlName="email"
+                  placeholder="Email"
+                  class="field-input"
+                />
+                <input
+                  formControlName="cc"
+                  placeholder="Description"
+                  class="field-input"
+                />
+                <button
+                  type="button"
+                  class="icon-btn icon-btn--danger"
+                  (click)="removeToContact(contact)"
+                  aria-label="Remove contact"
+                >
+                  <img src="assets/delete-red.png" alt="" />
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ============ LOCATIONS ============ -->
+      <section
+        class="card card--enter"
+        style="--delay: 360ms"
+        formArrayName="locations"
+      >
+        <div class="card-head">
+          <h3 class="card-title">Locations of Inspection</h3>
+          @if (canEditInspectionNotificationMtadata) {
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="addNewAddress()"
+              aria-label="Add location"
             >
+              <img src="assets/pluss011.png" alt="" />
+            </button>
+          }
+        </div>
+
+        @if (!canEditInspectionNotificationMtadata) {
+          <div class="list-scroll">
+            <div class="table-head location-cols">
+              <span>Country</span><span>State</span><span>City</span
+              ><span>Street 1</span><span>Street 2</span><span>ZIP</span>
+            </div>
+            @for (
+              loc of inspectionLocations.controls;
+              track loc;
+              let i = $index
+            ) {
+              <div class="table-row location-cols" [formGroup]="loc">
+                <span class="cell">{{ loc.get("country")?.value || "—" }}</span>
+                <span class="cell">{{ loc.get("state")?.value || "—" }}</span>
+                <span class="cell">{{ loc.get("city")?.value || "—" }}</span>
+                <span class="cell cell--muted">{{
+                  loc.get("streetLine1")?.value || "—"
+                }}</span>
+                <span class="cell cell--muted">{{
+                  loc.get("streetLine2")?.value || "—"
+                }}</span>
+                <span class="cell">{{ loc.get("zipCode")?.value || "—" }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="list-scroll">
+            @for (
+              loc of inspectionLocationFormArray.controls;
+              track loc;
+              let i = $index
+            ) {
+              <div class="edit-row location-edit" [formGroup]="loc">
+                <input
+                  formControlName="country"
+                  placeholder="Country"
+                  class="field-input"
+                />
+                <input
+                  formControlName="state"
+                  placeholder="State"
+                  class="field-input"
+                />
+                <input
+                  formControlName="city"
+                  placeholder="City"
+                  class="field-input"
+                />
+                <input
+                  formControlName="streetLine1"
+                  placeholder="Street line 1"
+                  class="field-input"
+                />
+                <input
+                  formControlName="streetLine2"
+                  placeholder="Street line 2"
+                  class="field-input"
+                />
+                <input
+                  formControlName="zipCode"
+                  placeholder="ZIP"
+                  class="field-input"
+                />
+                <button
+                  type="button"
+                  class="icon-btn icon-btn--danger"
+                  (click)="removeAddress(loc)"
+                  aria-label="Remove location"
+                >
+                  <img src="assets/delete-red.png" alt="" />
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ============ VENDOR DOCUMENTS ============ -->
+      <section class="card card--enter" style="--delay: 420ms">
+        <div class="card-head">
+          <h3 class="card-title">Vendor Documents for Execution</h3>
+          @if (canEditInspectionNotificationMtadata) {
+            <label class="upload-btn">
+              <input
+                type="file"
+                multiple
+                (change)="onFilesPicked($event)"
+                hidden
+              />
+              + Upload files
+            </label>
+          }
+        </div>
+
+        @if (attachments.length > 0) {
+          <div class="table-wrap">
+            <table class="data-table">
               <thead>
                 <tr>
-                  <th>Internal Correspondences</th>
-                  <th>User Role</th>
-                  <th>Comment</th>
-                  <th>Action</th>
+                  <th>File</th>
+                  <th>Description</th>
+                  <th>Doc. No.</th>
+                  <th>Status</th>
+                  <th class="col-action"></th>
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="
-                    let internaclCirculation of circulation.original
-                      .childCirculations
-                  "
-                >
-                  <td>
-                    <img
-                      src="assets/pluss011.png"
-                      style="width: 20px; height: 20px"
-                      (click)="
-                        AddInternalCorrespondenceRow(circulation.current)
-                      "
-                    />
-                  </td>
-                  <td style="width: 20% !important">
-                    <label
-                      [hidden]="
-                        internaclCirculation.id == '' ||
-                        internaclCirculation.id ==
-                          '00000000-0000-0000-0000-000000000000'
-                      "
-                      >{{
-                        internaclCirculation.performerContactPerson
-                          .contactType == 8
-                          ? "PidecInspector"
-                          : internaclCirculation.performerContactPerson
-                                .contactType == 9
-                            ? "ThirdParty Inspector"
-                            : internaclCirculation.performerContactPerson
-                                  .contactType == 10
-                              ? "Department Lead"
-                              : internaclCirculation.performerContactPerson
-                                    .contactType == 11
-                                ? "Department originator"
-                                : ""
-                      }}
-                      {{
-                        internaclCirculation.performerContactPerson.name
-                      }}</label
-                    >
-                    <select
-                      [hidden]="
-                        internaclCirculation.id != '' &&
-                        internaclCirculation.id !=
-                          '00000000-0000-0000-0000-000000000000'
-                      "
-                      [(ngModel)]="internaclCirculation.performerContactPerson"
-                      style="
-                        font-family: &quot;Times New Roman&quot;, Times, serif;
-                        font-size: 16px;
-                      "
-                    >
-                      <option [ngValue]="null">------</option>
-
-                      <option
-                        *ngFor="let contact of InternalReceiversContacts"
-                        [ngValue]="contact"
+                @for (file of attachments; track file.id; let i = $index) {
+                  <tr>
+                    <td>
+                      <a
+                        class="file-link"
+                        [href]="file.downloadUrl"
+                        (click)="fetchFile(file.id)"
+                        target="_blank"
+                        rel="noopener"
                       >
-                        {{
-                          contact.contactType == 8
-                            ? "PidecInspector"
-                            : contact.contactType == 9
-                              ? "ThirdParty Inspector"
-                              : contact.contactType == 10
-                                ? "Department Lead"
-                                : contact.contactType == 11
-                                  ? "Department originator"
-                                  : ""
-                        }}
-                        {{ contact.name }}
-                      </option>
-                    </select>
-                  </td>
-                  <td style="width: 60% !important">
-                    <textarea
-                      [(ngModel)]="internaclCirculation.creatorComment"
-                      type="text"
-                      style="width: 100% !important"
-                    ></textarea>
-                  </td>
-                  <td style="width: 20% !important">
-                    <button
-                      mat-raised-button
-                      style="
-                        width: 3.5rem !important;
-                        font-size: 14px !important;
-                        font-weight: 700 !important;
-                      "
-                      color="primary"
-                      [hidden]="
-                        internaclCirculation.id != '' &&
-                        internaclCirculation.id !=
-                          '00000000-0000-0000-0000-000000000000'
-                      "
-                      (click)="
-                        StartInternalCorrespondence(
-                          internaclCirculation,
-                          circulation.current
-                        )
-                      "
-                    >
-                      Send Note
-                    </button>
-                  </td>
-                </tr>
+                        {{ file.name }}
+                      </a>
+                    </td>
+                    <td>
+                      <input
+                        class="field-input field-input--sm"
+                        type="text"
+                        [(ngModel)]="file.description"
+                        placeholder="Description"
+                        [disabled]="!canEditInspectionNotificationMtadata"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="field-input field-input--sm"
+                        type="text"
+                        [(ngModel)]="file.docNo"
+                        placeholder="Doc number"
+                        [disabled]="!canEditInspectionNotificationMtadata"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </td>
+                    <td>
+                      <select
+                        class="field-input field-input--sm"
+                        [(ngModel)]="file.status"
+                        [disabled]="!canEditInspectionNotificationMtadata"
+                        [ngModelOptions]="{ standalone: true }"
+                      >
+                        <option value="">—</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="NOT_KNOWN">NOT_KNOWN</option>
+                        <option value="REJECTED">REJECTED</option>
+                      </select>
+                    </td>
+                    <td class="col-action">
+                      @if (canEditInspectionNotificationMtadata) {
+                        <button
+                          type="button"
+                          class="icon-btn icon-btn--danger"
+                          (click)="removeFile(i)"
+                          aria-label="Remove file"
+                        >
+                          ✕
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
-        </div>
-      </mat-card-content>
+        } @else {
+          <p class="empty-state">No documents uploaded yet.</p>
+        }
+      </section>
 
-      <!-- Action buttons -->
-      <mat-card-actions>
-        <button
-          mat-raised-button
-          style="
-            width: 4.5 rem !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-          "
-          color="primary"
-          (click)="onAction(circulation.current, 1)"
-          [disabled]="
-            !(
-              circulation.current | isActiveForUser: workflow.currentCirculation
-            ) || QC_AlreadyHasAction
-          "
-          *ngIf="shouldShowButton(circulation.current, 'approve')"
-        >
-          Approve
-        </button>
-        <button
-          mat-raised-button
-          style="
-            width: 4.5 rem !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-          "
-          color="primary"
-          (click)="onAction(circulation.current, 3)"
-          [disabled]="
-            !(
-              circulation.current | isActiveForUser: workflow.currentCirculation
-            ) || QC_AlreadyHasAction
-          "
-          *ngIf="shouldShowButton(circulation.current, 'backward')"
-        >
-          Backward
-        </button>
-        <button
-          mat-raised-button
-          style="
-            width: 4.5 rem !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-          "
-          color="warn"
-          (click)="onAction(circulation.current, 2)"
-          [disabled]="
-            !(
-              circulation.current | isActiveForUser: workflow.currentCirculation
-            ) || QC_AlreadyHasAction
-          "
-          *ngIf="shouldShowButton(circulation.current, 'reject')"
-        >
-          Reject
-        </button>
-      </mat-card-actions>
-
-      <div
-        class="submit-wrapper"
-        *ngIf="
-          circulation.current.performedActionDateGregorian.getFullYear() != 1
-        "
-      >
-        <div class="submit-card">
-          <div class="submit-info">
-            <span class="submit-status"
-              >{{
-                CirculationActionType(circulation) == -1
-                  ? ""
-                  : CirculationActionType(circulation) == 2
-                    ? "✖ Rejected "
-                    : CirculationActionType(circulation) == 3
-                      ? "↩ Backwarded"
-                      : "✔ Approved"
-              }}
-            </span>
-            <span class="submit-user">
-              {{
-                CirculationActionType(circulation) == -1
-                  ? ""
-                  : "By " + circulation.current.performerContactPerson.name
-              }}
-            </span>
-            <br />
-            <span class="submit-date">
-              {{
-                CirculationActionType(circulation) == -1
-                  ? ""
-                  : (circulation.current.performedActionDateGregorian
-                    | date: "yyyy-MM-dd")
-              }}
-            </span>
-          </div>
+      <!-- ============ SUBMIT / STATUS FOOTER ============ -->
+      @if (canShowSubmittData) {
+        <div class="status-banner status-banner--success">
+          <span class="status-dot"></span>
+          <span class="status-text">Submitted</span>
+          <span class="status-meta">
+            {{ inspectionForm.get("modifiedBy")?.value }} ·
+            {{ inspectionForm.get("modifiedDate")?.value | date: "yyyy-MM-dd" }}
+          </span>
         </div>
+      }
+
+      @if (canSubmitInspectionNotification) {
+        <footer class="form-footer">
+          <button
+            type="button"
+            class="btn btn--ghost"
+            (click)="DraftNewInspection()"
+          >
+            Save as draft
+          </button>
+          <button
+            type="button"
+            class="btn btn--primary"
+            (click)="SaveNewInspection()"
+          >
+            Submit
+          </button>
+        </footer>
+      }
+    </form>
+
+    <!-- ============ WORKFLOW COMMENTS ============ -->
+    @if (workflow) {
+      <div class="comment-grid">
+        @for (
+          circulation of workflow.requestCirculationsVM;
+          track circulation
+        ) {
+          @let actionType = CirculationActionType(circulation);
+          <mat-card
+            class="comment-card card--enter"
+            [class.last-Circulation-card]="currentPerformerIsQC(circulation)"
+          >
+            <mat-card-header class="comment-header">
+              <mat-card-title class="comment-title">
+                <span>{{
+                  circulation.current?.performerContactPerson?.name
+                }}</span>
+                <button
+                  type="button"
+                  class="icon-btn"
+                  (click)="openCirculationModal(circulation.original)"
+                  [hidden]="!CurrentCirculationHasCorrespondences(circulation)"
+                  aria-label="Open correspondences"
+                >
+                  +
+                </button>
+              </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content class="comment-content">
+              <textarea
+                class="comment-body"
+                [(ngModel)]="circulation.current.comment"
+                [hidden]="circulation.current.isHidden"
+                [disabled]="
+                  !(
+                    circulation.current
+                    | isActiveForUser: workflow.currentCirculation
+                  )
+                "
+                placeholder="Write your comment before it's too late…"
+                rows="3"
+              ></textarea>
+
+              <div class="comment-tools">
+                <button
+                  type="button"
+                  class="btn btn--ghost btn--sm"
+                  (click)="openDocuments()"
+                >
+                  Upload documents
+                </button>
+                <label
+                  class="upload-btn upload-btn--sm"
+                  [hidden]="
+                    !(
+                      circulation.current
+                      | isActiveForUser: workflow.currentCirculation
+                    ) || QC_AlreadyHasAction
+                  "
+                >
+                  <input
+                    type="file"
+                    multiple
+                    hidden
+                    (change)="onCommentFilesPicked($event, circulation.current)"
+                  />
+                  + Attach
+                </label>
+              </div>
+
+              @if (circulation.current.attachments?.length) {
+                <div class="table-wrap">
+                  <table class="data-table data-table--compact">
+                    <thead>
+                      <tr>
+                        <th>File</th>
+                        <th>Description</th>
+                        <th>Doc. No.</th>
+                        <th>Status</th>
+                        <th class="col-action"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (
+                        file of circulation.current.attachments;
+                        track file.id;
+                        let i = $index
+                      ) {
+                        <tr>
+                          <td>
+                            <a
+                              class="file-link"
+                              [href]="file?.downloadUrl"
+                              (click)="fetchFile(file.id)"
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              {{ file?.name }}
+                            </a>
+                          </td>
+                          <td>
+                            <input
+                              class="field-input field-input--sm"
+                              type="text"
+                              [(ngModel)]="file.description"
+                              placeholder="Description"
+                              [ngModelOptions]="{ standalone: true }"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              class="field-input field-input--sm"
+                              type="text"
+                              [(ngModel)]="file.docNo"
+                              placeholder="Doc number"
+                              [ngModelOptions]="{ standalone: true }"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              class="field-input field-input--sm"
+                              [(ngModel)]="file.status"
+                              [ngModelOptions]="{ standalone: true }"
+                            >
+                              <option value="">—</option>
+                              <option value="APPROVED">APPROVED</option>
+                              <option value="NOT_KNOWN">NOT_KNOWN</option>
+                              <option value="REJECTED">REJECTED</option>
+                            </select>
+                          </td>
+                          <td class="col-action">
+                            <button
+                              type="button"
+                              class="icon-btn icon-btn--danger"
+                              (click)="
+                                removeCirculationFile(circulation.current, i)
+                              "
+                              aria-label="Remove file"
+                            >
+                              ✕
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+
+              @if (currentPerformerIsQC(circulation)) {
+                <div class="internal">
+                  <div class="internal-head">
+                    <span>Internal correspondences</span>
+                    <button
+                      type="button"
+                      class="icon-btn"
+                      (click)="
+                        AddInternalCorrespondenceRow(circulation.current)
+                      "
+                      aria-label="Add correspondence"
+                    >
+                      <img src="assets/pluss011.png" alt="" />
+                    </button>
+                  </div>
+
+                  @for (
+                    internaclCirculation of circulation.original
+                      .childCirculations ?? [];
+                    track internaclCirculation
+                  ) {
+                    @let isSaved =
+                      internaclCirculation.id !== "" &&
+                      internaclCirculation.id !==
+                        "00000000-0000-0000-0000-000000000000";
+                    <div class="internal-row">
+                      @if (isSaved) {
+                        <div class="saved-role">
+                          <span class="role-tag">
+                            @switch (
+                              internaclCirculation.performerContactPerson
+                                .contactType
+                            ) {
+                              @case (8) {
+                                PidecInspector
+                              }
+                              @case (9) {
+                                ThirdParty Inspector
+                              }
+                              @case (10) {
+                                Department Lead
+                              }
+                              @case (11) {
+                                Department originator
+                              }
+                            }
+                          </span>
+                          <span class="cell">{{
+                            internaclCirculation.performerContactPerson.name
+                          }}</span>
+                        </div>
+                      } @else {
+                        <select
+                          class="field-input field-input--sm"
+                          [(ngModel)]="
+                            internaclCirculation.performerContactPerson
+                          "
+                          aria-label="Receiver"
+                        >
+                          <option [ngValue]="null">Select receiver</option>
+                          @for (
+                            contact of InternalReceiversContacts;
+                            track contact
+                          ) {
+                            <option [ngValue]="contact">
+                              @switch (contact.contactType) {
+                                @case (8) {
+                                  PidecInspector
+                                }
+                                @case (9) {
+                                  ThirdParty Inspector
+                                }
+                                @case (10) {
+                                  Department Lead
+                                }
+                                @case (11) {
+                                  Department originator
+                                }
+                              }
+                              {{ contact.name }}
+                            </option>
+                          }
+                        </select>
+                      }
+
+                      <textarea
+                        class="comment-body comment-body--sm"
+                        [(ngModel)]="internaclCirculation.creatorComment"
+                        rows="2"
+                        [disabled]="isSaved"
+                      ></textarea>
+
+                      @if (!isSaved) {
+                        <button
+                          mat-flat-button
+                          color="primary"
+                          type="button"
+                          class="btn-note"
+                          (click)="
+                            StartInternalCorrespondence(
+                              internaclCirculation,
+                              circulation.current
+                            )
+                          "
+                        >
+                          Send note
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </mat-card-content>
+
+            <mat-card-actions class="comment-actions">
+              @if (shouldShowButton(circulation.current, "approve")) {
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  class="action-pill"
+                  (click)="onAction(circulation.current, 1)"
+                  [disabled]="
+                    !(
+                      circulation.current
+                      | isActiveForUser: workflow.currentCirculation
+                    ) || QC_AlreadyHasAction
+                  "
+                >
+                  Approve
+                </button>
+              }
+              @if (shouldShowButton(circulation.current, "backward")) {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="action-pill"
+                  (click)="onAction(circulation.current, 3)"
+                  [disabled]="
+                    !(
+                      circulation.current
+                      | isActiveForUser: workflow.currentCirculation
+                    ) || QC_AlreadyHasAction
+                  "
+                >
+                  Backward
+                </button>
+              }
+              @if (shouldShowButton(circulation.current, "reject")) {
+                <button
+                  mat-flat-button
+                  color="warn"
+                  type="button"
+                  class="action-pill"
+                  (click)="onAction(circulation.current, 2)"
+                  [disabled]="
+                    !(
+                      circulation.current
+                      | isActiveForUser: workflow.currentCirculation
+                    ) || QC_AlreadyHasAction
+                  "
+                >
+                  Reject
+                </button>
+              }
+            </mat-card-actions>
+
+            @if (
+              circulation.current.performedActionDateGregorian.getFullYear() !=
+              1
+            ) {
+              <div
+                class="status-banner"
+                [class.status-banner--danger]="actionType == 2"
+                [class.status-banner--warn]="actionType == 3"
+                [class.status-banner--success]="
+                  actionType != 2 && actionType != 3
+                "
+              >
+                @if (actionType != -1) {
+                  <span class="status-dot"></span>
+                  <span class="status-text">
+                    @switch (actionType) {
+                      @case (2) {
+                        Rejected
+                      }
+                      @case (3) {
+                        Sent backward
+                      }
+                      @default {
+                        Approved
+                      }
+                    }
+                  </span>
+                  <span class="status-meta">
+                    By {{ circulation.current.performerContactPerson.name }} ·
+                    {{
+                      circulation.current.performedActionDateGregorian
+                        | date: "yyyy-MM-dd"
+                    }}
+                  </span>
+                }
+              </div>
+            }
+          </mat-card>
+        }
       </div>
-    </mat-card>
+    }
   </div>
-</div>
+}

@@ -258,12 +258,18 @@
    ============================================================ */
 @media print {
   @page {
-    size: A4;
-    margin: 15mm;
+    size: A4 portrait;
+    margin: 10mm;            /* usable width = 190mm */
   }
 
-  /* Only the printable area is shown - fixes a bug in the original stylesheet,
-     which targeted #newInspection, an id that does not exist in this component. */
+  /* Show only the form */
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
   body * {
     visibility: hidden;
   }
@@ -273,28 +279,154 @@
     visibility: visible;
   }
 
+  /* Force a light, ink-friendly palette even if the app theme is dark */
   #printableInspection {
+    --text-color: #000;
+    --border-color: #555;
+    --primaryform-color: #fff;
+    --list-background-light: #f0f0f0;
+    --primary-color: #1f3a5f;
+
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
+    max-width: none;
     margin: 0;
+    padding: 0;
     border: none;
+    border-radius: 0;
     box-shadow: none;
+    background: #fff;
+    color: #000;
+    font-size: 9.5pt;
+    line-height: 1.3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .info-container,
-  .print-header,
-  .upload-layout,
-  .location-entry {
+  /* Values/labels may wrap instead of overflowing (long emails, addresses) */
+  #printableInspection .field-row {
+    flex-wrap: wrap;
+    padding: 1px 0;
+  }
+
+  #printableInspection .field-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Letterhead */
+  #printableInspection .print-header {
+    grid-template-columns: 1.1fr 2.6fr 1.7fr;
+    font-size: 9pt;
+    border-width: 1.5pt;
+    border-radius: 8px;
+  }
+
+  #printableInspection .left,
+  #printableInspection .center,
+  #printableInspection .right {
+    padding: 5px 6px;
+    border-left-width: 1.5pt;
+  }
+
+  #printableInspection .doc-code,
+  #printableInspection .title,
+  #printableInspection .row {
+    border-bottom-width: 1.5pt;
+  }
+
+  #printableInspection .circle {
+    width: 18mm;
+    height: 18mm;
+    border-width: 1.5pt;
+    overflow: hidden;
+  }
+
+  #printableInspection .circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Info blocks */
+  #printableInspection .info-container {
+    margin-top: 2.5mm;
+    flex-wrap: wrap;           /* many recipients wrap instead of squeezing */
+    border-color: var(--border-color);
+  }
+
+  #printableInspection .info-box {
+    flex: 1 1 45%;
+    padding: 5px 8px;
+    min-height: 0;
+    font-size: 9.5pt;
+  }
+
+  /* Single-box sections should use the full width */
+  #printableInspection .info-container > .info-box:only-child {
+    flex-basis: 100%;
+  }
+
+  /* Checkboxes: crisp and black */
+  #printableInspection input[type='checkbox'] {
+    accent-color: #000;
+    width: 3mm;
+    height: 3mm;
+    margin: 0;
+  }
+
+  /* Attachments */
+  #printableInspection .upload-layout {
+    margin-top: 2.5mm;
+    border-color: var(--border-color);
+  }
+
+  #printableInspection .upload-title {
+    min-width: 25mm;
+    max-width: 30mm;
+    padding: 6px;
+    font-size: 9pt;
+  }
+
+  #printableInspection .upload-table {
+    table-layout: fixed;
+    font-size: 9pt;
+  }
+
+  #printableInspection .upload-table th,
+  #printableInspection .upload-table td {
+    padding: 4px 5px;
+    overflow-wrap: anywhere;
+  }
+
+  #printableInspection .upload-table th {
+    background: var(--primary-color);
+    color: #fff;
+  }
+
+  #printableInspection .upload-table thead {
+    display: table-header-group;   /* repeat header on every page */
+  }
+
+  #printableInspection .upload-table tr {
+    break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  .info-box {
-    font-size: 12px;
+  /* Signature line */
+  #printableInspection .submit-wrapper {
+    margin-top: 4mm;
+    font-size: 9pt;
   }
 
-  .field-label {
-    font-weight: bold;
+  /* Page-break control: keep small blocks whole, let the attachments table flow */
+  #printableInspection .print-header,
+  #printableInspection .info-box,
+  #printableInspection .location-entry,
+  #printableInspection .submit-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

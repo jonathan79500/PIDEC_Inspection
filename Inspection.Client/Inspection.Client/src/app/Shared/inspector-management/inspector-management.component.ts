@@ -103,6 +103,7 @@ export class InspectorManagementComponent implements OnInit {
   }
 
   loadContacts(): void {
+    
     this.service.getContacts().subscribe({
       next: (data) => this.contacts.set(data),
       error: () => this.showMessage('error', 'Could not load contacts.'),

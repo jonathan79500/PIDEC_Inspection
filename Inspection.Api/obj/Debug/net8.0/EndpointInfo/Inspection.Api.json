@@ -4730,7 +4730,7 @@
       "Inspection.Api.Controllers.queryParams": {
         "type": "object",
         "properties": {
-          "projectNumber": {
+          "projectId": {
             "type": "string",
             "nullable": true
           },
@@ -4748,7 +4748,7 @@
       "Inspection.Api.Controllers.queryProjectParams": {
         "type": "object",
         "properties": {
-          "projectNumber": {
+          "projectId": {
             "type": "string",
             "nullable": true
           }

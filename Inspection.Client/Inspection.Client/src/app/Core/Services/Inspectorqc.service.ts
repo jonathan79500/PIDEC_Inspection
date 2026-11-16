@@ -8,7 +8,7 @@ export class InspectorQcService {
   private http = inject(HttpClient);
 
   // TODO: change to your API base url
-  private readonly baseUrl = '/api/inspectors';
+  private readonly baseUrl = '/inspectors';
 
   /** Every inspector still awaiting a QC decision (QCApprovalState = NoAction). */
   getPending(): Observable<Inspector[]> {
